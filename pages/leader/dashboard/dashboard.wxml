@@ -1,0 +1,107 @@
+<view class="dashboard-container">
+  <!-- 调试模式返回按钮 -->
+  <view class="debug-banner" wx:if="{{isDebugMode}}" bindtap="returnToAdmin">
+    <van-icon name="arrow-left" size="24rpx" color="#fff" />
+    <text>调试模式 - 点击返回管理员中心</text>
+  </view>
+
+  <view class="header-section">
+    <view class="department-info">
+      <van-icon name="cluster-o" size="40rpx" color="#ffffff" />
+      <text class="department-name">{{department}}</text>
+    </view>
+    <view class="date-selector" bindtap="showDatePickerPopup">
+      <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+      <text>{{selectedDate}}</text>
+      <van-icon name="arrow-down" size="24rpx" color="rgba(255,255,255,0.9)" />
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <van-grid column-num="4" border="{{ false }}">
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{totalClasses}}</view>
+          <view class="stat-label">班级总数</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{totalStudents}}</view>
+          <view class="stat-label">学生总数</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number present">{{presentToday}}</view>
+          <view class="stat-label">今日到课</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number absent">{{absentToday}}</view>
+          <view class="stat-label">今日缺课</view>
+        </view>
+      </van-grid-item>
+    </van-grid>
+  </view>
+
+  <view class="class-list">
+    <van-cell-group title="班级考勤详情" wx:if="{{classes.length > 0}}">
+      <van-cell
+        wx:for="{{classes}}"
+        wx:key="className"
+        is-link
+        border="{{ false }}"
+        custom-class="class-card"
+        bind:click="viewClassDetail"
+        data-class="{{item}}"
+      >
+        <view slot="title" class="class-info">
+          <view class="class-header">
+            <view class="class-name">
+              <van-icon name="home-o" size="32rpx" color="#1890ff" />
+              <text>{{item.className}}</text>
+            </view>
+            <van-tag type="primary" plain>
+              出勤率 {{item.attendanceRate}}%
+            </van-tag>
+          </view>
+          <view class="class-stats">
+            <view class="stat-item">
+              <text class="label">总人数：</text>
+              <text class="value">{{item.totalStudents}}</text>
+            </view>
+            <view class="stat-item">
+              <text class="label">到课：</text>
+              <text class="value present">{{item.present}}</text>
+            </view>
+            <view class="stat-item">
+              <text class="label">缺课：</text>
+              <text class="value absent">{{item.absent}}</text>
+            </view>
+          </view>
+        </view>
+      </van-cell>
+    </van-cell-group>
+
+    <van-empty
+      wx:else
+      description="暂无数据"
+      image="search"
+    />
+  </view>
+
+  <van-popup show="{{ showDatePicker }}" position="bottom" bind:close="onDatePickerClose">
+    <van-datetime-picker
+      type="date"
+      value="{{ selectedDateTimestamp }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onDatePickerConfirm"
+      bind:cancel="onDatePickerClose"
+    />
+  </van-popup>
+
+  <van-toast id="van-toast" />
+</view>

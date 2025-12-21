@@ -1,0 +1,76 @@
+<view class="detail-container">
+  <view class="header-section" wx:if="{{record}}">
+    <view class="club-info">
+      <van-icon name="friends-o" size="40rpx" color="#ffffff" />
+      <text class="club-name">{{record.clubName}}</text>
+    </view>
+    <view class="date-time">
+      <van-icon name="clock-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+      <text>{{record.date}} {{record.time}}</text>
+    </view>
+    <view class="teacher-info">
+      <van-icon name="manager-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+      <text>点名老师: {{record.teacherName}}</text>
+    </view>
+  </view>
+
+  <view class="stats-section" wx:if="{{record}}">
+    <van-grid column-num="3" border="{{ false }}">
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{record.records.length}}</view>
+          <view class="stat-label">总人数</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number present">{{presentCount}}</view>
+          <view class="stat-label">到课</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number absent">{{absentCount}}</view>
+          <view class="stat-label">缺课</view>
+        </view>
+      </van-grid-item>
+    </van-grid>
+  </view>
+
+  <view class="student-list" wx:if="{{record && record.records.length > 0}}">
+    <van-cell-group title="点名详情">
+      <van-cell wx:for="{{record.records}}" wx:key="studentId" border="{{ false }}" custom-class="student-cell">
+        <view slot="title" class="student-info">
+          <view class="student-name">
+            <van-icon name="user-o" size="32rpx" color="#1890ff" />
+            <text>{{item.studentName}}</text>
+            <text class="gender-tag">{{item.gender}}</text>
+          </view>
+          <view class="student-class">{{item.department}} · {{item.className}}</view>
+          <view class="teacher-contact" wx:if="{{item.classTeacher}}">
+            <text>班主任: {{item.classTeacher}}</text>
+            <text wx:if="{{item.classTeacherPhone}}" class="phone">{{item.classTeacherPhone}}</text>
+          </view>
+          <view class="feedback-info" wx:if="{{item.feedback}}">
+            <van-icon name="comment-o" size="24rpx" color="#faad14" />
+            <text>班主任反馈: {{item.feedback}}</text>
+          </view>
+        </view>
+        <view slot="right-icon">
+          <van-tag
+            type="{{ item.status === 'present' ? 'success' : 'danger' }}"
+            size="large"
+          >
+            {{item.status === 'present' ? '到课' : '缺课'}}
+          </van-tag>
+        </view>
+      </van-cell>
+    </van-cell-group>
+  </view>
+
+  <van-empty
+    wx:if="{{!loading && (!record || record.records.length === 0)}}"
+    description="暂无数据"
+    image="search"
+  />
+</view>

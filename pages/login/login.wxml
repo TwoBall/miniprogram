@@ -1,0 +1,43 @@
+<view class="login-container">
+  <view class="logo-section">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="title">社团点名系统</text>
+    <text class="subtitle">Club Attendance System</text>
+  </view>
+
+  <view class="welcome-section">
+    <text class="welcome-text">欢迎使用社团点名系统</text>
+    <text class="welcome-desc">请使用微信授权登录</text>
+  </view>
+
+  <view class="button-section">
+    <van-button
+      type="info"
+      block
+      round
+      size="large"
+      loading="{{ loading }}"
+      loading-text="登录中..."
+      bind:click="handleWxLogin"
+      icon="wechat"
+    >
+      微信一键登录
+    </van-button>
+  </view>
+
+  <view class="tips-section">
+    <van-icon name="info-o" size="32rpx" color="#999" />
+    <text class="tips-text">首次使用需要完成注册信息</text>
+  </view>
+
+  <van-action-sheet
+    show="{{ showRoleSelector }}"
+    actions="{{ roleActions }}"
+    title="选择进入身份"
+    description="您的账号持有多个角色，请选择一个进入"
+    bind:close="onRoleSelectorClose"
+    bind:select="onRoleSelect"
+  />
+
+  <van-toast id="van-toast" />
+</view>

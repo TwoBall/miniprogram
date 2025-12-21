@@ -1,0 +1,31 @@
+<view class="history-container">
+  <view class="record-list" wx:if="{{records.length > 0}}">
+    <view class="record-card" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
+      <view class="record-header">
+        <view class="date">{{item.date}}</view>
+        <view class="time">{{item.time}}</view>
+      </view>
+
+      <view class="record-stats">
+        <view class="stat-item">
+          <text class="label">总人数：</text>
+          <text class="value">{{item.totalCount}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="label">到课：</text>
+          <text class="value present">{{item.presentCount}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="label">缺课：</text>
+          <text class="value absent">{{item.absentCount}}</text>
+        </view>
+      </view>
+
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text>暂无历史记录</text>
+  </view>
+</view>

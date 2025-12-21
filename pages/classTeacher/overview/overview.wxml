@@ -1,0 +1,110 @@
+<view class="overview-container">
+  <!-- 调试模式返回按钮 -->
+  <view class="debug-banner" wx:if="{{isDebugMode}}" bindtap="returnToAdmin">
+    <van-icon name="arrow-left" size="24rpx" color="#fff" />
+    <text>调试模式 - 点击返回管理员中心</text>
+  </view>
+
+  <view class="header-section">
+    <view class="class-info">
+      <van-icon name="home-o" size="40rpx" color="#ffffff" />
+      <text class="class-name">{{className}}</text>
+    </view>
+    <view class="date-selector" bindtap="showDatePickerPopup">
+      <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+      <text>{{selectedDate}}</text>
+      <van-icon name="arrow-down" size="24rpx" color="rgba(255,255,255,0.9)" />
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <van-grid column-num="4" border="{{ false }}">
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{totalStudents}}</view>
+          <view class="stat-label">总人数</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{joinedClubs}}</view>
+          <view class="stat-label">参加社团</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number present">{{presentToday}}</view>
+          <view class="stat-label">今日到课</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number absent">{{absentToday}}</view>
+          <view class="stat-label">今日缺课</view>
+        </view>
+      </van-grid-item>
+    </van-grid>
+  </view>
+
+  <view class="student-list">
+    <van-cell-group title="学生考勤详情" wx:if="{{students.length > 0}}">
+      <van-cell wx:for="{{students}}" wx:key="_id" border="{{ false }}" custom-class="student-card">
+        <view slot="title" class="student-info">
+          <view class="student-header">
+            <view class="student-name">
+              <van-icon name="user-o" size="32rpx" color="#1890ff" />
+              <text>{{item.name}}</text>
+              <text class="gender-tag">{{item.gender}}</text>
+            </view>
+            <van-tag
+              type="{{ item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'danger' : 'default' }}"
+              size="medium"
+            >
+              {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
+            </van-tag>
+          </view>
+          <view class="student-detail">
+            <view class="detail-item">
+              <van-icon name="friends-o" size="24rpx" color="#999" />
+              <text>{{item.clubName || '未加入社团'}}</text>
+            </view>
+            <view class="detail-item" wx:if="{{item.todayStatus}}">
+              <van-icon name="clock-o" size="24rpx" color="#999" />
+              <text>{{item.attendanceTime}}</text>
+            </view>
+          </view>
+        </view>
+        <view slot="right-icon" wx:if="{{item.todayStatus === 'absent'}}">
+          <van-button
+            type="primary"
+            size="small"
+            plain
+            bind:click="sendFeedback"
+            data-student="{{item}}"
+          >
+            发送反馈
+          </van-button>
+        </view>
+      </van-cell>
+    </van-cell-group>
+
+    <van-empty
+      wx:else
+      description="暂无数据"
+      image="search"
+    />
+  </view>
+
+  <van-popup show="{{ showDatePicker }}" position="bottom" bind:close="onDatePickerClose">
+    <van-datetime-picker
+      type="date"
+      value="{{ selectedDateTimestamp }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onDatePickerConfirm"
+      bind:cancel="onDatePickerClose"
+    />
+  </van-popup>
+
+  <van-toast id="van-toast" />
+</view>

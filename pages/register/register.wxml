@@ -1,0 +1,119 @@
+<view class="register-container">
+  <view class="form-section">
+    <view class="section-title">基本信息</view>
+    <van-cell-group>
+      <van-field
+        value="{{ name }}"
+        label="姓名"
+        placeholder="请输入姓名"
+        bind:change="onNameInput"
+        left-icon="user-o"
+        clearable
+        required
+      />
+    </van-cell-group>
+
+    <view class="section-title" style="margin-top: 40rpx;">角色信息</view>
+    <van-cell-group>
+      <van-cell
+        title="角色"
+        value="{{ roleArray[roleIndex] }}"
+        is-link
+        bind:click="showRolePickerPopup"
+        required
+      />
+
+      <van-cell
+        wx:if="{{ roleIndex === 0 }}"
+        title="社团名称"
+        value="{{ clubName || '请选择社团' }}"
+        is-link
+        bind:click="showClubPickerPopup"
+        required
+      />
+
+      <van-cell
+        wx:if="{{ roleIndex === 1 }}"
+        title="班级"
+        value="{{ className || '请选择班级' }}"
+        is-link
+        bind:click="showClassPickerPopup"
+        required
+      />
+
+      <van-cell
+        wx:if="{{ roleIndex === 2 }}"
+        title="学部"
+        value="{{ department || '请选择学部' }}"
+        is-link
+        bind:click="showDeptPickerPopup"
+        required
+      />
+    </van-cell-group>
+
+    <view class="tips-box">
+      <van-icon name="info-o" size="32rpx" color="#ff9800" />
+      <text class="tips-text">提交后需要等待管理员审核通过才能使用</text>
+    </view>
+
+    <view class="button-group">
+      <van-button
+        type="info"
+        block
+        round
+        loading="{{ loading }}"
+        loading-text="提交中..."
+        bind:click="handleRegister"
+      >
+        提交注册申请
+      </van-button>
+    </view>
+  </view>
+
+  <!-- 角色选择 -->
+  <van-popup show="{{ showRolePicker }}" position="bottom" bind:close="onRolePickerClose">
+    <van-picker
+      show-toolbar
+      title="选择角色"
+      columns="{{ roleArray }}"
+      default-index="{{ roleIndex }}"
+      bind:confirm="onRolePickerConfirm"
+      bind:cancel="onRolePickerClose"
+    />
+  </van-popup>
+
+  <!-- 学部选择 -->
+  <van-popup show="{{ showDeptPicker }}" position="bottom" bind:close="onDeptPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择学部"
+      columns="{{ departments }}"
+      bind:confirm="onDeptPickerConfirm"
+      bind:cancel="onDeptPickerClose"
+    />
+  </van-popup>
+
+  <!-- 班级选择 -->
+  <van-popup show="{{ showClassPicker }}" position="bottom" bind:close="onDeptPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择班级"
+      columns="{{ classes }}"
+      bind:confirm="onClassPickerConfirm"
+      bind:cancel="onClassPickerClose"
+    />
+  </van-popup>
+
+  <!-- 社团选择 -->
+  <van-popup show="{{ showClubPicker }}" position="bottom" bind:close="onClubPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择社团"
+      columns="{{ clubs }}"
+      bind:confirm="onClubPickerConfirm"
+      bind:cancel="onClubPickerClose"
+    />
+  </van-popup>
+
+  <van-toast id="van-toast" />
+</view>

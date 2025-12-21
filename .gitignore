@@ -1,0 +1,35 @@
+# 微信小程序 / Node.js 忽略规则
+
+# 依赖库
+node_modules/
+miniprogram_npm/
+
+# 微信开发者工具私有配置
+project.private.config.json
+
+# 云函数本地安装的依赖
+cloudfunctions/**/node_modules/
+
+# 编译产物/临时文件
+.temp/
+dist/
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# 其他
+.env
+.env.local

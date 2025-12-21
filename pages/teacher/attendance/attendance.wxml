@@ -1,0 +1,117 @@
+<view class="attendance-container">
+  <!-- 调试模式返回按钮 -->
+  <view class="debug-banner" wx:if="{{isDebugMode}}" bindtap="returnToAdmin">
+    <van-icon name="arrow-left" size="24rpx" color="#fff" />
+    <text>调试模式 - 点击返回管理员中心</text>
+  </view>
+
+  <view class="header-section">
+    <view class="club-info">
+      <van-icon name="friends-o" size="40rpx" color="#ffffff" />
+      <text class="club-name">{{clubName}}</text>
+    </view>
+    <view class="date-time">
+      <van-icon name="clock-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+      <text>{{currentDate}} {{currentTime}}</text>
+    </view>
+  </view>
+
+  <!-- 学部快速筛选 (横向滚动) -->
+  <view class="filter-section">
+    <scroll-view scroll-x enable-flex class="dept-scroll">
+      <view wx:for="{{departments}}" wx:key="value" 
+        class="dept-tag {{selectedDepts.indexOf(item.value) > -1 ? 'active' : ''}}"
+        bindtap="toggleDept"
+        data-name="{{item.value}}">
+        {{item.text}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="stats-card">
+    <view class="stats-row">
+      <view class="stat-item">
+        <view class="stat-num">{{totalCount}}</view>
+        <view class="stat-desc">总人数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-num present">{{presentCount}}</view>
+        <view class="stat-desc">到课</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-num absent">{{absentCount}}</view>
+        <view class="stat-desc">缺课</view>
+      </view>
+      <!-- 一键全到按钮 -->
+      <view class="quick-action" bindtap="markAllPresent">
+        <view class="action-icon">
+          <van-icon name="passed" color="#fff" size="24rpx" />
+        </view>
+        <text>一键全到</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="student-list">
+    <block wx:if="{{students.length > 0}}">
+      <view class="section-title">学生名单 ({{students.length}}人)</view>
+      
+      <view class="student-card" wx:for="{{students}}" wx:key="_id">
+        <view class="card-left">
+          <view class="info-row">
+            <text class="student-name">{{item.name}}</text>
+            <view class="gender-badge {{item.gender === '男' ? 'male' : 'female'}}">
+              <van-icon name="{{item.gender === '男' ? 'user' : 'user-o'}}" size="20rpx" />
+              <text>{{item.gender}}</text>
+            </view>
+          </view>
+          <view class="info-row sub-info">
+            <text>{{item.department}}</text>
+            <text class="divider">|</text>
+            <text>{{item.className}}</text>
+          </view>
+          <view class="info-row teacher-info" wx:if="{{item.classTeacher}}">
+            <van-icon name="manager-o" size="24rpx" />
+            <text>班主任：{{item.classTeacher}}</text>
+            <text wx:if="{{item.classTeacherPhone}}" bindtap="callTeacher" data-phone="{{item.classTeacherPhone}}" class="phone-link">{{item.classTeacherPhone}}</text>
+          </view>
+        </view>
+        
+        <view class="card-right">
+          <view class="action-buttons">
+            <view class="status-btn present {{item.status === 'present' ? 'active' : ''}}" 
+              bindtap="markPresent" data-index="{{index}}">
+              <van-icon name="passed" /> 到课
+            </view>
+            <view class="status-btn absent {{item.status === 'absent' ? 'active' : ''}}" 
+              bindtap="markAbsent" data-index="{{index}}">
+              <van-icon name="close" /> 缺课
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <van-empty
+      wx:else
+      description="暂无学生数据"
+      image="search"
+    />
+  </view>
+
+  <view class="submit-section" wx:if="{{students.length > 0}}">
+    <van-button
+      type="info"
+      block
+      round
+      bind:click="submitAttendance"
+      loading="{{ loading }}"
+      loading-text="提交中..."
+    >
+      提交点名记录
+    </van-button>
+  </view>
+
+  <van-toast id="van-toast" />
+  <van-dialog id="van-dialog" />
+</view>

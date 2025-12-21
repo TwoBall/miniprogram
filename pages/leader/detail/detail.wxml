@@ -1,0 +1,49 @@
+<view class="detail-container">
+  <view class="header-card">
+    <view class="class-name">{{className}}</view>
+    <view class="date">{{date}}</view>
+  </view>
+
+  <view class="student-list">
+    <block wx:if="{{students.length > 0}}">
+      <view class="student-card" wx:for="{{students}}" wx:key="_id">
+        <view class="student-header">
+          <view class="student-name">
+            <text>{{item.name}}</text>
+            <text class="gender-tag">{{item.gender}}</text>
+          </view>
+          <view class="status-badge {{item.todayStatus}}">
+            {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
+          </view>
+        </view>
+
+        <view class="student-detail">
+          <view class="detail-item">
+            <text class="label">社团：</text>
+            <text class="value">{{item.clubName || '未加入'}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.classTeacher}}">
+            <text class="label">班主任：</text>
+            <text class="value">{{item.classTeacher}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.classTeacherPhone}}">
+            <text class="label">联系方式：</text>
+            <text class="value">{{item.classTeacherPhone}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.todayStatus}}">
+            <text class="label">点名时间：</text>
+            <text class="value">{{item.attendanceTime}}</text>
+          </view>
+          <view class="feedback-info" wx:if="{{item.feedback}}">
+             <van-icon name="comment-o" size="24rpx" color="#faad14" />
+             <text>班主任反馈: {{item.feedback}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      暂无数据
+    </view>
+  </view>
+</view>

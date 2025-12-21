@@ -1,0 +1,205 @@
+<view class="approval-container">
+  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#1890ff">
+    <van-tab title="待审批({{pendingUsers.length}})">
+      <view class="tab-content">
+        <view class="user-list" wx:if="{{pendingUsers.length > 0}}">
+          <view class="user-card" wx:for="{{pendingUsers}}" wx:key="_id">
+            <view class="user-header">
+              <view class="user-info">
+                <view class="user-name">
+                  <van-icon name="user-o" size="32rpx" color="#1890ff" />
+                  <text>{{item.name}}</text>
+                </view>
+                <van-tag type="warning" size="medium">待审批</van-tag>
+              </view>
+            </view>
+
+            <view class="user-detail">
+              <view class="detail-row">
+                <van-icon name="manager-o" size="24rpx" color="#999" />
+                <text class="label">角色：</text>
+                <text class="value">
+                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
+                </text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.clubName}}">
+                <van-icon name="friends-o" size="24rpx" color="#999" />
+                <text class="label">社团：</text>
+                <text class="value">{{item.clubName}}</text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.className}}">
+                <van-icon name="home-o" size="24rpx" color="#999" />
+                <text class="label">班级：</text>
+                <text class="value">{{item.className}}</text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.department}}">
+                <van-icon name="cluster-o" size="24rpx" color="#999" />
+                <text class="label">学部：</text>
+                <text class="value">{{item.department}}</text>
+              </view>
+
+              <view class="detail-row">
+                <van-icon name="clock-o" size="24rpx" color="#999" />
+                <text class="label">申请时间：</text>
+                <text class="value">{{item.createTime}}</text>
+              </view>
+            </view>
+
+            <view class="action-buttons">
+              <van-button
+                type="danger"
+                size="small"
+                plain
+                bind:click="handleReject"
+                data-user="{{item}}"
+              >
+                拒绝
+              </van-button>
+              <van-button
+                type="primary"
+                size="small"
+                bind:click="handleApprove"
+                data-user="{{item}}"
+              >
+                通过
+              </van-button>
+            </view>
+          </view>
+        </view>
+
+        <van-empty
+          wx:else
+          description="暂无待审批用户"
+          image="search"
+        />
+      </view>
+    </van-tab>
+
+    <van-tab title="已通过({{approvedUsers.length}})">
+      <view class="tab-content">
+        <view class="user-list" wx:if="{{approvedUsers.length > 0}}">
+          <view class="user-card approved" wx:for="{{approvedUsers}}" wx:key="_id">
+            <view class="user-header">
+              <view class="user-info">
+                <view class="user-name">
+                  <van-icon name="user-o" size="32rpx" color="#07c160" />
+                  <text>{{item.name}}</text>
+                </view>
+                <van-tag type="success" size="medium">已通过</van-tag>
+              </view>
+            </view>
+
+            <view class="user-detail">
+              <view class="detail-row">
+                <van-icon name="manager-o" size="24rpx" color="#999" />
+                <text class="label">角色：</text>
+                <text class="value">
+                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
+                </text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.approvedByName}}">
+                <van-icon name="passed" size="24rpx" color="#999" />
+                <text class="label">审批人：</text>
+                <text class="value">{{item.approvedByName}}</text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.approvedTime}}">
+                <van-icon name="clock-o" size="24rpx" color="#999" />
+                <text class="label">审批时间：</text>
+                <text class="value">{{item.approvedTime}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <van-empty
+          wx:else
+          description="暂无已通过用户"
+          image="search"
+        />
+      </view>
+    </van-tab>
+
+    <van-tab title="已拒绝({{rejectedUsers.length}})">
+      <view class="tab-content">
+        <view class="user-list" wx:if="{{rejectedUsers.length > 0}}">
+          <view class="user-card rejected" wx:for="{{rejectedUsers}}" wx:key="_id">
+            <view class="user-header">
+              <view class="user-info">
+                <view class="user-name">
+                  <van-icon name="user-o" size="32rpx" color="#ee0a24" />
+                  <text>{{item.name}}</text>
+                </view>
+                <van-tag type="danger" size="medium">已拒绝</van-tag>
+              </view>
+            </view>
+
+            <view class="user-detail">
+              <view class="detail-row">
+                <van-icon name="manager-o" size="24rpx" color="#999" />
+                <text class="label">角色：</text>
+                <text class="value">
+                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
+                </text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.rejectReason}}">
+                <van-icon name="info-o" size="24rpx" color="#999" />
+                <text class="label">拒绝原因：</text>
+                <text class="value reason">{{item.rejectReason}}</text>
+              </view>
+
+              <view class="detail-row" wx:if="{{item.approvedByName}}">
+                <van-icon name="manager" size="24rpx" color="#999" />
+                <text class="label">审批人：</text>
+                <text class="value">{{item.approvedByName}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <van-empty
+          wx:else
+          description="暂无已拒绝用户"
+          image="search"
+        />
+      </view>
+    </van-tab>
+  </van-tabs>
+
+  <!-- 拒绝原因对话框 -->
+  <van-popup
+    show="{{ showRejectDialog }}"
+    position="center"
+    round
+    closeable
+    bind:close="closeRejectDialog"
+    custom-style="width: 80%; padding: 40rpx;"
+  >
+    <view class="reject-dialog">
+      <view class="dialog-title">拒绝原因</view>
+      <view class="dialog-content">
+        <van-field
+          value="{{ rejectReason }}"
+          type="textarea"
+          placeholder="请输入拒绝原因"
+          bind:change="onRejectReasonInput"
+          autosize
+          maxlength="200"
+          show-word-limit
+        />
+      </view>
+      <view class="dialog-actions">
+        <van-button size="small" bind:click="closeRejectDialog">取消</van-button>
+        <van-button type="danger" size="small" bind:click="confirmReject">确认拒绝</van-button>
+      </view>
+    </view>
+  </van-popup>
+
+  <van-toast id="van-toast" />
+  <van-dialog id="van-dialog" />
+</view>

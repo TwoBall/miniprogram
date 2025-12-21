@@ -1,0 +1,12 @@
+{
+  "name": "club-attendance",
+  "version": "1.0.0",
+  "description": "社团点名系统",
+  "main": "app.js",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  },
+  "scripts": {},
+  "author": "",
+  "license": "ISC"
+}

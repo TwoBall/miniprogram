@@ -1,0 +1,76 @@
+.history-container {
+  padding: 20rpx;
+}
+
+.record-list {
+  padding-bottom: 100rpx;
+}
+
+.record-card {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.date {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.time {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.record-stats {
+  display: flex;
+  gap: 40rpx;
+}
+
+.stat-item {
+  font-size: 28rpx;
+}
+
+.label {
+  color: #999999;
+}
+
+.value {
+  color: #333333;
+  font-weight: 500;
+}
+
+.present {
+  color: #52c41a;
+}
+
+.absent {
+  color: #ff4d4f;
+}
+
+.arrow {
+  position: absolute;
+  right: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 48rpx;
+  color: #cccccc;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 200rpx 0;
+  color: #999999;
+  font-size: 28rpx;
+}

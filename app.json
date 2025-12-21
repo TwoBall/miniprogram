@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/admin/home/home",
+    "pages/admin/approval/approval",
+    "pages/teacher/attendance/attendance",
+    "pages/teacher/history/history",
+    "pages/teacher/detail/detail",
+    "pages/classTeacher/overview/overview",
+    "pages/classTeacher/feedback/feedback",
+    "pages/leader/dashboard/dashboard",
+    "pages/leader/detail/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1890ff",
+    "navigationBarTitleText": "社团点名系统",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1890ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/teacher/attendance/attendance",
+        "text": "点名",
+        "iconPath": "images/tab/attendance.png",
+        "selectedIconPath": "images/tab/attendance-active.png"
+      },
+      {
+        "pagePath": "pages/teacher/history/history",
+        "text": "历史",
+        "iconPath": "images/tab/history.png",
+        "selectedIconPath": "images/tab/history-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-tag": "@vant/weapp/tag/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "van-toast": "@vant/weapp/toast/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-picker": "@vant/weapp/picker/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-datetime-picker": "@vant/weapp/datetime-picker/index",
+    "van-grid": "@vant/weapp/grid/index",
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "cloud": true
+}

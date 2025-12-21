@@ -1,0 +1,29 @@
+<view class="feedback-container">
+  <view class="info-card">
+    <view class="info-item">
+      <text class="label">学生姓名：</text>
+      <text class="value">{{studentName}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">所属社团：</text>
+      <text class="value">{{clubName}}</text>
+    </view>
+  </view>
+
+  <view class="feedback-card">
+    <view class="card-title">反馈内容</view>
+    <textarea
+      class="feedback-input"
+      placeholder="请输入反馈内容，如缺课原因、需要关注的问题等..."
+      value="{{feedback}}"
+      bindinput="onFeedbackInput"
+      maxlength="500"
+      auto-height
+    />
+    <view class="char-count">{{feedback.length}}/500</view>
+  </view>
+
+  <button class="btn-submit" bindtap="submitFeedback" disabled="{{loading}}">
+    {{loading ? '发送中...' : '发送反馈'}}
+  </button>
+</view>
