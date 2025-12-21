@@ -2,7 +2,6 @@
   "pages": [
     "pages/login/login",
     "pages/register/register",
-    "pages/admin/home/home",
     "pages/admin/approval/approval",
     "pages/teacher/attendance/attendance",
     "pages/teacher/history/history",

@@ -33,38 +33,18 @@ Page({
 
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
-    // 允许 admin 调试模式访问
-    const isDebugMode = !!(userInfo && userInfo._isDebugMode && userInfo._originalRole === 'admin')
-    if (!userInfo || (userInfo.role !== 'teacher' && !isDebugMode)) {
+    if (!userInfo || userInfo.role !== 'teacher') {
       wx.reLaunch({
         url: '/pages/login/login'
       })
       return
     }
     this.setData({
-      clubName: userInfo.clubName || '测试社团',
-      isDebugMode: isDebugMode
+      clubName: userInfo.clubName
     })
   },
 
-  // 返回管理员中心（调试模式）
-  returnToAdmin() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (userInfo && userInfo._originalRole === 'admin') {
-      // 恢复管理员身份
-      const adminInfo = {
-        ...userInfo,
-        role: 'admin'
-      }
-      delete adminInfo._isDebugMode
-      delete adminInfo._originalRole
-      wx.setStorageSync('userInfo', adminInfo)
 
-      wx.reLaunch({
-        url: '/pages/admin/home/home'
-      })
-    }
-  },
 
   updateDateTime() {
     const now = new Date()

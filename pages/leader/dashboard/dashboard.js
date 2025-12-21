@@ -26,28 +26,15 @@ Page({
 
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
-    const isDebugMode = userInfo && userInfo._isDebugMode && userInfo._originalRole === 'admin'
-    if (!userInfo || (userInfo.role !== 'leader' && !isDebugMode)) {
+    if (!userInfo || userInfo.role !== 'leader') {
       wx.reLaunch({
         url: '/pages/login/login'
       })
       return
     }
     this.setData({
-      department: userInfo.department || '测试学部',
-      isDebugMode: isDebugMode
+      department: userInfo.department
     })
-  },
-
-  returnToAdmin() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (userInfo && userInfo._originalRole === 'admin') {
-      const adminInfo = { ...userInfo, role: 'admin' }
-      delete adminInfo._isDebugMode
-      delete adminInfo._originalRole
-      wx.setStorageSync('userInfo', adminInfo)
-      wx.reLaunch({ url: '/pages/admin/home/home' })
-    }
   },
 
   initDate() {

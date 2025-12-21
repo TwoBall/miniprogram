@@ -1,10 +1,4 @@
 <view class="overview-container">
-  <!-- 调试模式返回按钮 -->
-  <view class="debug-banner" wx:if="{{isDebugMode}}" bindtap="returnToAdmin">
-    <van-icon name="arrow-left" size="24rpx" color="#fff" />
-    <text>调试模式 - 点击返回管理员中心</text>
-  </view>
-
   <view class="header-section">
     <view class="class-info">
       <van-icon name="home-o" size="40rpx" color="#ffffff" />
