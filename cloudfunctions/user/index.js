@@ -96,23 +96,25 @@ async function handleRegister(event, wxContext) {
             // 如果是被拒绝的，允许重新注册（这里逻辑可以根据需求调整，也可以更新原记录）
         }
 
-        // 2. 检查是否存在匹配的预注册账号（没有 openid 且信息完全匹配）
+        // 2. 检查是否存在匹配的预注册账号（没有 openid 或 openid 为空）
         const preRegQuery = {
             name,
             role,
-            openid: _.exists(false)
+            openid: _.or(_.exists(false), _.eq(null), _.eq(''))
         }
 
         if (role === 'classTeacher') {
             preRegQuery.className = className
-            preRegQuery.department = department
+            // 班主任只需匹配班级，不需要匹配学部
         } else if (role === 'leader') {
             preRegQuery.department = department
         } else if (role === 'teacher') {
             preRegQuery.clubName = clubName
         }
 
+        console.log('预注册匹配查询条件:', JSON.stringify(preRegQuery))
         const preRegUsers = await db.collection('users').where(preRegQuery).get()
+        console.log('预注册匹配结果:', preRegUsers.data.length, '条')
 
         if (preRegUsers.data.length > 0) {
             const userId = preRegUsers.data[0]._id
