@@ -1,28 +1,36 @@
+/* 领导班级详情页面 - 页面特有样式 */
+/* 公共样式已在 app.wxss 中引入 common.wxss */
+
 .detail-container {
-  padding: 20rpx;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
 }
 
-.header-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16rpx;
-  padding: 40rpx;
-  margin-bottom: 20rpx;
-  color: #ffffff;
+/* 班级信息 */
+.class-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
 }
 
 .class-name {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: bold;
-  margin-bottom: 12rpx;
 }
 
-.date {
-  font-size: 28rpx;
-  opacity: 0.9;
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 12rpx;
 }
 
+/* 学生列表 */
 .student-list {
-  padding: 0 10rpx;
+  padding: 20rpx;
 }
 
 .student-card {
@@ -30,9 +38,6 @@
   background: #fff;
   border-radius: 16rpx;
   padding: 24rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
 }
 
@@ -42,6 +47,7 @@
 
 .student-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 12rpx;
 }
@@ -50,7 +56,6 @@
   font-size: 32rpx;
   font-weight: 600;
   color: #333;
-  margin-right: 16rpx;
   display: flex;
   align-items: center;
 }
@@ -86,12 +91,12 @@
   color: #333;
 }
 
+/* 状态标签 */
 .status-badge {
   padding: 8rpx 20rpx;
   border-radius: 30rpx;
   font-size: 24rpx;
   font-weight: 500;
-  margin-left: 20rpx;
   white-space: nowrap;
 }
 
@@ -107,12 +112,6 @@
 
 .status-badge.null {
   background: #f5f5f5;
-  color: #999;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 100rpx 0;
   color: #999;
 }
 

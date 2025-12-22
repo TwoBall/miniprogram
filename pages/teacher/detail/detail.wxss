@@ -1,73 +1,36 @@
+/* 点名详情页面 - 页面特有样式 */
+/* 公共样式已在 app.wxss 中引入 common.wxss */
+
 .detail-container {
   min-height: 100vh;
   background-color: #f5f5f5;
   padding-bottom: 40rpx;
 }
 
-.header-section {
-  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
-  padding: 40rpx 30rpx;
-  color: #ffffff;
-}
-
+/* 社团信息 */
 .club-info {
   display: flex;
   align-items: center;
+  gap: 16rpx;
   margin-bottom: 20rpx;
 }
 
 .club-name {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: bold;
-  margin-left: 16rpx;
 }
 
 .date-time,
 .teacher-info {
   display: flex;
   align-items: center;
+  gap: 12rpx;
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.9);
   margin-top: 12rpx;
 }
 
-.date-time text,
-.teacher-info text {
-  margin-left: 12rpx;
-}
-
-.stats-section {
-  background: #ffffff;
-  margin: 20rpx;
-  border-radius: 16rpx;
-  padding: 20rpx 0;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.stat-content {
-  text-align: center;
-}
-
-.stat-number {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.stat-number.present {
-  color: #52c41a;
-}
-
-.stat-number.absent {
-  color: #ff4d4f;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 8rpx;
-}
-
+/* 学生列表 */
 .student-list {
   margin: 20rpx;
 }
@@ -86,13 +49,10 @@
 .student-name {
   display: flex;
   align-items: center;
+  gap: 12rpx;
   font-size: 30rpx;
   color: #333;
   margin-bottom: 8rpx;
-}
-
-.student-name text {
-  margin-left: 12rpx;
 }
 
 .gender-tag {
@@ -101,7 +61,6 @@
   background: #f0f0f0;
   padding: 2rpx 12rpx;
   border-radius: 20rpx;
-  margin-left: 12rpx;
 }
 
 .student-class {
@@ -119,7 +78,7 @@
 
 .teacher-contact .phone {
   margin-left: 16rpx;
-  color: #1890ff;
+  color: #1F6FAD;
 }
 
 .feedback-info {

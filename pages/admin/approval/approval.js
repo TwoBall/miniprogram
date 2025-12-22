@@ -35,6 +35,12 @@ Page({
     }
   },
 
+  goToSwitchRole() {
+    wx.navigateTo({
+      url: '/pages/common/switchRole/switchRole'
+    })
+  },
+
   onTabChange(e) {
     this.setData({
       activeTab: e.detail.index

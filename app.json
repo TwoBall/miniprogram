@@ -9,11 +9,12 @@
     "pages/classTeacher/overview/overview",
     "pages/classTeacher/feedback/feedback",
     "pages/leader/dashboard/dashboard",
-    "pages/leader/detail/detail"
+    "pages/leader/detail/detail",
+    "pages/common/switchRole/switchRole"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#1890ff",
+    "navigationBarBackgroundColor": "#1F6FAD",
     "navigationBarTitleText": "社团点名系统",
     "navigationBarTextStyle": "white"
   },
@@ -51,8 +52,7 @@
     "van-popup": "@vant/weapp/popup/index",
     "van-datetime-picker": "@vant/weapp/datetime-picker/index",
     "van-grid": "@vant/weapp/grid/index",
-    "van-grid-item": "@vant/weapp/grid-item/index",
-    "van-action-sheet": "@vant/weapp/action-sheet/index"
+    "van-grid-item": "@vant/weapp/grid-item/index"
   },
   "lazyCodeLoading": "requiredComponents",
   "style": "v2",

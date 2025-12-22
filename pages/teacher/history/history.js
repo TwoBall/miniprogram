@@ -61,5 +61,11 @@ Page({
     wx.navigateTo({
       url: `/pages/teacher/detail/detail?recordId=${record._id}`
     })
+  },
+
+  goToSwitchRole() {
+    wx.navigateTo({
+      url: '/pages/common/switchRole/switchRole'
+    })
   }
 })

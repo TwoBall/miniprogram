@@ -1,8 +1,14 @@
 <view class="overview-container">
   <view class="header-section">
-    <view class="class-info">
-      <van-icon name="home-o" size="40rpx" color="#ffffff" />
-      <text class="class-name">{{className}}</text>
+    <view class="header-top">
+      <view class="class-info">
+        <van-icon name="home-o" size="40rpx" color="#ffffff" />
+        <text class="class-name">{{className}}</text>
+      </view>
+      <view class="switch-role-btn" bindtap="goToSwitchRole">
+        <van-icon name="exchange" size="28rpx" color="#ffffff" />
+        <text class="switch-role-text">切换身份</text>
+      </view>
     </view>
     <view class="date-selector" bindtap="showDatePickerPopup">
       <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />

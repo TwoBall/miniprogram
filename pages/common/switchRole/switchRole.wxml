@@ -1,0 +1,62 @@
+<view class="switch-role-container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="header-content">
+      <text class="header-title">身份管理</text>
+      <text class="header-subtitle">选择要使用的身份</text>
+    </view>
+  </view>
+
+  <!-- 角色列表 -->
+  <view class="role-list" wx:if="{{!loading}}">
+    <view 
+      class="role-card {{item.isCurrent ? 'current' : ''}}"
+      wx:for="{{roles}}"
+      wx:key="_id"
+      bindtap="switchRole"
+      data-role="{{item}}"
+    >
+      <view class="role-icon-wrapper">
+        <van-icon 
+          name="{{item.role === 'teacher' ? 'friends-o' : (item.role === 'classTeacher' ? 'home-o' : (item.role === 'leader' ? 'cluster-o' : 'manager-o'))}}" 
+          size="48rpx" 
+          color="{{item.isCurrent ? '#1890ff' : '#666'}}"
+        />
+      </view>
+      <view class="role-info">
+        <view class="role-name">{{item.name}}</view>
+        <view class="role-label">{{item.roleLabel}}</view>
+        <view class="role-extra" wx:if="{{item.extraInfo}}">{{item.extraInfo}}</view>
+      </view>
+      <view class="role-status">
+        <van-tag type="primary" wx:if="{{item.isCurrent}}">当前</van-tag>
+        <van-icon name="arrow" color="#ccc" wx:else />
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-wrapper" wx:if="{{loading}}">
+    <van-loading size="48rpx" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 空状态 -->
+  <van-empty 
+    wx:if="{{!loading && roles.length === 0}}"
+    description="暂无身份信息"
+  />
+
+  <!-- 添加新身份 -->
+  <view class="add-role-section" wx:if="{{!loading}}">
+    <van-button 
+      plain 
+      type="info" 
+      icon="plus" 
+      block 
+      round
+      bind:click="addNewRole"
+    >注册新身份</van-button>
+  </view>
+
+  <van-toast id="van-toast" />
+</view>

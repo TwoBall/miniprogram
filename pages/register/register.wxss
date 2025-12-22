@@ -1,6 +1,6 @@
 .register-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
   padding: 60rpx 40rpx;
   box-sizing: border-box;
 }
@@ -18,7 +18,7 @@
   color: #333333;
   margin-bottom: 20rpx;
   padding-left: 20rpx;
-  border-left: 6rpx solid #1890ff;
+  border-left: 6rpx solid #1F6FAD;
 }
 
 .tips-box {

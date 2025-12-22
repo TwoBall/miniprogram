@@ -30,14 +30,5 @@
     <text class="tips-text">首次使用需要完成注册信息</text>
   </view>
 
-  <van-action-sheet
-    show="{{ showRoleSelector }}"
-    actions="{{ roleActions }}"
-    title="选择进入身份"
-    description="您的账号持有多个角色，请选择一个进入"
-    bind:close="onRoleSelectorClose"
-    bind:select="onRoleSelect"
-  />
-
   <van-toast id="van-toast" />
 </view>

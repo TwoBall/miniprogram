@@ -1,0 +1,159 @@
+/**
+ * 公共样式 - 统一所有页面的基础样式
+ * 在 app.wxss 中通过 @import 引入
+ */
+
+/* ========== 颜色变量（注释说明） ========== */
+/* 主渐变: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%) */
+/* 成功/到课: #07c160 */
+/* 危险/缺课: #ee0a24 或 #ff4d4f */
+/* 文字主色: #333 */
+/* 文字次色: #666 */
+/* 文字灰色: #999 */
+/* 背景色: #f5f5f5 */
+
+/* ========== 顶部信息栏 ========== */
+.header-section {
+  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
+  padding: 40rpx 30rpx;
+  color: #ffffff;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* ========== 切换身份按钮 ========== */
+.switch-role-btn {
+  padding: 12rpx 20rpx;
+  border-radius: 30rpx;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.switch-role-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.switch-role-text {
+  font-size: 24rpx;
+  color: #fff;
+}
+
+/* ========== 日期选择器 ========== */
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  width: fit-content;
+}
+
+/* ========== 统计区域 ========== */
+.stats-section {
+  margin: -40rpx 30rpx 20rpx;
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.stat-content {
+  padding: 30rpx 0;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+  color: #333333;
+}
+
+.stat-number.present {
+  color: #07c160;
+}
+
+.stat-number.absent {
+  color: #ee0a24;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+/* ========== 卡片基础样式 ========== */
+.common-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* ========== 通用列表 ========== */
+.common-list {
+  padding: 0 30rpx;
+}
+
+/* ========== 页面标题样式 ========== */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.title-text {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+/* ========== 信息详情行 ========== */
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+  flex-wrap: nowrap;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: #999999;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.detail-value {
+  flex: 1;
+  color: #333333;
+}
+
+/* ========== 状态颜色 ========== */
+.text-success {
+  color: #07c160;
+}
+
+.text-danger {
+  color: #ee0a24;
+}
+
+.text-warning {
+  color: #ff9800;
+}
+
+.text-muted {
+  color: #999999;
+}

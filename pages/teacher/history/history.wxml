@@ -1,4 +1,19 @@
 <view class="history-container">
+  <!-- 顶部信息栏 -->
+  <view class="header-section">
+    <view class="header-top">
+      <view class="club-info">
+        <van-icon name="notes-o" size="40rpx" color="#ffffff" />
+        <text class="club-name">历史记录</text>
+      </view>
+      <view class="switch-role-btn" bindtap="goToSwitchRole">
+        <van-icon name="exchange" size="28rpx" color="#ffffff" />
+        <text class="switch-role-text">切换身份</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 记录列表 -->
   <view class="record-list" wx:if="{{records.length > 0}}">
     <view class="record-card" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
       <view class="record-header">
@@ -25,7 +40,5 @@
     </view>
   </view>
 
-  <view class="empty-state" wx:else>
-    <text>暂无历史记录</text>
-  </view>
+  <van-empty wx:else description="暂无历史记录" image="search" />
 </view>

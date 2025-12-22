@@ -24,7 +24,7 @@
       />
 
       <van-cell
-        wx:if="{{ roleIndex === 0 }}"
+        wx:if="{{ roleValues[roleIndex] === 'teacher' }}"
         title="社团名称"
         value="{{ clubName || '请选择社团' }}"
         is-link
@@ -32,17 +32,27 @@
         required
       />
 
+      <!-- 班主任：先选学部，再选班级 -->
       <van-cell
-        wx:if="{{ roleIndex === 1 }}"
+        wx:if="{{ roleValues[roleIndex] === 'classTeacher' }}"
+        title="学部"
+        value="{{ classTeacherDept || '请先选择学部' }}"
+        is-link
+        bind:click="showClassTeacherDeptPickerPopup"
+        required
+      />
+      <van-cell
+        wx:if="{{ roleValues[roleIndex] === 'classTeacher' }}"
         title="班级"
-        value="{{ className || '请选择班级' }}"
+        value="{{ className || (classTeacherDept ? '请选择班级' : '请先选择学部') }}"
         is-link
         bind:click="showClassPickerPopup"
+        disabled="{{ !classTeacherDept }}"
         required
       />
 
       <van-cell
-        wx:if="{{ roleIndex === 2 }}"
+        wx:if="{{ roleValues[roleIndex] === 'leader' }}"
         title="学部"
         value="{{ department || '请选择学部' }}"
         is-link
@@ -93,12 +103,23 @@
     />
   </van-popup>
 
-  <!-- 班级选择 -->
-  <van-popup show="{{ showClassPicker }}" position="bottom" bind:close="onDeptPickerClose">
+  <!-- 班主任学部选择（级联）- 使用未过滤的学部列表 -->
+  <van-popup show="{{ showClassTeacherDeptPicker }}" position="bottom" bind:close="onClassTeacherDeptPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择学部"
+      columns="{{ allDepartments }}"
+      bind:confirm="onClassTeacherDeptPickerConfirm"
+      bind:cancel="onClassTeacherDeptPickerClose"
+    />
+  </van-popup>
+
+  <!-- 班级选择（使用过滤后的班级列表） -->
+  <van-popup show="{{ showClassPicker }}" position="bottom" bind:close="onClassPickerClose">
     <van-picker
       show-toolbar
       title="选择班级"
-      columns="{{ classes }}"
+      columns="{{ filteredClasses.length > 0 ? filteredClasses : classes }}"
       bind:confirm="onClassPickerConfirm"
       bind:cancel="onClassPickerClose"
     />

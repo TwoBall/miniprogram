@@ -1,4 +1,18 @@
 <view class="approval-container">
+  <!-- 顶部信息栏 -->
+  <view class="header-section">
+    <view class="header-top">
+      <view class="page-title">
+        <van-icon name="friends-o" size="40rpx" color="#ffffff" />
+        <text class="title-text">用户审批管理</text>
+      </view>
+      <view class="switch-role-btn" bindtap="goToSwitchRole">
+        <van-icon name="exchange" size="28rpx" color="#ffffff" />
+        <text class="switch-role-text">切换身份</text>
+      </view>
+    </view>
+  </view>
+
   <van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#1890ff">
     <van-tab title="待审批({{pendingUsers.length}})">
       <view class="tab-content">
@@ -18,9 +32,7 @@
               <view class="detail-row">
                 <van-icon name="manager-o" size="24rpx" color="#999" />
                 <text class="label">角色：</text>
-                <text class="value">
-                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
-                </text>
+                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
               </view>
 
               <view class="detail-row" wx:if="{{item.clubName}}">
@@ -96,9 +108,7 @@
               <view class="detail-row">
                 <van-icon name="manager-o" size="24rpx" color="#999" />
                 <text class="label">角色：</text>
-                <text class="value">
-                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
-                </text>
+                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
               </view>
 
               <view class="detail-row" wx:if="{{item.approvedByName}}">
@@ -142,9 +152,7 @@
               <view class="detail-row">
                 <van-icon name="manager-o" size="24rpx" color="#999" />
                 <text class="label">角色：</text>
-                <text class="value">
-                  {{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}
-                </text>
+                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
               </view>
 
               <view class="detail-row" wx:if="{{item.rejectReason}}">

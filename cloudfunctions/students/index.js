@@ -64,9 +64,17 @@ async function handleGetFilterOptions(event) {
         const classes = [...new Set(allStudents.map(s => s.className).filter(v => v))].sort()
         const clubs = [...new Set(allStudents.map(s => s.clubName).filter(v => v))].sort()
 
+        // 构建班级与学部的对应关系（根据学生数据）
+        const classDeptMap = {}
+        allStudents.forEach(s => {
+            if (s.className && s.department) {
+                classDeptMap[s.className] = s.department
+            }
+        })
+
         return {
             success: true,
-            data: { departments, classes, clubs }
+            data: { departments, classes, clubs, classDeptMap }
         }
     } catch (error) {
         console.error('获取选项失败:', error)

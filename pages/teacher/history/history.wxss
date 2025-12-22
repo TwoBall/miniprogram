@@ -1,8 +1,26 @@
+/* 历史记录页面 - 页面特有样式 */
+/* 公共样式已在 app.wxss 中引入 common.wxss */
+
 .history-container {
-  padding: 20rpx;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
 
+/* 社团信息 */
+.club-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.club-name {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+/* 记录列表 */
 .record-list {
+  padding: 20rpx;
   padding-bottom: 100rpx;
 }
 
@@ -12,6 +30,7 @@
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .record-header {
@@ -66,11 +85,4 @@
   transform: translateY(-50%);
   font-size: 48rpx;
   color: #cccccc;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 200rpx 0;
-  color: #999999;
-  font-size: 28rpx;
 }

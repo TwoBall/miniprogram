@@ -3,10 +3,7 @@ import Toast from '@vant/weapp/toast/toast'
 
 Page({
   data: {
-    loading: false,
-    showRoleSelector: false,
-    roleActions: [],
-    pendingUserList: []
+    loading: false
   },
 
   async handleWxLogin() {
@@ -61,44 +58,17 @@ Page({
           return
         }
 
-        if (userList.length === 1) {
-          // 只有一个角色，直接登录
-          this.loginSuccess(userList[0])
-        } else {
-          // 多个角色，弹出选择框
-          const roleLabels = {
-            'admin': '系统管理员',
-            'teacher': '社团老师',
-            'classTeacher': '班主任',
-            'leader': '学部领导'
-          }
-          const actions = userList.map(u => ({
-            name: `${roleLabels[u.role] || u.role} (${u.name}${u.className ? ' - ' + u.className : ''}${u.clubName ? ' - ' + u.clubName : ''})`,
-            userInfo: u
-          }))
-          this.setData({
-            roleActions: actions,
-            showRoleSelector: true,
-            pendingUserList: userList,
-            loading: false
-          })
-        }
+        // 保存所有角色到 storage（供角色切换页面使用）
+        wx.setStorageSync('allUserRoles', userList)
+
+        // 使用第一个角色登录（可在角色切换页面切换）
+        this.loginSuccess(userList[0])
       }
     } catch (error) {
       console.error('登录失败:', error)
       Toast.fail('登录失败，请重试')
       this.setData({ loading: false })
     }
-  },
-
-  onRoleSelect(e) {
-    const userInfo = e.detail.userInfo
-    this.setData({ showRoleSelector: false })
-    this.loginSuccess(userInfo)
-  },
-
-  onRoleSelectorClose() {
-    this.setData({ showRoleSelector: false })
   },
 
   loginSuccess(userInfo) {
