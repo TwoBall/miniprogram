@@ -1,10 +1,16 @@
-// 云函数入口文件 - 考勤管理统一接口
+/**
+ * 云函数 - 考勤管理
+ * 处理点名记录的提交、查询和统计
+ */
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const MAX_LIMIT = 100
 
-// 获取所有数据的辅助函数
+/**
+ * 获取所有数据的辅助函数
+ * 突破云数据库单次查询100条的限制
+ */
 async function getAllData(collection, condition, fields = null) {
     const countResult = await collection.where(condition).count()
     const total = countResult.total
@@ -29,7 +35,11 @@ async function getAllData(collection, condition, fields = null) {
     return results.flatMap(res => res.data)
 }
 
-// 云函数入口函数
+/**
+ * 云函数入口
+ * @param {Object} event - 请求参数
+ * @param {string} event.action - 操作类型
+ */
 exports.main = async (event, context) => {
     const { action } = event
 
@@ -39,7 +49,8 @@ exports.main = async (event, context) => {
         getDetail: handleGetDetail,
         getByClass: handleGetByClass,
         getByDepartment: handleGetByDepartment,
-        checkTodaySubmissions: handleCheckTodaySubmissions
+        checkTodaySubmissions: handleCheckTodaySubmissions,
+        updateRecords: handleUpdateRecords
     }
 
     const handler = handlers[action]
@@ -50,7 +61,9 @@ exports.main = async (event, context) => {
     return handler(event)
 }
 
-// ========== 检查今日是否已有点名记录 ==========
+/**
+ * 检查今日是否已有点名记录
+ */
 async function handleCheckTodaySubmissions(event) {
     const { clubName, date } = event
     try {
@@ -65,7 +78,10 @@ async function handleCheckTodaySubmissions(event) {
     }
 }
 
-// ========== 提交点名 ==========
+/**
+ * 提交点名记录
+ * 支持覆盖模式和新增模式
+ */
 async function handleSubmit(event) {
     const { clubName, teacherId, teacherName, date, time, records, mode } = event
 
@@ -88,7 +104,9 @@ async function handleSubmit(event) {
     }
 }
 
-// ========== 获取历史记录 ==========
+/**
+ * 获取教师的历史点名记录
+ */
 async function handleGetHistory(event) {
     const { teacherId } = event
 
@@ -117,7 +135,10 @@ async function handleGetHistory(event) {
     }
 }
 
-// ========== 获取记录详情 ==========
+/**
+ * 获取单条点名记录的详情
+ * 包含学生反馈信息
+ */
 async function handleGetDetail(event) {
     const { recordId } = event
 
@@ -153,7 +174,10 @@ async function handleGetDetail(event) {
     }
 }
 
-// ========== 按班级获取考勤 ==========
+/**
+ * 按班级获取考勤情况
+ * 返回班级学生列表及当日考勤状态
+ */
 async function handleGetByClass(event) {
     const { className, date } = event
 
@@ -209,7 +233,10 @@ async function handleGetByClass(event) {
     }
 }
 
-// ========== 按学部获取考勤 ==========
+/**
+ * 按学部获取考勤统计
+ * 返回学部下各班级的考勤汇总
+ */
 async function handleGetByDepartment(event) {
     const { department, date } = event
 
@@ -261,5 +288,34 @@ async function handleGetByDepartment(event) {
     } catch (error) {
         console.error('获取学部考勤失败:', error)
         return { success: false, message: '获取数据失败', data: { classes: [], totalClasses: 0, totalStudents: 0, presentToday: 0, absentToday: 0 } }
+    }
+}
+
+/**
+ * 更新点名记录（修改学生状态）
+ */
+async function handleUpdateRecords(event) {
+    const { recordId, records } = event
+
+    if (!recordId || !records) {
+        return { success: false, message: '参数错误' }
+    }
+
+    try {
+        const result = await db.collection('attendance_records').doc(recordId).update({
+            data: {
+                records,
+                updateTime: db.serverDate()
+            }
+        })
+
+        if (result.stats.updated > 0) {
+            return { success: true, message: '更新成功' }
+        } else {
+            return { success: false, message: '记录不存在或无变更' }
+        }
+    } catch (error) {
+        console.error('更新点名记录失败:', error)
+        return { success: false, message: '更新失败' }
     }
 }

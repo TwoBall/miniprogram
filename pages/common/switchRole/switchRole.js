@@ -9,6 +9,9 @@ Page({
         hasMultipleRoles: false
     },
 
+    /**
+     * 页面加载
+     */
     onLoad() {
         this.loadRoles()
     },
@@ -18,6 +21,9 @@ Page({
         this.loadRoles()
     },
 
+    /**
+     * 加载用户的所有角色
+     */
     loadRoles() {
         const userInfo = wx.getStorageSync('userInfo')
         const allRoles = wx.getStorageSync('allUserRoles') || []
@@ -50,6 +56,9 @@ Page({
         })
     },
 
+    /**
+     * 从云端获取角色列表
+     */
     async fetchRolesFromCloud() {
         try {
             const res = await wx.cloud.callFunction({
@@ -71,6 +80,9 @@ Page({
         }
     },
 
+    /**
+     * 切换角色
+     */
     switchRole(e) {
         const role = e.currentTarget.dataset.role
 
@@ -92,6 +104,9 @@ Page({
         }, 1000)
     },
 
+    /**
+     * 根据角色跳转到对应页面
+     */
     redirectByRole(role) {
         const routes = {
             'admin': '/pages/admin/approval/approval',
@@ -105,8 +120,11 @@ Page({
         })
     },
 
+    /**
+     * 添加新角色
+     * 跳转到注册页面,传递已有的社团、班级、学部信息用于过滤
+     */
     addNewRole() {
-        // 获取已有的具体社团、班级、学部（而不是角色类型）
         const roles = this.data.roles
         // 社团老师：过滤已注册的社团
         const existingClubs = roles.filter(r => r.clubName).map(r => r.clubName)

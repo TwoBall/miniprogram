@@ -14,6 +14,9 @@ Page({
     rejectReason: ''
   },
 
+  /**
+   * 页面加载
+   */
   onLoad() {
     this.checkAuth()
     this.loadUsers()
@@ -23,6 +26,9 @@ Page({
     this.loadUsers()
   },
 
+  /**
+   * 检查管理员权限
+   */
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (!userInfo || userInfo.role !== 'admin') {
@@ -35,6 +41,9 @@ Page({
     }
   },
 
+  /**
+   * 跳转到角色切换页面
+   */
   goToSwitchRole() {
     wx.navigateTo({
       url: '/pages/common/switchRole/switchRole'
@@ -47,6 +56,9 @@ Page({
     })
   },
 
+  /**
+   * 加载用户列表
+   */
   async loadUsers() {
     this.setData({ loading: true })
 
@@ -91,6 +103,9 @@ Page({
     }
   },
 
+  /**
+   * 处理审批通过
+   */
   handleApprove(e) {
     const user = e.currentTarget.dataset.user
 
@@ -104,6 +119,9 @@ Page({
     })
   },
 
+  /**
+   * 处理审批拒绝
+   */
   handleReject(e) {
     const user = e.currentTarget.dataset.user
 
@@ -140,6 +158,9 @@ Page({
     this.closeRejectDialog()
   },
 
+  /**
+   * 执行审批通过操作
+   */
   async doApprove(userId) {
     Toast.loading({
       message: '处理中...',
@@ -170,6 +191,9 @@ Page({
     }
   },
 
+  /**
+   * 执行审批拒绝操作
+   */
   async doReject(userId, rejectReason) {
     Toast.loading({
       message: '处理中...',
@@ -201,6 +225,9 @@ Page({
     }
   },
 
+  /**
+   * 格式化时间
+   */
   formatTime(date) {
     if (!date) return ''
     const d = new Date(date)

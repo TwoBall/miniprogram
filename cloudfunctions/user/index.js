@@ -1,10 +1,17 @@
-// 云函数入口文件 - 用户管理统一接口
+/**
+ * 云函数 - 用户管理
+ * 处理用户登录、注册、审批等操作
+ */
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command
 
-// 云函数入口函数
+/**
+ * 云函数入口
+ * @param {Object} event - 请求参数
+ * @param {string} event.action - 操作类型: login/register/approve/reject/getPending
+ */
 exports.main = async (event, context) => {
     const { action } = event
     const wxContext = cloud.getWXContext()
@@ -25,7 +32,10 @@ exports.main = async (event, context) => {
     return handler(event, wxContext)
 }
 
-// ========== 登录 ==========
+/**
+ * 处理用户登录
+ * 根据openid查询用户记录并返回审核状态
+ */
 async function handleLogin(event, wxContext) {
     try {
         const openid = wxContext.OPENID
@@ -82,7 +92,10 @@ async function handleLogin(event, wxContext) {
     }
 }
 
-// ========== 注册 ==========
+/**
+ * 处理用户注册
+ * 检查预注册账号或创建新的注册申请
+ */
 async function handleRegister(event, wxContext) {
     const { openid, name, role, department, className, clubName } = event
 
@@ -112,9 +125,7 @@ async function handleRegister(event, wxContext) {
             preRegQuery.clubName = clubName
         }
 
-        console.log('预注册匹配查询条件:', JSON.stringify(preRegQuery))
         const preRegUsers = await db.collection('users').where(preRegQuery).get()
-        console.log('预注册匹配结果:', preRegUsers.data.length, '条')
 
         if (preRegUsers.data.length > 0) {
             const userId = preRegUsers.data[0]._id
@@ -153,7 +164,10 @@ async function handleRegister(event, wxContext) {
     }
 }
 
-// ========== 审批/拒绝 ==========
+/**
+ * 处理审批或拒绝操作
+ * 验证管理员权限并更新用户状态
+ */
 async function handleApprove(event, wxContext) {
     const { userId, action, rejectReason } = event
     const adminOpenid = wxContext.OPENID
@@ -204,7 +218,10 @@ async function handleApprove(event, wxContext) {
     }
 }
 
-// ========== 获取用户列表 ==========
+/**
+ * 获取用户列表
+ * 支持按状态筛选
+ */
 async function handleGetPending(event, wxContext) {
     const { status } = event
     const adminOpenid = wxContext.OPENID

@@ -1,20 +1,29 @@
+/**
+ * 小程序入口文件
+ * 负责初始化云开发环境和全局状态管理
+ */
 App({
+  /**
+   * 小程序启动时执行
+   */
   onLaunch() {
     // 初始化云开发环境
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
       wx.cloud.init({
-        env: 'cloud1-1gwywkzq3c422fa5', // 请替换为您的云开发环境ID
+        env: 'cloud1-1gwywkzq3c422fa5',
         traceUser: true,
       })
     }
 
-    // 检查用户登录状态
     this.checkUserAuth()
   },
 
-  // 检查用户认证状态
+  /**
+   * 检查用户认证状态
+   * 从本地缓存恢复用户信息到全局数据
+   */
   checkUserAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (userInfo) {
@@ -24,6 +33,6 @@ App({
 
   globalData: {
     userInfo: null,
-    userRole: null, // 'teacher', 'classTeacher', 'leader'
+    userRole: null,
   }
 })

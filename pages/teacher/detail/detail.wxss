@@ -94,3 +94,15 @@
   border-radius: 8rpx;
   width: fit-content;
 }
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.save-section {
+  padding: 30rpx;
+  background: #ffffff;
+  margin-top: 20rpx;
+}

@@ -70,6 +70,10 @@ Page({
     this.setData({ currentDate: date, currentTime: time })
   },
 
+  /**
+   * 加载社团学生列表
+   * 根据当前星期自动筛选对应学部的学生
+   */
   async loadStudents() {
     const userInfo = wx.getStorageSync('userInfo')
 
@@ -186,11 +190,16 @@ Page({
     }
   },
 
-  // ========== 标记操作 ==========
+  /**
+   * 标记学生到课
+   */
   markPresent() {
     this.processSwipe('present', 'swipe-out-right')
   },
 
+  /**
+   * 标记学生缺课
+   */
   markAbsent() {
     this.processSwipe('absent', 'swipe-out-left')
   },
@@ -231,6 +240,8 @@ Page({
     // 延迟更新下一张
     setTimeout(() => {
       const nextIndex = currentIndex + 1
+      const isComplete = nextIndex >= students.length
+
       this.setData({
         currentIndex: nextIndex,
         currentStudent: students[nextIndex] || null,
@@ -244,10 +255,23 @@ Page({
         absentOpacity: 0,
         swipeDirection: ''
       })
+
+      // 点名完成时显示醒目提示
+      if (isComplete) {
+        wx.showModal({
+          title: '点名完成',
+          content: '所有学生已点名完成，请点击提交按钮保存记录',
+          showCancel: false,
+          confirmText: '知道了',
+          confirmColor: '#1F6FAD'
+        })
+      }
     }, 300)
   },
 
-  // ========== 撤销操作 ==========
+  /**
+   * 撤销上一次标记操作
+   */
   undoLast() {
     const { students, actionHistory, presentCount, absentCount, markedStudents } = this.data
 
@@ -278,7 +302,9 @@ Page({
     Toast('已撤销')
   },
 
-  // ========== 一键全到 ==========
+  /**
+   * 一键将剩余学生全部标记为到课
+   */
   markAllPresent() {
     const { students, currentIndex } = this.data
 
@@ -317,7 +343,14 @@ Page({
         cardStyle: ''
       })
 
-      Toast.success('已全部标记为到课')
+      // 显示醒目提交提示
+      wx.showModal({
+        title: '点名完成',
+        content: '所有学生已标记为到课，请点击提交按钮保存记录',
+        showCancel: false,
+        confirmText: '知道了',
+        confirmColor: '#1F6FAD'
+      })
     }).catch(() => { })
   },
 
@@ -328,7 +361,41 @@ Page({
     })
   },
 
-  // ========== 提交点名 ==========
+  /**
+   * 切换已点名学生的状态
+   */
+  toggleMarkedStudentStatus(e) {
+    const index = e.currentTarget.dataset.index
+    const { markedStudents, students, presentCount, absentCount } = this.data
+
+    const student = markedStudents[index]
+    const oldStatus = student.status
+    const newStatus = oldStatus === 'present' ? 'absent' : 'present'
+
+    // 更新 markedStudents
+    markedStudents[index].status = newStatus
+
+    // 同步更新 students 数组中对应学生的状态
+    const studentInList = students.find(s => s.name === student.name && s.className === student.className)
+    if (studentInList) {
+      studentInList.status = newStatus
+    }
+
+    // 更新计数
+    this.setData({
+      markedStudents,
+      students,
+      presentCount: oldStatus === 'present' ? presentCount - 1 : presentCount + 1,
+      absentCount: oldStatus === 'absent' ? absentCount - 1 : absentCount + 1
+    })
+
+    Toast(`已改为${newStatus === 'present' ? '到课' : '缺课'}`)
+  },
+
+  /**
+   * 提交点名记录到云端
+   * 检查是否有重复记录并提供覆盖或新增选项
+   */
   async submitAttendance() {
     const { students, clubName, currentDate, currentTime } = this.data
     const userInfo = wx.getStorageSync('userInfo')

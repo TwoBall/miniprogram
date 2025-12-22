@@ -1,5 +1,4 @@
 const app = getApp()
-const db = wx.cloud.database()
 
 Page({
   data: {
@@ -7,6 +6,9 @@ Page({
     loading: false
   },
 
+  /**
+   * 页面加载
+   */
   onLoad() {
     this.checkAuth()
     this.loadHistory()
@@ -16,6 +18,9 @@ Page({
     this.loadHistory()
   },
 
+  /**
+   * 检查用户权限
+   */
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (!userInfo || userInfo.role !== 'teacher') {
@@ -25,6 +30,9 @@ Page({
     }
   },
 
+  /**
+   * 加载历史点名记录
+   */
   async loadHistory() {
     const userInfo = wx.getStorageSync('userInfo')
 
@@ -56,6 +64,9 @@ Page({
     }
   },
 
+  /**
+   * 查看点名记录详情
+   */
   viewDetail(e) {
     const record = e.currentTarget.dataset.record
     wx.navigateTo({
@@ -63,6 +74,9 @@ Page({
     })
   },
 
+  /**
+   * 跳转到角色切换页面
+   */
   goToSwitchRole() {
     wx.navigateTo({
       url: '/pages/common/switchRole/switchRole'

@@ -277,6 +277,11 @@
   border: 2rpx solid #ddd;
 }
 
+.undo-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 /* 底部进度栏 */
 .progress-section {
   background: #ffffff;
@@ -378,6 +383,16 @@
 .marked-class {
   font-size: 24rpx;
   color: #999;
+}
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.toggle-icon {
+  opacity: 0.6;
 }
 
 /* 滑出动画 */

@@ -1,11 +1,20 @@
-// 云函数入口文件 - 学生数据统一接口
+/**
+ * 云函数 - 学生数据管理
+ * 提供按社团、班级、学部查询学生的接口
+ */
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command
 const MAX_LIMIT = 100
 
-// 获取所有数据的辅助函数（突破100条限制）
+/**
+ * 获取所有数据的辅助函数
+ * 突破云数据库单次查询100条的限制
+ * @param {Object} collection - 数据库集合
+ * @param {Object} condition - 查询条件
+ * @param {Object} fields - 返回字段
+ */
 async function getAllData(collection, condition, fields = null) {
     const countResult = await collection.where(condition).count()
     const total = countResult.total
@@ -30,7 +39,11 @@ async function getAllData(collection, condition, fields = null) {
     return results.flatMap(res => res.data)
 }
 
-// 云函数入口函数
+/**
+ * 云函数入口
+ * @param {Object} event - 请求参数
+ * @param {string} event.action - 操作类型
+ */
 exports.main = async (event, context) => {
     const { action } = event
 
@@ -49,7 +62,10 @@ exports.main = async (event, context) => {
     return handler(event)
 }
 
-// ========== 获取筛选选项 (学部/班级/社团) ==========
+/**
+ * 获取筛选选项
+ * 返回所有学部、班级、社团列表及班级与学部的映射关系
+ */
 async function handleGetFilterOptions(event) {
     try {
         // 获取所有学生数据中的唯一值
@@ -82,10 +98,11 @@ async function handleGetFilterOptions(event) {
     }
 }
 
-// ========== 按社团获取学生 ==========
+/**
+ * 按社团获取学生列表
+ */
 async function handleGetByClub(event) {
     const { clubName } = event
-    console.log('Querying students for club:', clubName)
 
     try {
         const students = await getAllData(
@@ -101,7 +118,9 @@ async function handleGetByClub(event) {
     }
 }
 
-// ========== 按班级获取学生 ==========
+/**
+ * 按班级获取学生列表
+ */
 async function handleGetByClass(event) {
     const { className } = event
 
@@ -119,7 +138,9 @@ async function handleGetByClass(event) {
     }
 }
 
-// ========== 按学部获取学生 ==========
+/**
+ * 按学部获取学生列表
+ */
 async function handleGetByDepartment(event) {
     const { department } = event
 

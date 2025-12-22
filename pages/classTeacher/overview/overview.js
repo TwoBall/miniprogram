@@ -1,5 +1,4 @@
 const app = getApp()
-const db = wx.cloud.database()
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -14,16 +13,21 @@ Page({
     joinedClubs: 0,
     presentToday: 0,
     absentToday: 0,
-    students: [],
-    isDebugMode: false
+    students: []
   },
 
+  /**
+   * 页面加载
+   */
   onLoad() {
     this.checkAuth()
     this.initDate()
     this.loadData()
   },
 
+  /**
+   * 检查用户权限
+   */
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (!userInfo || userInfo.role !== 'classTeacher') {
@@ -37,12 +41,18 @@ Page({
     })
   },
 
+  /**
+   * 跳转到角色切换页面
+   */
   goToSwitchRole() {
     wx.navigateTo({
       url: '/pages/common/switchRole/switchRole'
     })
   },
 
+  /**
+   * 初始化日期为今天
+   */
   initDate() {
     const now = new Date()
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
@@ -60,6 +70,9 @@ Page({
     this.setData({ showDatePicker: false })
   },
 
+  /**
+   * 日期选择确认
+   */
   onDatePickerConfirm(e) {
     const date = new Date(e.detail)
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
@@ -72,6 +85,9 @@ Page({
     this.loadData()
   },
 
+  /**
+   * 加载班级考勤数据
+   */
   async loadData() {
     const userInfo = wx.getStorageSync('userInfo')
     const { selectedDate } = this.data
@@ -117,6 +133,9 @@ Page({
     }
   },
 
+  /**
+   * 发送反馈
+   */
   sendFeedback(e) {
     const student = e.currentTarget.dataset.student
     wx.navigateTo({

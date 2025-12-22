@@ -1,4 +1,3 @@
-const db = wx.cloud.database()
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -33,8 +32,11 @@ Page({
     showClubPicker: false
   },
 
+  /**
+   * 页面加载
+   * @param {Object} options - 页面参数,包含openid和已有角色信息
+   */
   onLoad(options) {
-    // 从登录页面或角色管理页面传递过来的 openid
     if (options.openid) {
       this.setData({ openid: options.openid })
     } else {
@@ -48,7 +50,6 @@ Page({
       return
     }
 
-    // 处理已有的具体社团、班级、学部（用于过滤选项列表）
     const existingClubs = options.existingClubs ? options.existingClubs.split(',').filter(r => r) : []
     const existingClasses = options.existingClasses ? options.existingClasses.split(',').filter(r => r) : []
     const existingDepartments = options.existingDepartments ? options.existingDepartments.split(',').filter(r => r) : []
@@ -66,6 +67,10 @@ Page({
   },
 
 
+  /**
+   * 获取可选的学部、班级、社团列表
+   * 过滤掉用户已注册的选项
+   */
   async fetchOptions() {
     try {
       const res = await wx.cloud.callFunction({
@@ -103,8 +108,8 @@ Page({
           clubs
         })
       }
-    } catch (e) {
-      console.error('获取选项失败', e)
+    } catch (error) {
+      console.error('获取选项失败:', error)
     }
   },
 
@@ -170,6 +175,10 @@ Page({
     this.setData({ clubName: e.detail.value, showClubPicker: false })
   },
 
+  /**
+   * 处理注册提交
+   * 验证输入并调用云函数创建注册申请
+   */
   async handleRegister() {
     const { openid, name, roleIndex, roleValues, department, className, clubName } = this.data
 
@@ -179,7 +188,7 @@ Page({
       return
     }
 
-    const role = availableRoleValues[roleIndex]
+    const role = roleValues[roleIndex]
 
     // 根据角色验证必填字段
     if (role === 'teacher' && !clubName) {

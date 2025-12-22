@@ -38,8 +38,15 @@
   </view>
 
   <view class="student-list" wx:if="{{record && record.records.length > 0}}">
-    <van-cell-group title="点名详情">
-      <van-cell wx:for="{{record.records}}" wx:key="studentId" border="{{ false }}" custom-class="student-cell">
+    <van-cell-group title="点名详情 (点击可修改)">
+      <van-cell 
+        wx:for="{{record.records}}" 
+        wx:key="studentId" 
+        border="{{ false }}" 
+        custom-class="student-cell"
+        data-index="{{index}}"
+        bindtap="toggleStudentStatus"
+      >
         <view slot="title" class="student-info">
           <view class="student-name">
             <van-icon name="user-o" size="32rpx" color="#1890ff" />
@@ -56,16 +63,24 @@
             <text>班主任反馈: {{item.feedback}}</text>
           </view>
         </view>
-        <view slot="right-icon">
+        <view slot="right-icon" class="status-toggle">
           <van-tag
             type="{{ item.status === 'present' ? 'success' : 'danger' }}"
             size="large"
           >
             {{item.status === 'present' ? '到课' : '缺课'}}
           </van-tag>
+          <van-icon name="exchange" size="32rpx" color="#999" />
         </view>
       </van-cell>
     </van-cell-group>
+
+    <!-- 保存修改按钮 -->
+    <view class="save-section" wx:if="{{hasChanges}}">
+      <van-button type="primary" block loading="{{saving}}" bindtap="saveChanges">
+        保存修改
+      </van-button>
+    </view>
   </view>
 
   <van-empty
@@ -73,4 +88,6 @@
     description="暂无数据"
     image="search"
   />
+
+  <van-toast id="van-toast" />
 </view>

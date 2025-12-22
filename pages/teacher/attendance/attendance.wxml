@@ -115,8 +115,8 @@
       <view class="action-btn absent-btn" bindtap="markAbsentByBtn">
         <van-icon name="cross" size="56rpx" color="#ff4d4f" />
       </view>
-      <view class="action-btn undo-btn" bindtap="undoLast" wx:if="{{currentIndex > 0}}">
-        <van-icon name="revoke" size="40rpx" color="#999" />
+      <view class="action-btn undo-btn {{currentIndex === 0 ? 'disabled' : ''}}" bindtap="undoLast">
+        <van-icon name="revoke" size="40rpx" color="{{currentIndex === 0 ? '#ccc' : '#999'}}" />
       </view>
       <view class="action-btn present-btn" bindtap="markPresentByBtn">
         <van-icon name="success" size="56rpx" color="#07c160" />
@@ -169,14 +169,21 @@
 
       <!-- 展开的已点名列表 -->
       <scroll-view scroll-y class="marked-students-scroll" wx:if="{{showMarkedList && currentIndex > 0}}">
-        <view class="marked-student-item" wx:for="{{markedStudents}}" wx:key="index">
+        <view class="marked-student-item" 
+              wx:for="{{markedStudents}}" 
+              wx:key="index"
+              data-index="{{index}}"
+              bindtap="toggleMarkedStudentStatus">
           <view class="marked-student-info">
             <text class="marked-name">{{item.name}}</text>
             <text class="marked-class">{{item.className}}</text>
           </view>
-          <van-tag type="{{item.status === 'present' ? 'success' : 'danger'}}">
-            {{item.status === 'present' ? '到课' : '缺课'}}
-          </van-tag>
+          <view class="status-toggle">
+            <van-tag type="{{item.status === 'present' ? 'success' : 'danger'}}">
+              {{item.status === 'present' ? '到课' : '缺课'}}
+            </van-tag>
+            <van-icon name="exchange" size="28rpx" color="#999" class="toggle-icon" />
+          </view>
         </view>
       </scroll-view>
     </view>

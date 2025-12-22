@@ -1,5 +1,4 @@
 const app = getApp()
-const db = wx.cloud.database()
 
 Page({
   data: {
@@ -8,6 +7,10 @@ Page({
     students: []
   },
 
+  /**
+   * 页面加载
+   * @param {Object} options - 页面参数,包含班级名称和日期
+   */
   onLoad(options) {
     this.checkAuth()
     this.setData({
@@ -17,6 +20,9 @@ Page({
     this.loadDetail()
   },
 
+  /**
+   * 检查用户权限
+   */
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (!userInfo || userInfo.role !== 'leader') {
@@ -26,6 +32,9 @@ Page({
     }
   },
 
+  /**
+   * 加载班级详细考勤情况
+   */
   async loadDetail() {
     const { className, date } = this.data
 

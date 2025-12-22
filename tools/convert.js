@@ -1,8 +1,12 @@
+/**
+ * Excel数据转换工具
+ * 将学生社团明细表转换为JSON格式,用于导入云数据库
+ * 同时提取班主任信息生成预注册数据
+ */
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-// 配置信息
 const CONFIG = {
     inputFile: '../学生社团明细表.xlsx',
     outputFile: '../students.json',
@@ -18,6 +22,12 @@ const CONFIG = {
     }
 };
 
+/**
+ * 执行转换
+ * 1. 读取Excel文件
+ * 2. 转换学生数据为JSON
+ * 3. 提取班主任数据生成预注册记录
+ */
 function convert() {
     console.log('正在读取文件:', CONFIG.inputFile);
 

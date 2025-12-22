@@ -1,5 +1,4 @@
 const app = getApp()
-const db = wx.cloud.database()
 
 Page({
   data: {
@@ -10,6 +9,10 @@ Page({
     loading: false
   },
 
+  /**
+   * 页面加载
+   * @param {Object} options - 页面参数,包含学生信息
+   */
   onLoad(options) {
     this.checkAuth()
     this.setData({
@@ -19,6 +22,9 @@ Page({
     })
   },
 
+  /**
+   * 检查用户权限
+   */
   checkAuth() {
     const userInfo = wx.getStorageSync('userInfo')
     if (!userInfo || userInfo.role !== 'classTeacher') {
@@ -34,6 +40,9 @@ Page({
     })
   },
 
+  /**
+   * 提交反馈
+   */
   async submitFeedback() {
     const { studentId, studentName, clubName, feedback } = this.data
     const userInfo = wx.getStorageSync('userInfo')
