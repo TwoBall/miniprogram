@@ -83,7 +83,7 @@ Page({
 
         // 根据星期过滤学部
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))].sort()
-        const day = 2 //new Date().getDay()
+        const day = new Date().getDay()
         let defaultDepts = []
         let isClassDay = true
         let noClassMessage = ''

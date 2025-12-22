@@ -102,17 +102,17 @@ Page({
 
     // 根据角色验证必填字段
     if (role === 'teacher' && !clubName) {
-      Toast.fail('请输入社团名称')
+      Toast.fail('请选择社团名称')
       return
     }
 
     if (role === 'classTeacher' && !className) {
-      Toast.fail('请输入班级')
+      Toast.fail('请选择班级')
       return
     }
 
     if (role === 'leader' && !department) {
-      Toast.fail('请输入学部')
+      Toast.fail('请选择学部')
       return
     }
 

@@ -54,6 +54,7 @@
     "van-grid-item": "@vant/weapp/grid-item/index",
     "van-action-sheet": "@vant/weapp/action-sheet/index"
   },
+  "lazyCodeLoading": "requiredComponents",
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "cloud": true

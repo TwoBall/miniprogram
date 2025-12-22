@@ -52,24 +52,21 @@ exports.main = async (event, context) => {
 // ========== 获取筛选选项 (学部/班级/社团) ==========
 async function handleGetFilterOptions(event) {
     try {
-        // 使用聚合操作获取唯一值
-        const dbFields = ['department', 'className', 'clubName']
-        const results = await Promise.all(dbFields.map(field => {
-            return db.collection('students').aggregate()
-                .group({
-                    _id: null,
-                    values: _.addToSet(`$${field}`)
-                })
-                .end()
-        }))
+        // 获取所有学生数据中的唯一值
+        const allStudents = await getAllData(
+            db.collection('students'),
+            {},
+            { department: true, className: true, clubName: true }
+        )
+
+        // 提取唯一值
+        const departments = [...new Set(allStudents.map(s => s.department).filter(v => v))].sort()
+        const classes = [...new Set(allStudents.map(s => s.className).filter(v => v))].sort()
+        const clubs = [...new Set(allStudents.map(s => s.clubName).filter(v => v))].sort()
 
         return {
             success: true,
-            data: {
-                departments: (results[0].list[0] ? results[0].list[0].values : []).filter(v => v),
-                classes: (results[1].list[0] ? results[1].list[0].values : []).filter(v => v).sort(),
-                clubs: (results[2].list[0] ? results[2].list[0].values : []).filter(v => v).sort()
-            }
+            data: { departments, classes, clubs }
         }
     } catch (error) {
         console.error('获取选项失败:', error)
