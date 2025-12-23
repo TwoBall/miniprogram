@@ -1,4 +1,4 @@
-const auth = require('../../utils/auth')
+const auth = require('../../../utils/auth')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({

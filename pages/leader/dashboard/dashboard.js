@@ -1,6 +1,6 @@
 const app = getApp()
-const auth = require('../../utils/auth')
-const dateUtil = require('../../utils/date')
+const auth = require('../../../utils/auth')
+const dateUtil = require('../../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({

@@ -1,5 +1,5 @@
-const auth = require('../../utils/auth')
-const storage = require('../../utils/storage')
+const auth = require('../../../utils/auth')
+const storage = require('../../../utils/storage')
 
 Page({
   data: {
