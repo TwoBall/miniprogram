@@ -1,4 +1,6 @@
 const app = getApp()
+const auth = require('../../utils/auth')
+const dateUtil = require('../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -39,22 +41,16 @@ Page({
   },
 
   onLoad() {
-    this.checkAuth()
+    const userInfo = auth.checkRole('teacher')
+    if (userInfo) {
+      this.setData({ clubName: userInfo.clubName })
+    }
     this.updateDateTime()
     this.loadStudents()
   },
 
   onShow() {
     this.updateDateTime()
-  },
-
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'teacher') {
-      wx.reLaunch({ url: '/pages/login/login' })
-      return
-    }
-    this.setData({ clubName: userInfo.clubName })
   },
 
   goToSwitchRole() {
@@ -64,10 +60,10 @@ Page({
   },
 
   updateDateTime() {
-    const now = new Date()
-    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-    this.setData({ currentDate: date, currentTime: time })
+    this.setData({
+      currentDate: dateUtil.getCurrentDate(),
+      currentTime: dateUtil.getCurrentTime()
+    })
   },
 
   /**
@@ -75,7 +71,8 @@ Page({
    * 根据当前星期自动筛选对应学部的学生
    */
   async loadStudents() {
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
 
     try {
       Toast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
@@ -93,7 +90,7 @@ Page({
 
         // 根据星期过滤学部
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))].sort()
-        const day = new Date().getDay()
+        const day = dateUtil.getDayOfWeek()
         let defaultDepts = []
         let isClassDay = true
         let noClassMessage = ''
@@ -104,8 +101,7 @@ Page({
           defaultDepts = depts.filter(d => d === '医药护理部')
         } else {
           isClassDay = false
-          const dayNames = ['日', '一', '二', '三', '四', '五', '六']
-          noClassMessage = `今天是周${dayNames[day]}，无上课任务`
+          noClassMessage = `今天是${dateUtil.getDayOfWeekName()}，无上课任务`
         }
 
         if (isClassDay && defaultDepts.length === 0) {
@@ -398,7 +394,7 @@ Page({
    */
   async submitAttendance() {
     const { students, clubName, currentDate, currentTime } = this.data
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = auth.getUserInfo()
 
     // 检查是否全部点名
     const unmarked = students.filter(s => s.status === null)

@@ -1,4 +1,5 @@
-const app = getApp()
+const auth = require('../../utils/auth')
+const dateUtil = require('../../utils/date')
 
 Page({
   data: {
@@ -14,24 +15,12 @@ Page({
    * @param {Object} options - 页面参数,包含学生信息
    */
   onLoad(options) {
-    this.checkAuth()
+    auth.checkRole('classTeacher')
     this.setData({
       studentId: options.studentId,
       studentName: options.studentName,
       clubName: options.clubName
     })
-  },
-
-  /**
-   * 检查用户权限
-   */
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'classTeacher') {
-      wx.reLaunch({
-        url: '/pages/login/login'
-      })
-    }
   },
 
   onFeedbackInput(e) {
@@ -45,7 +34,7 @@ Page({
    */
   async submitFeedback() {
     const { studentId, studentName, clubName, feedback } = this.data
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = auth.getUserInfo()
 
     if (!feedback.trim()) {
       wx.showToast({
@@ -68,7 +57,7 @@ Page({
           className: userInfo.className,
           teacherName: userInfo.name,
           feedback,
-          date: new Date().toISOString().split('T')[0]
+          date: dateUtil.getCurrentDate()
         }
       })
 

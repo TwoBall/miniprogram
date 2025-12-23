@@ -1,4 +1,6 @@
 const app = getApp()
+const auth = require('../../utils/auth')
+const dateUtil = require('../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -20,7 +22,10 @@ Page({
    * 页面加载
    */
   onLoad() {
-    this.checkAuth()
+    const userInfo = auth.checkRole('classTeacher')
+    if (userInfo) {
+      this.setData({ className: userInfo.className })
+    }
     this.initDate()
     this.loadData()
   },
@@ -31,22 +36,6 @@ Page({
   async onPullDownRefresh() {
     await this.loadData()
     wx.stopPullDownRefresh()
-  },
-
-  /**
-   * 检查用户权限
-   */
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'classTeacher') {
-      wx.reLaunch({
-        url: '/pages/login/login'
-      })
-      return
-    }
-    this.setData({
-      className: userInfo.className
-    })
   },
 
   /**
@@ -62,11 +51,9 @@ Page({
    * 初始化日期为今天
    */
   initDate() {
-    const now = new Date()
-    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
     this.setData({
-      selectedDate: date,
-      selectedDateTimestamp: now.getTime()
+      selectedDate: dateUtil.getCurrentDate(),
+      selectedDateTimestamp: new Date().getTime()
     })
   },
 
@@ -82,8 +69,7 @@ Page({
    * 日期选择确认
    */
   onDatePickerConfirm(e) {
-    const date = new Date(e.detail)
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    const dateStr = dateUtil.formatDate(e.detail)
 
     this.setData({
       selectedDate: dateStr,
@@ -97,7 +83,9 @@ Page({
    * 加载班级考勤数据
    */
   async loadData() {
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
+
     const { selectedDate } = this.data
 
     try {

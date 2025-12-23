@@ -1,4 +1,4 @@
-const app = getApp()
+const auth = require('../../utils/auth')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -17,7 +17,7 @@ Page({
      * @param {Object} options - 页面参数,包含recordId
      */
     onLoad(options) {
-        this.checkAuth()
+        auth.checkRole('teacher')
         if (options.recordId) {
             this.setData({ recordId: options.recordId })
             this.loadRecordDetail(options.recordId)
@@ -26,18 +26,6 @@ Page({
             setTimeout(() => {
                 wx.navigateBack()
             }, 1500)
-        }
-    },
-
-    /**
-     * 检查用户权限
-     */
-    checkAuth() {
-        const userInfo = wx.getStorageSync('userInfo')
-        if (!userInfo || userInfo.role !== 'teacher') {
-            wx.reLaunch({
-                url: '/pages/login/login'
-            })
         }
     },
 
@@ -138,4 +126,3 @@ Page({
         }
     }
 })
-

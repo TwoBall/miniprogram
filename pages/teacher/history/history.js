@@ -1,4 +1,5 @@
-const app = getApp()
+const auth = require('../../utils/auth')
+const storage = require('../../utils/storage')
 
 Page({
   data: {
@@ -10,7 +11,7 @@ Page({
    * 页面加载
    */
   onLoad() {
-    this.checkAuth()
+    auth.checkRole('teacher')
     this.loadHistory()
   },
 
@@ -27,27 +28,15 @@ Page({
   },
 
   /**
-   * 检查用户权限
-   */
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'teacher') {
-      wx.reLaunch({
-        url: '/pages/login/login'
-      })
-    }
-  },
-
-  /**
    * 加载历史点名记录
    */
   async loadHistory() {
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
 
     try {
       wx.showLoading({ title: '加载中...' })
 
-      // 获取历史点名记录
       const res = await wx.cloud.callFunction({
         name: 'attendance',
         data: {

@@ -1,4 +1,4 @@
-const app = getApp()
+const auth = require('../../utils/auth')
 
 Page({
   data: {
@@ -12,24 +12,12 @@ Page({
    * @param {Object} options - 页面参数,包含班级名称和日期
    */
   onLoad(options) {
-    this.checkAuth()
+    auth.checkRole('leader')
     this.setData({
       className: options.className,
       date: options.date
     })
     this.loadDetail()
-  },
-
-  /**
-   * 检查用户权限
-   */
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'leader') {
-      wx.reLaunch({
-        url: '/pages/login/login'
-      })
-    }
   },
 
   /**

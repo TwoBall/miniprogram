@@ -1,4 +1,6 @@
 const app = getApp()
+const auth = require('../../utils/auth')
+const dateUtil = require('../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -18,7 +20,7 @@ Page({
    * 页面加载
    */
   onLoad() {
-    this.checkAuth()
+    auth.checkRole('admin')
     this.loadUsers()
   },
 
@@ -32,21 +34,6 @@ Page({
   async onPullDownRefresh() {
     await this.loadUsers()
     wx.stopPullDownRefresh()
-  },
-
-  /**
-   * 检查管理员权限
-   */
-  checkAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (!userInfo || userInfo.role !== 'admin') {
-      Toast.fail('无权限访问')
-      setTimeout(() => {
-        wx.reLaunch({
-          url: '/pages/login/login'
-        })
-      }, 1500)
-    }
   },
 
   /**
@@ -231,14 +218,5 @@ Page({
       console.error('拒绝失败:', error)
       Toast.fail('操作失败')
     }
-  },
-
-  /**
-   * 格式化时间
-   */
-  formatTime(date) {
-    if (!date) return ''
-    const d = new Date(date)
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
   }
 })

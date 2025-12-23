@@ -23,7 +23,7 @@
 - 新建 `utils/auth.js`
 - 新建 `utils/date.js`
 - 新建 `utils/storage.js`
-- ~~修改所有页面 JS 文件引用~~（第二阶段）
+- ~~修改所有页面 JS 文件引用~~（✅ 已完成 - 9个页面已迁移）
 
 ---
 

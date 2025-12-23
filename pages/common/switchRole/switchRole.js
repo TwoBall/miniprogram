@@ -1,4 +1,6 @@
 const app = getApp()
+const auth = require('../../../utils/auth')
+const storage = require('../../../utils/storage')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -25,8 +27,8 @@ Page({
      * 加载用户的所有角色
      */
     loadRoles() {
-        const userInfo = wx.getStorageSync('userInfo')
-        const allRoles = wx.getStorageSync('allUserRoles') || []
+        const userInfo = auth.getUserInfo()
+        const allRoles = auth.getAllUserRoles()
 
         // 如果 storage 没有角色列表，从云端获取
         if (allRoles.length === 0) {
@@ -67,7 +69,7 @@ Page({
             })
 
             if (res.result.success && res.result.userList) {
-                wx.setStorageSync('allUserRoles', res.result.userList)
+                storage.set(storage.STORAGE_KEYS.ALL_USER_ROLES, res.result.userList)
                 this.loadRoles()
             } else {
                 this.setData({ loading: false })
@@ -92,7 +94,7 @@ Page({
         }
 
         // 切换角色
-        wx.setStorageSync('userInfo', role)
+        storage.set(storage.STORAGE_KEYS.USER_INFO, role)
         app.globalData.userInfo = role
         app.globalData.userRole = role.role
 
