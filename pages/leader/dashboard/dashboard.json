@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "学部考勤"
+  "navigationBarTitleText": "学部考勤",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

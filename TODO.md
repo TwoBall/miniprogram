@@ -64,12 +64,12 @@
 ---
 
 ### 4. 添加下拉刷新功能
-**预计时间：1小时**
+✅ **已完成** - 2025-12-23
 
-- [ ] `pages/teacher/history/history` - 历史记录列表
-- [ ] `pages/classTeacher/overview/overview` - 班级考勤
-- [ ] `pages/leader/dashboard/dashboard` - 学部仪表盘
-- [ ] `pages/admin/approval/approval` - 审批列表
+- [x] `pages/teacher/history/history` - 历史记录列表
+- [x] `pages/classTeacher/overview/overview` - 班级考勤
+- [x] `pages/leader/dashboard/dashboard` - 学部仪表盘
+- [x] `pages/admin/approval/approval` - 审批列表
 
 **实现方式：**
 - 在页面 JSON 中添加 `"enablePullDownRefresh": true`
@@ -208,11 +208,11 @@
 
 | 类别 | 总数 | 已完成 | 进度 |
 |------|------|--------|------|
-| 高优先级 | 4 | 0 | 0% |
+| 高优先级 | 4 | 1 | 25% |
 | 中优先级 | 4 | 0 | 0% |
 | 低优先级 | 4 | 0 | 0% |
 | 文档完善 | 2 | 1 | 50% |
 
 ---
 
-*最后更新：2025-12-22*
+*最后更新：2025-12-23*

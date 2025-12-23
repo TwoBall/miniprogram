@@ -27,6 +27,14 @@ Page({
   },
 
   /**
+   * 页面下拉刷新
+   */
+  async onPullDownRefresh() {
+    await this.loadUsers()
+    wx.stopPullDownRefresh()
+  },
+
+  /**
    * 检查管理员权限
    */
   checkAuth() {

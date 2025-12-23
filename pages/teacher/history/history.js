@@ -19,6 +19,14 @@ Page({
   },
 
   /**
+   * 页面下拉刷新
+   */
+  async onPullDownRefresh() {
+    await this.loadHistory()
+    wx.stopPullDownRefresh()
+  },
+
+  /**
    * 检查用户权限
    */
   checkAuth() {
