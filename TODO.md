@@ -103,20 +103,29 @@
 
 ---
 
-### 7. 数据缓存机制
-**预计时间：2小时**
+### 7. 云函数调用优化
+**预计时间：3小时**
 
-- [ ] 缓存筛选选项（学部/班级/社团列表）
-  - 设置缓存有效期（如 1 小时）
-  - 注册页面加载时优先读取缓存
-- [ ] 缓存当日考勤数据
-  - 班主任/领导页面首次加载后缓存
-  - 刷新时更新缓存
+> 优化云函数调用量，降低基础套餐成本
 
-**实现位置：**
-- `pages/register/register.js` - `fetchOptions()`
-- `pages/classTeacher/overview/overview.js` - `loadData()`
-- `pages/leader/dashboard/dashboard.js` - `loadData()`
+#### 7.1 本地缓存策略
+- [ ] 筛选选项缓存（学部/班级/社团）- 24小时有效
+  - `register.js:fetchOptions()` 使用 `storage.getWithCache()`
+- [ ] 学生列表缓存 - 当日有效
+  - `attendance.js:loadStudents()`
+- [ ] 考勤数据缓存 - 5分钟有效
+  - `overview.js:loadData()`, `dashboard.js:loadData()`
+- [ ] 历史记录缓存 - 5分钟有效
+  - `history.js:loadHistory()`
+
+#### 7.2 减少重复调用
+- [ ] `onShow` 添加防抖（5秒内不重复请求）
+  - `approval.js`, `history.js`, `switchRole.js`
+- [ ] 合并提交检查：`checkTodaySubmissions` + `submit` 合并为 1 次调用
+
+#### 7.3 数据库直接查询（进阶）
+- [ ] 简单查询改用前端直接查数据库
+- [ ] 配置数据库权限规则
 
 ---
 
