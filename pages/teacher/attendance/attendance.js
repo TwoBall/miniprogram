@@ -278,6 +278,10 @@ Page({
 
     const lastAction = actionHistory.pop()
     const student = students[lastAction.index]
+
+    // 使用学生当前的实际状态来调整计数器（而非actionHistory中的原始状态）
+    // 因为用户可能在已点名列表中修改过状态
+    const currentStatus = student.status
     student.status = null
 
     // 从已点名列表中移除
@@ -287,8 +291,8 @@ Page({
       currentIndex: lastAction.index,
       currentStudent: student,
       remainingCount: students.length - lastAction.index,
-      presentCount: lastAction.status === 'present' ? presentCount - 1 : presentCount,
-      absentCount: lastAction.status === 'absent' ? absentCount - 1 : absentCount,
+      presentCount: currentStatus === 'present' ? presentCount - 1 : presentCount,
+      absentCount: currentStatus === 'absent' ? absentCount - 1 : absentCount,
       actionHistory,
       markedStudents,
       cardStyle: '',
