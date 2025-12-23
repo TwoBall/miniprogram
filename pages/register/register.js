@@ -1,4 +1,5 @@
 import Toast from '@vant/weapp/toast/toast'
+const storage = require('../../utils/storage')
 
 Page({
   data: {
@@ -11,57 +12,38 @@ Page({
     existingClubs: [],
     existingClasses: [],
     existingDepartments: [],
-    isAddingRole: false, // 是否是添加新身份模式
-    showRolePicker: false,
+    // 可选列表
+    departments: [],
+    allDepartments: [], // 未过滤的学部列表
+    classes: [],
+    allClasses: [],
+    classDeptMap: {},
+    clubs: [],
+    // 选中值
     department: '',
     className: '',
-    clubName: '',
-    // 班主任选择学部（级联选择）
-    classTeacherDept: '',
-    showClassTeacherDeptPicker: false,
-    loading: false,
-    // 选项列表
-    departments: [],
-    classes: [],
-    allClasses: [], // 全部班级（用于级联过滤）
-    filteredClasses: [], // 根据学部过滤后的班级
-    clubs: [],
-    // 弹窗控制
-    showDeptPicker: false,
+    club: '',
+    // 弹窗状态
+    showRolePicker: false,
+    showDepartmentPicker: false,
     showClassPicker: false,
-    showClubPicker: false
+    showClubPicker: false,
+    // 提交状态
+    submitting: false
   },
 
   /**
    * 页面加载
-   * @param {Object} options - 页面参数,包含openid和已有角色信息
+   * @param {Object} options - 页面参数
    */
   onLoad(options) {
-    if (options.openid) {
-      this.setData({ openid: options.openid })
-    } else {
-      // 如果没有 openid，返回登录页
-      Toast.fail('请先登录')
-      setTimeout(() => {
-        wx.redirectTo({
-          url: '/pages/login/login'
-        })
-      }, 1500)
-      return
-    }
-
-    const existingClubs = options.existingClubs ? options.existingClubs.split(',').filter(r => r) : []
-    const existingClasses = options.existingClasses ? options.existingClasses.split(',').filter(r => r) : []
-    const existingDepartments = options.existingDepartments ? options.existingDepartments.split(',').filter(r => r) : []
-
-    if (existingClubs.length > 0 || existingClasses.length > 0 || existingDepartments.length > 0) {
-      this.setData({
-        existingClubs,
-        existingClasses,
-        existingDepartments,
-        isAddingRole: true
-      })
-    }
+    // 获取openid和已有的具体选项
+    this.setData({
+      openid: options.openid || '',
+      existingClubs: options.existingClubs ? options.existingClubs.split(',') : [],
+      existingClasses: options.existingClasses ? options.existingClasses.split(',') : [],
+      existingDepartments: options.existingDepartments ? options.existingDepartments.split(',') : []
+    })
 
     this.fetchOptions()
   },
@@ -69,48 +51,75 @@ Page({
 
   /**
    * 获取可选的学部、班级、社团列表
-   * 过滤掉用户已注册的选项
+   * 优先使用缓存（24小时有效），减少云函数调用
    */
   async fetchOptions() {
+    // 尝试从缓存读取
+    const cached = storage.getWithCache(
+      storage.STORAGE_KEYS.FILTER_OPTIONS,
+      storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
+      storage.CACHE_DURATION.ONE_DAY
+    )
+
+    if (cached) {
+      console.log('使用筛选选项缓存')
+      this.applyFilterOptions(cached)
+      return
+    }
+
+    // 缓存不存在或过期，从云端获取
     try {
       const res = await wx.cloud.callFunction({
         name: 'students',
         data: { action: 'getFilterOptions' }
       })
       if (res.result.success) {
-        const { existingClubs, existingClasses, existingDepartments } = this.data
-
-        // 过滤掉已注册的具体选项
-        let departments = res.result.data.departments || []
-        let classes = res.result.data.classes || []
-        let clubs = res.result.data.clubs || []
-        const classDeptMap = res.result.data.classDeptMap || {}
-
-        if (existingClubs && existingClubs.length > 0) {
-          clubs = clubs.filter(c => !existingClubs.includes(c))
-        }
-        if (existingClasses && existingClasses.length > 0) {
-          classes = classes.filter(c => !existingClasses.includes(c))
-        }
-        if (existingDepartments && existingDepartments.length > 0) {
-          departments = departments.filter(d => !existingDepartments.includes(d))
-        }
-
-        // 班级按升序排列
-        classes.sort((a, b) => a.localeCompare(b, 'zh-CN'))
-
-        this.setData({
-          departments,
-          allDepartments: res.result.data.departments || [], // 未过滤的学部列表（班主任用）
-          classes,
-          allClasses: classes, // 保存全部班级用于级联过滤
-          classDeptMap, // 班级与学部的对应关系
-          clubs
-        })
+        // 存入缓存
+        storage.setWithCache(
+          storage.STORAGE_KEYS.FILTER_OPTIONS,
+          storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
+          res.result.data
+        )
+        this.applyFilterOptions(res.result.data)
       }
     } catch (error) {
       console.error('获取选项失败:', error)
     }
+  },
+
+  /**
+   * 应用筛选选项到页面数据
+   */
+  applyFilterOptions(data) {
+    const { existingClubs, existingClasses, existingDepartments } = this.data
+
+    // 过滤掉已注册的具体选项
+    let departments = data.departments || []
+    let classes = data.classes || []
+    let clubs = data.clubs || []
+    const classDeptMap = data.classDeptMap || {}
+
+    if (existingClubs && existingClubs.length > 0) {
+      clubs = clubs.filter(c => !existingClubs.includes(c))
+    }
+    if (existingClasses && existingClasses.length > 0) {
+      classes = classes.filter(c => !existingClasses.includes(c))
+    }
+    if (existingDepartments && existingDepartments.length > 0) {
+      departments = departments.filter(d => !existingDepartments.includes(d))
+    }
+
+    // 班级按升序排列
+    classes.sort((a, b) => a.localeCompare(b, 'zh-CN'))
+
+    this.setData({
+      departments,
+      allDepartments: data.departments || [],
+      classes,
+      allClasses: classes,
+      classDeptMap,
+      clubs
+    })
   },
 
   onNameInput(e) {

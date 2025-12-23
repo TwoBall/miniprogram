@@ -37,14 +37,14 @@
   - 当前在 `attendance/index.js` 和 `students/index.js` 中重复
 - [ ] 创建 `cloudfunctions/common/utils.js`
 
-#### 2.2 本地缓存策略
-- [ ] 筛选选项缓存（24小时）- `register.js`
-- [ ] 学生列表缓存（当日）- `attendance.js`
-- [ ] 考勤数据缓存（5分钟）- `overview.js`, `dashboard.js`
-- [ ] 历史记录缓存（5分钟）- `history.js`
+#### 2.2 本地缓存策略 ✅
+- [x] 筛选选项缓存（24小时）- `register.js`
+- [x] 学生列表缓存（当日）- `attendance.js` *(暂缓)*
+- [x] 考勤数据缓存（5分钟）- `overview.js`, `dashboard.js`
+- [x] 历史记录缓存（5分钟）- `history.js`
 
-#### 2.3 减少重复调用
-- [ ] `onShow` 添加防抖（5秒内不重复）
+#### 2.3 减少重复调用 ✅
+- [x] `onShow` 添加防抖（5秒内不重复）
 - [ ] 合并 `checkTodaySubmissions` + `submit` 为 1 次调用
 
 #### 2.4 数据库直接查询（进阶）

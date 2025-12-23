@@ -7,6 +7,9 @@ Page({
     loading: false
   },
 
+  // 上次加载时间（用于防抖）
+  lastLoadTime: 0,
+
   /**
    * 页面加载
    */
@@ -16,23 +19,42 @@ Page({
   },
 
   onShow() {
+    // 5秒内不重复加载（防抖）
+    const now = Date.now()
+    if (now - this.lastLoadTime < 5000) return
     this.loadHistory()
   },
 
   /**
-   * 页面下拉刷新
+   * 页面下拉刷新（强制刷新，忽略缓存）
    */
   async onPullDownRefresh() {
-    await this.loadHistory()
+    await this.loadHistory(true)
     wx.stopPullDownRefresh()
   },
 
   /**
    * 加载历史点名记录
+   * @param {boolean} forceRefresh - 是否强制刷新（忽略缓存）
    */
-  async loadHistory() {
+  async loadHistory(forceRefresh = false) {
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
+
+    this.lastLoadTime = Date.now()
+
+    // 尝试从缓存读取（5分钟有效）
+    if (!forceRefresh) {
+      const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
+      const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
+      const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
+
+      if (cached) {
+        console.log('使用历史记录缓存')
+        this.setData({ records: cached })
+        return
+      }
+    }
 
     try {
       wx.showLoading({ title: '加载中...' })
@@ -46,6 +68,11 @@ Page({
       })
 
       if (res.result.success) {
+        // 存入缓存
+        const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
+        const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
+        storage.setWithCache(cacheKey, cacheTimeKey, res.result.data)
+
         this.setData({
           records: res.result.data
         })

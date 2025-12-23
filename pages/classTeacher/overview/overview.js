@@ -1,6 +1,7 @@
 const app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
+const storage = require('../../../utils/storage')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -31,10 +32,10 @@ Page({
   },
 
   /**
-   * 页面下拉刷新
+   * 页面下拉刷新（强制刷新）
    */
   async onPullDownRefresh() {
-    await this.loadData()
+    await this.loadData(true)
     wx.stopPullDownRefresh()
   },
 
@@ -76,17 +77,31 @@ Page({
       selectedDateTimestamp: e.detail,
       showDatePicker: false
     })
-    this.loadData()
+    this.loadData(true) // 切换日期强制刷新
   },
 
   /**
    * 加载班级考勤数据
+   * @param {boolean} forceRefresh - 是否强制刷新
    */
-  async loadData() {
+  async loadData(forceRefresh = false) {
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
 
     const { selectedDate } = this.data
+
+    // 尝试从缓存读取（5分钟有效，按班级+日期缓存）
+    const cacheKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA}_class_${userInfo.className}_${selectedDate}`
+    const cacheTimeKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA_TIME}_class_${userInfo.className}_${selectedDate}`
+
+    if (!forceRefresh) {
+      const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
+      if (cached) {
+        console.log('使用班级考勤缓存')
+        this.applyData(cached)
+        return
+      }
+    }
 
     try {
       Toast.loading({
@@ -106,20 +121,9 @@ Page({
       })
 
       if (res.result.success) {
-        const data = res.result.data
-        // 排序：缺课 > 到课 > 未点名
-        const sortedStudents = data.students.sort((a, b) => {
-          const statusOrder = { 'absent': 0, 'present': 1, null: 2 }
-          return (statusOrder[a.todayStatus] ?? 2) - (statusOrder[b.todayStatus] ?? 2)
-        })
-
-        this.setData({
-          students: sortedStudents,
-          totalStudents: data.totalStudents,
-          joinedClubs: data.joinedClubs,
-          presentToday: data.presentToday,
-          absentToday: data.absentToday
-        })
+        // 存入缓存
+        storage.setWithCache(cacheKey, cacheTimeKey, res.result.data)
+        this.applyData(res.result.data)
       }
     } catch (error) {
       console.error('加载数据失败:', error)
@@ -127,6 +131,25 @@ Page({
     } finally {
       Toast.clear()
     }
+  },
+
+  /**
+   * 应用数据到页面
+   */
+  applyData(data) {
+    // 排序：缺课 > 到课 > 未点名
+    const sortedStudents = data.students.sort((a, b) => {
+      const statusOrder = { 'absent': 0, 'present': 1, null: 2 }
+      return (statusOrder[a.todayStatus] ?? 2) - (statusOrder[b.todayStatus] ?? 2)
+    })
+
+    this.setData({
+      students: sortedStudents,
+      totalStudents: data.totalStudents,
+      joinedClubs: data.joinedClubs,
+      presentToday: data.presentToday,
+      absentToday: data.absentToday
+    })
   },
 
   /**

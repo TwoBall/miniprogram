@@ -1,6 +1,7 @@
 const app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
+const storage = require('../../../utils/storage')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -31,10 +32,10 @@ Page({
   },
 
   /**
-   * 页面下拉刷新
+   * 页面下拉刷新（强制刷新）
    */
   async onPullDownRefresh() {
-    await this.loadData()
+    await this.loadData(true)
     wx.stopPullDownRefresh()
   },
 
@@ -76,17 +77,37 @@ Page({
       selectedDateTimestamp: e.detail,
       showDatePicker: false
     })
-    this.loadData()
+    this.loadData(true) // 切换日期强制刷新
   },
 
   /**
    * 加载学部考勤数据
+   * @param {boolean} forceRefresh - 是否强制刷新
    */
-  async loadData() {
+  async loadData(forceRefresh = false) {
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
 
     const { selectedDate } = this.data
+
+    // 尝试从缓存读取（5分钟有效，按学部+日期缓存）
+    const cacheKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA}_dept_${userInfo.department}_${selectedDate}`
+    const cacheTimeKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA_TIME}_dept_${userInfo.department}_${selectedDate}`
+
+    if (!forceRefresh) {
+      const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
+      if (cached) {
+        console.log('使用学部考勤缓存')
+        this.setData({
+          classes: cached.classes,
+          totalClasses: cached.totalClasses,
+          totalStudents: cached.totalStudents,
+          presentToday: cached.presentToday,
+          absentToday: cached.absentToday
+        })
+        return
+      }
+    }
 
     try {
       Toast.loading({
@@ -107,6 +128,9 @@ Page({
 
       if (res.result.success) {
         const data = res.result.data
+        // 存入缓存
+        storage.setWithCache(cacheKey, cacheTimeKey, data)
+
         this.setData({
           classes: data.classes,
           totalClasses: data.totalClasses,

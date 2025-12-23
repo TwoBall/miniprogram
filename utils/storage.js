@@ -15,13 +15,29 @@ const STORAGE_KEYS = {
     /** 筛选选项缓存（学部、班级、社团列表） */
     FILTER_OPTIONS: 'filterOptions',
     /** 筛选选项缓存时间戳 */
-    FILTER_OPTIONS_TIME: 'filterOptionsTime'
+    FILTER_OPTIONS_TIME: 'filterOptionsTime',
+    /** 学生列表缓存 */
+    STUDENTS_LIST: 'studentsList',
+    /** 学生列表缓存时间戳 */
+    STUDENTS_LIST_TIME: 'studentsListTime',
+    /** 历史记录缓存 */
+    HISTORY_RECORDS: 'historyRecords',
+    /** 历史记录缓存时间戳 */
+    HISTORY_RECORDS_TIME: 'historyRecordsTime',
+    /** 考勤数据缓存前缀 */
+    ATTENDANCE_DATA: 'attendanceData',
+    /** 考勤数据缓存时间戳前缀 */
+    ATTENDANCE_DATA_TIME: 'attendanceDataTime',
+    /** 最后刷新时间（用于防抖） */
+    LAST_REFRESH_TIME: 'lastRefreshTime'
 }
 
 /**
  * 缓存有效期（毫秒）
  */
 const CACHE_DURATION = {
+    /** 5分钟 */
+    FIVE_MINUTES: 5 * 60 * 1000,
     /** 1小时 */
     ONE_HOUR: 60 * 60 * 1000,
     /** 1天 */
