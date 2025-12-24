@@ -20,6 +20,8 @@ Page({
     absentCount: 0,
     remainingCount: 0,
     loading: false,
+    // 页面加载状态
+    pageLoading: true,
     // 上课日相关
     isClassDay: true,
     noClassMessage: '',
@@ -77,6 +79,8 @@ Page({
     try {
       Toast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
 
+      this.setData({ pageLoading: true })
+
       const res = await wx.cloud.callFunction({
         name: 'students',
         data: { action: 'getByClub', clubName: userInfo.clubName }
@@ -133,6 +137,7 @@ Page({
       Toast.fail('加载失败')
     } finally {
       Toast.clear()
+      this.setData({ pageLoading: false })
     }
   },
 

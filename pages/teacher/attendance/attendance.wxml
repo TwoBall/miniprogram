@@ -33,8 +33,13 @@
 
   <!-- 卡片区域（仅上课日显示） -->
   <block wx:if="{{isClassDay}}">
+    <!-- 加载骨架屏 -->
+    <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+      <skeleton type="attendance-card" count="{{1}}" />
+    </view>
+
     <!-- 已完成提示 -->
-    <view class="complete-section" wx:if="{{currentIndex >= students.length && students.length > 0}}">
+    <view class="complete-section" wx:if="{{!pageLoading && currentIndex >= students.length && students.length > 0}}">
       <view class="complete-icon">🎉</view>
       <view class="complete-text">点名完成！</view>
       <view class="complete-stats">
@@ -44,7 +49,7 @@
     </view>
 
     <!-- 卡片堆叠区 -->
-    <view class="card-stack" wx:if="{{currentIndex < students.length}}">
+    <view class="card-stack" wx:if="{{!pageLoading && currentIndex < students.length}}">
       <!-- 背景卡片（第3张） -->
       <view class="student-card card-bg-2" wx:if="{{currentIndex + 2 < students.length}}">
         <view class="card-content">
@@ -111,7 +116,7 @@
     </view>
 
     <!-- 底部操作按钮 -->
-    <view class="action-section" wx:if="{{currentIndex < students.length}}">
+    <view class="action-section" wx:if="{{!pageLoading && currentIndex < students.length}}">
       <view class="action-btn absent-btn" bindtap="markAbsentByBtn">
         <van-icon name="cross" size="56rpx" color="#ff4d4f" />
       </view>
@@ -124,7 +129,7 @@
     </view>
 
     <!-- 底部进度栏 -->
-    <view class="progress-section">
+    <view class="progress-section" wx:if="{{!pageLoading}}">
       <!-- 统计信息和操作按钮 -->
       <view class="progress-header">
         <view class="progress-stats">

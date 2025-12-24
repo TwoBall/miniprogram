@@ -16,7 +16,11 @@
   <van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#1890ff">
     <van-tab title="待审批({{pendingUsers.length}})">
       <view class="tab-content">
-        <view class="user-list" wx:if="{{pendingUsers.length > 0}}">
+        <!-- 骨架屏 -->
+        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+        </view>
+        <view class="user-list" wx:elif="{{pendingUsers.length > 0}}">
           <view class="user-card" wx:for="{{pendingUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
@@ -83,7 +87,7 @@
         </view>
 
         <van-empty
-          wx:else
+          wx:elif="{{!pageLoading}}"
           description="暂无待审批用户"
           image="search"
         />
@@ -92,7 +96,11 @@
 
     <van-tab title="已通过({{approvedUsers.length}})">
       <view class="tab-content">
-        <view class="user-list" wx:if="{{approvedUsers.length > 0}}">
+        <!-- 骨架屏 -->
+        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+        </view>
+        <view class="user-list" wx:elif="{{approvedUsers.length > 0}}">
           <view class="user-card approved" wx:for="{{approvedUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
@@ -127,7 +135,7 @@
         </view>
 
         <van-empty
-          wx:else
+          wx:elif="{{!pageLoading}}"
           description="暂无已通过用户"
           image="search"
         />
@@ -136,7 +144,11 @@
 
     <van-tab title="已拒绝({{rejectedUsers.length}})">
       <view class="tab-content">
-        <view class="user-list" wx:if="{{rejectedUsers.length > 0}}">
+        <!-- 骨架屏 -->
+        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+        </view>
+        <view class="user-list" wx:elif="{{rejectedUsers.length > 0}}">
           <view class="user-card rejected" wx:for="{{rejectedUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
@@ -171,7 +183,7 @@
         </view>
 
         <van-empty
-          wx:else
+          wx:elif="{{!pageLoading}}"
           description="暂无已拒绝用户"
           image="search"
         />

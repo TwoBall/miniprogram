@@ -17,7 +17,12 @@
     </view>
   </view>
 
-  <view class="stats-section">
+  <!-- 统计区域骨架屏 -->
+  <view class="stats-section" wx:if="{{pageLoading}}">
+    <skeleton type="stats" count="{{4}}" />
+  </view>
+
+  <view class="stats-section" wx:else>
     <van-grid column-num="4" border="{{ false }}">
       <van-grid-item use-slot>
         <view class="stat-content">
@@ -47,7 +52,12 @@
   </view>
 
   <view class="student-list">
-    <van-cell-group title="学生考勤详情" wx:if="{{students.length > 0}}">
+    <!-- 学生列表骨架屏 -->
+    <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+      <skeleton type="list" count="{{5}}" avatar="{{true}}" avatarShape="round" />
+    </view>
+
+    <van-cell-group title="学生考勤详情" wx:elif="{{students.length > 0}}">
       <van-cell wx:for="{{students}}" wx:key="_id" border="{{ false }}" custom-class="student-card">
         <view slot="title" class="student-info">
           <view class="student-header">

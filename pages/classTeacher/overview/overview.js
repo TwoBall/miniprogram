@@ -16,7 +16,8 @@ Page({
     joinedClubs: 0,
     presentToday: 0,
     absentToday: 0,
-    students: []
+    students: [],
+    pageLoading: true
   },
 
   /**
@@ -99,9 +100,12 @@ Page({
       if (cached) {
         console.log('使用班级考勤缓存')
         this.applyData(cached)
+        this.setData({ pageLoading: false })
         return
       }
     }
+
+    this.setData({ pageLoading: true })
 
     try {
       Toast.loading({
@@ -130,6 +134,7 @@ Page({
       Toast.fail('加载失败')
     } finally {
       Toast.clear()
+      this.setData({ pageLoading: false })
     }
   },
 

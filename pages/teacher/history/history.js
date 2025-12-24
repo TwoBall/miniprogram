@@ -4,7 +4,8 @@ const storage = require('../../../utils/storage')
 Page({
   data: {
     records: [],
-    loading: false
+    loading: false,
+    pageLoading: true
   },
 
   // 上次加载时间（用于防抖）
@@ -51,10 +52,12 @@ Page({
 
       if (cached) {
         console.log('使用历史记录缓存')
-        this.setData({ records: cached })
+        this.setData({ records: cached, pageLoading: false })
         return
       }
     }
+
+    this.setData({ pageLoading: true })
 
     try {
       wx.showLoading({ title: '加载中...' })
@@ -85,6 +88,7 @@ Page({
       })
     } finally {
       wx.hideLoading()
+      this.setData({ pageLoading: false })
     }
   },
 

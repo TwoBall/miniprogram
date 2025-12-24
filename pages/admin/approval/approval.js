@@ -11,6 +11,7 @@ Page({
     approvedUsers: [],
     rejectedUsers: [],
     loading: false,
+    pageLoading: true,
     showRejectDialog: false,
     currentUser: null,
     rejectReason: ''
@@ -55,7 +56,7 @@ Page({
    * 加载用户列表
    */
   async loadUsers() {
-    this.setData({ loading: true })
+    this.setData({ loading: true, pageLoading: true })
 
     try {
       Toast.loading({
@@ -94,7 +95,7 @@ Page({
       Toast.fail('加载失败')
     } finally {
       Toast.clear()
-      this.setData({ loading: false })
+      this.setData({ loading: false, pageLoading: false })
     }
   },
 

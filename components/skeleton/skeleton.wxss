@@ -1,0 +1,240 @@
+/* 骨架屏组件样式 */
+.skeleton-container {
+  padding: 20rpx;
+}
+
+/* 动画效果 */
+.skeleton-animate .skeleton-avatar,
+.skeleton-animate .skeleton-title,
+.skeleton-animate .skeleton-subtitle,
+.skeleton-animate .skeleton-row,
+.skeleton-animate .skeleton-action,
+.skeleton-animate .skeleton-stat-value,
+.skeleton-animate .skeleton-stat-label,
+.skeleton-animate .skeleton-avatar-large,
+.skeleton-animate .skeleton-name,
+.skeleton-animate .skeleton-tag,
+.skeleton-animate .skeleton-info-row,
+.skeleton-animate .skeleton-date,
+.skeleton-animate .skeleton-time,
+.skeleton-animate .skeleton-stat-inline {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 基础占位元素 */
+.skeleton-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+}
+
+.skeleton-avatar.round {
+  border-radius: 50%;
+}
+
+.skeleton-avatar.square {
+  border-radius: 8rpx;
+}
+
+.skeleton-title {
+  height: 32rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  width: 60%;
+}
+
+.skeleton-subtitle {
+  height: 24rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  width: 40%;
+  margin-top: 12rpx;
+}
+
+.skeleton-row {
+  height: 24rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  margin-top: 16rpx;
+}
+
+/* 卡片骨架 */
+.skeleton-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-header-content {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.skeleton-card-body {
+  margin-top: 20rpx;
+}
+
+/* 列表骨架 */
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.skeleton-list-content {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.skeleton-action {
+  width: 80rpx;
+  height: 48rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+}
+
+/* 统计骨架 */
+.skeleton-stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.skeleton-stat-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.skeleton-stat-value {
+  width: 60rpx;
+  height: 48rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+}
+
+.skeleton-stat-label {
+  width: 80rpx;
+  height: 24rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  margin-top: 12rpx;
+}
+
+/* 点名卡片骨架 */
+.skeleton-attendance-card {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 60rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  margin: 40rpx 30rpx;
+}
+
+.skeleton-avatar-large {
+  width: 160rpx;
+  height: 160rpx;
+  background-color: #f0f0f0;
+}
+
+.skeleton-avatar-large.round {
+  border-radius: 50%;
+}
+
+.skeleton-name {
+  width: 150rpx;
+  height: 40rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  margin-top: 30rpx;
+}
+
+.skeleton-tag {
+  width: 80rpx;
+  height: 36rpx;
+  background-color: #f0f0f0;
+  border-radius: 18rpx;
+  margin-top: 20rpx;
+}
+
+.skeleton-info-rows {
+  width: 100%;
+  margin-top: 40rpx;
+}
+
+.skeleton-info-row {
+  width: 70%;
+  height: 28rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  margin: 16rpx auto;
+}
+
+/* 历史记录卡片骨架 */
+.skeleton-history-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.skeleton-date {
+  width: 180rpx;
+  height: 32rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+}
+
+.skeleton-time {
+  width: 100rpx;
+  height: 28rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+}
+
+.skeleton-history-stats {
+  display: flex;
+  gap: 40rpx;
+}
+
+.skeleton-stat-inline {
+  width: 120rpx;
+  height: 28rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+}

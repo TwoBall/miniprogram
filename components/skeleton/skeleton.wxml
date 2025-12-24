@@ -1,0 +1,68 @@
+<view class="skeleton-container {{animate ? 'skeleton-animate' : ''}}">
+  <!-- 卡片骨架 -->
+  <block wx:if="{{type === 'card'}}">
+    <view class="skeleton-card" wx:for="{{items}}" wx:key="*this">
+      <view class="skeleton-card-header">
+        <view class="skeleton-avatar {{avatarShape}}" wx:if="{{avatar}}"></view>
+        <view class="skeleton-header-content">
+          <view class="skeleton-title"></view>
+          <view class="skeleton-subtitle"></view>
+        </view>
+      </view>
+      <view class="skeleton-card-body">
+        <view class="skeleton-row" wx:for="{{row}}" wx:for-item="r" wx:key="*this" style="width: {{90 - r * 10}}%"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 列表骨架 -->
+  <block wx:elif="{{type === 'list'}}">
+    <view class="skeleton-list-item" wx:for="{{items}}" wx:key="*this">
+      <view class="skeleton-avatar {{avatarShape}}" wx:if="{{avatar}}"></view>
+      <view class="skeleton-list-content">
+        <view class="skeleton-title" style="width: 40%"></view>
+        <view class="skeleton-subtitle" style="width: 60%"></view>
+      </view>
+      <view class="skeleton-action"></view>
+    </view>
+  </block>
+
+  <!-- 统计骨架 -->
+  <block wx:elif="{{type === 'stats'}}">
+    <view class="skeleton-stats-grid">
+      <view class="skeleton-stat-item" wx:for="{{items}}" wx:key="*this">
+        <view class="skeleton-stat-value"></view>
+        <view class="skeleton-stat-label"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 点名卡片骨架（特殊样式） -->
+  <block wx:elif="{{type === 'attendance-card'}}">
+    <view class="skeleton-attendance-card">
+      <view class="skeleton-avatar-large round"></view>
+      <view class="skeleton-name"></view>
+      <view class="skeleton-tag"></view>
+      <view class="skeleton-info-rows">
+        <view class="skeleton-info-row"></view>
+        <view class="skeleton-info-row"></view>
+        <view class="skeleton-info-row"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 历史记录卡片骨架 -->
+  <block wx:elif="{{type === 'history-card'}}">
+    <view class="skeleton-history-card" wx:for="{{items}}" wx:key="*this">
+      <view class="skeleton-history-header">
+        <view class="skeleton-date"></view>
+        <view class="skeleton-time"></view>
+      </view>
+      <view class="skeleton-history-stats">
+        <view class="skeleton-stat-inline"></view>
+        <view class="skeleton-stat-inline"></view>
+        <view class="skeleton-stat-inline"></view>
+      </view>
+    </view>
+  </block>
+</view>
