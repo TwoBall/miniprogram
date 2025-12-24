@@ -37,6 +37,14 @@ function getCurrentDate() {
 }
 
 /**
+ * 获取当前时间字符串 HH:mm
+ * @returns {string} 当前时间
+ */
+function getCurrentTime() {
+  return formatTime(new Date())
+}
+
+/**
  * 获取星期几
  * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
  * @returns {number} 星期几（0-6，0表示周日）
@@ -60,6 +68,7 @@ module.exports = {
   formatDate,
   formatTime,
   getCurrentDate,
+  getCurrentTime,
   getDayOfWeek,
   getDayOfWeekName
 }
