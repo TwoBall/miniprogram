@@ -90,7 +90,7 @@
 
     <van-empty
       wx:else
-      description="暂无数据"
+      description="该班级暂无学生考勤数据"
       image="search"
     />
   </view>
