@@ -1,10 +1,13 @@
-const _app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const storage = require('../../../utils/storage')
+const request = require('../../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
+  // 上次加载时间（用于防抖）
+  lastLoadTime: 0,
+
   data: {
     className: '',
     selectedDate: '',
@@ -29,6 +32,15 @@ Page({
       this.setData({ className: userInfo.className })
     }
     this.initDate()
+    this.loadData()
+  },
+
+  /**
+   * 页面显示（30秒内不重复加载）
+   */
+  onShow() {
+    const now = Date.now()
+    if (this.lastLoadTime && now - this.lastLoadTime < 30000) return
     this.loadData()
   },
 
@@ -89,6 +101,7 @@ Page({
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
 
+    this.lastLoadTime = Date.now()
     const { selectedDate } = this.data
 
     // 尝试从缓存读取（5分钟有效，按班级+日期缓存）
@@ -115,19 +128,16 @@ Page({
       })
 
       // 调用云函数获取班级学生考勤情况
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getByClass',
-          className: userInfo.className,
-          date: selectedDate
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getByClass',
+        className: userInfo.className,
+        date: selectedDate
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
+      if (result.success) {
         // 存入缓存
-        storage.setWithCache(cacheKey, cacheTimeKey, res.result.data)
-        this.applyData(res.result.data)
+        storage.setWithCache(cacheKey, cacheTimeKey, result.data)
+        this.applyData(result.data)
       }
     } catch (error) {
       console.error('加载数据失败:', error)

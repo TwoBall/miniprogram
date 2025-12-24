@@ -1,5 +1,6 @@
 import Toast from '@vant/weapp/toast/toast'
 const storage = require('../../utils/storage')
+const request = require('../../utils/request')
 
 Page({
   data: {
@@ -8,10 +9,8 @@ Page({
     roleIndex: 0,
     roleArray: ['社团老师', '班主任', '学部领导'],
     roleValues: ['teacher', 'classTeacher', 'leader'],
-    // 已有的具体选项（用于过滤，而非过滤角色类型）
-    existingClubs: [],
-    existingClasses: [],
-    existingDepartments: [],
+    // 已有的角色类型（用于过滤角色选择器）
+    existingRoles: [],
     // 可选列表
     departments: [],
     allDepartments: [], // 未过滤的学部列表
@@ -37,12 +36,28 @@ Page({
    * @param {Object} options - 页面参数
    */
   onLoad(options) {
-    // 获取openid和已有的具体选项
+    const existingRoles = options.existingRoles ? options.existingRoles.split(',') : []
+
+    // 全部角色选项
+    const allRoleArray = ['社团老师', '班主任', '学部领导']
+    const allRoleValues = ['teacher', 'classTeacher', 'leader']
+
+    // 过滤掉已有的角色类型
+    const filteredRoleArray = []
+    const filteredRoleValues = []
+    allRoleValues.forEach((role, index) => {
+      if (!existingRoles.includes(role)) {
+        filteredRoleArray.push(allRoleArray[index])
+        filteredRoleValues.push(role)
+      }
+    })
+
     this.setData({
       openid: options.openid || '',
-      existingClubs: options.existingClubs ? options.existingClubs.split(',') : [],
-      existingClasses: options.existingClasses ? options.existingClasses.split(',') : [],
-      existingDepartments: options.existingDepartments ? options.existingDepartments.split(',') : []
+      existingRoles,
+      roleArray: filteredRoleArray,
+      roleValues: filteredRoleValues,
+      roleIndex: 0
     })
 
     this.fetchOptions()
@@ -69,18 +84,18 @@ Page({
 
     // 缓存不存在或过期，从云端获取
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: { action: 'getFilterOptions' }
+      const result = await request.callCloud('students', { action: 'getFilterOptions' }, {
+        showLoading: false,
+        showError: false
       })
-      if (res.result.success) {
+      if (result.success) {
         // 存入缓存
         storage.setWithCache(
           storage.STORAGE_KEYS.FILTER_OPTIONS,
           storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
-          res.result.data
+          result.data
         )
-        this.applyFilterOptions(res.result.data)
+        this.applyFilterOptions(result.data)
       }
     } catch (error) {
       console.error('获取选项失败:', error)
@@ -91,30 +106,17 @@ Page({
    * 应用筛选选项到页面数据
    */
   applyFilterOptions(data) {
-    const { existingClubs, existingClasses, existingDepartments } = this.data
-
-    // 过滤掉已注册的具体选项
-    let departments = data.departments || []
-    let classes = data.classes || []
-    let clubs = data.clubs || []
+    const departments = data.departments || []
+    const classes = data.classes || []
+    const clubs = data.clubs || []
     const classDeptMap = data.classDeptMap || {}
 
-    if (existingClubs && existingClubs.length > 0) {
-      clubs = clubs.filter(c => !existingClubs.includes(c))
-    }
-    if (existingClasses && existingClasses.length > 0) {
-      classes = classes.filter(c => !existingClasses.includes(c))
-    }
-    if (existingDepartments && existingDepartments.length > 0) {
-      departments = departments.filter(d => !existingDepartments.includes(d))
-    }
-
-    // 班级按升序排列
-    classes.sort((a, b) => a.localeCompare(b, 'zh-CN'))
+    // 班级按自然排序（1班 < 2班 < 10班）
+    classes.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
 
     this.setData({
       departments,
-      allDepartments: data.departments || [],
+      allDepartments: departments,
       classes,
       allClasses: classes,
       classDeptMap,
@@ -151,18 +153,13 @@ Page({
   },
   onClassTeacherDeptPickerConfirm(e) {
     const dept = e.detail.value
-    const { allClasses, existingClasses, classDeptMap } = this.data
+    const { allClasses, classDeptMap } = this.data
 
     // 根据班级与学部的映射关系过滤（从数据库获取的真实数据）
-    let filtered = allClasses.filter(cls => classDeptMap[cls] === dept)
+    const filtered = allClasses.filter(cls => classDeptMap[cls] === dept)
 
-    // 过滤掉已注册的班级
-    if (existingClasses && existingClasses.length > 0) {
-      filtered = filtered.filter(c => !existingClasses.includes(c))
-    }
-
-    // 升序排列
-    filtered.sort((a, b) => a.localeCompare(b, 'zh-CN'))
+    // 自然排序
+    filtered.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
 
     this.setData({
       classTeacherDept: dept,
@@ -219,20 +216,17 @@ Page({
 
     try {
       // 调用云函数进行注册
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          action: 'register',
-          openid,
-          name,
-          role,
-          department: role === 'leader' ? department : '',
-          className: role === 'classTeacher' ? className : '',
-          clubName: role === 'teacher' ? clubName : ''
-        }
-      })
+      const result = await request.callCloud('user', {
+        action: 'register',
+        openid,
+        name,
+        role,
+        department: role === 'leader' ? department : '',
+        className: role === 'classTeacher' ? className : '',
+        clubName: role === 'teacher' ? clubName : ''
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
+      if (result.success) {
         Toast.success('注册申请已提交，请等待管理员审核')
 
         setTimeout(() => {
@@ -241,7 +235,7 @@ Page({
           })
         }, 2000)
       } else {
-        Toast.fail(res.result.message || '注册失败')
+        Toast.fail(result.message || '注册失败')
       }
     } catch (error) {
       console.error('注册失败:', error)

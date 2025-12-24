@@ -21,7 +21,8 @@ exports.main = async (event, context) => {
         register: handleRegister,
         approve: handleApprove,
         reject: handleApprove, // 使用同一个处理函数
-        getPending: handleGetPending
+        getPending: handleGetPending,
+        getAllByStatus: handleGetAllByStatus
     }
 
     const handler = handlers[action]
@@ -263,5 +264,78 @@ async function handleGetPending(event, wxContext) {
     } catch (error) {
         console.error('获取用户列表失败:', error)
         return { success: false, message: '获取用户列表失败', data: [], pagination: { page: 1, pageSize, total: 0, hasMore: false } }
+    }
+}
+
+/**
+ * 一次性获取所有状态的用户列表
+ * 减少云函数调用次数，提升性能
+ * @param {number} pendingPageSize - 待审批列表每页数量（通常需要全部加载）
+ * @param {number} approvedPageSize - 已通过列表每页数量
+ * @param {number} rejectedPageSize - 已拒绝列表每页数量
+ */
+async function handleGetAllByStatus(event, _wxContext) {
+    const {
+        pendingPageSize = 100,
+        approvedPageSize = 20,
+        rejectedPageSize = 20
+    } = event
+
+    try {
+        const baseCondition = { role: _.neq('admin') }
+
+        // 并行查询三种状态
+        const [pendingRes, approvedRes, rejectedRes, pendingCount, approvedCount, rejectedCount] = await Promise.all([
+            // 待审批列表
+            db.collection('users')
+                .where({ ...baseCondition, status: 'pending' })
+                .orderBy('createTime', 'desc')
+                .limit(pendingPageSize)
+                .get(),
+            // 已通过列表
+            db.collection('users')
+                .where({ ...baseCondition, status: 'approved' })
+                .orderBy('createTime', 'desc')
+                .limit(approvedPageSize)
+                .get(),
+            // 已拒绝列表
+            db.collection('users')
+                .where({ ...baseCondition, status: 'rejected' })
+                .orderBy('createTime', 'desc')
+                .limit(rejectedPageSize)
+                .get(),
+            // 各状态总数
+            db.collection('users').where({ ...baseCondition, status: 'pending' }).count(),
+            db.collection('users').where({ ...baseCondition, status: 'approved' }).count(),
+            db.collection('users').where({ ...baseCondition, status: 'rejected' }).count()
+        ])
+
+        return {
+            success: true,
+            pending: {
+                data: pendingRes.data,
+                total: pendingCount.total,
+                hasMore: pendingRes.data.length < pendingCount.total
+            },
+            approved: {
+                data: approvedRes.data,
+                total: approvedCount.total,
+                hasMore: approvedRes.data.length < approvedCount.total
+            },
+            rejected: {
+                data: rejectedRes.data,
+                total: rejectedCount.total,
+                hasMore: rejectedRes.data.length < rejectedCount.total
+            }
+        }
+    } catch (error) {
+        console.error('获取所有状态用户列表失败:', error)
+        return {
+            success: false,
+            message: '获取用户列表失败',
+            pending: { data: [], total: 0, hasMore: false },
+            approved: { data: [], total: 0, hasMore: false },
+            rejected: { data: [], total: 0, hasMore: false }
+        }
     }
 }

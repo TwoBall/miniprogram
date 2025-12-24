@@ -90,20 +90,6 @@
   color: #999999;
 }
 
-/* ========== 卡片基础样式 ========== */
-.common-card {
-  background-color: #ffffff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
-}
-
-/* ========== 通用列表 ========== */
-.common-list {
-  padding: 0 30rpx;
-}
-
 /* ========== 页面标题样式 ========== */
 .page-title {
   display: flex;
@@ -128,32 +114,4 @@
 
 .detail-row:last-child {
   margin-bottom: 0;
-}
-
-.detail-label {
-  color: #999999;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.detail-value {
-  flex: 1;
-  color: #333333;
-}
-
-/* ========== 状态颜色 ========== */
-.text-success {
-  color: #07c160;
-}
-
-.text-danger {
-  color: #ee0a24;
-}
-
-.text-warning {
-  color: #ff9800;
-}
-
-.text-muted {
-  color: #999999;
 }

@@ -1,5 +1,6 @@
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
+const request = require('../../../utils/request')
 
 Page({
   data: {
@@ -85,18 +86,15 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' })
 
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getHistory',
-          teacherId: userInfo._id,
-          page: 1,
-          pageSize: this.data.pageSize
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getHistory',
+        teacherId: userInfo._id,
+        page: 1,
+        pageSize: this.data.pageSize
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
-        const { data, pagination } = res.result
+      if (result.success) {
+        const { data, pagination } = result
 
         // 存入缓存
         const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
@@ -135,18 +133,15 @@ Page({
     const nextPage = this.data.page + 1
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getHistory',
-          teacherId: userInfo._id,
-          page: nextPage,
-          pageSize: this.data.pageSize
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getHistory',
+        teacherId: userInfo._id,
+        page: nextPage,
+        pageSize: this.data.pageSize
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
-        const { data, pagination } = res.result
+      if (result.success) {
+        const { data, pagination } = result
 
         this.setData({
           records: [...this.data.records, ...data],
@@ -168,6 +163,8 @@ Page({
    */
   viewDetail(e) {
     const record = e.currentTarget.dataset.record
+    // 预传递数据，减少详情页云函数调用
+    wx.setStorageSync('temp_record_detail', record)
     wx.navigateTo({
       url: `/pages/teacher/detail/detail?recordId=${record._id}`
     })

@@ -13,15 +13,6 @@ function getUserInfo() {
 }
 
 /**
- * 检查是否已登录
- * @returns {boolean} 是否已登录
- */
-function isLoggedIn() {
-  const userInfo = getUserInfo()
-  return !!userInfo
-}
-
-/**
  * 检查用户角色权限
  * 如果不符合要求，自动跳转到登录页
  * @param {string} requiredRole - 需要的角色，如 'teacher', 'classTeacher', 'leader', 'admin'
@@ -49,30 +40,6 @@ function checkRole(requiredRole, options = {}) {
 }
 
 /**
- * 检查用户是否拥有多个角色中的任意一个
- * @param {string[]} allowedRoles - 允许的角色数组
- * @param {Object} options - 选项配置
- * @returns {Object|null} 符合权限返回用户信息，否则返回 null
- */
-function checkRoles(allowedRoles, options = {}) {
-  const {
-    redirect = true,
-    redirectUrl = '/pages/login/login'
-  } = options
-
-  const userInfo = getUserInfo()
-
-  if (!userInfo || !allowedRoles.includes(userInfo.role)) {
-    if (redirect) {
-      wx.reLaunch({ url: redirectUrl })
-    }
-    return null
-  }
-
-  return userInfo
-}
-
-/**
  * 获取用户所有已注册的角色
  * @returns {Array} 角色数组
  */
@@ -82,8 +49,6 @@ function getAllUserRoles() {
 
 module.exports = {
   getUserInfo,
-  isLoggedIn,
   checkRole,
-  checkRoles,
   getAllUserRoles
 }

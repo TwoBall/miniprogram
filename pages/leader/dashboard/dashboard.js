@@ -1,10 +1,13 @@
-const _app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const storage = require('../../../utils/storage')
+const request = require('../../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
+  // 上次加载时间（用于防抖）
+  lastLoadTime: 0,
+
   data: {
     department: '',
     selectedDate: '',
@@ -28,6 +31,15 @@ Page({
       this.setData({ department: userInfo.department })
     }
     this.initDate()
+    this.loadData()
+  },
+
+  /**
+   * 页面显示（30秒内不重复加载）
+   */
+  onShow() {
+    const now = Date.now()
+    if (this.lastLoadTime && now - this.lastLoadTime < 30000) return
     this.loadData()
   },
 
@@ -88,6 +100,7 @@ Page({
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
 
+    this.lastLoadTime = Date.now()
     const { selectedDate } = this.data
 
     // 尝试从缓存读取（5分钟有效，按学部+日期缓存）
@@ -98,6 +111,8 @@ Page({
       const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
       if (cached) {
         console.log('使用学部考勤缓存')
+        // 班级按自然排序（缓存数据也需要排序以保证一致性）
+        cached.classes.sort((a, b) => a.className.localeCompare(b.className, 'zh-CN', { numeric: true }))
         this.setData({
           classes: cached.classes,
           totalClasses: cached.totalClasses,
@@ -117,17 +132,16 @@ Page({
       })
 
       // 调用云函数获取学部考勤情况
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getByDepartment',
-          department: userInfo.department,
-          date: selectedDate
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getByDepartment',
+        department: userInfo.department,
+        date: selectedDate
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
-        const data = res.result.data
+      if (result.success) {
+        const data = result.data
+        // 班级按自然排序（1班 < 2班 < 10班）
+        data.classes.sort((a, b) => a.className.localeCompare(b.className, 'zh-CN', { numeric: true }))
         // 存入缓存
         storage.setWithCache(cacheKey, cacheTimeKey, data)
 

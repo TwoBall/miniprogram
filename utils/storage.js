@@ -16,10 +16,6 @@ const STORAGE_KEYS = {
   FILTER_OPTIONS: 'filterOptions',
   /** 筛选选项缓存时间戳 */
   FILTER_OPTIONS_TIME: 'filterOptionsTime',
-  /** 学生列表缓存 */
-  STUDENTS_LIST: 'studentsList',
-  /** 学生列表缓存时间戳 */
-  STUDENTS_LIST_TIME: 'studentsListTime',
   /** 历史记录缓存 */
   HISTORY_RECORDS: 'historyRecords',
   /** 历史记录缓存时间戳 */
@@ -36,10 +32,12 @@ const STORAGE_KEYS = {
  * 缓存有效期（毫秒）
  */
 const CACHE_DURATION = {
+  /** 2分钟 */
+  TWO_MINUTES: 2 * 60 * 1000,
   /** 5分钟 */
   FIVE_MINUTES: 5 * 60 * 1000,
-  /** 1小时 */
-  ONE_HOUR: 60 * 60 * 1000,
+  /** 10分钟 */
+  TEN_MINUTES: 10 * 60 * 1000,
   /** 1天 */
   ONE_DAY: 24 * 60 * 60 * 1000
 }
@@ -90,27 +88,13 @@ function remove(key) {
 }
 
 /**
- * 清空所有存储
- * @returns {boolean} 是否成功
- */
-function clear() {
-  try {
-    wx.clearStorageSync()
-    return true
-  } catch (error) {
-    console.error('清空存储失败:', error)
-    return false
-  }
-}
-
-/**
  * 获取带缓存的数据
  * @param {string} key - 存储键名
  * @param {string} timeKey - 时间戳键名
  * @param {number} duration - 有效期（毫秒）
  * @returns {*} 缓存的值，过期或不存在返回 null
  */
-function getWithCache(key, timeKey, duration = CACHE_DURATION.ONE_HOUR) {
+function getWithCache(key, timeKey, duration = CACHE_DURATION.FIVE_MINUTES) {
   const data = get(key)
   const time = get(timeKey)
 
@@ -147,8 +131,6 @@ module.exports = {
   CACHE_DURATION,
   get,
   set,
-  remove,
-  clear,
   getWithCache,
   setWithCache
 }

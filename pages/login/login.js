@@ -1,4 +1,5 @@
 const app = getApp()
+const request = require('../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -23,12 +24,10 @@ Page({
         return
       }
 
-      const cloudRes = await wx.cloud.callFunction({
-        name: 'user',
-        data: { action: 'login' }
+      const result = await request.callCloud('user', { action: 'login' }, {
+        showLoading: false,
+        showError: false
       })
-
-      const result = cloudRes.result
 
       if (!result.success) {
         Toast.fail(result.message || '登录失败')

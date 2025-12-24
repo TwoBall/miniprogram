@@ -118,30 +118,8 @@ function showNetworkError() {
   Toast.fail('网络异常，请检查网络连接')
 }
 
-/**
- * 包装异步函数，添加错误处理
- * @param {Function} fn - 异步函数
- * @param {Object} options - 错误处理选项
- * @returns {Function} 包装后的函数
- */
-function withErrorHandling(fn, options = {}) {
-  return async function (...args) {
-    try {
-      return await fn.apply(this, args)
-    } catch (error) {
-      handleError(error, options)
-      throw error
-    }
-  }
-}
-
 module.exports = {
-  ErrorType,
-  ErrorMessages,
-  parseErrorType,
-  getFriendlyMessage,
   handleError,
   checkNetwork,
-  showNetworkError,
-  withErrorHandling
+  showNetworkError
 }

@@ -1,6 +1,6 @@
-const _app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
+const request = require('../../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -81,16 +81,23 @@ Page({
 
       this.setData({ pageLoading: true })
 
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: { action: 'getByClub', clubName: userInfo.clubName }
-      })
+      const result = await request.callCloud('students', {
+        action: 'getByClub',
+        clubName: userInfo.clubName
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
-        const allStudents = res.result.data.map(student => ({
+      if (result.success) {
+        const allStudents = result.data.map(student => ({
           ...student,
           status: null
         }))
+
+        // 按班级+姓名排序
+        allStudents.sort((a, b) => {
+          const classCompare = (a.className || '').localeCompare(b.className || '', 'zh-CN', { numeric: true })
+          if (classCompare !== 0) return classCompare
+          return (a.name || '').localeCompare(b.name || '', 'zh-CN')
+        })
 
         // 根据星期过滤学部
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))].sort()
@@ -416,17 +423,18 @@ Page({
 
     try {
       // 检查今日记录
-      const checkRes = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: { action: 'checkTodaySubmissions', clubName, date: currentDate }
-      })
+      const checkResult = await request.callCloud('attendance', {
+        action: 'checkTodaySubmissions',
+        clubName,
+        date: currentDate
+      }, { showLoading: false, showError: false })
 
       let submitMode = 'add'
-      if (checkRes.result.success && checkRes.result.count > 0) {
+      if (checkResult.success && checkResult.count > 0) {
         try {
           await Dialog.confirm({
             title: '今日已有记录',
-            message: `检测到已有 ${checkRes.result.count} 条记录，是否覆盖？`,
+            message: `检测到已有 ${checkResult.count} 条记录，是否覆盖？`,
             confirmButtonText: '覆盖',
             cancelButtonText: '新增'
           })
@@ -437,35 +445,32 @@ Page({
       }
 
       // 提交
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'submit',
-          clubName,
-          teacherId: userInfo._id,
-          teacherName: userInfo.name,
-          date: currentDate,
-          time: currentTime,
-          mode: submitMode,
-          records: students.map(s => ({
-            studentId: s._id,
-            studentName: s.name,
-            className: s.className,
-            department: s.department,
-            gender: s.gender || '',
-            clubName: s.clubName || clubName,
-            classTeacher: s.classTeacher || '',
-            classTeacherPhone: s.classTeacherPhone || '',
-            status: s.status
-          }))
-        }
-      })
+      const submitResult = await request.callCloud('attendance', {
+        action: 'submit',
+        clubName,
+        teacherId: userInfo._id,
+        teacherName: userInfo.name,
+        date: currentDate,
+        time: currentTime,
+        mode: submitMode,
+        records: students.map(s => ({
+          studentId: s._id,
+          studentName: s.name,
+          className: s.className,
+          department: s.department,
+          gender: s.gender || '',
+          clubName: s.clubName || clubName,
+          classTeacher: s.classTeacher || '',
+          classTeacherPhone: s.classTeacherPhone || '',
+          status: s.status
+        }))
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
+      if (submitResult.success) {
         Toast.success(submitMode === 'cover' ? '已覆盖' : '提交成功')
         setTimeout(() => this.loadStudents(), 1500)
       } else {
-        Toast.fail(res.result.message || '提交失败')
+        Toast.fail(submitResult.message || '提交失败')
       }
     } catch (error) {
       console.error('提交失败:', error)

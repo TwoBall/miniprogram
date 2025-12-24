@@ -46,9 +46,9 @@ App({
    */
   onPageNotFound(res) {
     console.error('[页面不存在]', res.path)
-    // 跳转到首页或错误页
-    wx.switchTab({
-      url: '/pages/index/index'
+    // 跳转到登录页
+    wx.reLaunch({
+      url: '/pages/login/login'
     })
   },
 
@@ -89,7 +89,6 @@ App({
 
   globalData: {
     userInfo: null,
-    userRole: null,
     wasOffline: false,
     networkType: 'unknown'
   }

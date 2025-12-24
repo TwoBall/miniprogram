@@ -29,47 +29,11 @@ function formatTime(date) {
 }
 
 /**
- * 格式化日期时间为 YYYY-MM-DD HH:mm
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
- * @returns {string} 格式化后的日期时间字符串
- */
-function formatDateTime(date) {
-  return `${formatDate(date)} ${formatTime(date)}`
-}
-
-/**
- * 格式化日期时间为 YYYY-MM-DD HH:mm:ss
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
- * @returns {string} 格式化后的完整日期时间字符串
- */
-function formatFullDateTime(date) {
-  const d = date ? new Date(date) : new Date()
-  const seconds = String(d.getSeconds()).padStart(2, '0')
-  return `${formatDateTime(d)}:${seconds}`
-}
-
-/**
  * 获取当前日期字符串 YYYY-MM-DD
  * @returns {string} 当前日期
  */
 function getCurrentDate() {
   return formatDate(new Date())
-}
-
-/**
- * 获取当前时间字符串 HH:mm
- * @returns {string} 当前时间
- */
-function getCurrentTime() {
-  return formatTime(new Date())
-}
-
-/**
- * 获取当前日期时间字符串 YYYY-MM-DD HH:mm
- * @returns {string} 当前日期时间
- */
-function getCurrentDateTime() {
-  return formatDateTime(new Date())
 }
 
 /**
@@ -95,11 +59,7 @@ function getDayOfWeekName(date) {
 module.exports = {
   formatDate,
   formatTime,
-  formatDateTime,
-  formatFullDateTime,
   getCurrentDate,
-  getCurrentTime,
-  getCurrentDateTime,
   getDayOfWeek,
   getDayOfWeekName
 }

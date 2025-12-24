@@ -1,4 +1,5 @@
 const auth = require('../../../utils/auth')
+const request = require('../../../utils/request')
 
 Page({
   data: {
@@ -29,17 +30,14 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' })
 
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getByClass',
-          className,
-          date
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getByClass',
+        className,
+        date
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
-        const students = res.result.data.students
+      if (result.success) {
+        const students = result.data.students
         // 排序：缺课 > 到课 > 未点名
         const sortedStudents = students.sort((a, b) => {
           const statusOrder = { 'absent': 0, 'present': 1, null: 2 }

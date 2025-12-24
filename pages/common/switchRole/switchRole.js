@@ -1,6 +1,7 @@
 const app = getApp()
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
+const request = require('../../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -63,13 +64,13 @@ Page({
      */
   async fetchRolesFromCloud() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: { action: 'login' }
+      const result = await request.callCloud('user', { action: 'login' }, {
+        showLoading: false,
+        showError: false
       })
 
-      if (res.result.success && res.result.userList) {
-        storage.set(storage.STORAGE_KEYS.ALL_USER_ROLES, res.result.userList)
+      if (result.success && result.userList) {
+        storage.set(storage.STORAGE_KEYS.ALL_USER_ROLES, result.userList)
         this.loadRoles()
       } else {
         this.setData({ loading: false })
@@ -124,23 +125,18 @@ Page({
 
   /**
      * 添加新角色
-     * 跳转到注册页面,传递已有的社团、班级、学部信息用于过滤
+     * 跳转到注册页面，传递已有的角色类型用于过滤（每种角色只能注册一个）
      */
   addNewRole() {
     const roles = this.data.roles
-    // 社团老师：过滤已注册的社团
-    const existingClubs = roles.filter(r => r.clubName).map(r => r.clubName)
-    // 班主任：过滤已注册的班级
-    const existingClasses = roles.filter(r => r.className).map(r => r.className)
-    // 学部领导：只有 leader 角色才过滤学部，班主任虽然有 department 字段但不应过滤学部
-    const existingDepartments = roles.filter(r => r.role === 'leader' && r.department).map(r => r.department)
+    // 获取已有的角色类型（与后端逻辑一致：每种角色类型只能有一个）
+    const existingRoles = [...new Set(roles.map(r => r.role))]
     const openid = roles[0]?.openid || ''
 
-    // 传递已有的具体选项
     let url = `/pages/register/register?openid=${openid}`
-    if (existingClubs.length > 0) url += `&existingClubs=${existingClubs.join(',')}`
-    if (existingClasses.length > 0) url += `&existingClasses=${existingClasses.join(',')}`
-    if (existingDepartments.length > 0) url += `&existingDepartments=${existingDepartments.join(',')}`
+    if (existingRoles.length > 0) {
+      url += `&existingRoles=${existingRoles.join(',')}`
+    }
 
     wx.navigateTo({ url })
   },

@@ -1,5 +1,6 @@
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
+const request = require('../../../utils/request')
 
 Page({
   data: {
@@ -48,20 +49,17 @@ Page({
 
     try {
       // 调用云函数提交反馈
-      const res = await wx.cloud.callFunction({
-        name: 'submitFeedback',
-        data: {
-          studentId,
-          studentName,
-          clubName,
-          className: userInfo.className,
-          teacherName: userInfo.name,
-          feedback,
-          date: dateUtil.getCurrentDate()
-        }
-      })
+      const result = await request.callCloud('submitFeedback', {
+        studentId,
+        studentName,
+        clubName,
+        className: userInfo.className,
+        teacherName: userInfo.name,
+        feedback,
+        date: dateUtil.getCurrentDate()
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
+      if (result.success) {
         wx.showToast({
           title: '反馈已发送',
           icon: 'success'
@@ -72,7 +70,7 @@ Page({
         }, 1500)
       } else {
         wx.showToast({
-          title: res.result.message || '发送失败',
+          title: result.message || '发送失败',
           icon: 'none'
         })
       }

@@ -1,4 +1,5 @@
 const auth = require('../../../utils/auth')
+const request = require('../../../utils/request')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -20,13 +21,39 @@ Page({
     auth.checkRole('teacher')
     if (options.recordId) {
       this.setData({ recordId: options.recordId })
-      this.loadRecordDetail(options.recordId)
+
+      // 优先使用预传递的数据
+      const cachedRecord = wx.getStorageSync('temp_record_detail')
+      if (cachedRecord && cachedRecord._id === options.recordId && cachedRecord.records) {
+        console.log('使用预传递的记录数据')
+        wx.removeStorageSync('temp_record_detail')
+        this.applyRecordData(cachedRecord)
+      } else {
+        wx.removeStorageSync('temp_record_detail')
+        this.loadRecordDetail(options.recordId)
+      }
     } else {
       Toast('记录不存在')
       setTimeout(() => {
         wx.navigateBack()
       }, 1500)
     }
+  },
+
+  /**
+   * 应用记录数据到页面
+   * @param {Object} record - 考勤记录
+   */
+  applyRecordData(record) {
+    const presentCount = record.records.filter(r => r.status === 'present').length
+    const absentCount = record.records.filter(r => r.status === 'absent').length
+
+    this.setData({
+      record,
+      presentCount,
+      absentCount,
+      loading: false
+    })
   },
 
   /**
@@ -37,16 +64,13 @@ Page({
     try {
       wx.showLoading({ title: '加载中...' })
 
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getDetail',
-          recordId: recordId
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'getDetail',
+        recordId: recordId
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success && res.result.data) {
-        const record = res.result.data
+      if (result.success && result.data) {
+        const record = result.data
         const presentCount = record.records.filter(r => r.status === 'present').length
         const absentCount = record.records.filter(r => r.status === 'absent').length
 
@@ -57,7 +81,7 @@ Page({
           loading: false
         })
       } else {
-        Toast(res.result.message || '记录不存在')
+        Toast(result.message || '记录不存在')
         setTimeout(() => {
           wx.navigateBack()
         }, 1500)
@@ -103,20 +127,17 @@ Page({
     this.setData({ saving: true })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'updateRecords',
-          recordId,
-          records: record.records
-        }
-      })
+      const result = await request.callCloud('attendance', {
+        action: 'updateRecords',
+        recordId,
+        records: record.records
+      }, { showLoading: false, showError: false })
 
-      if (res.result.success) {
+      if (result.success) {
         Toast.success('保存成功')
         this.setData({ hasChanges: false })
       } else {
-        Toast.fail(res.result.message || '保存失败')
+        Toast.fail(result.message || '保存失败')
       }
     } catch (error) {
       console.error('保存失败:', error)
