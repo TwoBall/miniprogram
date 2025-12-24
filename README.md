@@ -2,7 +2,7 @@
 
 > 一个基于微信小程序和云开发的校内社团点名管理系统
 
-[![版本](https://img.shields.io/badge/版本-v1.1.0-blue.svg)](https://github.com)
+[![版本](https://img.shields.io/badge/版本-v1.2.0-blue.svg)](https://github.com)
 [![基础库](https://img.shields.io/badge/基础库-2.2.3+-green.svg)](https://developers.weixin.qq.com/miniprogram/dev/framework/)
 [![许可证](https://img.shields.io/badge/许可证-MIT-orange.svg)](LICENSE)
 
@@ -32,6 +32,11 @@
    - 查看班级详细考勤情况及反馈
    - 智能排序（缺课优先）
 
+4. **系统管理员**
+   - 审批用户注册申请
+   - 管理用户权限
+   - 查看已通过/已拒绝用户列表
+
 ### 💡 核心功能
 
 - ✅ **用户认证**：微信登录、角色注册、权限审批
@@ -50,11 +55,12 @@
 | 微信云开发 | 后端服务 | - |
 | 云数据库 | 数据存储 | MongoDB |
 | 云函数 | 业务逻辑 | Node.js |
+| ESLint | 代码规范 | 8.57.0 |
 
 ## 📁 项目结构
 
 ```
-我来点名啦/
+社团点名系统/
 ├── pages/                          # 页面目录
 │   ├── login/                      # 登录页
 │   ├── register/                   # 注册页
@@ -64,20 +70,35 @@
 │   ├── classTeacher/               # 班主任页面
 │   │   ├── overview/               # 班级概览
 │   │   └── feedback/               # 发送反馈
-│   └── leader/                     # 学部领导页面
-│       ├── dashboard/              # 学部仪表盘
-│       └── detail/                 # 班级详情
+│   ├── leader/                     # 学部领导页面
+│   │   ├── dashboard/              # 学部仪表盘
+│   │   └── detail/                 # 班级详情
+│   ├── admin/                      # 管理员页面
+│   │   └── approval/               # 用户审批
+│   └── common/                     # 公共页面
+│       └── switchRole/             # 切换身份
+├── components/                     # 自定义组件
+│   └── skeleton/                   # 骨架屏组件
+├── utils/                          # 工具函数
+│   ├── request.js                  # 云函数调用封装
+│   ├── auth.js                     # 权限检查工具
+│   ├── date.js                     # 日期格式化工具
+│   ├── storage.js                  # 本地存储封装
+│   └── error.js                    # 错误处理工具
 ├── cloudfunctions/                 # 云函数目录
-│   ├── user/                       # 用户管理（登录/注册）
+│   ├── user/                       # 用户管理（登录/注册/审批）
 │   ├── students/                   # 学生管理
 │   ├── attendance/                 # 考勤管理（提交/查询）
 │   └── submitFeedback/             # 提交反馈
 ├── images/                         # 图片资源
+├── styles/                         # 公共样式
+│   └── common.wxss                 # 公共样式文件
 ├── app.js                          # 小程序入口
 ├── app.json                        # 小程序配置
 ├── app.wxss                        # 全局样式
-├── DATABASE.md                     # 数据库设计文档
-└── README.md                       # 项目说明文档
+├── .eslintrc.js                    # ESLint 配置
+├── package.json                    # 项目依赖
+└── *.md                            # 项目文档
 ```
 
 ## 🚀 快速开始
@@ -160,6 +181,9 @@ node convert.js
 
 - [开发文档](DEVELOPMENT.md) - 完整的开发指南和 API 文档
 - [数据库设计](DATABASE.md) - 数据库结构和数据导入说明
+- [数据库索引](DATABASE_INDEX.md) - 数据库索引优化说明
+- [优化待办清单](TODO.md) - 项目优化任务清单
+- [新功能计划](NEW_FEATURES_PLAN.md) - 未来功能规划（暂缓）
 
 ## 📱 使用指南
 
@@ -214,6 +238,15 @@ node convert.js
 - 统一使用驼峰命名法
 - 所有函数添加 JSDoc 注释
 - 统一错误处理方式
+- ESLint 代码检查（2空格缩进、无分号、单引号）
+
+```bash
+# 运行代码检查
+npm run lint
+
+# 自动修复格式问题
+npm run lint:fix
+```
 
 ### 项目特点
 
@@ -227,6 +260,8 @@ node convert.js
 - 突破 100 条查询限制的批量查询
 - 使用 Promise.all 并行请求
 - 合理的数据缓存策略
+- 骨架屏加载效果
+- 分页加载优化
 
 ✅ **完整文档**
 - 详细的开发文档
@@ -252,6 +287,18 @@ chore: 构建/工具链相关
 ```
 
 ## 📝 更新日志
+
+### v1.2.0 (2025-12-24)
+- ✨ 添加管理员用户审批功能
+- ✨ 添加骨架屏加载效果
+- ✨ 添加分页加载（历史记录/审批列表）
+- ✨ 添加下拉刷新功能
+- ✨ 添加全局错误处理机制
+- ✨ 创建公共工具模块（request/auth/date/storage/error）
+- ⚡ 云函数调用优化（本地缓存+防抖）
+- ⚡ 数据库索引优化
+- 🔧 添加 ESLint 代码规范检查
+- 🎨 优化空状态展示
 
 ### v1.1.0 (2025-12-22)
 - ✨ 完成代码规范化和清理

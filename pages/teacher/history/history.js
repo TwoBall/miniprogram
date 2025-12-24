@@ -5,7 +5,12 @@ Page({
   data: {
     records: [],
     loading: false,
-    pageLoading: true
+    pageLoading: true,
+    // 分页相关
+    page: 1,
+    pageSize: 20,
+    hasMore: true,
+    loadingMore: false
   },
 
   // 上次加载时间（用于防抖）
@@ -30,12 +35,25 @@ Page({
    * 页面下拉刷新（强制刷新，忽略缓存）
    */
   async onPullDownRefresh() {
+    // 重置分页
+    this.setData({ page: 1, hasMore: true, records: [] })
     await this.loadHistory(true)
     wx.stopPullDownRefresh()
   },
 
   /**
-   * 加载历史点名记录
+   * 上拉触底加载更多
+   */
+  async onReachBottom() {
+    if (!this.data.hasMore || this.data.loadingMore) return
+
+    this.setData({ loadingMore: true })
+    await this.loadMoreHistory()
+    this.setData({ loadingMore: false })
+  },
+
+  /**
+   * 加载历史点名记录（首页）
    * @param {boolean} forceRefresh - 是否强制刷新（忽略缓存）
    */
   async loadHistory(forceRefresh = false) {
@@ -44,20 +62,25 @@ Page({
 
     this.lastLoadTime = Date.now()
 
-    // 尝试从缓存读取（5分钟有效）
+    // 尝试从缓存读取（5分钟有效）- 仅首页使用缓存
     if (!forceRefresh) {
       const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
       const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
       const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
 
-      if (cached) {
+      if (cached && cached.records) {
         console.log('使用历史记录缓存')
-        this.setData({ records: cached, pageLoading: false })
+        this.setData({
+          records: cached.records,
+          page: cached.page || 1,
+          hasMore: cached.hasMore !== false,
+          pageLoading: false
+        })
         return
       }
     }
 
-    this.setData({ pageLoading: true })
+    this.setData({ pageLoading: true, page: 1 })
 
     try {
       wx.showLoading({ title: '加载中...' })
@@ -66,18 +89,28 @@ Page({
         name: 'attendance',
         data: {
           action: 'getHistory',
-          teacherId: userInfo._id
+          teacherId: userInfo._id,
+          page: 1,
+          pageSize: this.data.pageSize
         }
       })
 
       if (res.result.success) {
+        const { data, pagination } = res.result
+
         // 存入缓存
         const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
         const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
-        storage.setWithCache(cacheKey, cacheTimeKey, res.result.data)
+        storage.setWithCache(cacheKey, cacheTimeKey, {
+          records: data,
+          page: 1,
+          hasMore: pagination.hasMore
+        })
 
         this.setData({
-          records: res.result.data
+          records: data,
+          page: 1,
+          hasMore: pagination.hasMore
         })
       }
     } catch (error) {
@@ -89,6 +122,44 @@ Page({
     } finally {
       wx.hideLoading()
       this.setData({ pageLoading: false })
+    }
+  },
+
+  /**
+   * 加载更多历史记录
+   */
+  async loadMoreHistory() {
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
+
+    const nextPage = this.data.page + 1
+
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'attendance',
+        data: {
+          action: 'getHistory',
+          teacherId: userInfo._id,
+          page: nextPage,
+          pageSize: this.data.pageSize
+        }
+      })
+
+      if (res.result.success) {
+        const { data, pagination } = res.result
+
+        this.setData({
+          records: [...this.data.records, ...data],
+          page: nextPage,
+          hasMore: pagination.hasMore
+        })
+      }
+    } catch (error) {
+      console.error('加载更多记录失败:', error)
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      })
     }
   },
 

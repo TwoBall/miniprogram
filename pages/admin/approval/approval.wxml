@@ -139,6 +139,14 @@
           description="暂无已通过用户"
           image="search"
         />
+
+        <!-- 加载更多提示 -->
+        <view class="load-more" wx:if="{{approvedLoading}}">
+          <van-loading size="24px">加载中...</van-loading>
+        </view>
+        <view class="no-more" wx:elif="{{approvedUsers.length > 0 && !approvedHasMore}}">
+          <text>— 没有更多了 —</text>
+        </view>
       </view>
     </van-tab>
 
@@ -187,6 +195,14 @@
           description="暂无已拒绝用户"
           image="search"
         />
+
+        <!-- 加载更多提示 -->
+        <view class="load-more" wx:if="{{rejectedLoading}}">
+          <van-loading size="24px">加载中...</van-loading>
+        </view>
+        <view class="no-more" wx:elif="{{rejectedUsers.length > 0 && !rejectedHasMore}}">
+          <text>— 没有更多了 —</text>
+        </view>
       </view>
     </van-tab>
   </van-tabs>

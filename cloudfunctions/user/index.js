@@ -220,28 +220,48 @@ async function handleApprove(event, wxContext) {
 
 /**
  * 获取用户列表
- * 支持按状态筛选
+ * 支持按状态筛选和分页
+ * @param {string} status - 状态筛选: pending/approved/rejected/all
+ * @param {number} page - 页码，从1开始，默认1
+ * @param {number} pageSize - 每页数量，默认20
  */
 async function handleGetPending(event, wxContext) {
-    const { status } = event
-    const adminOpenid = wxContext.OPENID
+    const { status, page = 1, pageSize = 20 } = event
 
     try {
-        // 可选：验证管理员权限
         const condition = { role: _.neq('admin') }
         if (status && status !== 'all') {
             condition.status = status
         }
 
+        // 获取总数
+        const countRes = await db.collection('users')
+            .where(condition)
+            .count()
+        const total = countRes.total
+
+        // 计算跳过的记录数
+        const skip = (page - 1) * pageSize
+
         const result = await db.collection('users')
             .where(condition)
             .orderBy('createTime', 'desc')
-            .limit(100)
+            .skip(skip)
+            .limit(pageSize)
             .get()
 
-        return { success: true, data: result.data }
+        return {
+            success: true,
+            data: result.data,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                hasMore: skip + result.data.length < total
+            }
+        }
     } catch (error) {
         console.error('获取用户列表失败:', error)
-        return { success: false, message: '获取用户列表失败', data: [] }
+        return { success: false, message: '获取用户列表失败', data: [], pagination: { page: 1, pageSize, total: 0, hasMore: false } }
     }
 }

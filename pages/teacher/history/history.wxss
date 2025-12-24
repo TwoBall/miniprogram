@@ -86,3 +86,17 @@
   font-size: 48rpx;
   color: #cccccc;
 }
+
+/* 加载更多 */
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: 30rpx 0;
+}
+
+.no-more {
+  text-align: center;
+  padding: 30rpx 0;
+  color: #999999;
+  font-size: 26rpx;
+}

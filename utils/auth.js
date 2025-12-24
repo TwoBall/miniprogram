@@ -9,7 +9,7 @@ const storage = require('./storage')
  * @returns {Object|null} 用户信息对象，未登录返回 null
  */
 function getUserInfo() {
-    return storage.get(storage.STORAGE_KEYS.USER_INFO)
+  return storage.get(storage.STORAGE_KEYS.USER_INFO)
 }
 
 /**
@@ -17,8 +17,8 @@ function getUserInfo() {
  * @returns {boolean} 是否已登录
  */
 function isLoggedIn() {
-    const userInfo = getUserInfo()
-    return !!userInfo
+  const userInfo = getUserInfo()
+  return !!userInfo
 }
 
 /**
@@ -31,21 +31,21 @@ function isLoggedIn() {
  * @returns {Object|null} 符合权限返回用户信息，否则返回 null
  */
 function checkRole(requiredRole, options = {}) {
-    const {
-        redirect = true,
-        redirectUrl = '/pages/login/login'
-    } = options
+  const {
+    redirect = true,
+    redirectUrl = '/pages/login/login'
+  } = options
 
-    const userInfo = getUserInfo()
+  const userInfo = getUserInfo()
 
-    if (!userInfo || userInfo.role !== requiredRole) {
-        if (redirect) {
-            wx.reLaunch({ url: redirectUrl })
-        }
-        return null
+  if (!userInfo || userInfo.role !== requiredRole) {
+    if (redirect) {
+      wx.reLaunch({ url: redirectUrl })
     }
+    return null
+  }
 
-    return userInfo
+  return userInfo
 }
 
 /**
@@ -55,21 +55,21 @@ function checkRole(requiredRole, options = {}) {
  * @returns {Object|null} 符合权限返回用户信息，否则返回 null
  */
 function checkRoles(allowedRoles, options = {}) {
-    const {
-        redirect = true,
-        redirectUrl = '/pages/login/login'
-    } = options
+  const {
+    redirect = true,
+    redirectUrl = '/pages/login/login'
+  } = options
 
-    const userInfo = getUserInfo()
+  const userInfo = getUserInfo()
 
-    if (!userInfo || !allowedRoles.includes(userInfo.role)) {
-        if (redirect) {
-            wx.reLaunch({ url: redirectUrl })
-        }
-        return null
+  if (!userInfo || !allowedRoles.includes(userInfo.role)) {
+    if (redirect) {
+      wx.reLaunch({ url: redirectUrl })
     }
+    return null
+  }
 
-    return userInfo
+  return userInfo
 }
 
 /**
@@ -77,13 +77,13 @@ function checkRoles(allowedRoles, options = {}) {
  * @returns {Array} 角色数组
  */
 function getAllUserRoles() {
-    return storage.get(storage.STORAGE_KEYS.ALL_USER_ROLES) || []
+  return storage.get(storage.STORAGE_KEYS.ALL_USER_ROLES) || []
 }
 
 module.exports = {
-    getUserInfo,
-    isLoggedIn,
-    checkRole,
-    checkRoles,
-    getAllUserRoles
+  getUserInfo,
+  isLoggedIn,
+  checkRole,
+  checkRoles,
+  getAllUserRoles
 }

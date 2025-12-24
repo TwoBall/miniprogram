@@ -105,16 +105,29 @@ async function handleSubmit(event) {
 }
 
 /**
- * 获取教师的历史点名记录
+ * 获取教师的历史点名记录（支持分页）
+ * @param {string} teacherId - 教师ID
+ * @param {number} page - 页码，从1开始，默认1
+ * @param {number} pageSize - 每页数量，默认20
  */
 async function handleGetHistory(event) {
-    const { teacherId } = event
+    const { teacherId, page = 1, pageSize = 20 } = event
 
     try {
+        // 先获取总数
+        const countRes = await db.collection('attendance_records')
+            .where({ teacherId })
+            .count()
+        const total = countRes.total
+
+        // 计算跳过的记录数
+        const skip = (page - 1) * pageSize
+
         const recordsRes = await db.collection('attendance_records')
             .where({ teacherId })
             .orderBy('createTime', 'desc')
-            .limit(50)
+            .skip(skip)
+            .limit(pageSize)
             .field({ _id: true, date: true, time: true, clubName: true, records: true })
             .get()
 
@@ -128,10 +141,19 @@ async function handleGetHistory(event) {
             absentCount: record.records.filter(r => r.status === 'absent').length
         }))
 
-        return { success: true, data: records }
+        return {
+            success: true,
+            data: records,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                hasMore: skip + records.length < total
+            }
+        }
     } catch (error) {
         console.error('获取历史记录失败:', error)
-        return { success: false, message: '获取历史记录失败', data: [] }
+        return { success: false, message: '获取历史记录失败', data: [], pagination: { page: 1, pageSize, total: 0, hasMore: false } }
     }
 }
 

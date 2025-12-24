@@ -1,4 +1,4 @@
-const app = getApp()
+const _app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
@@ -172,7 +172,7 @@ Page({
     })
   },
 
-  onTouchEnd(e) {
+  onTouchEnd(_e) {
     const { moveX } = this.data
     const threshold = 100
 
@@ -213,7 +213,7 @@ Page({
     this.processSwipe('absent', 'swipe-out-left')
   },
 
-  processSwipe(status, animClass) {
+  processSwipe(status, _animClass) {
     const { students, currentIndex, actionHistory, presentCount, absentCount, markedStudents } = this.data
 
     if (currentIndex >= students.length) return

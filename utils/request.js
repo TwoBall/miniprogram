@@ -10,7 +10,7 @@ const errorUtil = require('./error')
  * @param {number} ms - 延迟毫秒数
  */
 function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 /**
@@ -27,87 +27,87 @@ function delay(ms) {
  * @returns {Promise<Object>} 云函数返回结果
  */
 async function callCloud(name, data = {}, options = {}) {
-    const {
-        showLoading = true,
-        loadingText = '加载中...',
-        showError = true,
-        timeout = 15000,
-        retryCount = 2,
-        retryDelay = 1000
-    } = options
+  const {
+    showLoading = true,
+    loadingText = '加载中...',
+    showError = true,
+    timeout = 15000,
+    retryCount = 2,
+    retryDelay = 1000
+  } = options
 
-    // 检查网络状态
-    const isOnline = await errorUtil.checkNetwork()
-    if (!isOnline) {
-        errorUtil.showNetworkError()
-        throw new Error('网络不可用')
-    }
+  // 检查网络状态
+  const isOnline = await errorUtil.checkNetwork()
+  if (!isOnline) {
+    errorUtil.showNetworkError()
+    throw new Error('网络不可用')
+  }
 
-    if (showLoading) {
-        Toast.loading({
-            message: loadingText,
+  if (showLoading) {
+    Toast.loading({
+      message: loadingText,
+      forbidClick: true,
+      duration: 0
+    })
+  }
+
+  let lastError = null
+
+  // 尝试调用（包含重试）
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      // 重试时显示提示
+      if (attempt > 0) {
+        console.log(`云函数 ${name} 第 ${attempt} 次重试...`)
+        if (showLoading) {
+          Toast.loading({
+            message: '重试中...',
             forbidClick: true,
             duration: 0
-        })
-    }
-
-    let lastError = null
-
-    // 尝试调用（包含重试）
-    for (let attempt = 0; attempt <= retryCount; attempt++) {
-        try {
-            // 重试时显示提示
-            if (attempt > 0) {
-                console.log(`云函数 ${name} 第 ${attempt} 次重试...`)
-                if (showLoading) {
-                    Toast.loading({
-                        message: '重试中...',
-                        forbidClick: true,
-                        duration: 0
-                    })
-                }
-            }
-
-            // 创建超时 Promise
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('请求超时')), timeout)
-            })
-
-            // 云函数调用
-            const cloudPromise = wx.cloud.callFunction({
-                name,
-                data
-            })
-
-            // 竞争：谁先完成用谁的结果
-            const res = await Promise.race([cloudPromise, timeoutPromise])
-
-            if (showLoading) {
-                Toast.clear()
-            }
-
-            return res.result
-        } catch (error) {
-            lastError = error
-            console.error(`云函数 ${name} 调用失败 (尝试 ${attempt + 1}/${retryCount + 1}):`, error)
-
-            // 如果还有重试机会，等待后重试
-            if (attempt < retryCount) {
-                await delay(retryDelay)
-            }
+          })
         }
-    }
+      }
 
-    // 所有重试都失败
-    if (showLoading) {
+      // 创建超时 Promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('请求超时')), timeout)
+      })
+
+      // 云函数调用
+      const cloudPromise = wx.cloud.callFunction({
+        name,
+        data
+      })
+
+      // 竞争：谁先完成用谁的结果
+      const res = await Promise.race([cloudPromise, timeoutPromise])
+
+      if (showLoading) {
         Toast.clear()
-    }
+      }
 
-    if (showError) {
-        errorUtil.handleError(lastError, { context: `云函数 ${name}` })
-    }
+      return res.result
+    } catch (error) {
+      lastError = error
+      console.error(`云函数 ${name} 调用失败 (尝试 ${attempt + 1}/${retryCount + 1}):`, error)
 
-    throw lastError
+      // 如果还有重试机会，等待后重试
+      if (attempt < retryCount) {
+        await delay(retryDelay)
+      }
+    }
+  }
+
+  // 所有重试都失败
+  if (showLoading) {
+    Toast.clear()
+  }
+
+  if (showError) {
+    errorUtil.handleError(lastError, { context: `云函数 ${name}` })
+  }
+
+  throw lastError
 }
 
 /**
@@ -117,13 +117,13 @@ async function callCloud(name, data = {}, options = {}) {
  * @returns {Promise<Object>} 云函数返回结果
  */
 async function callCloudSilent(name, data = {}) {
-    return callCloud(name, data, {
-        showLoading: false,
-        showError: false
-    })
+  return callCloud(name, data, {
+    showLoading: false,
+    showError: false
+  })
 }
 
 module.exports = {
-    callCloud,
-    callCloudSilent
+  callCloud,
+  callCloudSilent
 }

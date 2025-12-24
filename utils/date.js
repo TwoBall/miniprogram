@@ -9,11 +9,11 @@
  * @returns {string} 格式化后的日期字符串
  */
 function formatDate(date) {
-    const d = date ? new Date(date) : new Date()
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+  const d = date ? new Date(date) : new Date()
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 /**
@@ -22,10 +22,10 @@ function formatDate(date) {
  * @returns {string} 格式化后的时间字符串
  */
 function formatTime(date) {
-    const d = date ? new Date(date) : new Date()
-    const hours = String(d.getHours()).padStart(2, '0')
-    const minutes = String(d.getMinutes()).padStart(2, '0')
-    return `${hours}:${minutes}`
+  const d = date ? new Date(date) : new Date()
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${hours}:${minutes}`
 }
 
 /**
@@ -34,7 +34,7 @@ function formatTime(date) {
  * @returns {string} 格式化后的日期时间字符串
  */
 function formatDateTime(date) {
-    return `${formatDate(date)} ${formatTime(date)}`
+  return `${formatDate(date)} ${formatTime(date)}`
 }
 
 /**
@@ -43,9 +43,9 @@ function formatDateTime(date) {
  * @returns {string} 格式化后的完整日期时间字符串
  */
 function formatFullDateTime(date) {
-    const d = date ? new Date(date) : new Date()
-    const seconds = String(d.getSeconds()).padStart(2, '0')
-    return `${formatDateTime(d)}:${seconds}`
+  const d = date ? new Date(date) : new Date()
+  const seconds = String(d.getSeconds()).padStart(2, '0')
+  return `${formatDateTime(d)}:${seconds}`
 }
 
 /**
@@ -53,7 +53,7 @@ function formatFullDateTime(date) {
  * @returns {string} 当前日期
  */
 function getCurrentDate() {
-    return formatDate(new Date())
+  return formatDate(new Date())
 }
 
 /**
@@ -61,7 +61,7 @@ function getCurrentDate() {
  * @returns {string} 当前时间
  */
 function getCurrentTime() {
-    return formatTime(new Date())
+  return formatTime(new Date())
 }
 
 /**
@@ -69,7 +69,7 @@ function getCurrentTime() {
  * @returns {string} 当前日期时间
  */
 function getCurrentDateTime() {
-    return formatDateTime(new Date())
+  return formatDateTime(new Date())
 }
 
 /**
@@ -78,8 +78,8 @@ function getCurrentDateTime() {
  * @returns {number} 星期几（0-6，0表示周日）
  */
 function getDayOfWeek(date) {
-    const d = date ? new Date(date) : new Date()
-    return d.getDay()
+  const d = date ? new Date(date) : new Date()
+  return d.getDay()
 }
 
 /**
@@ -88,18 +88,18 @@ function getDayOfWeek(date) {
  * @returns {string} 星期几的中文名
  */
 function getDayOfWeekName(date) {
-    const dayNames = ['日', '一', '二', '三', '四', '五', '六']
-    return `周${dayNames[getDayOfWeek(date)]}`
+  const dayNames = ['日', '一', '二', '三', '四', '五', '六']
+  return `周${dayNames[getDayOfWeek(date)]}`
 }
 
 module.exports = {
-    formatDate,
-    formatTime,
-    formatDateTime,
-    formatFullDateTime,
-    getCurrentDate,
-    getCurrentTime,
-    getCurrentDateTime,
-    getDayOfWeek,
-    getDayOfWeekName
+  formatDate,
+  formatTime,
+  formatDateTime,
+  formatFullDateTime,
+  getCurrentDate,
+  getCurrentTime,
+  getCurrentDateTime,
+  getDayOfWeek,
+  getDayOfWeekName
 }

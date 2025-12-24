@@ -1,4 +1,4 @@
-const app = getApp()
+const _app = getApp()
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const storage = require('../../../utils/storage')

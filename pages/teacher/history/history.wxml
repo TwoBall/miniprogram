@@ -43,6 +43,14 @@
 
       <view class="arrow">›</view>
     </view>
+
+    <!-- 加载更多提示 -->
+    <view class="load-more" wx:if="{{loadingMore}}">
+      <van-loading size="24px">加载中...</van-loading>
+    </view>
+    <view class="no-more" wx:elif="{{!hasMore}}">
+      <text>— 没有更多了 —</text>
+    </view>
   </view>
 
   <van-empty wx:if="{{!pageLoading && records.length === 0}}" description="暂无历史记录" image="search" />

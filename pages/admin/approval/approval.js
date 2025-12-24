@@ -1,6 +1,6 @@
-const app = getApp()
+const _app = getApp()
 const auth = require('../../../utils/auth')
-const dateUtil = require('../../../utils/date')
+const _dateUtil = require('../../../utils/date')
 import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -14,7 +14,17 @@ Page({
     pageLoading: true,
     showRejectDialog: false,
     currentUser: null,
-    rejectReason: ''
+    rejectReason: '',
+    // 分页相关 - 已通过列表
+    approvedPage: 1,
+    approvedHasMore: true,
+    approvedLoading: false,
+    // 分页相关 - 已拒绝列表
+    rejectedPage: 1,
+    rejectedHasMore: true,
+    rejectedLoading: false,
+    // 通用分页配置
+    pageSize: 20
   },
 
   /**
@@ -22,19 +32,34 @@ Page({
    */
   onLoad() {
     auth.checkRole('admin')
-    this.loadUsers()
+    this.loadAllTabs()
   },
 
   onShow() {
-    this.loadUsers()
+    this.loadAllTabs()
   },
 
   /**
    * 页面下拉刷新
    */
   async onPullDownRefresh() {
-    await this.loadUsers()
+    await this.loadAllTabs(true)
     wx.stopPullDownRefresh()
+  },
+
+  /**
+   * 上拉触底加载更多
+   */
+  async onReachBottom() {
+    const { activeTab } = this.data
+
+    if (activeTab === 1) {
+      // 已通过列表
+      await this.loadMoreApproved()
+    } else if (activeTab === 2) {
+      // 已拒绝列表
+      await this.loadMoreRejected()
+    }
   },
 
   /**
@@ -53,10 +78,11 @@ Page({
   },
 
   /**
-   * 加载用户列表
+   * 加载所有标签页数据
+   * @param {boolean} forceRefresh - 是否强制刷新
    */
-  async loadUsers() {
-    this.setData({ loading: true, pageLoading: true })
+  async loadAllTabs(forceRefresh = false) {
+    this.setData({ pageLoading: true })
 
     try {
       Toast.loading({
@@ -65,37 +91,127 @@ Page({
         duration: 0
       })
 
-      // 获取所有用户
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          action: 'getPending',
-          status: 'all'
-        }
-      })
-
-      if (res.result.success) {
-        const users = res.result.data
-
-        // 分类用户
-        const pendingUsers = users.filter(u => u.status === 'pending')
-        const approvedUsers = users.filter(u => u.status === 'approved')
-        const rejectedUsers = users.filter(u => u.status === 'rejected')
-
+      // 重置分页状态
+      if (forceRefresh) {
         this.setData({
-          pendingUsers,
-          approvedUsers,
-          rejectedUsers
+          approvedPage: 1,
+          approvedHasMore: true,
+          rejectedPage: 1,
+          rejectedHasMore: true
         })
-      } else {
-        Toast.fail('加载失败')
       }
+
+      // 并行加载三个列表的首页数据
+      const [pendingRes, approvedRes, rejectedRes] = await Promise.all([
+        wx.cloud.callFunction({
+          name: 'user',
+          data: { action: 'getPending', status: 'pending', page: 1, pageSize: 100 }
+        }),
+        wx.cloud.callFunction({
+          name: 'user',
+          data: { action: 'getPending', status: 'approved', page: 1, pageSize: this.data.pageSize }
+        }),
+        wx.cloud.callFunction({
+          name: 'user',
+          data: { action: 'getPending', status: 'rejected', page: 1, pageSize: this.data.pageSize }
+        })
+      ])
+
+      const updateData = {}
+
+      if (pendingRes.result.success) {
+        updateData.pendingUsers = pendingRes.result.data
+      }
+
+      if (approvedRes.result.success) {
+        updateData.approvedUsers = approvedRes.result.data
+        updateData.approvedPage = 1
+        updateData.approvedHasMore = approvedRes.result.pagination.hasMore
+      }
+
+      if (rejectedRes.result.success) {
+        updateData.rejectedUsers = rejectedRes.result.data
+        updateData.rejectedPage = 1
+        updateData.rejectedHasMore = rejectedRes.result.pagination.hasMore
+      }
+
+      this.setData(updateData)
     } catch (error) {
       console.error('加载用户列表失败:', error)
       Toast.fail('加载失败')
     } finally {
       Toast.clear()
-      this.setData({ loading: false, pageLoading: false })
+      this.setData({ pageLoading: false })
+    }
+  },
+
+  /**
+   * 加载更多已通过用户
+   */
+  async loadMoreApproved() {
+    if (!this.data.approvedHasMore || this.data.approvedLoading) return
+
+    this.setData({ approvedLoading: true })
+
+    try {
+      const nextPage = this.data.approvedPage + 1
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          action: 'getPending',
+          status: 'approved',
+          page: nextPage,
+          pageSize: this.data.pageSize
+        }
+      })
+
+      if (res.result.success) {
+        this.setData({
+          approvedUsers: [...this.data.approvedUsers, ...res.result.data],
+          approvedPage: nextPage,
+          approvedHasMore: res.result.pagination.hasMore
+        })
+      }
+    } catch (error) {
+      console.error('加载更多已通过用户失败:', error)
+      Toast.fail('加载失败')
+    } finally {
+      this.setData({ approvedLoading: false })
+    }
+  },
+
+  /**
+   * 加载更多已拒绝用户
+   */
+  async loadMoreRejected() {
+    if (!this.data.rejectedHasMore || this.data.rejectedLoading) return
+
+    this.setData({ rejectedLoading: true })
+
+    try {
+      const nextPage = this.data.rejectedPage + 1
+      const res = await wx.cloud.callFunction({
+        name: 'user',
+        data: {
+          action: 'getPending',
+          status: 'rejected',
+          page: nextPage,
+          pageSize: this.data.pageSize
+        }
+      })
+
+      if (res.result.success) {
+        this.setData({
+          rejectedUsers: [...this.data.rejectedUsers, ...res.result.data],
+          rejectedPage: nextPage,
+          rejectedHasMore: res.result.pagination.hasMore
+        })
+      }
+    } catch (error) {
+      console.error('加载更多已拒绝用户失败:', error)
+      Toast.fail('加载失败')
+    } finally {
+      this.setData({ rejectedLoading: false })
     }
   },
 
@@ -176,7 +292,7 @@ Page({
       if (res.result.success) {
         Toast.success('审批通过')
         setTimeout(() => {
-          this.loadUsers()
+          this.loadAllTabs(true)
         }, 1500)
       } else {
         Toast.fail(res.result.message || '操作失败')
@@ -210,7 +326,7 @@ Page({
       if (res.result.success) {
         Toast.success('已拒绝')
         setTimeout(() => {
-          this.loadUsers()
+          this.loadAllTabs(true)
         }, 1500)
       } else {
         Toast.fail(res.result.message || '操作失败')
