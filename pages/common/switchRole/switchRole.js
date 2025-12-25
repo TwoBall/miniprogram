@@ -1,3 +1,7 @@
+// input: 用户已登录的角色列表（从storage或云端获取）
+// output: 角色切换、跳转到对应角色首页
+// pos: 页面层 > 公共模块 > 角色切换
+
 const app = getApp()
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
@@ -131,7 +135,7 @@ Page({
     const roles = this.data.roles
     // 获取已有的角色类型（与后端逻辑一致：每种角色类型只能有一个）
     const existingRoles = [...new Set(roles.map(r => r.role))]
-    const openid = roles[0]?.openid || ''
+    const openid = roles[0]?._openid || ''
 
     let url = `/pages/register/register?openid=${openid}`
     if (existingRoles.length > 0) {

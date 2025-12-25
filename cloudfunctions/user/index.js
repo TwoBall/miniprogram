@@ -79,7 +79,8 @@ async function handleLogin(event, wxContext) {
                     role: u.role,
                     department: u.department || '',
                     className: u.className || '',
-                    clubName: u.clubName || ''
+                    clubName: u.clubName || '',
+                    status: u.status
                 }))
             }
         }

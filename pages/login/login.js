@@ -8,6 +8,26 @@ Page({
   },
 
   /**
+   * 页面加载时检查是否已登录
+   * 如果有有效的登录信息，自动跳转到对应角色页面
+   */
+  onLoad() {
+    this.checkAutoLogin()
+  },
+
+  /**
+   * 检查自动登录
+   * 验证本地存储的用户信息是否有效
+   */
+  checkAutoLogin() {
+    const userInfo = wx.getStorageSync('userInfo')
+    if (userInfo && userInfo.role && userInfo.status === 'approved') {
+      // 已有有效登录信息，直接跳转
+      this.redirectByRole(userInfo.role)
+    }
+  },
+
+  /**
    * 处理微信登录
    * 调用云函数验证用户身份并跳转到对应页面
    */

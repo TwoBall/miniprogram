@@ -67,7 +67,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#1F6FAD",
-    "navigationBarTitleText": "社团点名系统",
+    "navigationBarTitleText": "智慧社团管理系统",
     "navigationBarTextStyle": "white"
   },
   "usingComponents": {},

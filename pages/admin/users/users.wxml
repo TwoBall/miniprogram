@@ -58,7 +58,7 @@
                 <block wx:if="{{ item.clubName }}"> · {{ item.clubName }}</block>
               </text>
             </view>
-            <view class="user-meta" wx:if="{{ item.openid }}">
+            <view class="user-meta" wx:if="{{ item._openid }}">
               <van-icon name="user-circle-o" size="28rpx" color="#52c41a" />
               <text class="meta-text">已绑定微信</text>
             </view>

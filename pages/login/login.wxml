@@ -1,12 +1,12 @@
 <view class="login-container">
   <view class="logo-section">
     <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-    <text class="title">社团点名系统</text>
-    <text class="subtitle">Club Attendance System</text>
+    <text class="title">智慧社团管理系统</text>
+    <text class="subtitle">Smart Club Management System</text>
   </view>
 
   <view class="welcome-section">
-    <text class="welcome-text">欢迎使用社团点名系统</text>
+    <text class="welcome-text">欢迎使用智慧社团管理系统</text>
     <text class="welcome-desc">请使用微信授权登录</text>
   </view>
 

@@ -1,3 +1,7 @@
+// input: 角色筛选、搜索关键词、分页参数
+// output: 用户列表展示、用户增删改操作
+// pos: 页面层 > 管理员模块 > 用户管理
+
 const app = getApp()
 
 Page({

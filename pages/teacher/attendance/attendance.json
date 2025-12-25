@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "社团点名",
+  "navigationBarTitleText": "社团考勤",
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",

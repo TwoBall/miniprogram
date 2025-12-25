@@ -1,3 +1,7 @@
+// input: 无（自动加载统计数据）
+// output: 用户统计、学生统计、考勤统计数据展示
+// pos: 页面层 > 管理员模块 > 数据中心
+
 const app = getApp()
 
 Page({
@@ -135,7 +139,7 @@ Page({
         users.forEach(user => {
           userStats.byRole[user.role] = (userStats.byRole[user.role] || 0) + 1
           userStats.byStatus[user.status] = (userStats.byStatus[user.status] || 0) + 1
-          if (user.openid) {
+          if (user._openid) {
             userStats.bound++
           } else {
             userStats.unbound++

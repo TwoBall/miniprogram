@@ -1,7 +1,7 @@
 {
-  "name": "club-attendance",
+  "name": "smart-club-management",
   "version": "1.0.0",
-  "description": "社团点名系统",
+  "description": "智慧社团管理系统",
   "main": "app.js",
   "dependencies": {
     "@vant/weapp": "^1.11.7"

@@ -9,7 +9,7 @@
 ## 目录结构
 
 ### 页面
-- `switchRole/` - 角色切换页面
+- `switchRole/` - 角色切换页面，支持多角色用户在不同身份间切换（使用 `_openid` 字段获取用户标识）
 - `notifications/` - 通知列表页面
 - `transfer/` - 转社团申请页面
 - `export/` - 数据导出页面

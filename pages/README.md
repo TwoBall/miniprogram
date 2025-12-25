@@ -12,8 +12,8 @@
 - `admin/approval/` - 审批管理页面
 - `admin/home/` - 管理员首页
 - `admin/profile/` - 管理员个人中心
-- `admin/users/` - 用户管理页面
-- `admin/data/` - 数据中心页面
+- `admin/users/` - 用户管理页面（支持预注册账号识别，通过 `_openid` 字段判断）
+- `admin/data/` - 数据中心页面（用户/学生/考勤统计）
 
 ### 教师模块
 - `teacher/attendance/` - 考勤管理页面
