@@ -37,7 +37,7 @@
           <view slot="title" class="user-info">
             <view class="user-header">
               <view class="user-name-wrapper">
-                <text class="user-name">{{ item.name }}</text>
+                <text class="user-name">{{ item.userName }}</text>
                 <van-tag
                   type="{{ statusMap[item.status].type }}"
                   size="medium"

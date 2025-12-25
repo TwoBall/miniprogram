@@ -22,7 +22,7 @@
               <view class="user-info">
                 <view class="user-name">
                   <van-icon name="user-o" size="32rpx" color="#1890ff" />
-                  <text>{{item.name}}</text>
+                  <text>{{item.userName}}</text>
                 </view>
                 <van-tag type="warning" size="medium">待审批</van-tag>
               </view>
@@ -102,7 +102,7 @@
               <view class="user-info">
                 <view class="user-name">
                   <van-icon name="user-o" size="32rpx" color="#07c160" />
-                  <text>{{item.name}}</text>
+                  <text>{{item.userName}}</text>
                 </view>
                 <van-tag type="success" size="medium">已通过</van-tag>
               </view>
@@ -158,7 +158,7 @@
               <view class="user-info">
                 <view class="user-name">
                   <van-icon name="user-o" size="32rpx" color="#ee0a24" />
-                  <text>{{item.name}}</text>
+                  <text>{{item.userName}}</text>
                 </view>
                 <van-tag type="danger" size="medium">已拒绝</van-tag>
               </view>

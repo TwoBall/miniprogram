@@ -118,7 +118,7 @@ async function checkAbsenceAndNotify(records, clubName, date) {
             if (teachersRes.data.length === 0) continue
 
             const classTeacher = teachersRes.data[0]
-            const studentNames = students.map(s => s.name).join('、')
+            const studentNames = students.map(s => s.studentName).join('、')
 
             // 创建缺勤提醒通知
             await db.collection('notifications').add({
@@ -508,7 +508,7 @@ async function handleGetClubRank(event) {
         const studentStats = {}
         students.forEach(s => {
             studentStats[s._id] = {
-                name: s.studentName,
+                studentName: s.studentName,
                 className: s.className,
                 present: 0,
                 total: 0,
@@ -688,7 +688,7 @@ async function handleGetAbsenceWarnings(event) {
                     if (!absenceCount[key]) {
                         absenceCount[key] = {
                             studentId: s.studentId,
-                            name: s.studentName,
+                            studentName: s.studentName,
                             className: s.className,
                             clubName: record.clubName,
                             count: 0,

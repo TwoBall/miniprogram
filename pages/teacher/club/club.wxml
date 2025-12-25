@@ -66,7 +66,7 @@
         <view slot="title" class="student-info">
           <view class="student-header">
             <view class="name-wrapper">
-              <text class="student-name">{{ item.name }}</text>
+              <text class="student-name">{{ item.studentName }}</text>
               <van-tag
                 wx:if="{{ warningStudentIds.includes(item.studentId) }}"
                 type="danger"
@@ -110,7 +110,7 @@
     <view wx:elif="{{ attendanceRank.length > 0 }}" class="rank-list">
       <view
         wx:for="{{ attendanceRank }}"
-        wx:key="name"
+        wx:key="studentName"
         class="rank-item {{ index < 3 ? 'top-rank' : '' }}"
       >
         <view class="rank-badge">
@@ -120,7 +120,7 @@
         </view>
         <view class="rank-info">
           <view class="rank-header">
-            <text class="student-name">{{ item.name }}</text>
+            <text class="student-name">{{ item.studentName }}</text>
             <text class="class-name">{{ item.className }}</text>
           </view>
           <view class="rank-stats">

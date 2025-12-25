@@ -24,7 +24,7 @@
         />
       </view>
       <view class="role-info">
-        <view class="role-name">{{item.name}}</view>
+        <view class="role-name">{{item.userName}}</view>
         <view class="role-label">{{item.roleLabel}}</view>
         <view class="role-extra" wx:if="{{item.extraInfo}}">{{item.extraInfo}}</view>
       </view>

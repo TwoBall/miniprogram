@@ -68,7 +68,7 @@
       <view class="student-info">
         <view class="student-header">
           <view class="name-wrapper">
-            <text class="student-name">{{ item.name }}</text>
+            <text class="student-name">{{ item.studentName }}</text>
             <van-tag
               wx:if="{{ warningStudentIds.includes(item.studentId) }}"
               type="danger"

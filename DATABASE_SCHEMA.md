@@ -4,10 +4,17 @@
 
 ## 命名原则
 
+### 字段命名
 1. **字段名应具有自描述性**：字段名应清晰地表明其所属实体和含义
 2. **避免通用名称**：避免使用 `name`、`id` 等过于通用的字段名
 3. **使用驼峰命名法**：所有字段使用小驼峰命名（camelCase）
 4. **一致性原则**：相同含义的字段在不同集合中使用相同的命名
+5. **系统字段使用下划线前缀**：微信云开发自动生成的字段使用下划线前缀（如 `_id`、`_openid`）
+
+### 集合命名
+1. **使用 snake_case**：多词集合名使用下划线分隔（如 `attendance_records`、`transfer_requests`）
+2. **使用复数形式**：集合名使用复数形式表示集合（如 `users`、`students`）
+3. **清晰表达含义**：集合名应清晰表达其存储的数据类型
 
 ## 数据模型
 
@@ -245,6 +252,19 @@ db.collection('attendance_records')
 4. **版本控制**：数据库结构变更应创建迁移脚本并记录版本
 
 ## 版本历史
+
+- **v2.1** (2025-12-26)
+  - 统一 `openid` 字段为 `_openid`（带下划线前缀），符合微信云开发规范
+  - 创建 `migrateFields` 云函数，支持字段迁移操作：
+    - `check` - 检查当前数据库字段状态
+    - `migrateOpenid` - 迁移 openid → _openid
+    - `migrateName` - 迁移 name → studentName/userName
+    - `rollbackOpenid` - 回滚 _openid → openid
+  - 更新的云函数：
+    - `cloudfunctions/user/index.js` - 所有 openid 查询和数据写入
+  - 添加集合命名规范说明（使用 snake_case）
+  - 添加系统字段命名说明（下划线前缀）
+  - 数据库迁移已完成
 
 - **v2.0** (2025-12-25)
   - 将 `students.name` 改为 `students.studentName`

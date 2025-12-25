@@ -18,7 +18,7 @@
       <view class="student-card" wx:for="{{students}}" wx:key="_id">
         <view class="student-header">
           <view class="student-name">
-            <text>{{item.name}}</text>
+            <text>{{item.studentName}}</text>
             <text class="gender-tag">{{item.gender}}</text>
           </view>
           <view class="status-badge {{item.todayStatus}}">

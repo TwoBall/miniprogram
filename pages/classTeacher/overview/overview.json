@@ -2,6 +2,17 @@
   "navigationBarTitleText": "考勤总览",
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
-    "custom-tabbar": "/components/custom-tabbar/custom-tabbar"
+    "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
+    "van-button": "@vant/weapp/button/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-datetime-picker": "@vant/weapp/datetime-picker/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "van-grid": "@vant/weapp/grid/index",
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-tag": "@vant/weapp/tag/index",
+    "van-toast": "@vant/weapp/toast/index"
   }
 }

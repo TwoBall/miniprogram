@@ -5,7 +5,7 @@
       <van-icon name="user-circle-o" size="64px" color="#1890ff" />
     </view>
     <view class="student-basic">
-      <view class="student-name">{{ student.name || '加载中...' }}</view>
+      <view class="student-name">{{ student.studentName || '加载中...' }}</view>
       <view class="student-meta">
         <van-tag wx:if="{{ student.gender }}" plain type="primary" size="medium">
           {{ student.gender === 'male' ? '男' : '女' }}
@@ -20,7 +20,7 @@
     <van-tab title="基本信息" name="info">
       <view class="tab-content">
         <van-cell-group>
-          <van-cell title="姓名" value="{{ student.name }}" />
+          <van-cell title="姓名" value="{{ student.studentName }}" />
           <van-cell title="性别" value="{{ student.gender === 'male' ? '男' : '女' }}" />
           <van-cell title="班级" value="{{ student.className }}" />
           <van-cell title="学部" value="{{ student.department }}" />

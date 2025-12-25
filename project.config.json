@@ -1,7 +1,36 @@
 {
   "description": "项目配置文件",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "tools"
+      },
+      {
+        "type": "file",
+        "value": "analyse-data.json"
+      },
+      {
+        "type": "file",
+        "value": "CLAUDE.md"
+      },
+      {
+        "type": "file",
+        "value": "INIT_PROMPT.md"
+      },
+      {
+        "type": "file",
+        "value": "DATABASE_SCHEMA.md"
+      },
+      {
+        "type": "file",
+        "value": "CARD_STYLE_GUIDE.md"
+      },
+      {
+        "type": "glob",
+        "value": "**/*.md"
+      }
+    ],
     "include": []
   },
   "setting": {

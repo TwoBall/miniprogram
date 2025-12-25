@@ -2,7 +2,7 @@
   <!-- 欢迎信息 -->
   <view class="welcome-section">
     <view class="greeting">
-      <text class="greeting-text">您好，{{ userInfo.name || '管理员' }}</text>
+      <text class="greeting-text">您好，{{ userInfo.userName || '管理员' }}</text>
       <van-tag type="primary" size="medium">管理员</van-tag>
     </view>
     <view class="subtitle">欢迎使用智慧社团管理系统</view>

@@ -1,5 +1,10 @@
 {
   "navigationBarTitleText": "通知中心",
   "enablePullDownRefresh": true,
-  "usingComponents": {}
+  "usingComponents": {
+    "van-empty": "@vant/weapp/empty/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-toast": "@vant/weapp/toast/index"
+  }
 }

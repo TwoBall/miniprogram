@@ -185,7 +185,7 @@ async function exportSummary(event) {
             if (!studentStats[key]) {
               studentStats[key] = {
                 studentId: student.studentId,
-                name: student.studentName,
+                studentName: student.studentName,
                 className: student.className,
                 clubName: record.clubName,
                 total: 0,
@@ -206,7 +206,7 @@ async function exportSummary(event) {
 
     // 转换为导出格式
     const exportData = Object.values(studentStats).map(stat => ({
-      '学生姓名': stat.name,
+      '学生姓名': stat.studentName,
       '班级': stat.className,
       '社团': stat.clubName,
       '应到次数': stat.total,

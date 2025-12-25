@@ -1,64 +1,76 @@
 {
   "pages": [
     "pages/login/login",
-    "pages/register/register",
-    "pages/admin/approval/approval",
-    "pages/admin/home/home",
-    "pages/admin/profile/profile",
-    "pages/admin/users/users",
-    "pages/admin/users/add",
-    "pages/admin/data/data",
-    "pages/teacher/attendance/attendance",
-    "pages/teacher/history/history",
-    "pages/teacher/detail/detail",
-    "pages/teacher/club/club",
-    "pages/teacher/profile/profile",
-    "pages/classTeacher/overview/overview",
-    "pages/classTeacher/feedback/feedback",
-    "pages/classTeacher/profile/profile",
-    "pages/classTeacher/students/students",
-    "pages/classTeacher/studentDetail/studentDetail",
-    "pages/leader/dashboard/dashboard",
-    "pages/leader/detail/detail",
-    "pages/leader/profile/profile",
-    "pages/common/switchRole/switchRole",
-    "pages/common/notifications/notifications",
-    "pages/common/transfer/transfer",
-    "pages/common/export/export"
+    "pages/register/register"
   ],
+  "subpackages": [
+    {
+      "root": "pages/admin",
+      "name": "admin",
+      "pages": [
+        "approval/approval",
+        "home/home",
+        "profile/profile",
+        "users/users",
+        "users/add",
+        "data/data"
+      ]
+    },
+    {
+      "root": "pages/teacher",
+      "name": "teacher",
+      "pages": [
+        "attendance/attendance",
+        "history/history",
+        "detail/detail",
+        "club/club",
+        "profile/profile"
+      ]
+    },
+    {
+      "root": "pages/classTeacher",
+      "name": "classTeacher",
+      "pages": [
+        "overview/overview",
+        "feedback/feedback",
+        "profile/profile",
+        "students/students",
+        "studentDetail/studentDetail"
+      ]
+    },
+    {
+      "root": "pages/leader",
+      "name": "leader",
+      "pages": [
+        "dashboard/dashboard",
+        "detail/detail",
+        "profile/profile"
+      ]
+    },
+    {
+      "root": "pages/common",
+      "name": "common",
+      "pages": [
+        "switchRole/switchRole",
+        "notifications/notifications",
+        "transfer/transfer",
+        "export/export"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/login/login": {
+      "network": "all",
+      "packages": ["common"]
+    }
+  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#1F6FAD",
     "navigationBarTitleText": "社团点名系统",
     "navigationBarTextStyle": "white"
   },
-  "usingComponents": {
-    "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
-    "van-button": "@vant/weapp/button/index",
-    "van-cell": "@vant/weapp/cell/index",
-    "van-cell-group": "@vant/weapp/cell-group/index",
-    "van-field": "@vant/weapp/field/index",
-    "van-icon": "@vant/weapp/icon/index",
-    "van-tag": "@vant/weapp/tag/index",
-    "van-empty": "@vant/weapp/empty/index",
-    "van-toast": "@vant/weapp/toast/index",
-    "van-dialog": "@vant/weapp/dialog/index",
-    "van-picker": "@vant/weapp/picker/index",
-    "van-popup": "@vant/weapp/popup/index",
-    "van-datetime-picker": "@vant/weapp/datetime-picker/index",
-    "van-grid": "@vant/weapp/grid/index",
-    "van-grid-item": "@vant/weapp/grid-item/index",
-    "van-tabbar": "@vant/weapp/tabbar/index",
-    "van-tabbar-item": "@vant/weapp/tabbar-item/index",
-    "van-tabs": "@vant/weapp/tabs/index",
-    "van-tab": "@vant/weapp/tab/index",
-    "van-search": "@vant/weapp/search/index",
-    "van-swipe-cell": "@vant/weapp/swipe-cell/index",
-    "van-loading": "@vant/weapp/loading/index",
-    "van-action-sheet": "@vant/weapp/action-sheet/index",
-    "van-radio": "@vant/weapp/radio/index",
-    "van-radio-group": "@vant/weapp/radio-group/index"
-  },
+  "usingComponents": {},
   "lazyCodeLoading": "requiredComponents",
   "style": "v2",
   "sitemapLocation": "sitemap.json",

@@ -100,7 +100,7 @@ async function handleCreate(event, wxContext) {
                 toClub,
                 initiatorType,
                 initiatorId: initiator._id,
-                initiatorName: initiator.name,
+                initiatorName: initiator.userName,
                 reason: reason || '',
                 status: initialStatus,
                 fromTeacherConfirmed: initiatorType === 'fromTeacher',
@@ -331,7 +331,7 @@ async function handleApprove(event, wxContext) {
             data: {
                 status: 'approved',
                 approvedBy: classTeacher._id,
-                approvedByName: classTeacher.name,
+                approvedByName: classTeacher.userName,
                 approvedTime: db.serverDate(),
                 updateTime: db.serverDate()
             }

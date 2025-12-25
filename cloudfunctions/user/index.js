@@ -50,8 +50,8 @@ async function handleLogin(event, wxContext) {
 
         // 获取该 openid 下的所有账号记录
         const userRes = await db.collection('users')
-            .where({ openid })
-            .field({ _id: true, openid: true, userName: true, role: true, department: true, className: true, clubName: true, status: true })
+            .where({ _openid: openid })
+            .field({ _id: true, _openid: true, userName: true, role: true, department: true, className: true, clubName: true, status: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -74,8 +74,8 @@ async function handleLogin(event, wxContext) {
                 status: 'approved',
                 userList: approvedUsers.map(u => ({
                     _id: u._id,
-                    openid: u.openid,
-                    name: u.userName,
+                    _openid: u._openid,
+                    userName: u.userName,
                     role: u.role,
                     department: u.department || '',
                     className: u.className || '',
@@ -106,7 +106,7 @@ async function handleRegister(event, wxContext) {
 
     try {
         // 1. 检查该 openid 下是否已经有该角色的账号
-        const sameRoleRes = await db.collection('users').where({ openid, role }).get()
+        const sameRoleRes = await db.collection('users').where({ _openid: openid, role }).get()
         if (sameRoleRes.data.length > 0) {
             const user = sameRoleRes.data[0]
             if (user.status === 'approved') return { success: false, message: '您已拥有该角色权限' }
@@ -118,7 +118,7 @@ async function handleRegister(event, wxContext) {
         const preRegQuery = {
             userName: name,
             role,
-            openid: _.or(_.exists(false), _.eq(null), _.eq(''))
+            _openid: _.or(_.exists(false), _.eq(null), _.eq(''))
         }
 
         if (role === 'classTeacher') {
@@ -136,7 +136,7 @@ async function handleRegister(event, wxContext) {
             const userId = preRegUsers.data[0]._id
             await db.collection('users').doc(userId).update({
                 data: {
-                    openid,
+                    _openid: openid,
                     updateTime: db.serverDate()
                 }
             })
@@ -150,7 +150,7 @@ async function handleRegister(event, wxContext) {
         // 3. 创建新的申请记录
         const result = await db.collection('users').add({
             data: {
-                openid,
+                _openid: openid,
                 userName: name,
                 role,
                 department: department || '',
@@ -180,7 +180,7 @@ async function handleApprove(event, wxContext) {
     try {
         // 验证管理员权限
         const adminRes = await db.collection('users')
-            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
             .field({ _id: true, userName: true })
             .get()
 
@@ -220,7 +220,7 @@ async function handleApprove(event, wxContext) {
         }
 
         // 发送审批结果通知
-        if (user.openid) {
+        if (user._openid) {
             const roleNames = {
                 teacher: '社团老师',
                 classTeacher: '班主任',
@@ -237,7 +237,7 @@ async function handleApprove(event, wxContext) {
             await db.collection('notifications').add({
                 data: {
                     type: 'register_result',
-                    recipientId: user.openid,
+                    recipientId: user._openid,
                     title,
                     content,
                     data: {
@@ -400,7 +400,7 @@ async function handleGetAll(event, wxContext) {
     try {
         // 验证管理员权限
         const adminRes = await db.collection('users')
-            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
             .field({ _id: true })
             .get()
 
@@ -453,7 +453,7 @@ async function handleAdd(event, wxContext) {
     try {
         // 验证管理员权限
         const adminRes = await db.collection('users')
-            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
             .field({ _id: true, userName: true })
             .get()
 
@@ -502,7 +502,7 @@ async function handleDelete(event, wxContext) {
     try {
         // 验证管理员权限
         const adminRes = await db.collection('users')
-            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
             .field({ _id: true })
             .get()
 
@@ -550,7 +550,7 @@ async function handleUpdate(event, wxContext) {
     try {
         // 验证管理员权限
         const adminRes = await db.collection('users')
-            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
             .field({ _id: true })
             .get()
 

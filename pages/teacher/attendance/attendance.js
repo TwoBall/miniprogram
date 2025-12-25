@@ -376,7 +376,7 @@ Page({
     markedStudents[index].status = newStatus
 
     // 同步更新 students 数组中对应学生的状态
-    const studentInList = students.find(s => s.studentName === student.name && s.className === student.className)
+    const studentInList = students.find(s => s.studentName === student.studentName && s.className === student.className)
     if (studentInList) {
       studentInList.status = newStatus
     }

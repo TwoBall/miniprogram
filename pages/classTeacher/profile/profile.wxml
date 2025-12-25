@@ -5,7 +5,7 @@
       <van-icon name="user-circle-o" size="64px" color="#52c41a" />
     </view>
     <view class="user-details">
-      <view class="name">{{ userInfo.name || '未登录' }}</view>
+      <view class="name">{{ userInfo.userName || '未登录' }}</view>
       <view class="role-tag">
         <van-icon name="manager-o" size="14px" />
         <text>班主任</text>

@@ -89,7 +89,7 @@
               <van-icon name="{{currentStudent.gender === '男' ? 'friends' : 'friends-o'}}" size="80rpx" color="#fff" />
             </view>
           </view>
-          <view class="student-name">{{currentStudent.name}}</view>
+          <view class="student-name">{{currentStudent.studentName}}</view>
           <view class="student-gender">
             <van-tag plain type="{{currentStudent.gender === '男' ? 'primary' : 'danger'}}">{{currentStudent.gender}}</van-tag>
           </view>
@@ -176,7 +176,7 @@
               data-index="{{index}}"
               bindtap="toggleMarkedStudentStatus">
           <view class="marked-student-info">
-            <text class="marked-name">{{item.name}}</text>
+            <text class="marked-name">{{item.studentName}}</text>
             <text class="marked-class">{{item.className}}</text>
           </view>
           <view class="status-toggle">

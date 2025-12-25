@@ -1,0 +1,91 @@
+# 项目结构引用
+
+本文档定义了项目的核心目录结构，用于 Claude Code 快速理解项目架构。
+
+## 核心业务目录
+
+### 页面模块
+@pages/README.md
+
+页面层采用按角色分类的目录结构，包含：
+- admin/ - 管理员功能模块
+- teacher/ - 教师功能模块
+- classTeacher/ - 班主任功能模块
+- leader/ - 领导功能模块
+- common/ - 公共功能模块
+- login/ - 登录模块
+- register/ - 注册模块
+
+### 云函数模块
+@cloudfunctions/README.md
+
+云函数层处理后端业务逻辑，包含：
+- attendance/ - 考勤管理
+- students/ - 学生管理
+- user/ - 用户管理
+- export/ - 数据导出
+- notification/ - 通知推送
+- transfer/ - 转班处理
+- submitFeedback/ - 反馈提交
+- migrateFields/ - 字段迁移
+
+### 组件模块
+@components/README.md
+
+自定义组件层，包含可复用的 UI 组件：
+- custom-tabbar/ - 自定义底部标签栏
+- skeleton/ - 骨架屏加载组件
+
+### 工具模块
+@utils/README.md
+
+工具函数层，提供通用功能：
+
+**主包工具**（供登录/注册页面使用）：
+- error.js - 错误处理
+- request.js - 网络请求
+- storage.js - 本地存储
+
+**分包工具**（位于 pages/common/utils/）：
+- auth.js - 身份认证
+- date.js - 日期处理
+
+## 其他重要目录
+
+- `styles/` - 全局样式
+- `images/` - 图片资源
+- `miniprogram_npm/` - 小程序 npm 包编译产物
+- `node_modules/` - Node.js 依赖包
+
+## 分包共享资源
+
+为优化主包体积，仅被分包使用的资源已移至 `pages/common/` 目录：
+- `pages/common/behaviors/` - 分包共享行为混入（profileBehavior）
+- `pages/common/utils/` - 分包共享工具函数（auth、date）
+
+## 配置文件
+
+- `app.js` - 小程序主入口
+- `app.json` - 全局配置
+- `app.wxss` - 全局样式
+- `project.config.json` - 项目配置
+- `sitemap.json` - 索引配置
+- `package.json` - npm 依赖管理
+
+## 架构说明
+
+本项目采用微信小程序标准架构：
+
+```
+用户界面 (pages)
+    ↓
+组件层 (components)
+    ↓
+工具层 (utils)
+    ↓
+云函数层 (cloudfunctions)
+    ↓
+云数据库 (Cloud Database)
+```
+
+每一层都有明确的职责分工，确保代码的可维护性和可扩展性。
