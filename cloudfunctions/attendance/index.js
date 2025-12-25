@@ -36,6 +36,46 @@ async function getAllData(collection, condition, fields = null) {
 }
 
 /**
+ * 获取所有数据的辅助函数（支持排序）
+ * 突破云数据库单次查询100条的限制
+ * @param {Object} collection - 数据库集合
+ * @param {Object} condition - 查询条件
+ * @param {Object} fields - 返回字段
+ * @param {Object} orderBy - 排序规则，如 { className: 1, name: 1 }
+ */
+async function getAllDataSorted(collection, condition, fields = null, orderBy = null) {
+    const countResult = await collection.where(condition).count()
+    const total = countResult.total
+
+    if (total === 0) return []
+
+    let query = collection.where(condition)
+    if (fields) query = query.field(fields)
+
+    // 添加排序
+    if (orderBy) {
+        for (const [field, order] of Object.entries(orderBy)) {
+            query = query.orderBy(field, order === 1 ? 'asc' : 'desc')
+        }
+    }
+
+    if (total <= MAX_LIMIT) {
+        const res = await query.get()
+        return res.data
+    }
+
+    // 分批查询时按顺序执行，保证排序稳定性
+    const batchTimes = Math.ceil(total / MAX_LIMIT)
+    const allData = []
+    for (let i = 0; i < batchTimes; i++) {
+        const res = await query.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+        allData.push(...res.data)
+    }
+
+    return allData
+}
+
+/**
  * 检查缺勤情况并发送通知
  */
 async function checkAbsenceAndNotify(records, clubName, date) {
@@ -183,17 +223,30 @@ async function handleSubmit(event) {
 
 /**
  * 获取教师的历史点名记录（支持分页）
- * @param {string} teacherId - 教师ID
+ * @param {string} teacherId - 教师ID（用于获取社团信息）
+ * @param {string} clubName - 社团名称（可选，优先使用）
  * @param {number} page - 页码，从1开始，默认1
  * @param {number} pageSize - 每页数量，默认20
  */
 async function handleGetHistory(event) {
-    const { teacherId, page = 1, pageSize = 20 } = event
+    const { teacherId, clubName, page = 1, pageSize = 20 } = event
 
     try {
+        // 如果没有传clubName，先通过teacherId查询用户的社团
+        let queryClubName = clubName
+        if (!queryClubName && teacherId) {
+            const userRes = await db.collection('users').doc(teacherId).get()
+            if (userRes.data && userRes.data.clubName) {
+                queryClubName = userRes.data.clubName
+            }
+        }
+
+        // 如果还是没有获取到clubName，则只查询该教师的记录（兼容处理）
+        const whereCondition = queryClubName ? { clubName: queryClubName } : { teacherId }
+
         // 先获取总数
         const countRes = await db.collection('attendance_records')
-            .where({ teacherId })
+            .where(whereCondition)
             .count()
         const total = countRes.total
 
@@ -201,11 +254,11 @@ async function handleGetHistory(event) {
         const skip = (page - 1) * pageSize
 
         const recordsRes = await db.collection('attendance_records')
-            .where({ teacherId })
+            .where(whereCondition)
             .orderBy('createTime', 'desc')
             .skip(skip)
             .limit(pageSize)
-            .field({ _id: true, date: true, time: true, clubName: true, records: true })
+            .field({ _id: true, date: true, time: true, clubName: true, records: true, teacherName: true })
             .get()
 
         const records = recordsRes.data.map(record => ({
@@ -213,6 +266,7 @@ async function handleGetHistory(event) {
             date: record.date,
             time: record.time,
             clubName: record.clubName,
+            teacherName: record.teacherName,
             totalCount: record.records.length,
             presentCount: record.records.filter(r => r.status === 'present').length,
             absentCount: record.records.filter(r => r.status === 'absent').length
@@ -266,6 +320,13 @@ async function handleGetDetail(event) {
             feedback: feedbackMap[r.studentId] || ''
         }))
 
+        // 按班级+姓名排序，保证显示顺序一致
+        record.records.sort((a, b) => {
+            const classCompare = (a.className || '').localeCompare(b.className || '', 'zh-CN', { numeric: true })
+            if (classCompare !== 0) return classCompare
+            return (a.studentName || '').localeCompare(b.studentName || '', 'zh-CN')
+        })
+
         return { success: true, data: record }
     } catch (error) {
         console.error('获取记录详情失败:', error)
@@ -283,7 +344,7 @@ async function handleGetByClass(event) {
     try {
         // 并行查询学生、考勤记录、反馈信息
         const [students, attendanceRecords, feedbacks] = await Promise.all([
-            getAllData(db.collection('students'), { className }, { _id: true, name: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }),
+            getAllDataSorted(db.collection('students'), { className }, { _id: true, name: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }, { name: 1 }),
             getAllData(db.collection('attendance_records'), { date }, { records: true, date: true, time: true }),
             getAllData(db.collection('feedbacks'), { className, date }, { studentId: true, feedback: true })
         ])
@@ -314,7 +375,8 @@ async function handleGetByClass(event) {
             })
         })
 
-        const result = Object.values(studentMap)
+        // 保持数据库返回的姓名排序
+        const result = students.map(s => studentMap[s._id])
 
         return {
             success: true,

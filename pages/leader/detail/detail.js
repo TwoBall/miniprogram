@@ -38,7 +38,8 @@ Page({
 
       if (result.success) {
         const students = result.data.students
-        // 排序：缺课 > 到课 > 未点名
+        // 数据已从云函数按姓名排序返回
+        // 前端按业务需求重新排序：缺课 > 到课 > 未点名
         const sortedStudents = students.sort((a, b) => {
           const statusOrder = { 'absent': 0, 'present': 1, null: 2 }
           return (statusOrder[a.todayStatus] ?? 2) - (statusOrder[b.todayStatus] ?? 2)

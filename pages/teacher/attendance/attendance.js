@@ -87,17 +87,11 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (result.success) {
+        // 数据已在云函数中按班级+姓名排序，无需前端再次排序
         const allStudents = result.data.map(student => ({
           ...student,
           status: null
         }))
-
-        // 按班级+姓名排序
-        allStudents.sort((a, b) => {
-          const classCompare = (a.className || '').localeCompare(b.className || '', 'zh-CN', { numeric: true })
-          if (classCompare !== 0) return classCompare
-          return (a.name || '').localeCompare(b.name || '', 'zh-CN')
-        })
 
         // 根据星期过滤学部
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))].sort()

@@ -39,6 +39,46 @@ async function getAllData(collection, condition, fields = null) {
 }
 
 /**
+ * 获取所有数据的辅助函数（支持排序）
+ * 突破云数据库单次查询100条的限制
+ * @param {Object} collection - 数据库集合
+ * @param {Object} condition - 查询条件
+ * @param {Object} fields - 返回字段
+ * @param {Object} orderBy - 排序规则，如 { className: 1, name: 1 }
+ */
+async function getAllDataSorted(collection, condition, fields = null, orderBy = null) {
+    const countResult = await collection.where(condition).count()
+    const total = countResult.total
+
+    if (total === 0) return []
+
+    let query = collection.where(condition)
+    if (fields) query = query.field(fields)
+
+    // 添加排序
+    if (orderBy) {
+        for (const [field, order] of Object.entries(orderBy)) {
+            query = query.orderBy(field, order === 1 ? 'asc' : 'desc')
+        }
+    }
+
+    if (total <= MAX_LIMIT) {
+        const res = await query.get()
+        return res.data
+    }
+
+    // 分批查询时按顺序执行，保证排序稳定性
+    const batchTimes = Math.ceil(total / MAX_LIMIT)
+    const allData = []
+    for (let i = 0; i < batchTimes; i++) {
+        const res = await query.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+        allData.push(...res.data)
+    }
+
+    return allData
+}
+
+/**
  * 云函数入口
  * @param {Object} event - 请求参数
  * @param {string} event.action - 操作类型
@@ -104,10 +144,11 @@ async function handleGetByClub(event) {
     const { clubName } = event
 
     try {
-        const students = await getAllData(
+        const students = await getAllDataSorted(
             db.collection('students'),
             { clubName },
-            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }
+            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
+            { className: 1, name: 1 }  // 按班级、姓名排序
         )
 
         return { success: true, data: students }
@@ -124,10 +165,11 @@ async function handleGetByClass(event) {
     const { className } = event
 
     try {
-        const students = await getAllData(
+        const students = await getAllDataSorted(
             db.collection('students'),
             { className },
-            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }
+            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
+            { name: 1 }  // 按姓名排序
         )
 
         return { success: true, data: students }
