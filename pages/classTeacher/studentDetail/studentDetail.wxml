@@ -67,10 +67,10 @@
             <view class="attendance-header">
               <view class="date">{{ item.date }}</view>
               <van-tag
-                type="{{ item.students.find(s => s.studentId === studentId).status === 'present' ? 'success' : item.students.find(s => s.studentId === studentId).status === 'late' ? 'warning' : 'danger' }}"
+                type="{{ item.studentStatus === 'present' ? 'success' : item.studentStatus === 'late' ? 'warning' : 'danger' }}"
                 size="medium"
               >
-                {{ item.students.find(s => s.studentId === studentId).status === 'present' ? '正常' : item.students.find(s => s.studentId === studentId).status === 'late' ? '迟到' : '缺勤' }}
+                {{ item.studentStatus === 'present' ? '正常' : item.studentStatus === 'late' ? '迟到' : '缺勤' }}
               </van-tag>
             </view>
             <view class="attendance-info">
@@ -78,9 +78,9 @@
                 <van-icon name="apps-o" size="14px" color="#999" />
                 <text>{{ item.clubName }}</text>
               </view>
-              <view wx:if="{{ item.students.find(s => s.studentId === studentId).note }}" class="info-row">
+              <view wx:if="{{ item.studentNote }}" class="info-row">
                 <van-icon name="comment-o" size="14px" color="#999" />
-                <text>{{ item.students.find(s => s.studentId === studentId).note }}</text>
+                <text>{{ item.studentNote }}</text>
               </view>
             </view>
           </view>

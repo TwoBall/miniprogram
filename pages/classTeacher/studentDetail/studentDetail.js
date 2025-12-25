@@ -64,13 +64,14 @@ Page({
       if (result.success) {
         const records = result.data || []
 
-        // 计算统计数据
+        // 计算统计数据并预处理每条记录的学生状态
         let presentCount = 0
         let absentCount = 0
         let lateCount = 0
 
-        records.forEach(record => {
+        const processedRecords = records.map(record => {
           const studentRecord = record.students.find(s => s.studentId === this.data.studentId)
+
           if (studentRecord) {
             switch (studentRecord.status) {
               case 'present':
@@ -84,6 +85,13 @@ Page({
                 break
             }
           }
+
+          // 为每条记录添加该学生的状态信息
+          return {
+            ...record,
+            studentStatus: studentRecord?.status || 'unknown',
+            studentNote: studentRecord?.note || ''
+          }
         })
 
         const totalRecords = records.length
@@ -92,7 +100,7 @@ Page({
           : 0
 
         this.setData({
-          attendanceHistory: records,
+          attendanceHistory: processedRecords,
           totalRecords,
           presentCount,
           absentCount,
