@@ -24,7 +24,7 @@ Page({
     this.setData({
       clubInfo: {
         name: userInfo.clubName,
-        teacher: userInfo.name,
+        teacher: userInfo.userName,
         department: userInfo.department
       }
     })

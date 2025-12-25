@@ -147,8 +147,8 @@ async function handleGetByClub(event) {
         const students = await getAllDataSorted(
             db.collection('students'),
             { clubName },
-            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
-            { className: 1, name: 1 }  // 按班级、姓名排序
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
+            { className: 1, studentName: 1 }  // 按班级、姓名排序
         )
 
         return { success: true, data: students }
@@ -168,8 +168,8 @@ async function handleGetByClass(event) {
         const students = await getAllDataSorted(
             db.collection('students'),
             { className },
-            { _id: true, name: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
-            { name: 1 }  // 按姓名排序
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
+            { studentName: 1 }  // 按姓名排序
         )
 
         return { success: true, data: students }
@@ -189,7 +189,7 @@ async function handleGetByDepartment(event) {
         const students = await getAllData(
             db.collection('students'),
             { department },
-            { _id: true, name: true, department: true, className: true, gender: true, clubName: true }
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true }
         )
 
         return { success: true, data: students }

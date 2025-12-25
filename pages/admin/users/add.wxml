@@ -3,7 +3,7 @@
     <van-cell-group title="基本信息">
       <van-field
         label="姓名"
-        value="{{ formData.name }}"
+        value="{{ formData.userName }}"
         placeholder="请输入姓名"
         required
         bind:change="onNameInput"

@@ -54,7 +54,7 @@ Page({
         studentName,
         clubName,
         className: userInfo.className,
-        teacherName: userInfo.name,
+        teacherName: userInfo.userName,
         feedback,
         date: dateUtil.getCurrentDate()
       }, { showLoading: false, showError: false })

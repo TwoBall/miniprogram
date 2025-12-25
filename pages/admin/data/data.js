@@ -292,9 +292,8 @@ Page({
   },
 
   exportData() {
-    wx.showToast({
-      title: '数据导出功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/common/export/export'
     })
   }
 })

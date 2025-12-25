@@ -157,4 +157,6 @@
       bind:change="onRejectReasonInput"
     />
   </van-dialog>
+
+  <van-toast id="van-toast" />
 </view>

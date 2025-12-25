@@ -220,7 +220,7 @@ Page({
 
     // 添加到已点名列表
     markedStudents.push({
-      name: student.name,
+      name: student.studentName,
       className: student.className,
       status: status
     })
@@ -326,7 +326,7 @@ Page({
         students[i].status = 'present'
         actionHistory.push({ index: i, status: 'present' })
         markedStudents.push({
-          name: students[i].name,
+          name: students[i].studentName,
           className: students[i].className,
           status: 'present'
         })
@@ -376,7 +376,7 @@ Page({
     markedStudents[index].status = newStatus
 
     // 同步更新 students 数组中对应学生的状态
-    const studentInList = students.find(s => s.name === student.name && s.className === student.className)
+    const studentInList = students.find(s => s.studentName === student.name && s.className === student.className)
     if (studentInList) {
       studentInList.status = newStatus
     }
@@ -437,13 +437,13 @@ Page({
         action: 'submit',
         clubName,
         teacherId: userInfo._id,
-        teacherName: userInfo.name,
+        teacherName: userInfo.userName,
         date: currentDate,
         time: currentTime,
         mode: submitMode,
         records: students.map(s => ({
           studentId: s._id,
-          studentName: s.name,
+          studentName: s.studentName,
           className: s.className,
           department: s.department,
           gender: s.gender || '',

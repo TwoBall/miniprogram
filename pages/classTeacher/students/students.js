@@ -116,7 +116,7 @@ Page({
     }
 
     const filtered = this.data.students.filter(student => {
-      return student.name.includes(keyword) ||
+      return student.studentName.includes(keyword) ||
              student.clubName?.includes(keyword)
     })
 

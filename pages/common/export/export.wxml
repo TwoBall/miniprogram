@@ -1,0 +1,162 @@
+<view class="export-container">
+  <!-- 导出类型选择 -->
+  <view class="section">
+    <view class="section-title">导出类型</view>
+    <van-cell-group>
+      <van-radio-group value="{{ exportType }}" bind:change="onExportTypeChange">
+        <van-cell-group>
+          <van-cell title="考勤明细" clickable>
+            <van-radio slot="right-icon" name="attendance" />
+          </van-cell>
+          <van-cell title="考勤汇总" clickable>
+            <van-radio slot="right-icon" name="summary" />
+          </van-cell>
+          <van-cell title="学生名单" clickable>
+            <van-radio slot="right-icon" name="students" />
+          </van-cell>
+        </van-cell-group>
+      </van-radio-group>
+    </van-cell-group>
+  </view>
+
+  <!-- 日期范围选择(仅考勤相关导出) -->
+  <view class="section" wx:if="{{ exportType === 'attendance' || exportType === 'summary' }}">
+    <view class="section-title">日期范围</view>
+    <van-cell-group>
+      <van-radio-group value="{{ dateRange }}" bind:change="onDateRangeChange">
+        <van-cell-group>
+          <van-cell title="今日" clickable>
+            <van-radio slot="right-icon" name="today" />
+          </van-cell>
+          <van-cell title="本周" clickable>
+            <van-radio slot="right-icon" name="week" />
+          </van-cell>
+          <van-cell title="本月" clickable>
+            <van-radio slot="right-icon" name="month" />
+          </van-cell>
+          <van-cell title="自定义" clickable>
+            <van-radio slot="right-icon" name="custom" />
+          </van-cell>
+        </van-cell-group>
+      </van-radio-group>
+
+      <!-- 自定义日期范围 -->
+      <view wx:if="{{ dateRange === 'custom' }}" class="custom-date">
+        <van-cell
+          title="开始日期"
+          value="{{ startDate || '请选择' }}"
+          is-link
+          bind:click="onShowStartDatePicker"
+        />
+        <van-cell
+          title="结束日期"
+          value="{{ endDate || '请选择' }}"
+          is-link
+          bind:click="onShowEndDatePicker"
+        />
+      </view>
+    </van-cell-group>
+  </view>
+
+  <!-- 筛选条件 -->
+  <view class="section">
+    <view class="section-title">筛选条件</view>
+    <van-cell-group>
+      <!-- 管理员和学部领导可选择学部 -->
+      <van-cell
+        wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'leader' }}"
+        title="学部"
+        value="{{ department || '全部' }}"
+        is-link
+        bind:click="showDepartmentPicker"
+      />
+
+      <!-- 管理员、学部领导、社团老师可选择社团 -->
+      <van-cell
+        wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'leader' || userInfo.role === 'teacher' }}"
+        title="社团"
+        value="{{ clubName || (userInfo.role === 'teacher' ? userInfo.clubName : '全部') }}"
+        is-link="{{ userInfo.role !== 'teacher' }}"
+        bind:click="showClubPicker"
+      />
+
+      <!-- 管理员和班主任可选择班级 -->
+      <van-cell
+        wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'classTeacher' }}"
+        title="班级"
+        value="{{ className || (userInfo.role === 'classTeacher' ? userInfo.className : '全部') }}"
+        is-link="{{ userInfo.role !== 'classTeacher' }}"
+        bind:click="showClassPicker"
+      />
+    </van-cell-group>
+  </view>
+
+  <!-- 导出按钮 -->
+  <view class="export-btn">
+    <van-button
+      type="primary"
+      size="large"
+      block
+      bind:click="onExport"
+      loading="{{ exporting }}"
+      disabled="{{ exporting }}"
+    >
+      {{ exporting ? '导出中...' : '开始导出' }}
+    </van-button>
+  </view>
+
+  <!-- 说明 -->
+  <view class="tips">
+    <van-icon name="info-o" size="16px" />
+    <text class="tips-text">
+      导出的 Excel 文件将保存在小程序缓存中，可以通过微信分享给他人
+    </text>
+  </view>
+
+  <!-- 日期选择器 -->
+  <van-popup show="{{ showStartDatePicker }}" position="bottom">
+    <van-datetime-picker
+      type="date"
+      value="{{ minDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onConfirmStartDate"
+      bind:cancel="onCancelDatePicker"
+    />
+  </van-popup>
+
+  <van-popup show="{{ showEndDatePicker }}" position="bottom">
+    <van-datetime-picker
+      type="date"
+      value="{{ maxDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onConfirmEndDate"
+      bind:cancel="onCancelDatePicker"
+    />
+  </van-popup>
+
+  <!-- 学部选择器 -->
+  <van-action-sheet
+    show="{{ showDepartmentPicker }}"
+    actions="{{ departmentActions }}"
+    bind:select="onSelectDepartment"
+    bind:close="onCloseDepartmentPicker"
+  />
+
+  <!-- 社团选择器 -->
+  <van-action-sheet
+    show="{{ showClubPicker }}"
+    actions="{{ clubActions }}"
+    bind:select="onSelectClub"
+    bind:close="onCloseClubPicker"
+  />
+
+  <!-- 班级选择器 -->
+  <van-action-sheet
+    show="{{ showClassPicker }}"
+    actions="{{ classActions }}"
+    bind:select="onSelectClass"
+    bind:close="onCloseClassPicker"
+  />
+</view>

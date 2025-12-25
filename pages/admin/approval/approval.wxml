@@ -56,7 +56,7 @@
               <view class="detail-row">
                 <van-icon name="clock-o" size="24rpx" color="#999" />
                 <text class="label">申请时间：</text>
-                <text class="value">{{item.createTime}}</text>
+                <text class="value" user-select>{{item.createTime}}</text>
               </view>
             </view>
 
@@ -124,7 +124,7 @@
               <view class="detail-row" wx:if="{{item.approvedTime}}">
                 <van-icon name="clock-o" size="24rpx" color="#999" />
                 <text class="label">审批时间：</text>
-                <text class="value">{{item.approvedTime}}</text>
+                <text class="value" user-select>{{item.approvedTime}}</text>
               </view>
             </view>
           </view>
@@ -174,7 +174,7 @@
               <view class="detail-row" wx:if="{{item.rejectReason}}">
                 <van-icon name="info-o" size="24rpx" color="#999" />
                 <text class="label">拒绝原因：</text>
-                <text class="value reason">{{item.rejectReason}}</text>
+                <text class="value reason" user-select>{{item.rejectReason}}</text>
               </view>
 
               <view class="detail-row" wx:if="{{item.approvedByName}}">

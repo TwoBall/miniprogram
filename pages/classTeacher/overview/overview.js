@@ -165,7 +165,7 @@ Page({
   sendFeedback(e) {
     const student = e.currentTarget.dataset.student
     wx.navigateTo({
-      url: `/pages/classTeacher/feedback/feedback?studentId=${student._id}&studentName=${student.name}&clubName=${student.clubName}`
+      url: `/pages/classTeacher/feedback/feedback?studentId=${student._id}&studentName=${student.studentName}&clubName=${student.clubName}`
     })
   }
 })

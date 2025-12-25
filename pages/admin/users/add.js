@@ -6,7 +6,7 @@ Page({
     userId: '',
 
     formData: {
-      name: '',
+      userName: '',
       role: 'teacher',
       department: '',
       className: '',
@@ -59,7 +59,7 @@ Page({
         if (user) {
           this.setData({
             formData: {
-              name: user.name || '',
+              userName: user.userName || '',
               role: user.role || 'teacher',
               department: user.department || '',
               className: user.className || '',
@@ -79,7 +79,7 @@ Page({
 
   onNameInput(e) {
     this.setData({
-      'formData.name': e.detail.value
+      'formData.userName': e.detail.value
     })
   },
 
@@ -133,9 +133,9 @@ Page({
   },
 
   validateForm() {
-    const { name, role, department, className, clubName } = this.data.formData
+    const { userName, role, department, className, clubName } = this.data.formData
 
-    if (!name.trim()) {
+    if (!userName.trim()) {
       wx.showToast({
         title: '请输入姓名',
         icon: 'none'

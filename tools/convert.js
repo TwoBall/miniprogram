@@ -12,7 +12,7 @@ const CONFIG = {
   outputFile: '../students.json',
   // Excel 列名 -> 数据库字段名 映射
   mapping: {
-    '学生姓名': 'name',
+    '学生姓名': 'studentName',  // v2.0: 使用 studentName 而不是 name
     '学部': 'department',
     '班级': 'className',
     '性别': 'gender',
@@ -77,7 +77,7 @@ function convert() {
       const key = `${teacherName}_${className}`
       if (!teachersMap.has(key)) {
         teachersMap.set(key, {
-          name: teacherName,
+          userName: teacherName,  // v2.0: 使用 userName 而不是 name
           role: 'classTeacher',
           className: className,
           department: department || '',

@@ -419,7 +419,7 @@ async function handleReject(event, wxContext) {
             data: {
                 status: 'rejected',
                 rejectedBy: user._id,
-                rejectedByName: user.name,
+                rejectedByName: user.userName,
                 rejectReason: reason,
                 rejectedTime: db.serverDate(),
                 updateTime: db.serverDate()

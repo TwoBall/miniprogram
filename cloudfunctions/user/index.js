@@ -51,7 +51,7 @@ async function handleLogin(event, wxContext) {
         // 获取该 openid 下的所有账号记录
         const userRes = await db.collection('users')
             .where({ openid })
-            .field({ _id: true, openid: true, name: true, role: true, department: true, className: true, clubName: true, status: true })
+            .field({ _id: true, openid: true, userName: true, role: true, department: true, className: true, clubName: true, status: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -75,7 +75,7 @@ async function handleLogin(event, wxContext) {
                 userList: approvedUsers.map(u => ({
                     _id: u._id,
                     openid: u.openid,
-                    name: u.name,
+                    name: u.userName,
                     role: u.role,
                     department: u.department || '',
                     className: u.className || '',
@@ -116,7 +116,7 @@ async function handleRegister(event, wxContext) {
 
         // 2. 检查是否存在匹配的预注册账号（没有 openid 或 openid 为空）
         const preRegQuery = {
-            name,
+            userName: name,
             role,
             openid: _.or(_.exists(false), _.eq(null), _.eq(''))
         }
@@ -151,7 +151,7 @@ async function handleRegister(event, wxContext) {
         const result = await db.collection('users').add({
             data: {
                 openid,
-                name,
+                userName: name,
                 role,
                 department: department || '',
                 className: className || '',
@@ -181,7 +181,7 @@ async function handleApprove(event, wxContext) {
         // 验证管理员权限
         const adminRes = await db.collection('users')
             .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true, name: true })
+            .field({ _id: true, userName: true })
             .get()
 
         if (adminRes.data.length === 0) {
@@ -204,7 +204,7 @@ async function handleApprove(event, wxContext) {
         const updateData = {
             status: action === 'approve' ? 'approved' : 'rejected',
             approvedBy: admin._id,
-            approvedByName: admin.name,
+            approvedByName: admin.userName,
             approvedTime: db.serverDate(),
             updateTime: db.serverDate()
         }
@@ -242,7 +242,7 @@ async function handleApprove(event, wxContext) {
                     content,
                     data: {
                         userId,
-                        userName: user.name,
+                        userName: user.userName,
                         role: user.role,
                         action,
                         rejectReason: rejectReason || ''
@@ -256,7 +256,7 @@ async function handleApprove(event, wxContext) {
         return {
             success: true,
             message: action === 'approve' ? '审批通过' : '已拒绝',
-            data: { userId, action, approvedBy: admin.name }
+            data: { userId, action, approvedBy: admin.userName }
         }
     } catch (error) {
         console.error('审批失败:', error)
@@ -454,7 +454,7 @@ async function handleAdd(event, wxContext) {
         // 验证管理员权限
         const adminRes = await db.collection('users')
             .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true, name: true })
+            .field({ _id: true, userName: true })
             .get()
 
         if (adminRes.data.length === 0) {
@@ -466,14 +466,14 @@ async function handleAdd(event, wxContext) {
         // 创建预注册账号（无 openid，等待用户关联）
         const result = await db.collection('users').add({
             data: {
-                name,
+                userName: name,
                 role,
                 department: department || '',
                 className: className || '',
                 clubName: clubName || '',
                 status: 'approved',
                 approvedBy: admin._id,
-                approvedByName: admin.name,
+                approvedByName: admin.userName,
                 approvedTime: db.serverDate(),
                 createTime: db.serverDate(),
                 updateTime: db.serverDate()
@@ -559,7 +559,7 @@ async function handleUpdate(event, wxContext) {
         }
 
         // 防止修改敏感字段
-        const allowedFields = ['name', 'role', 'department', 'className', 'clubName', 'status']
+        const allowedFields = ['userName', 'role', 'department', 'className', 'clubName', 'status']
         const updateData = {}
         for (const key of allowedFields) {
             if (updates[key] !== undefined) {

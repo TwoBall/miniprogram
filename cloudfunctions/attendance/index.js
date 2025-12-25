@@ -345,7 +345,7 @@ async function handleGetByClass(event) {
     try {
         // 并行查询学生、考勤记录、反馈信息
         const [students, attendanceRecords, feedbacks] = await Promise.all([
-            getAllDataSorted(db.collection('students'), { className }, { _id: true, name: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }, { name: 1 }),
+            getAllDataSorted(db.collection('students'), { className }, { _id: true, studentName: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }, { studentName: 1 }),
             getAllData(db.collection('attendance_records'), { date }, { records: true, date: true, time: true }),
             getAllData(db.collection('feedbacks'), { className, date }, { studentId: true, feedback: true })
         ])
@@ -495,7 +495,7 @@ async function handleGetClubRank(event) {
             getAllData(
                 db.collection('students'),
                 { clubName },
-                { _id: true, name: true, className: true }
+                { _id: true, studentName: true, className: true }
             ),
             getAllData(
                 db.collection('attendance_records'),
@@ -508,7 +508,7 @@ async function handleGetClubRank(event) {
         const studentStats = {}
         students.forEach(s => {
             studentStats[s._id] = {
-                name: s.name,
+                name: s.studentName,
                 className: s.className,
                 present: 0,
                 total: 0,
@@ -635,12 +635,12 @@ async function handleGetByStudent(event) {
         const allRecords = await getAllData(
             db.collection('attendance_records'),
             {},
-            { _id: true, date: true, clubName: true, students: true, createTime: true }
+            { _id: true, date: true, clubName: true, records: true, createTime: true }
         )
 
         // 筛选出包含该学生的记录
         const studentRecords = allRecords
-            .filter(record => record.students.some(s => s.studentId === studentId))
+            .filter(record => record.records.some(s => s.studentId === studentId))
             .sort((a, b) => {
                 // 按日期降序排序
                 return b.date.localeCompare(a.date)
@@ -676,19 +676,19 @@ async function handleGetAbsenceWarnings(event) {
         const records = await getAllData(
             db.collection('attendance_records'),
             condition,
-            { students: true, clubName: true, date: true }
+            { records: true, clubName: true, date: true }
         )
 
         // 统计每个学生的缺勤次数
         const absenceCount = {}
         records.forEach(record => {
-            record.students.forEach(s => {
+            record.records.forEach(s => {
                 if (s.status === 'absent') {
                     const key = s.studentId
                     if (!absenceCount[key]) {
                         absenceCount[key] = {
                             studentId: s.studentId,
-                            name: s.name,
+                            name: s.studentName,
                             className: s.className,
                             clubName: record.clubName,
                             count: 0,

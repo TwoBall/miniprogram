@@ -292,7 +292,7 @@ Page({
 
     Dialog.confirm({
       title: '确认通过',
-      message: `确定通过 ${user.name} 的注册申请吗？`
+      message: `确定通过 ${user.userName} 的注册申请吗？`
     }).then(() => {
       this.doApprove(user._id)
     }).catch(() => {

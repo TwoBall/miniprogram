@@ -23,7 +23,8 @@
     "pages/leader/profile/profile",
     "pages/common/switchRole/switchRole",
     "pages/common/notifications/notifications",
-    "pages/common/transfer/transfer"
+    "pages/common/transfer/transfer",
+    "pages/common/export/export"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -54,7 +55,9 @@
     "van-search": "@vant/weapp/search/index",
     "van-swipe-cell": "@vant/weapp/swipe-cell/index",
     "van-loading": "@vant/weapp/loading/index",
-    "van-action-sheet": "@vant/weapp/action-sheet/index"
+    "van-action-sheet": "@vant/weapp/action-sheet/index",
+    "van-radio": "@vant/weapp/radio/index",
+    "van-radio-group": "@vant/weapp/radio-group/index"
   },
   "lazyCodeLoading": "requiredComponents",
   "style": "v2",

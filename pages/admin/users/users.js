@@ -98,7 +98,7 @@ Page({
         if (this.data.searchKeyword) {
           const keyword = this.data.searchKeyword.toLowerCase()
           users = users.filter(user =>
-            user.name.toLowerCase().includes(keyword) ||
+            user.userName.toLowerCase().includes(keyword) ||
             user.department?.toLowerCase().includes(keyword) ||
             user.className?.toLowerCase().includes(keyword) ||
             user.clubName?.toLowerCase().includes(keyword)
@@ -168,7 +168,7 @@ Page({
 
     wx.showModal({
       title: '确认删除',
-      content: `确定要删除用户"${user.name}"吗？删除后该用户将无法登录系统。`,
+      content: `确定要删除用户"${user.userName}"吗？删除后该用户将无法登录系统。`,
       success: async (res) => {
         if (res.confirm) {
           try {
