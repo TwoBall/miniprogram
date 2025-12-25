@@ -76,6 +76,10 @@
   color: #ee0a24;
 }
 
+.stat-number.warning {
+  color: #ff9800;
+}
+
 /* 社团排名 */
 .ranking-toggle {
   display: flex;

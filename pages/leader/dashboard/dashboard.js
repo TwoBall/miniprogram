@@ -21,7 +21,11 @@ Page({
     absentToday: 0,
     classes: [],
     clubRanking: [],
-    showRanking: false
+    showRanking: false,
+
+    // 缺勤预警
+    absenceWarnings: [],
+    warningCount: 0
   },
 
   /**
@@ -34,6 +38,7 @@ Page({
     }
     this.initDate()
     this.loadData()
+    this.loadAbsenceWarnings()
   },
 
   /**
@@ -49,7 +54,10 @@ Page({
    * 页面下拉刷新（强制刷新）
    */
   async onPullDownRefresh() {
-    await this.loadData(true)
+    await Promise.all([
+      this.loadData(true),
+      this.loadAbsenceWarnings()
+    ])
     wx.stopPullDownRefresh()
   },
 
@@ -211,5 +219,37 @@ Page({
       this.loadClubRanking()
     }
     this.setData({ showRanking: !this.data.showRanking })
+  },
+
+  /**
+   * 加载缺勤预警
+   */
+  async loadAbsenceWarnings() {
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
+
+    try {
+      // 获取当前月份 (YYYY-MM)
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const currentMonth = `${year}-${month}`
+
+      const result = await request.callCloud('attendance', {
+        action: 'getAbsenceWarnings',
+        month: currentMonth,
+        department: userInfo.department
+      }, { showLoading: false, showError: false })
+
+      if (result.success) {
+        const warnings = result.data || []
+        this.setData({
+          absenceWarnings: warnings,
+          warningCount: warnings.length
+        })
+      }
+    } catch (error) {
+      console.error('加载缺勤预警失败:', error)
+    }
   }
 })

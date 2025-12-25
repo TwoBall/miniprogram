@@ -20,6 +20,12 @@
   margin-bottom: 32rpx;
 }
 
+.stats-group {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
 .class-name {
   display: flex;
   align-items: center;
@@ -34,6 +40,17 @@
   color: #999;
   padding: 8rpx 16rpx;
   background-color: #f0f9ff;
+  border-radius: 20rpx;
+}
+
+.warning-count {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  color: #ff9800;
+  padding: 8rpx 16rpx;
+  background-color: #fff7e6;
   border-radius: 20rpx;
 }
 
@@ -122,7 +139,15 @@
 .student-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16rpx;
+}
+
+.name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
 }
 
 .student-name {

@@ -123,7 +123,8 @@ exports.main = async (event, context) => {
         updateRecords: handleUpdateRecords,
         getClubRank: handleGetClubRank,
         getClubRanking: handleGetClubRanking,
-        getByStudent: handleGetByStudent
+        getByStudent: handleGetByStudent,
+        getAbsenceWarnings: handleGetAbsenceWarnings
     }
 
     const handler = handlers[action]
@@ -586,5 +587,70 @@ async function handleGetByStudent(event) {
     } catch (error) {
         console.error('获取学生考勤记录失败:', error)
         return { success: false, message: '获取考勤记录失败', data: [] }
+    }
+}
+
+/**
+ * 获取缺勤预警列表
+ * 统计指定月份缺勤>=3次的学生
+ */
+async function handleGetAbsenceWarnings(event) {
+    const { month, department, className, clubName } = event
+    const _ = db.command
+
+    try {
+        // 计算月份范围
+        const startDate = `${month}-01`
+        const endDate = `${month}-31`
+
+        // 查询该月所有考勤记录
+        let condition = {
+            date: _.gte(startDate).and(_.lte(endDate))
+        }
+        if (department) condition.department = department
+        if (clubName) condition.clubName = clubName
+
+        const records = await getAllData(
+            db.collection('attendance_records'),
+            condition,
+            { students: true, clubName: true, date: true }
+        )
+
+        // 统计每个学生的缺勤次数
+        const absenceCount = {}
+        records.forEach(record => {
+            record.students.forEach(s => {
+                if (s.status === 'absent') {
+                    const key = s.studentId
+                    if (!absenceCount[key]) {
+                        absenceCount[key] = {
+                            studentId: s.studentId,
+                            name: s.name,
+                            className: s.className,
+                            clubName: record.clubName,
+                            count: 0,
+                            dates: []
+                        }
+                    }
+                    absenceCount[key].count++
+                    absenceCount[key].dates.push(record.date)
+                }
+            })
+        })
+
+        // 筛选>=3次的学生
+        let warnings = Object.values(absenceCount)
+            .filter(s => s.count >= 3)
+            .sort((a, b) => b.count - a.count)
+
+        // 如果指定班级，再过滤
+        if (className) {
+            warnings = warnings.filter(s => s.className === className)
+        }
+
+        return { success: true, data: warnings }
+    } catch (error) {
+        console.error('获取缺勤预警列表失败:', error)
+        return { success: false, message: '获取预警列表失败', data: [] }
     }
 }

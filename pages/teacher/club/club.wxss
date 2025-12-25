@@ -61,6 +61,20 @@
   opacity: 0.9;
 }
 
+.stat-item.warning {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 8rpx;
+}
+
+.stat-item.warning .stat-value {
+  color: #fff;
+}
+
+.stat-item.warning .stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 /* Tab 切换 */
 .tabs {
   display: flex;
@@ -129,10 +143,22 @@
   margin-bottom: 16rpx;
 }
 
+.name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
 .student-name {
   font-size: 32rpx;
   font-weight: 600;
   color: #333;
+  flex-shrink: 0;
+}
+
+.warning-tag {
+  flex-shrink: 0;
 }
 
 .student-meta {

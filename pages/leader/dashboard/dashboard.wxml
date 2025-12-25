@@ -18,7 +18,7 @@
   </view>
 
   <view class="stats-section">
-    <van-grid column-num="4" border="{{ false }}">
+    <van-grid column-num="4" border="{{ false }}" wx:if="{{ warningCount === 0 }}">
       <van-grid-item use-slot>
         <view class="stat-content">
           <view class="stat-number">{{totalClasses}}</view>
@@ -41,6 +41,39 @@
         <view class="stat-content">
           <view class="stat-number absent">{{absentToday}}</view>
           <view class="stat-label">今日缺课</view>
+        </view>
+      </van-grid-item>
+    </van-grid>
+
+    <van-grid column-num="5" border="{{ false }}" wx:else>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{totalClasses}}</view>
+          <view class="stat-label">班级</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number">{{totalStudents}}</view>
+          <view class="stat-label">学生</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number present">{{presentToday}}</view>
+          <view class="stat-label">到课</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number absent">{{absentToday}}</view>
+          <view class="stat-label">缺课</view>
+        </view>
+      </van-grid-item>
+      <van-grid-item use-slot>
+        <view class="stat-content">
+          <view class="stat-number warning">{{warningCount}}</view>
+          <view class="stat-label">预警</view>
         </view>
       </van-grid-item>
     </van-grid>

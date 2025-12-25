@@ -12,7 +12,11 @@ Page({
 
     // 统计数据
     totalCount: 0,
-    clubDistribution: []
+    clubDistribution: [],
+
+    // 缺勤预警
+    absenceWarnings: [],
+    warningStudentIds: []
   },
 
   onLoad() {
@@ -33,7 +37,12 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.loadStudents()
+    Promise.all([
+      this.loadStudents(),
+      this.loadAbsenceWarnings()
+    ]).then(() => {
+      wx.stopPullDownRefresh()
+    })
   },
 
   // 加载班级学生列表
@@ -65,6 +74,9 @@ Page({
           clubDistribution,
           loading: false
         })
+
+        // 加载缺勤预警
+        this.loadAbsenceWarnings()
 
         wx.stopPullDownRefresh()
       } else {
@@ -109,6 +121,37 @@ Page({
     })
 
     this.setData({ filteredStudents: filtered })
+  },
+
+  // 加载缺勤预警
+  async loadAbsenceWarnings() {
+    try {
+      // 获取当前月份 (YYYY-MM)
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const currentMonth = `${year}-${month}`
+
+      const result = await request.callCloud('attendance', {
+        action: 'getAbsenceWarnings',
+        month: currentMonth,
+        className: this.data.className
+      })
+
+      if (result.success) {
+        const warnings = result.data || []
+
+        // 创建预警学生ID集合
+        const warningIds = warnings.map(w => w.studentId)
+
+        this.setData({
+          absenceWarnings: warnings,
+          warningStudentIds: warningIds
+        })
+      }
+    } catch (error) {
+      console.error('加载缺勤预警失败:', error)
+    }
   },
 
   // 查看学生详情

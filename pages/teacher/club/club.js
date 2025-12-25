@@ -12,7 +12,11 @@ Page({
     stats: {
       totalStudents: 0,
       avgAttendanceRate: 0
-    }
+    },
+
+    // 缺勤预警
+    absenceWarnings: [],
+    warningStudentIds: new Set()
   },
 
   onLoad() {
@@ -28,7 +32,10 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.loadStudents().then(() => {
+    Promise.all([
+      this.loadStudents(),
+      this.loadAbsenceWarnings()
+    ]).then(() => {
       wx.stopPullDownRefresh()
     })
   },
@@ -62,6 +69,9 @@ Page({
           'stats.totalStudents': students.length,
           loading: false
         })
+
+        // 加载缺勤预警
+        this.loadAbsenceWarnings()
       } else {
         throw new Error(res.result.message)
       }
@@ -118,6 +128,46 @@ Page({
         title: error.message || '加载失败',
         icon: 'none'
       })
+    }
+  },
+
+  // 加载缺勤预警
+  async loadAbsenceWarnings() {
+    const userInfo = wx.getStorageSync('userInfo')
+
+    if (!userInfo.clubName) {
+      return
+    }
+
+    try {
+      // 获取当前月份 (YYYY-MM)
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const currentMonth = `${year}-${month}`
+
+      const res = await wx.cloud.callFunction({
+        name: 'attendance',
+        data: {
+          action: 'getAbsenceWarnings',
+          month: currentMonth,
+          clubName: userInfo.clubName
+        }
+      })
+
+      if (res.result.success) {
+        const warnings = res.result.data || []
+
+        // 创建预警学生ID集合
+        const warningIds = warnings.map(w => w.studentId)
+
+        this.setData({
+          absenceWarnings: warnings,
+          warningStudentIds: warningIds
+        })
+      }
+    } catch (error) {
+      console.error('加载缺勤预警失败:', error)
     }
   },
 

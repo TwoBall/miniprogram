@@ -6,7 +6,13 @@
         <van-icon name="friends-o" size="20px" color="#1890ff" />
         <text>{{ className }}</text>
       </view>
-      <view class="student-count">共 {{ totalCount }} 人</view>
+      <view class="stats-group">
+        <view class="student-count">共 {{ totalCount }} 人</view>
+        <view wx:if="{{ absenceWarnings.length > 0 }}" class="warning-count">
+          <van-icon name="warning-o" size="14px" color="#ff9800" />
+          {{ absenceWarnings.length }} 人预警
+        </view>
+      </view>
     </view>
 
     <!-- 社团分布 -->
@@ -61,7 +67,18 @@
 
       <view class="student-info">
         <view class="student-header">
-          <text class="student-name">{{ item.name }}</text>
+          <view class="name-wrapper">
+            <text class="student-name">{{ item.name }}</text>
+            <van-tag
+              wx:if="{{ warningStudentIds.includes(item.studentId) }}"
+              type="danger"
+              plain
+              size="medium"
+            >
+              <van-icon name="warning-o" size="12px" />
+              预警
+            </van-tag>
+          </view>
           <van-tag wx:if="{{ item.gender }}" plain type="primary" size="medium">
             {{ item.gender === 'male' ? '男' : '女' }}
           </van-tag>

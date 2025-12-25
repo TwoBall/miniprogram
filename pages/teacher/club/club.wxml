@@ -20,6 +20,10 @@
         <text class="stat-value">{{ stats.avgAttendanceRate }}%</text>
         <text class="stat-label">平均出勤率</text>
       </view>
+      <view class="stat-item warning" wx:if="{{ activeTab === 'students' && absenceWarnings.length > 0 }}">
+        <text class="stat-value">{{ absenceWarnings.length }}</text>
+        <text class="stat-label">缺勤预警</text>
+      </view>
     </view>
   </view>
 
@@ -61,7 +65,19 @@
       >
         <view slot="title" class="student-info">
           <view class="student-header">
-            <text class="student-name">{{ item.name }}</text>
+            <view class="name-wrapper">
+              <text class="student-name">{{ item.name }}</text>
+              <van-tag
+                wx:if="{{ warningStudentIds.includes(item.studentId) }}"
+                type="danger"
+                plain
+                size="medium"
+                custom-class="warning-tag"
+              >
+                <van-icon name="warning-o" size="14px" />
+                缺勤预警
+              </van-tag>
+            </view>
             <van-tag type="primary" plain size="medium">{{ item.className }}</van-tag>
           </view>
           <view class="student-meta">
