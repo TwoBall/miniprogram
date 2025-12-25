@@ -94,7 +94,7 @@ Page({
    */
   redirectByRole(role) {
     const routes = {
-      'admin': '/pages/admin/approval/approval',
+      'admin': '/pages/admin/home/home',
       'teacher': '/pages/teacher/attendance/attendance',
       'classTeacher': '/pages/classTeacher/overview/overview',
       'leader': '/pages/leader/dashboard/dashboard'
