@@ -55,12 +55,6 @@ Page({
     this.updateDateTime()
   },
 
-  goToSwitchRole() {
-    wx.navigateTo({
-      url: '/pages/common/switchRole/switchRole'
-    })
-  },
-
   updateDateTime() {
     this.setData({
       currentDate: dateUtil.getCurrentDate(),

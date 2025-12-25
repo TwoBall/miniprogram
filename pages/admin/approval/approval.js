@@ -105,15 +105,6 @@ Page({
     }
   },
 
-  /**
-   * 跳转到角色切换页面
-   */
-  goToSwitchRole() {
-    wx.navigateTo({
-      url: '/pages/common/switchRole/switchRole'
-    })
-  },
-
   onTabChange(e) {
     this.setData({
       activeTab: e.detail.index

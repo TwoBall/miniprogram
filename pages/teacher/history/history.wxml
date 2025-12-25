@@ -6,10 +6,6 @@
         <van-icon name="notes-o" size="40rpx" color="#ffffff" />
         <text class="club-name">历史记录</text>
       </view>
-      <view class="switch-role-btn" bindtap="goToSwitchRole">
-        <van-icon name="exchange" size="28rpx" color="#ffffff" />
-        <text class="switch-role-text">切换身份</text>
-      </view>
     </view>
   </view>
 

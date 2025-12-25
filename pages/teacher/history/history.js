@@ -170,14 +170,5 @@ Page({
     wx.navigateTo({
       url: `/pages/teacher/detail/detail?recordId=${record._id}`
     })
-  },
-
-  /**
-   * 跳转到角色切换页面
-   */
-  goToSwitchRole() {
-    wx.navigateTo({
-      url: '/pages/common/switchRole/switchRole'
-    })
   }
 })

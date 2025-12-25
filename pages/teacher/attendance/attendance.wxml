@@ -6,10 +6,6 @@
         <van-icon name="friends-o" size="40rpx" color="#ffffff" />
         <text class="club-name">{{clubName}}</text>
       </view>
-      <view class="switch-role-btn" bindtap="goToSwitchRole">
-        <van-icon name="exchange" size="28rpx" color="#ffffff" />
-        <text class="switch-role-text">切换身份</text>
-      </view>
     </view>
     <view class="date-time">
       <van-icon name="clock-o" size="28rpx" color="rgba(255,255,255,0.9)" />
