@@ -57,10 +57,22 @@
 - `miniprogram_npm/` - 小程序 npm 包编译产物
 - `node_modules/` - Node.js 依赖包
 
+### 行为混入模块
+@behaviors/README.md
+
+**主包 Behavior**（被多个分包使用，必须放在主包）：
+- `behaviors/profileBehavior.js` - Profile 页面通用行为
+
+**分包 Behavior**（仅 common 分包内部使用）：
+- `pages/common/behaviors/datePickerBehavior.js` - 日期选择器行为
+- `pages/common/behaviors/paginationBehavior.js` - 分页加载行为
+
+**注意**：微信小程序分包之间不能互相引用，但所有分包都可以引用主包。因此被多个分包使用的 Behavior 必须放在主包 `behaviors/` 目录。
+
 ## 分包共享资源
 
-为优化主包体积，仅被分包使用的资源已移至 `pages/common/` 目录：
-- `pages/common/behaviors/` - 分包共享行为混入（profileBehavior）
+为优化主包体积，仅被 common 分包内部使用的资源放置在 `pages/common/` 目录：
+- `pages/common/behaviors/` - common 分包内部使用的行为混入
 - `pages/common/utils/` - 分包共享工具函数（auth、date）
 
 ## 配置文件

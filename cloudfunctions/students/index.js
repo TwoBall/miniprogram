@@ -3,80 +3,10 @@
  * 提供按社团、班级、学部查询学生的接口
  */
 const cloud = require('wx-server-sdk')
+const { getAllData, getAllDataSorted } = require('./utils')
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const MAX_LIMIT = 100
-
-/**
- * 获取所有数据的辅助函数
- * 突破云数据库单次查询100条的限制
- * @param {Object} collection - 数据库集合
- * @param {Object} condition - 查询条件
- * @param {Object} fields - 返回字段
- */
-async function getAllData(collection, condition, fields = null) {
-    const countResult = await collection.where(condition).count()
-    const total = countResult.total
-
-    if (total === 0) return []
-
-    let query = collection.where(condition)
-    if (fields) query = query.field(fields)
-
-    if (total <= MAX_LIMIT) {
-        const res = await query.get()
-        return res.data
-    }
-
-    const batchTimes = Math.ceil(total / MAX_LIMIT)
-    const tasks = []
-    for (let i = 0; i < batchTimes; i++) {
-        tasks.push(query.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get())
-    }
-
-    const results = await Promise.all(tasks)
-    return results.flatMap(res => res.data)
-}
-
-/**
- * 获取所有数据的辅助函数（支持排序）
- * 突破云数据库单次查询100条的限制
- * @param {Object} collection - 数据库集合
- * @param {Object} condition - 查询条件
- * @param {Object} fields - 返回字段
- * @param {Object} orderBy - 排序规则，如 { className: 1, name: 1 }
- */
-async function getAllDataSorted(collection, condition, fields = null, orderBy = null) {
-    const countResult = await collection.where(condition).count()
-    const total = countResult.total
-
-    if (total === 0) return []
-
-    let query = collection.where(condition)
-    if (fields) query = query.field(fields)
-
-    // 添加排序
-    if (orderBy) {
-        for (const [field, order] of Object.entries(orderBy)) {
-            query = query.orderBy(field, order === 1 ? 'asc' : 'desc')
-        }
-    }
-
-    if (total <= MAX_LIMIT) {
-        const res = await query.get()
-        return res.data
-    }
-
-    // 分批查询时按顺序执行，保证排序稳定性
-    const batchTimes = Math.ceil(total / MAX_LIMIT)
-    const allData = []
-    for (let i = 0; i < batchTimes; i++) {
-        const res = await query.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
-        allData.push(...res.data)
-    }
-
-    return allData
-}
 
 /**
  * 云函数入口

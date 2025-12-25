@@ -16,13 +16,39 @@
 - `transfer/` - 转班处理云函数，处理学生转班申请和审批
 - `submitFeedback/` - 反馈提交云函数，处理用户反馈信息的提交
 - `migrateFields/` - 字段迁移云函数，处理数据库字段的迁移和更新
+- `common/` - 公共模块模板（不需要上传，仅作为参考）
 
 ## 云函数结构
 
 每个云函数目录包含：
 - `index.js` - 云函数入口文件
 - `package.json` - 依赖配置
+- `utils.js` - 公共工具函数（复制自 common 模块）
 - `config.json` (可选) - 云函数配置
+
+## 公共工具模块
+
+由于微信云开发不支持 `file:` 本地依赖，公共代码采用**复制方式**共享：
+
+```
+cloudfunctions/
+  common/           # 公共模块模板（不上传）
+    db-utils.js     # 数据库工具
+    auth-utils.js   # 权限验证
+    constants.js    # 常量定义
+  attendance/
+    utils.js        # 复制自 common，合并版公共工具
+  students/
+    utils.js        # 复制自 common
+  ...
+```
+
+**使用方式**：
+```javascript
+const { getAllData, getAllDataSorted } = require('./utils')
+```
+
+**维护说明**：修改公共代码时，需要同步更新所有云函数目录下的 `utils.js`。
 
 ## 调用方式
 

@@ -1,3 +1,7 @@
+// input: 用户存储信息、角色类型
+// output: 用户信息、菜单列表、菜单点击处理
+// pos: 主包 > behaviors > Profile 页面通用行为
+
 // Profile 页面通用行为
 const profileBehavior = Behavior({
   data: {

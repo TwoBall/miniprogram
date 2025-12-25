@@ -115,3 +115,32 @@
 .detail-row:last-child {
   margin-bottom: 0;
 }
+
+/* ========== 加载更多 ========== */
+.load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx 0;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.load-more text {
+  margin-left: 10rpx;
+}
+
+/* ========== 空状态 ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+  color: #999;
+}
+
+.empty-state text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+}

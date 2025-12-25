@@ -1,4 +1,5 @@
 const app = getApp()
+const { formatDate } = require('../../../utils/date')
 
 Page({
   data: {
@@ -105,16 +106,16 @@ Page({
 
     switch (range) {
       case 'today':
-        startDate = endDate = this.formatDate(today)
+        startDate = endDate = formatDate(today)
         break
       case 'week':
         const weekStart = new Date(year, month, day - today.getDay())
-        startDate = this.formatDate(weekStart)
-        endDate = this.formatDate(today)
+        startDate = formatDate(weekStart)
+        endDate = formatDate(today)
         break
       case 'month':
-        startDate = this.formatDate(new Date(year, month, 1))
-        endDate = this.formatDate(today)
+        startDate = formatDate(new Date(year, month, 1))
+        endDate = formatDate(today)
         break
       case 'custom':
         // 自定义范围，不设置默认值
@@ -151,7 +152,7 @@ Page({
   onConfirmStartDate(e) {
     const date = new Date(e.detail)
     this.setData({
-      startDate: this.formatDate(date),
+      startDate: formatDate(date),
       showStartDatePicker: false
     })
   },
@@ -160,7 +161,7 @@ Page({
   onConfirmEndDate(e) {
     const date = new Date(e.detail)
     this.setData({
-      endDate: this.formatDate(date),
+      endDate: formatDate(date),
       showEndDatePicker: false
     })
   },
@@ -336,13 +337,5 @@ Page({
     } finally {
       this.setData({ exporting: false })
     }
-  },
-
-  // 格式化日期
-  formatDate(date) {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
   }
 })

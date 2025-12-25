@@ -4,41 +4,11 @@
  */
 const cloud = require('wx-server-sdk')
 const xlsx = require('xlsx')
+const { getAllData } = require('./utils')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command
-const MAX_LIMIT = 100
-
-/**
- * 获取所有数据的辅助函数
- */
-async function getAllData(collectionName, condition) {
-  try {
-    const collection = db.collection(collectionName)
-    const countResult = await collection.where(condition).count()
-    const total = countResult.total
-
-    if (total === 0) return []
-
-    if (total <= MAX_LIMIT) {
-      const res = await collection.where(condition).get()
-      return res.data || []
-    }
-
-    const batchTimes = Math.ceil(total / MAX_LIMIT)
-    const tasks = []
-    for (let i = 0; i < batchTimes; i++) {
-      tasks.push(collection.where(condition).skip(i * MAX_LIMIT).limit(MAX_LIMIT).get())
-    }
-
-    const results = await Promise.all(tasks)
-    return results.flatMap(res => res.data || [])
-  } catch (error) {
-    console.error('getAllData error:', error)
-    return []
-  }
-}
 
 /**
  * 云函数入口
@@ -76,7 +46,7 @@ async function exportAttendance(event) {
     if (clubName) condition.clubName = clubName
 
     // 获取考勤记录
-    const records = await getAllData('attendance_records', condition)
+    const records = await getAllData(db.collection('attendance_records'), condition)
 
     // 转换为导出格式
     const exportData = []
@@ -170,7 +140,7 @@ async function exportSummary(event) {
     if (clubName) condition.clubName = clubName
 
     // 获取考勤记录
-    const records = await getAllData('attendance_records', condition)
+    const records = await getAllData(db.collection('attendance_records'), condition)
 
     // 统计每个学生的考勤情况
     const studentStats = {}
@@ -287,7 +257,7 @@ async function exportStudents(event) {
     if (className) condition.className = className
 
     // 获取学生数据
-    const students = await getAllData('students', condition)
+    const students = await getAllData(db.collection('students'), condition)
 
     if (students.length === 0) {
       return { success: false, message: '没有符合条件的学生' }

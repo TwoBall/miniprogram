@@ -126,11 +126,39 @@ function setWithCache(key, timeKey, value) {
   return success1 && success2
 }
 
+/**
+ * 获取当前用户信息
+ * @returns {Object|null} 用户信息对象
+ */
+function getUserInfo() {
+  return get(STORAGE_KEYS.USER_INFO)
+}
+
+/**
+ * 设置当前用户信息
+ * @param {Object} userInfo - 用户信息对象
+ * @returns {boolean} 是否成功
+ */
+function setUserInfo(userInfo) {
+  return set(STORAGE_KEYS.USER_INFO, userInfo)
+}
+
+/**
+ * 清除用户信息
+ * @returns {boolean} 是否成功
+ */
+function clearUserInfo() {
+  return remove(STORAGE_KEYS.USER_INFO)
+}
+
 module.exports = {
   STORAGE_KEYS,
   CACHE_DURATION,
   get,
   set,
   getWithCache,
-  setWithCache
+  setWithCache,
+  getUserInfo,
+  setUserInfo,
+  clearUserInfo
 }

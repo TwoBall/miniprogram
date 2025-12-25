@@ -64,11 +64,66 @@ function getDayOfWeekName(date) {
   return `周${dayNames[getDayOfWeek(date)]}`
 }
 
+/**
+ * 格式化相对时间（如"刚刚"、"5分钟前"、"昨天 14:30"）
+ * @param {Date|string|number} time - 日期对象、时间戳或日期字符串
+ * @returns {string} 相对时间字符串
+ */
+function formatRelativeTime(time) {
+  if (!time) return ''
+
+  const date = new Date(time)
+  const now = new Date()
+  const diff = now - date
+
+  // 1分钟内
+  if (diff < 60000) {
+    return '刚刚'
+  }
+
+  // 1小时内
+  if (diff < 3600000) {
+    return `${Math.floor(diff / 60000)}分钟前`
+  }
+
+  // 今天
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  if (date >= today) {
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `今天 ${hours}:${minutes}`
+  }
+
+  // 昨天
+  const yesterday = new Date(today - 86400000)
+  if (date >= yesterday) {
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `昨天 ${hours}:${minutes}`
+  }
+
+  // 今年
+  if (date.getFullYear() === now.getFullYear()) {
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${month}-${day} ${hours}:${minutes}`
+  }
+
+  // 其他年份
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 module.exports = {
   formatDate,
   formatTime,
   getCurrentDate,
   getCurrentTime,
   getDayOfWeek,
-  getDayOfWeekName
+  getDayOfWeekName,
+  formatRelativeTime
 }

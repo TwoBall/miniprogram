@@ -1,20 +1,17 @@
 const auth = require('../../../utils/auth')
-const dateUtil = require('../../../utils/date')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
+const datePickerBehavior = require('../../common/behaviors/datePickerBehavior')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
+  behaviors: [datePickerBehavior],
+
   // 上次加载时间（用于防抖）
   lastLoadTime: 0,
 
   data: {
     className: '',
-    selectedDate: '',
-    selectedDateTimestamp: new Date().getTime(),
-    minDate: new Date(2020, 0, 1).getTime(),
-    maxDate: new Date().getTime(),
-    showDatePicker: false,
     totalStudents: 0,
     joinedClubs: 0,
     presentToday: 0,
@@ -55,32 +52,16 @@ Page({
   /**
    * 初始化日期为今天
    */
-  initDate() {
-    this.setData({
-      selectedDate: dateUtil.getCurrentDate(),
-      selectedDateTimestamp: new Date().getTime()
-    })
-  },
+  // initDate 由 datePickerBehavior 提供
 
-  showDatePickerPopup() {
-    this.setData({ showDatePicker: true })
-  },
+  // showDatePickerPopup 由 datePickerBehavior 提供
 
-  onDatePickerClose() {
-    this.setData({ showDatePicker: false })
-  },
+  // onDatePickerClose 由 datePickerBehavior 提供
 
   /**
-   * 日期选择确认
+   * 日期变化回调（由 datePickerBehavior 调用）
    */
-  onDatePickerConfirm(e) {
-    const dateStr = dateUtil.formatDate(e.detail)
-
-    this.setData({
-      selectedDate: dateStr,
-      selectedDateTimestamp: e.detail,
-      showDatePicker: false
-    })
+  onDateChange() {
     this.loadData(true) // 切换日期强制刷新
   },
 

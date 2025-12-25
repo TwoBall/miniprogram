@@ -3,36 +3,10 @@
  * 处理站内通知的创建、查询、标记已读等操作
  */
 const cloud = require('wx-server-sdk')
+const { getAllData } = require('./utils')
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
-const MAX_LIMIT = 100
-
-/**
- * 获取所有数据的辅助函数
- */
-async function getAllData(collection, condition, fields = null) {
-    const countResult = await collection.where(condition).count()
-    const total = countResult.total
-
-    if (total === 0) return []
-
-    let query = collection.where(condition)
-    if (fields) query = query.field(fields)
-
-    if (total <= MAX_LIMIT) {
-        const res = await query.get()
-        return res.data
-    }
-
-    const batchTimes = Math.ceil(total / MAX_LIMIT)
-    const tasks = []
-    for (let i = 0; i < batchTimes; i++) {
-        tasks.push(query.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get())
-    }
-
-    const results = await Promise.all(tasks)
-    return results.flatMap(res => res.data)
-}
 
 /**
  * 云函数入口

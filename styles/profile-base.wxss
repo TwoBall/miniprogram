@@ -1,0 +1,61 @@
+/**
+ * Profile 页面公共样式基类
+ * 各角色 profile.wxss 只需 @import 此文件并覆盖 .user-info 的渐变色
+ */
+
+.profile-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 100rpx;
+}
+
+.user-info {
+  padding: 60rpx 40rpx;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  margin-right: 30rpx;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.name {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.role-tag text {
+  margin-left: 8rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  margin-top: 12rpx;
+  opacity: 0.9;
+}
+
+.info-item text {
+  margin-left: 8rpx;
+}
+
+.menu-section {
+  margin-top: 20rpx;
+}

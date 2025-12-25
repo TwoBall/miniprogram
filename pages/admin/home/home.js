@@ -1,3 +1,5 @@
+const { formatDate } = require('../../../utils/date')
+
 Page({
   data: {
     userInfo: null,
@@ -22,7 +24,7 @@ Page({
 
   async loadStats() {
     try {
-      const today = this.formatDate(new Date())
+      const today = formatDate(new Date())
 
       // 并行调用所有云函数获取统计数据
       const [userRes, clubRes, attendanceRes] = await Promise.all([
@@ -89,13 +91,6 @@ Page({
         icon: 'none'
       })
     }
-  },
-
-  formatDate(date) {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
   },
 
   navigateTo(e) {
