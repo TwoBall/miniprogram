@@ -1,0 +1,117 @@
+<view class="users-container">
+  <view class="search-bar">
+    <van-search
+      value="{{ searchKeyword }}"
+      placeholder="搜索姓名、学部、班级或社团"
+      use-action-slot
+      bind:change="onSearchChange"
+      bind:search="onSearch"
+      bind:clear="onSearchClear"
+    >
+      <view slot="action" bind:tap="onSearch">搜索</view>
+    </van-search>
+  </view>
+
+  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>
+    <van-tab
+      wx:for="{{ roleOptions }}"
+      wx:key="value"
+      name="{{ item.value }}"
+      title="{{ item.label }}"
+    />
+  </van-tabs>
+
+  <view class="users-list">
+    <van-cell-group wx:if="{{ users.length > 0 }}">
+      <van-swipe-cell
+        wx:for="{{ users }}"
+        wx:key="_id"
+        right-width="{{ 130 }}"
+      >
+        <van-cell
+          border="{{ false }}"
+          custom-class="user-card"
+          bind:click="editUser"
+          data-user="{{ item }}"
+        >
+          <view slot="title" class="user-info">
+            <view class="user-header">
+              <view class="user-name-wrapper">
+                <text class="user-name">{{ item.name }}</text>
+                <van-tag
+                  type="{{ statusMap[item.status].type }}"
+                  size="medium"
+                  plain
+                >
+                  {{ statusMap[item.status].text }}
+                </van-tag>
+              </view>
+              <van-tag type="primary" plain size="medium">
+                {{ roleMap[item.role] }}
+              </van-tag>
+            </view>
+            <view class="user-extra" wx:if="{{ item.department || item.className || item.clubName }}">
+              <van-icon name="location-o" size="28rpx" color="#999" />
+              <text class="extra-text">
+                <block wx:if="{{ item.department }}">{{ item.department }}</block>
+                <block wx:if="{{ item.className }}"> · {{ item.className }}</block>
+                <block wx:if="{{ item.clubName }}"> · {{ item.clubName }}</block>
+              </text>
+            </view>
+            <view class="user-meta" wx:if="{{ item.openid }}">
+              <van-icon name="user-circle-o" size="28rpx" color="#52c41a" />
+              <text class="meta-text">已绑定微信</text>
+            </view>
+            <view class="user-meta" wx:else>
+              <van-icon name="user-circle-o" size="28rpx" color="#ff9800" />
+              <text class="meta-text">预注册账号</text>
+            </view>
+          </view>
+        </van-cell>
+        <view slot="right" class="swipe-actions">
+          <view class="action-btn edit-btn" bind:tap="editUser" data-user="{{ item }}">
+            编辑
+          </view>
+          <view class="action-btn delete-btn" bind:tap="deleteUser" data-user="{{ item }}">
+            删除
+          </view>
+        </view>
+      </van-swipe-cell>
+    </van-cell-group>
+
+    <van-empty
+      wx:elif="{{ !loading }}"
+      description="暂无用户数据"
+      image="search"
+    />
+
+    <van-loading
+      wx:if="{{ loading && users.length === 0 }}"
+      type="spinner"
+      class="loading-center"
+    >
+      加载中...
+    </van-loading>
+
+    <view wx:if="{{ hasMore && users.length > 0 }}" class="load-more">
+      <van-loading type="spinner" size="20px" />
+      <text>加载更多...</text>
+    </view>
+  </view>
+
+  <view class="add-btn-wrapper">
+    <van-button
+      type="primary"
+      round
+      icon="plus"
+      bind:click="goToAddUser"
+      custom-class="add-btn"
+    >
+      添加用户
+    </van-button>
+  </view>
+
+  <van-toast id="van-toast" />
+
+  <custom-tabbar role="admin" active="0" />
+</view>

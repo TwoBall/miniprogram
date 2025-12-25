@@ -3,13 +3,21 @@
     "pages/login/login",
     "pages/register/register",
     "pages/admin/approval/approval",
+    "pages/admin/home/home",
+    "pages/admin/profile/profile",
+    "pages/admin/users/users",
+    "pages/admin/users/add",
+    "pages/admin/data/data",
     "pages/teacher/attendance/attendance",
     "pages/teacher/history/history",
     "pages/teacher/detail/detail",
+    "pages/teacher/profile/profile",
     "pages/classTeacher/overview/overview",
     "pages/classTeacher/feedback/feedback",
+    "pages/classTeacher/profile/profile",
     "pages/leader/dashboard/dashboard",
     "pages/leader/detail/detail",
+    "pages/leader/profile/profile",
     "pages/common/switchRole/switchRole"
   ],
   "window": {
@@ -17,26 +25,6 @@
     "navigationBarBackgroundColor": "#1F6FAD",
     "navigationBarTitleText": "社团点名系统",
     "navigationBarTextStyle": "white"
-  },
-  "tabBar": {
-    "color": "#666666",
-    "selectedColor": "#1890ff",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
-    "list": [
-      {
-        "pagePath": "pages/teacher/attendance/attendance",
-        "text": "点名",
-        "iconPath": "images/tab/attendance.png",
-        "selectedIconPath": "images/tab/attendance-active.png"
-      },
-      {
-        "pagePath": "pages/teacher/history/history",
-        "text": "历史",
-        "iconPath": "images/tab/history.png",
-        "selectedIconPath": "images/tab/history-active.png"
-      }
-    ]
   },
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
@@ -52,7 +40,15 @@
     "van-popup": "@vant/weapp/popup/index",
     "van-datetime-picker": "@vant/weapp/datetime-picker/index",
     "van-grid": "@vant/weapp/grid/index",
-    "van-grid-item": "@vant/weapp/grid-item/index"
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-tabbar": "@vant/weapp/tabbar/index",
+    "van-tabbar-item": "@vant/weapp/tabbar-item/index",
+    "van-tabs": "@vant/weapp/tabs/index",
+    "van-tab": "@vant/weapp/tab/index",
+    "van-search": "@vant/weapp/search/index",
+    "van-swipe-cell": "@vant/weapp/swipe-cell/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
   },
   "lazyCodeLoading": "requiredComponents",
   "style": "v2",

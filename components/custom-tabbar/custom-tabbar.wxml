@@ -1,0 +1,15 @@
+<van-tabbar
+  active="{{ active }}"
+  bind:change="onChange"
+  fixed="{{ true }}"
+  placeholder="{{ true }}"
+  border="{{ true }}"
+>
+  <van-tabbar-item
+    wx:for="{{ tabs[role] }}"
+    wx:key="text"
+    icon="{{ item.icon }}"
+  >
+    {{ item.text }}
+  </van-tabbar-item>
+</van-tabbar>

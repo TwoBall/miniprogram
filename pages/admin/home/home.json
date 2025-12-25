@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "管理工作台",
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
+    "van-grid": "@vant/weapp/grid/index",
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-tag": "@vant/weapp/tag/index"
+  }
+}

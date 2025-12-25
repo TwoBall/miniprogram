@@ -1,0 +1,78 @@
+<view class="home-container">
+  <!-- 欢迎信息 -->
+  <view class="welcome-section">
+    <view class="greeting">
+      <text class="greeting-text">您好，{{ userInfo.name || '管理员' }}</text>
+      <van-tag type="primary" size="medium">管理员</van-tag>
+    </view>
+    <view class="subtitle">欢迎使用智慧社团管理系统</view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-card">
+        <view class="stat-value">{{ stats.totalUsers }}</view>
+        <view class="stat-label">总用户数</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value warning">{{ stats.pendingUsers }}</view>
+        <view class="stat-label">待审批</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{ stats.totalClubs }}</view>
+        <view class="stat-label">社团数量</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-value">{{ stats.todayAttendance }}</view>
+        <view class="stat-label">今日点名</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions">
+    <view class="section-title">快捷操作</view>
+    <van-grid column-num="3" border="{{ false }}">
+      <van-grid-item
+        icon="manager-o"
+        text="用户管理"
+        data-url="/pages/admin/users/users"
+        bindtap="navigateTo"
+      />
+      <van-grid-item
+        icon="bar-chart-o"
+        text="数据中心"
+        data-url="/pages/admin/data/data"
+        bindtap="navigateTo"
+      />
+      <van-grid-item
+        icon="orders-o"
+        text="审批中心"
+        data-url="/pages/admin/approval/approval"
+        bindtap="navigateTo"
+      />
+      <van-grid-item
+        icon="bell"
+        text="通知中心"
+        data-url="/pages/common/notifications/notifications"
+        bindtap="navigateTo"
+      />
+      <van-grid-item
+        icon="setting-o"
+        text="系统设置"
+        data-url="/pages/admin/settings/settings"
+        bindtap="navigateTo"
+      />
+      <van-grid-item
+        icon="chart-trending-o"
+        text="数据统计"
+        data-url="/pages/admin/statistics/statistics"
+        bindtap="navigateTo"
+      />
+    </van-grid>
+  </view>
+
+  <!-- 底部 TabBar -->
+  <custom-tabbar role="admin" active="0" />
+</view>

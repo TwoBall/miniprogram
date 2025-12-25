@@ -104,4 +104,7 @@
   </van-popup>
 
   <van-toast id="van-toast" />
+
+  <!-- 底部 TabBar -->
+  <custom-tabbar role="leader" active="0" />
 </view>

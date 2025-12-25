@@ -22,7 +22,11 @@ exports.main = async (event, context) => {
         approve: handleApprove,
         reject: handleApprove, // 使用同一个处理函数
         getPending: handleGetPending,
-        getAllByStatus: handleGetAllByStatus
+        getAllByStatus: handleGetAllByStatus,
+        getAll: handleGetAll,
+        add: handleAdd,
+        delete: handleDelete,
+        update: handleUpdate
     }
 
     const handler = handlers[action]
@@ -337,5 +341,208 @@ async function handleGetAllByStatus(event, _wxContext) {
             approved: { data: [], total: 0, hasMore: false },
             rejected: { data: [], total: 0, hasMore: false }
         }
+    }
+}
+
+/**
+ * 获取所有用户（管理员专用）
+ * 支持按角色、状态筛选和分页
+ * @param {string} role - 角色筛选（可选）
+ * @param {string} status - 状态筛选（可选）
+ * @param {number} page - 页码
+ * @param {number} pageSize - 每页数量
+ */
+async function handleGetAll(event, wxContext) {
+    const { role, status, page = 1, pageSize = 20 } = event
+    const adminOpenid = wxContext.OPENID
+
+    try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
+        // 构建查询条件
+        const condition = { deleted: _.neq(true) }
+        if (role) condition.role = role
+        if (status) condition.status = status
+
+        // 获取总数
+        const countRes = await db.collection('users').where(condition).count()
+        const total = countRes.total
+
+        // 分页查询
+        const skip = (page - 1) * pageSize
+        const result = await db.collection('users')
+            .where(condition)
+            .orderBy('createTime', 'desc')
+            .skip(skip)
+            .limit(pageSize)
+            .get()
+
+        return {
+            success: true,
+            data: result.data,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                hasMore: skip + result.data.length < total
+            }
+        }
+    } catch (error) {
+        console.error('获取用户列表失败:', error)
+        return { success: false, message: '获取用户列表失败：' + error.message }
+    }
+}
+
+/**
+ * 添加用户（管理员专用）
+ * 管理员可直接创建已审批的用户账号
+ */
+async function handleAdd(event, wxContext) {
+    const { name, role, department, className, clubName } = event
+    const adminOpenid = wxContext.OPENID
+
+    try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true, name: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
+        const admin = adminRes.data[0]
+
+        // 创建预注册账号（无 openid，等待用户关联）
+        const result = await db.collection('users').add({
+            data: {
+                name,
+                role,
+                department: department || '',
+                className: className || '',
+                clubName: clubName || '',
+                status: 'approved',
+                approvedBy: admin._id,
+                approvedByName: admin.name,
+                approvedTime: db.serverDate(),
+                createTime: db.serverDate(),
+                updateTime: db.serverDate()
+            }
+        })
+
+        return {
+            success: true,
+            message: '用户添加成功',
+            data: { _id: result._id }
+        }
+    } catch (error) {
+        console.error('添加用户失败:', error)
+        return { success: false, message: '添加用户失败：' + error.message }
+    }
+}
+
+/**
+ * 删除用户（管理员专用）
+ * 使用软删除，标记 deleted 字段
+ */
+async function handleDelete(event, wxContext) {
+    const { userId } = event
+    const adminOpenid = wxContext.OPENID
+
+    try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
+        // 检查是否为管理员账号
+        const targetUser = await db.collection('users').doc(userId).get()
+        if (!targetUser.data) {
+            return { success: false, message: '用户不存在' }
+        }
+
+        if (targetUser.data.role === 'admin') {
+            return { success: false, message: '不能删除管理员账号' }
+        }
+
+        // 软删除
+        const result = await db.collection('users').doc(userId).update({
+            data: {
+                deleted: true,
+                deletedTime: db.serverDate(),
+                updateTime: db.serverDate()
+            }
+        })
+
+        if (result.stats.updated === 0) {
+            return { success: false, message: '删除失败' }
+        }
+
+        return { success: true, message: '用户已删除' }
+    } catch (error) {
+        console.error('删除用户失败:', error)
+        return { success: false, message: '删除用户失败：' + error.message }
+    }
+}
+
+/**
+ * 更新用户信息（管理员专用）
+ */
+async function handleUpdate(event, wxContext) {
+    const { userId, updates } = event
+    const adminOpenid = wxContext.OPENID
+
+    try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
+        // 防止修改敏感字段
+        const allowedFields = ['name', 'role', 'department', 'className', 'clubName', 'status']
+        const updateData = {}
+        for (const key of allowedFields) {
+            if (updates[key] !== undefined) {
+                updateData[key] = updates[key]
+            }
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return { success: false, message: '没有可更新的字段' }
+        }
+
+        updateData.updateTime = db.serverDate()
+
+        const result = await db.collection('users').doc(userId).update({
+            data: updateData
+        })
+
+        if (result.stats.updated === 0) {
+            return { success: false, message: '用户不存在或更新失败' }
+        }
+
+        return { success: true, message: '用户信息已更新' }
+    } catch (error) {
+        console.error('更新用户失败:', error)
+        return { success: false, message: '更新用户失败：' + error.message }
     }
 }

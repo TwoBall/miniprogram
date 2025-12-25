@@ -1,0 +1,4 @@
+/* 自定义 TabBar 样式 */
+.custom-tabbar {
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+}

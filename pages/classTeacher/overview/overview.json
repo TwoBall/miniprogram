@@ -1,8 +1,7 @@
 {
-  "navigationBarTitleText": "班级考勤",
-  "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark",
+  "navigationBarTitleText": "考勤总览",
   "usingComponents": {
-    "skeleton": "/components/skeleton/skeleton"
+    "skeleton": "/components/skeleton/skeleton",
+    "custom-tabbar": "/components/custom-tabbar/custom-tabbar"
   }
 }

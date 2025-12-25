@@ -117,4 +117,7 @@
   </van-popup>
 
   <van-toast id="van-toast" />
+
+  <!-- 底部 TabBar -->
+  <custom-tabbar role="classTeacher" active="0" />
 </view>

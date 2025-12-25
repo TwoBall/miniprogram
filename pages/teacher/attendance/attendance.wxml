@@ -196,4 +196,7 @@
 
   <van-toast id="van-toast" />
   <van-dialog id="van-dialog" />
+
+  <!-- 底部 TabBar -->
+  <custom-tabbar role="teacher" active="0" />
 </view>

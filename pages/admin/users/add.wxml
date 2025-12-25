@@ -1,0 +1,94 @@
+<view class="add-user-container">
+  <view class="form-section">
+    <van-cell-group title="基本信息">
+      <van-field
+        label="姓名"
+        value="{{ formData.name }}"
+        placeholder="请输入姓名"
+        required
+        bind:change="onNameInput"
+      />
+
+      <van-cell
+        title="角色"
+        is-link
+        required
+        value="{{ getRoleLabel(formData.role) }}"
+        bind:click="showRolePicker"
+      />
+    </van-cell-group>
+
+    <van-cell-group title="详细信息" wx:if="{{ formData.role }}">
+      <van-cell
+        wx:if="{{ formData.role === 'leader' || formData.role === 'classTeacher' }}"
+        title="学部"
+        is-link
+        required="{{ formData.role === 'leader' }}"
+        value="{{ formData.department || '请选择学部' }}"
+        bind:click="showDepartmentPicker"
+      />
+
+      <van-field
+        wx:if="{{ formData.role === 'classTeacher' }}"
+        label="班级"
+        value="{{ formData.className }}"
+        placeholder="请输入班级（如：一年级1班）"
+        required
+        bind:change="onClassInput"
+      />
+
+      <van-field
+        wx:if="{{ formData.role === 'teacher' }}"
+        label="社团名称"
+        value="{{ formData.clubName }}"
+        placeholder="请输入社团名称"
+        required
+        bind:change="onClubInput"
+      />
+    </van-cell-group>
+
+    <view class="tips-section">
+      <van-icon name="info-o" size="32rpx" color="#1890ff" />
+      <text class="tips-text">
+        添加的用户将自动审批通过，用户首次登录时可通过姓名和角色关联此账号
+      </text>
+    </view>
+  </view>
+
+  <view class="action-buttons">
+    <van-button
+      type="default"
+      size="large"
+      bind:click="cancel"
+    >
+      取消
+    </van-button>
+    <van-button
+      type="primary"
+      size="large"
+      bind:click="submitForm"
+    >
+      {{ mode === 'add' ? '添加' : '保存' }}
+    </van-button>
+  </view>
+
+  <!-- 角色选择器 -->
+  <van-action-sheet
+    show="{{ showRolePicker }}"
+    actions="{{ roleOptions }}"
+    bind:select="onRoleConfirm"
+    bind:close="onRoleCancel"
+    cancel-text="取消"
+  />
+
+  <!-- 学部选择器 -->
+  <van-action-sheet
+    show="{{ showDepartmentPicker }}"
+    actions="{{ departmentOptions }}"
+    bind:select="onDepartmentConfirm"
+    bind:close="onDepartmentCancel"
+    cancel-text="取消"
+  />
+
+  <van-toast id="van-toast" />
+</view>

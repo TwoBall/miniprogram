@@ -1,0 +1,157 @@
+<view class="data-container">
+  <view wx:if="{{ loading }}" class="loading-wrapper">
+    <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+  </view>
+
+  <view wx:else class="content">
+    <!-- 用户统计 -->
+    <view class="section">
+      <view class="section-header">
+        <van-icon name="friends-o" size="36rpx" color="#1890ff" />
+        <text class="section-title">用户统计</text>
+      </view>
+
+      <view class="stats-overview">
+        <view class="stat-item-large">
+          <text class="stat-number">{{ userStats.total }}</text>
+          <text class="stat-label">总用户数</text>
+        </view>
+      </view>
+
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="value">{{ userStats.byRole.teacher }}</text>
+          <text class="label">社团老师</text>
+        </view>
+        <view class="stat-card">
+          <text class="value">{{ userStats.byRole.classTeacher }}</text>
+          <text class="label">班主任</text>
+        </view>
+        <view class="stat-card">
+          <text class="value">{{ userStats.byRole.leader }}</text>
+          <text class="label">学部领导</text>
+        </view>
+        <view class="stat-card">
+          <text class="value">{{ userStats.byRole.admin }}</text>
+          <text class="label">管理员</text>
+        </view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-item">
+          <van-tag type="success" size="large">已通过 {{ userStats.byStatus.approved }}</van-tag>
+        </view>
+        <view class="stat-item">
+          <van-tag type="warning" size="large">待审批 {{ userStats.byStatus.pending }}</van-tag>
+        </view>
+        <view class="stat-item">
+          <van-tag type="danger" size="large">已拒绝 {{ userStats.byStatus.rejected }}</van-tag>
+        </view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-item">
+          <van-icon name="success" color="#52c41a" size="28rpx" />
+          <text class="stat-text">已绑定: {{ userStats.bound }}</text>
+        </view>
+        <view class="stat-item">
+          <van-icon name="warning-o" color="#ff9800" size="28rpx" />
+          <text class="stat-text">未绑定: {{ userStats.unbound }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学生统计 -->
+    <view class="section">
+      <view class="section-header">
+        <van-icon name="user-o" size="36rpx" color="#52c41a" />
+        <text class="section-title">学生统计</text>
+      </view>
+
+      <view class="stats-overview">
+        <view class="stat-item-large">
+          <text class="stat-number">{{ studentStats.total }}</text>
+          <text class="stat-label">学生总数</text>
+        </view>
+      </view>
+
+      <view class="stats-list" wx:if="{{ Object.keys(studentStats.byDepartment).length > 0 }}">
+        <view
+          wx:for="{{ Object.keys(studentStats.byDepartment) }}"
+          wx:key="*this"
+          class="stats-list-item"
+        >
+          <text class="item-label">{{ item }}</text>
+          <text class="item-value">{{ studentStats.byDepartment[item] }} 人</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 社团统计 -->
+    <view class="section">
+      <view class="section-header">
+        <van-icon name="cluster-o" size="36rpx" color="#ff9800" />
+        <text class="section-title">社团统计</text>
+      </view>
+
+      <view class="stats-overview">
+        <view class="stat-item-large">
+          <text class="stat-number">{{ clubStats.total }}</text>
+          <text class="stat-label">社团总数</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 考勤统计 -->
+    <view class="section">
+      <view class="section-header">
+        <van-icon name="records" size="36rpx" color="#722ed1" />
+        <text class="section-title">考勤统计</text>
+      </view>
+
+      <view class="attendance-cards">
+        <view class="attendance-card">
+          <text class="card-title">今日</text>
+          <text class="card-count">{{ attendanceStats.todayTotal }}</text>
+          <text class="card-label">点名次数</text>
+          <view class="card-rate">
+            <text>出勤率 {{ attendanceStats.todayRate }}%</text>
+          </view>
+        </view>
+        <view class="attendance-card">
+          <text class="card-title">本周</text>
+          <text class="card-count">{{ attendanceStats.weekTotal }}</text>
+          <text class="card-label">点名次数</text>
+          <view class="card-rate">
+            <text>出勤率 {{ attendanceStats.weekRate }}%</text>
+          </view>
+        </view>
+        <view class="attendance-card">
+          <text class="card-title">本月</text>
+          <text class="card-count">{{ attendanceStats.monthTotal }}</text>
+          <text class="card-label">点名次数</text>
+          <view class="card-rate">
+            <text>出勤率 {{ attendanceStats.monthRate }}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-section">
+      <van-button
+        type="primary"
+        size="large"
+        icon="down"
+        bind:click="exportData"
+        block
+      >
+        导出统计报表
+      </van-button>
+    </view>
+  </view>
+
+  <van-toast id="van-toast" />
+
+  <custom-tabbar role="admin" active="0" />
+</view>
