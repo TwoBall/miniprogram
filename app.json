@@ -20,7 +20,8 @@
     "pages/leader/detail/detail",
     "pages/leader/profile/profile",
     "pages/common/switchRole/switchRole",
-    "pages/common/notifications/notifications"
+    "pages/common/notifications/notifications",
+    "pages/common/transfer/transfer"
   ],
   "window": {
     "backgroundTextStyle": "light",

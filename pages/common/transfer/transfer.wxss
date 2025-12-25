@@ -1,0 +1,193 @@
+/* 转社团申请页面样式 */
+
+.transfer-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 转社团申请列表 */
+.transfer-list {
+  padding: 24rpx 30rpx;
+}
+
+.transfer-item {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 32rpx 24rpx;
+  margin-bottom: 20rpx;
+  transition: all 0.3s;
+}
+
+.transfer-item:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* 申请头部 */
+.transfer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.student-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.student-class {
+  font-size: 24rpx;
+  color: #999;
+  padding: 4rpx 12rpx;
+  background-color: #f5f5f5;
+  border-radius: 4rpx;
+}
+
+/* 转社团方向 */
+.transfer-direction {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 0;
+  border-top: 2rpx solid #f0f0f0;
+  border-bottom: 2rpx solid #f0f0f0;
+  margin-bottom: 20rpx;
+}
+
+.club-badge {
+  flex: 1;
+  padding: 16rpx 20rpx;
+  border-radius: 8rpx;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.club-badge.from {
+  background-color: #fff7e6;
+  color: #ff9800;
+  border: 2rpx solid #ffe7ba;
+}
+
+.club-badge.to {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 2rpx solid #bae7ff;
+}
+
+/* 申请详情 */
+.transfer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.info-row .label {
+  color: #999;
+  min-width: 120rpx;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  color: #666;
+  flex: 1;
+}
+
+/* 确认状态 */
+.confirm-status {
+  display: flex;
+  gap: 24rpx;
+  padding: 20rpx;
+  background-color: #fafafa;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.status-item.confirmed {
+  color: #52c41a;
+}
+
+/* 操作按钮 */
+.transfer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+}
+
+/* 审批/拒绝信息 */
+.result-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  margin-top: 20rpx;
+  border-top: 2rpx solid #f0f0f0;
+  padding-top: 20rpx;
+  flex-wrap: wrap;
+}
+
+.result-info.approved {
+  color: #52c41a;
+}
+
+.result-info.rejected {
+  color: #ee0a24;
+}
+
+.reject-reason {
+  width: 100%;
+  margin-top: 8rpx;
+  padding-top: 8rpx;
+  border-top: 1rpx solid rgba(238, 10, 36, 0.1);
+}
+
+/* 加载中 */
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 60rpx 0;
+}
+
+/* 没有更多 */
+.no-more {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 24rpx;
+  color: #999;
+}

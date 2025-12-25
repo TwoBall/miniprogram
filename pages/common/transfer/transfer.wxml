@@ -1,0 +1,160 @@
+<view class="transfer-container">
+  <!-- 标签页 -->
+  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>
+    <van-tab title="待处理" name="pending_teacher"></van-tab>
+    <van-tab title="待审批" name="pending_classTeacher" wx:if="{{ role === 'classTeacher' }}"></van-tab>
+    <van-tab title="已通过" name="approved"></van-tab>
+    <van-tab title="已拒绝" name="rejected"></van-tab>
+    <van-tab title="全部" name="all"></van-tab>
+  </van-tabs>
+
+  <!-- 转社团申请列表 -->
+  <view class="transfer-list">
+    <view
+      wx:for="{{ transfers }}"
+      wx:key="_id"
+      class="transfer-item"
+      bindtap="onViewDetail"
+      data-transfer="{{ item }}"
+    >
+      <!-- 申请信息 -->
+      <view class="transfer-header">
+        <view class="student-info">
+          <text class="student-name">{{ item.studentName }}</text>
+          <text class="student-class">{{ item.className }}</text>
+        </view>
+        <van-tag type="{{ statusMap[item.status].type }}" size="medium">
+          {{ statusMap[item.status].text }}
+        </van-tag>
+      </view>
+
+      <!-- 转社团方向 -->
+      <view class="transfer-direction">
+        <view class="club-badge from">{{ item.fromClub }}</view>
+        <van-icon name="arrow" size="16px" color="#999" />
+        <view class="club-badge to">{{ item.toClub }}</view>
+      </view>
+
+      <!-- 申请详情 -->
+      <view class="transfer-info">
+        <view class="info-row">
+          <text class="label">发起人：</text>
+          <text class="value">{{ item.initiatorName }}</text>
+        </view>
+        <view class="info-row" wx:if="{{ item.reason }}">
+          <text class="label">理由：</text>
+          <text class="value">{{ item.reason }}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">时间：</text>
+          <text class="value">{{ item.createTime }}</text>
+        </view>
+      </view>
+
+      <!-- 确认状态 -->
+      <view class="confirm-status">
+        <view class="status-item {{ item.fromTeacherConfirmed ? 'confirmed' : '' }}">
+          <van-icon name="{{ item.fromTeacherConfirmed ? 'success' : 'circle' }}" size="14px" />
+          <text>转出老师</text>
+        </view>
+        <view class="status-item {{ item.toTeacherConfirmed ? 'confirmed' : '' }}">
+          <van-icon name="{{ item.toTeacherConfirmed ? 'success' : 'circle' }}" size="14px" />
+          <text>转入老师</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="transfer-actions" wx:if="{{ item.status !== 'approved' && item.status !== 'rejected' }}" catchtap="stopPropagation">
+        <!-- 老师确认按钮 -->
+        <van-button
+          wx:if="{{ role === 'teacher' && item.status === 'pending_teacher' && ((item.fromClub === userInfo.clubName && !item.fromTeacherConfirmed) || (item.toClub === userInfo.clubName && !item.toTeacherConfirmed)) }}"
+          type="primary"
+          size="small"
+          bindtap="onConfirm"
+          data-id="{{ item._id }}"
+        >
+          确认
+        </van-button>
+
+        <!-- 班主任审批按钮 -->
+        <view wx:if="{{ role === 'classTeacher' && item.status === 'pending_classTeacher' }}" class="action-buttons">
+          <van-button
+            type="primary"
+            size="small"
+            bindtap="onApprove"
+            data-id="{{ item._id }}"
+          >
+            通过
+          </van-button>
+          <van-button
+            type="danger"
+            size="small"
+            bindtap="onReject"
+            data-id="{{ item._id }}"
+          >
+            拒绝
+          </van-button>
+        </view>
+
+        <!-- 拒绝按钮（老师也可以拒绝） -->
+        <van-button
+          wx:if="{{ role === 'teacher' && item.status === 'pending_teacher' && (item.fromClub === userInfo.clubName || item.toClub === userInfo.clubName) }}"
+          type="danger"
+          size="small"
+          bindtap="onReject"
+          data-id="{{ item._id }}"
+        >
+          拒绝
+        </van-button>
+      </view>
+
+      <!-- 审批/拒绝信息 -->
+      <view wx:if="{{ item.status === 'approved' }}" class="result-info approved">
+        <van-icon name="passed" size="14px" />
+        <text>审批人：{{ item.approvedByName }} · {{ item.approvedTime ? formatTime(item.approvedTime) : '' }}</text>
+      </view>
+      <view wx:if="{{ item.status === 'rejected' }}" class="result-info rejected">
+        <van-icon name="close" size="14px" />
+        <text>拒绝人：{{ item.rejectedByName }}</text>
+        <text class="reject-reason">原因：{{ item.rejectReason }}</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <van-empty
+      wx:if="{{ !loading && transfers.length === 0 }}"
+      description="暂无转社团申请"
+    />
+
+    <!-- 加载中 -->
+    <view wx:if="{{ loading }}" class="loading-wrapper">
+      <van-loading type="spinner" size="24px">加载中...</van-loading>
+    </view>
+
+    <!-- 没有更多 -->
+    <view wx:if="{{ !loading && !hasMore && transfers.length > 0 }}" class="no-more">
+      没有更多了
+    </view>
+  </view>
+
+  <!-- 拒绝对话框 -->
+  <van-dialog
+    id="rejectDialog"
+    use-slot
+    title="拒绝申请"
+    show-cancel-button
+    confirm-button-text="确定"
+    cancel-button-text="取消"
+    bind:confirm="onRejectConfirm"
+    bind:cancel="onRejectCancel"
+  >
+    <van-field
+      value="{{ rejectReason }}"
+      type="textarea"
+      placeholder="请输入拒绝原因"
+      autosize
+      border="{{ false }}"
+      bind:change="onRejectReasonInput"
+    />
+  </van-dialog>
+</view>
