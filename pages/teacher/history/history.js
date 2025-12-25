@@ -89,6 +89,7 @@ Page({
       const result = await request.callCloud('attendance', {
         action: 'getHistory',
         teacherId: userInfo._id,
+        clubName: userInfo.clubName,
         page: 1,
         pageSize: this.data.pageSize
       }, { showLoading: false, showError: false })
@@ -136,6 +137,7 @@ Page({
       const result = await request.callCloud('attendance', {
         action: 'getHistory',
         teacherId: userInfo._id,
+        clubName: userInfo.clubName,
         page: nextPage,
         pageSize: this.data.pageSize
       }, { showLoading: false, showError: false })

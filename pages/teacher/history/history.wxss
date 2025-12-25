@@ -52,6 +52,20 @@
   color: #999999;
 }
 
+.record-info {
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+}
+
+.teacher-label {
+  color: #999999;
+}
+
+.teacher-name {
+  color: #666666;
+  font-weight: 500;
+}
+
 .record-stats {
   display: flex;
   gap: 40rpx;
