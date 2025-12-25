@@ -270,30 +270,20 @@ Page({
 
   async getAttendanceCount(startDate, endDate) {
     try {
-      const db = wx.cloud.database()
-      const _ = db.command
-
-      const res = await db.collection('attendance_records')
-        .where({
-          date: _.gte(startDate).and(_.lte(endDate))
-        })
-        .get()
-
-      let totalPresent = 0
-      let totalStudents = 0
-
-      res.data.forEach(record => {
-        if (record.students && Array.isArray(record.students)) {
-          totalStudents += record.students.length
-          totalPresent += record.students.filter(s => s.status === 'present').length
+      const res = await wx.cloud.callFunction({
+        name: 'attendance',
+        data: {
+          action: 'getStatistics',
+          startDate,
+          endDate
         }
       })
 
-      const rate = totalStudents > 0 ? ((totalPresent / totalStudents) * 100).toFixed(1) : 0
-
-      return {
-        total: res.data.length,
-        rate: parseFloat(rate)
+      if (res.result.success) {
+        return res.result.data
+      } else {
+        console.error('获取考勤统计失败:', res.result.message)
+        return { total: 0, rate: 0 }
       }
     } catch (error) {
       console.error('获取考勤统计失败:', error)

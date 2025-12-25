@@ -164,7 +164,8 @@ exports.main = async (event, context) => {
         getClubRank: handleGetClubRank,
         getClubRanking: handleGetClubRanking,
         getByStudent: handleGetByStudent,
-        getAbsenceWarnings: handleGetAbsenceWarnings
+        getAbsenceWarnings: handleGetAbsenceWarnings,
+        getStatistics: handleGetStatistics
     }
 
     const handler = handlers[action]
@@ -714,5 +715,47 @@ async function handleGetAbsenceWarnings(event) {
     } catch (error) {
         console.error('获取缺勤预警列表失败:', error)
         return { success: false, message: '获取预警列表失败', data: [] }
+    }
+}
+
+/**
+ * 获取考勤统计数据
+ * 统计指定日期范围内的考勤记录总数和出勤率
+ */
+async function handleGetStatistics(event) {
+    const { startDate, endDate } = event
+    const _ = db.command
+
+    try {
+        const records = await getAllData(
+            db.collection('attendance_records'),
+            {
+                date: _.gte(startDate).and(_.lte(endDate))
+            },
+            { records: true }
+        )
+
+        let totalPresent = 0
+        let totalStudents = 0
+
+        records.forEach(record => {
+            if (record.records && Array.isArray(record.records)) {
+                totalStudents += record.records.length
+                totalPresent += record.records.filter(s => s.status === 'present').length
+            }
+        })
+
+        const rate = totalStudents > 0 ? ((totalPresent / totalStudents) * 100).toFixed(1) : 0
+
+        return {
+            success: true,
+            data: {
+                total: records.length,
+                rate: parseFloat(rate)
+            }
+        }
+    } catch (error) {
+        console.error('获取考勤统计失败:', error)
+        return { success: false, message: '获取考勤统计失败', data: { total: 0, rate: 0 } }
     }
 }
