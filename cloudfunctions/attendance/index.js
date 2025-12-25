@@ -50,7 +50,9 @@ exports.main = async (event, context) => {
         getByClass: handleGetByClass,
         getByDepartment: handleGetByDepartment,
         checkTodaySubmissions: handleCheckTodaySubmissions,
-        updateRecords: handleUpdateRecords
+        updateRecords: handleUpdateRecords,
+        getClubRank: handleGetClubRank,
+        getClubRanking: handleGetClubRanking
     }
 
     const handler = handlers[action]
@@ -339,5 +341,147 @@ async function handleUpdateRecords(event) {
     } catch (error) {
         console.error('更新点名记录失败:', error)
         return { success: false, message: '更新失败' }
+    }
+}
+
+/**
+ * 获取社团学生出勤率排行
+ * 返回社团所有学生的出勤统计，按出勤率排序
+ */
+async function handleGetClubRank(event) {
+    const { clubName } = event
+
+    try {
+        // 并行查询学生列表和所有考勤记录
+        const [students, attendanceRecords] = await Promise.all([
+            getAllData(
+                db.collection('students'),
+                { clubName },
+                { _id: true, name: true, className: true }
+            ),
+            getAllData(
+                db.collection('attendance_records'),
+                { clubName },
+                { records: true }
+            )
+        ])
+
+        // 统计每个学生的出勤情况
+        const studentStats = {}
+        students.forEach(s => {
+            studentStats[s._id] = {
+                name: s.name,
+                className: s.className,
+                present: 0,
+                total: 0,
+                rate: 0
+            }
+        })
+
+        // 遍历所有考勤记录，累计出勤次数
+        attendanceRecords.forEach(record => {
+            record.records.forEach(r => {
+                if (studentStats[r.studentId]) {
+                    studentStats[r.studentId].total++
+                    if (r.status === 'present') {
+                        studentStats[r.studentId].present++
+                    }
+                }
+            })
+        })
+
+        // 计算出勤率并转换为数组
+        const rankList = Object.values(studentStats)
+            .map(item => ({
+                ...item,
+                rate: item.total > 0 ? parseFloat(((item.present / item.total) * 100).toFixed(1)) : 0
+            }))
+            .filter(item => item.total > 0) // 过滤掉没有考勤记录的学生
+            .sort((a, b) => {
+                // 先按出勤率降序，再按总次数降序
+                if (b.rate !== a.rate) return b.rate - a.rate
+                return b.total - a.total
+            })
+
+        return {
+            success: true,
+            data: rankList
+        }
+    } catch (error) {
+        console.error('获取社团排行失败:', error)
+        return { success: false, message: '获取排行失败', data: [] }
+    }
+}
+
+/**
+ * 获取学部社团出勤率排名
+ * 返回学部所有社团的出勤统计，按出勤率排序
+ */
+async function handleGetClubRanking(event) {
+    const { department } = event
+    const _ = db.command
+
+    try {
+        // 获取本月考勤记录（如果未指定日期范围）
+        const now = new Date()
+        const startDate = event.startDate || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
+        const endDate = event.endDate || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-31`
+
+        // 获取学部所有学生（获取社团信息）
+        const students = await getAllData(
+            db.collection('students'),
+            { department },
+            { _id: true, clubName: true }
+        )
+
+        // 获取指定时间范围内的考勤记录
+        const records = await getAllData(
+            db.collection('attendance_records'),
+            {
+                date: _.gte(startDate).and(_.lte(endDate))
+            },
+            { records: true, clubName: true }
+        )
+
+        // 按社团统计出勤率
+        const clubStats = {}
+
+        // 初始化社团统计数据
+        students.forEach(s => {
+            if (s.clubName && !clubStats[s.clubName]) {
+                clubStats[s.clubName] = { total: 0, present: 0 }
+            }
+        })
+
+        // 统计考勤数据
+        records.forEach(record => {
+            if (record.clubName && clubStats[record.clubName] !== undefined) {
+                record.records.forEach(r => {
+                    clubStats[record.clubName].total++
+                    if (r.status === 'present') {
+                        clubStats[record.clubName].present++
+                    }
+                })
+            }
+        })
+
+        // 计算出勤率并排序
+        const ranking = Object.entries(clubStats)
+            .map(([name, stats]) => ({
+                clubName: name,
+                total: stats.total,
+                present: stats.present,
+                rate: stats.total > 0 ? parseFloat(((stats.present / stats.total) * 100).toFixed(1)) : 0
+            }))
+            .sort((a, b) => {
+                // 先按出勤率降序，再按总次数降序
+                if (b.rate !== a.rate) return b.rate - a.rate
+                return b.total - a.total
+            })
+
+        return { success: true, data: ranking }
+    } catch (error) {
+        console.error('获取学部社团排行失败:', error)
+        return { success: false, message: '获取排行失败', data: [] }
     }
 }

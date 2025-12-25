@@ -47,6 +47,48 @@
   </view>
 
   <view class="class-list">
+    <!-- 社团排名按钮 -->
+    <view class="ranking-toggle" bindtap="onToggleRanking">
+      <van-icon name="{{ showRanking ? 'arrow-up' : 'bar-chart-o' }}" size="32rpx" color="#1890ff" />
+      <text>{{ showRanking ? '收起社团排名' : '查看社团排名（本月）' }}</text>
+    </view>
+
+    <!-- 社团排名列表 -->
+    <view wx:if="{{ showRanking }}" class="club-ranking-section">
+      <van-cell-group title="社团出勤率排名（本月）" wx:if="{{clubRanking.length > 0}}">
+        <view
+          wx:for="{{clubRanking}}"
+          wx:key="clubName"
+          class="ranking-item {{ index < 3 ? 'top-rank' : '' }}"
+        >
+          <view class="rank-badge">
+            <text class="rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">
+              {{ index + 1 }}
+            </text>
+          </view>
+          <view class="club-info">
+            <view class="club-name">
+              <van-icon name="cluster-o" size="32rpx" color="#1890ff" />
+              <text>{{item.clubName}}</text>
+            </view>
+            <view class="club-stats">
+              <text class="stat-detail">到课 {{item.present}} / 总计 {{item.total}} 次</text>
+            </view>
+          </view>
+          <view class="rate-badge {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
+            <text class="rate-value">{{item.rate}}%</text>
+          </view>
+        </view>
+      </van-cell-group>
+
+      <van-empty
+        wx:else
+        description="暂无社团排名数据"
+        image="search"
+      />
+    </view>
+
+    <!-- 班级考勤详情 -->
     <van-cell-group title="班级考勤详情" wx:if="{{classes.length > 0}}">
       <van-cell
         wx:for="{{classes}}"

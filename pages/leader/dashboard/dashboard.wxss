@@ -75,3 +75,119 @@
 .value.absent {
   color: #ee0a24;
 }
+
+/* 社团排名 */
+.ranking-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #1890ff;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.club-ranking-section {
+  margin-bottom: 32rpx;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 24rpx;
+  margin-bottom: 20rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+}
+
+.ranking-item.top-rank {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+  border: 2rpx solid #ffd700;
+}
+
+.rank-badge {
+  flex-shrink: 0;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+}
+
+.rank-number {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #999;
+}
+
+.rank-number.first {
+  color: #ffd700;
+}
+
+.rank-number.second {
+  color: #c0c0c0;
+}
+
+.rank-number.third {
+  color: #cd7f32;
+}
+
+.club-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.club-name {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.club-stats {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.rate-badge {
+  flex-shrink: 0;
+  padding: 12rpx 24rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+}
+
+.rate-badge.excellent {
+  background-color: #f0f9ff;
+  color: #1890ff;
+}
+
+.rate-badge.good {
+  background-color: #f0fdf4;
+  color: #52c41a;
+}
+
+.rate-badge.normal {
+  background-color: #fffbeb;
+  color: #ff9800;
+}
+
+.rate-badge.poor {
+  background-color: #fef2f2;
+  color: #ff4d4f;
+}
+
+.rate-value {
+  font-size: 32rpx;
+}

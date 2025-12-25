@@ -19,7 +19,9 @@ Page({
     totalStudents: 0,
     presentToday: 0,
     absentToday: 0,
-    classes: []
+    classes: [],
+    clubRanking: [],
+    showRanking: false
   },
 
   /**
@@ -169,5 +171,45 @@ Page({
     wx.navigateTo({
       url: `/pages/leader/detail/detail?className=${classData.className}&date=${this.data.selectedDate}`
     })
+  },
+
+  /**
+   * 加载社团排名
+   */
+  async loadClubRanking() {
+    const userInfo = auth.getUserInfo()
+    if (!userInfo) return
+
+    try {
+      Toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0
+      })
+
+      const result = await request.callCloud('attendance', {
+        action: 'getClubRanking',
+        department: userInfo.department
+      }, { showLoading: false, showError: false })
+
+      if (result.success) {
+        this.setData({ clubRanking: result.data || [] })
+      }
+    } catch (error) {
+      console.error('加载社团排名失败:', error)
+      Toast.fail('加载失败')
+    } finally {
+      Toast.clear()
+    }
+  },
+
+  /**
+   * 切换社团排名显示
+   */
+  onToggleRanking() {
+    if (!this.data.showRanking && this.data.clubRanking.length === 0) {
+      this.loadClubRanking()
+    }
+    this.setData({ showRanking: !this.data.showRanking })
   }
 })

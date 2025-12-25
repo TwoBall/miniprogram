@@ -1,0 +1,130 @@
+<view class="club-container">
+  <!-- 社团信息卡片 -->
+  <view class="club-header">
+    <view class="club-info">
+      <view class="club-name-wrapper">
+        <van-icon name="cluster-o" size="40rpx" color="#1890ff" />
+        <text class="club-name">{{ clubInfo.name }}</text>
+      </view>
+      <view class="club-meta">
+        <text class="teacher-name">负责人：{{ clubInfo.teacher }}</text>
+        <text class="department">{{ clubInfo.department }}</text>
+      </view>
+    </view>
+    <view class="stats-quick">
+      <view class="stat-item">
+        <text class="stat-value">{{ stats.totalStudents }}</text>
+        <text class="stat-label">学生数</text>
+      </view>
+      <view class="stat-item" wx:if="{{ activeTab === 'rank' }}">
+        <text class="stat-value">{{ stats.avgAttendanceRate }}%</text>
+        <text class="stat-label">平均出勤率</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{ activeTab === 'students' ? 'active' : '' }}"
+      data-tab="students"
+      bindtap="onTabChange"
+    >
+      <van-icon name="friends-o" size="36rpx" />
+      <text>学生名单</text>
+    </view>
+    <view
+      class="tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
+      data-tab="rank"
+      bindtap="onTabChange"
+    >
+      <van-icon name="bar-chart-o" size="36rpx" />
+      <text>出勤排行</text>
+    </view>
+  </view>
+
+  <!-- 学生名单 -->
+  <view wx:if="{{ activeTab === 'students' }}" class="content">
+    <view wx:if="{{ loading }}" class="loading-wrapper">
+      <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+    </view>
+
+    <van-cell-group wx:elif="{{ students.length > 0 }}">
+      <van-cell
+        wx:for="{{ students }}"
+        wx:key="_id"
+        border="{{ false }}"
+        custom-class="student-card"
+        is-link
+        bind:click="viewStudentDetail"
+        data-student="{{ item }}"
+      >
+        <view slot="title" class="student-info">
+          <view class="student-header">
+            <text class="student-name">{{ item.name }}</text>
+            <van-tag type="primary" plain size="medium">{{ item.className }}</van-tag>
+          </view>
+          <view class="student-meta">
+            <view class="meta-item">
+              <van-icon name="location-o" size="28rpx" color="#999" />
+              <text>{{ item.department }}</text>
+            </view>
+            <view class="meta-item" wx:if="{{ item.studentId }}">
+              <van-icon name="idcard" size="28rpx" color="#999" />
+              <text>{{ item.studentId }}</text>
+            </view>
+          </view>
+        </view>
+      </van-cell>
+    </van-cell-group>
+
+    <van-empty
+      wx:else
+      description="暂无学生数据"
+      image="search"
+    />
+  </view>
+
+  <!-- 出勤率排行 -->
+  <view wx:if="{{ activeTab === 'rank' }}" class="content">
+    <view wx:if="{{ loading }}" class="loading-wrapper">
+      <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+    </view>
+
+    <view wx:elif="{{ attendanceRank.length > 0 }}" class="rank-list">
+      <view
+        wx:for="{{ attendanceRank }}"
+        wx:key="name"
+        class="rank-item {{ index < 3 ? 'top-rank' : '' }}"
+      >
+        <view class="rank-badge">
+          <text class="rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">
+            {{ index + 1 }}
+          </text>
+        </view>
+        <view class="rank-info">
+          <view class="rank-header">
+            <text class="student-name">{{ item.name }}</text>
+            <text class="class-name">{{ item.className }}</text>
+          </view>
+          <view class="rank-stats">
+            <text class="attendance-detail">
+              到课 {{ item.present }} / 总计 {{ item.total }} 次
+            </text>
+          </view>
+        </view>
+        <view class="rank-rate {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
+          <text class="rate-value">{{ item.rate }}%</text>
+        </view>
+      </view>
+    </view>
+
+    <van-empty
+      wx:else
+      description="暂无考勤数据"
+      image="search"
+    />
+  </view>
+
+  <van-toast id="van-toast" />
+</view>

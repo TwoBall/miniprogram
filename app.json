@@ -11,6 +11,7 @@
     "pages/teacher/attendance/attendance",
     "pages/teacher/history/history",
     "pages/teacher/detail/detail",
+    "pages/teacher/club/club",
     "pages/teacher/profile/profile",
     "pages/classTeacher/overview/overview",
     "pages/classTeacher/feedback/feedback",
