@@ -19,7 +19,8 @@
     "pages/leader/dashboard/dashboard",
     "pages/leader/detail/detail",
     "pages/leader/profile/profile",
-    "pages/common/switchRole/switchRole"
+    "pages/common/switchRole/switchRole",
+    "pages/common/notifications/notifications"
   ],
   "window": {
     "backgroundTextStyle": "light",

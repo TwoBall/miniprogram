@@ -194,6 +194,13 @@ async function handleApprove(event, wxContext) {
             return { success: false, message: '拒绝时必须提供原因' }
         }
 
+        // 查询申请用户信息
+        const userRes = await db.collection('users').doc(userId).get()
+        if (!userRes.data) {
+            return { success: false, message: '用户不存在' }
+        }
+        const user = userRes.data
+
         const updateData = {
             status: action === 'approve' ? 'approved' : 'rejected',
             approvedBy: admin._id,
@@ -210,6 +217,40 @@ async function handleApprove(event, wxContext) {
 
         if (result.stats.updated === 0) {
             return { success: false, message: '用户不存在或更新失败' }
+        }
+
+        // 发送审批结果通知
+        if (user.openid) {
+            const roleNames = {
+                teacher: '社团老师',
+                classTeacher: '班主任',
+                leader: '学部领导',
+                admin: '管理员'
+            }
+            const roleName = roleNames[user.role] || user.role
+
+            const title = action === 'approve' ? '注册审批通过' : '注册申请被拒绝'
+            const content = action === 'approve'
+                ? `恭喜！您的 ${roleName} 注册申请已通过审批，现在可以使用系统了。`
+                : `抱歉，您的 ${roleName} 注册申请未通过。原因：${rejectReason}`
+
+            await db.collection('notifications').add({
+                data: {
+                    type: 'register_result',
+                    recipientId: user.openid,
+                    title,
+                    content,
+                    data: {
+                        userId,
+                        userName: user.name,
+                        role: user.role,
+                        action,
+                        rejectReason: rejectReason || ''
+                    },
+                    read: false,
+                    createTime: db.serverDate()
+                }
+            })
         }
 
         return {

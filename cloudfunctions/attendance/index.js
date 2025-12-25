@@ -36,6 +36,76 @@ async function getAllData(collection, condition, fields = null) {
 }
 
 /**
+ * 检查缺勤情况并发送通知
+ */
+async function checkAbsenceAndNotify(records, clubName, date) {
+    try {
+        // 筛选出缺勤的学生
+        const absentRecords = records.filter(r => r.status === 'absent')
+
+        if (absentRecords.length === 0) return
+
+        // 批量获取缺勤学生的班主任信息
+        const studentIds = absentRecords.map(r => r.studentId)
+        const _ = db.command
+
+        // 查询学生信息（获取班级、姓名）
+        const studentsRes = await db.collection('students')
+            .where({ _id: _.in(studentIds) })
+            .get()
+
+        // 按班级分组
+        const classCounts = {}
+        studentsRes.data.forEach(student => {
+            const className = student.className
+            if (!classCounts[className]) {
+                classCounts[className] = []
+            }
+            classCounts[className].push(student)
+        })
+
+        // 为每个班级的班主任创建通知
+        for (const [className, students] of Object.entries(classCounts)) {
+            // 查询班主任
+            const teachersRes = await db.collection('users')
+                .where({
+                    role: 'classTeacher',
+                    className: className,
+                    status: 'approved'
+                })
+                .get()
+
+            if (teachersRes.data.length === 0) continue
+
+            const classTeacher = teachersRes.data[0]
+            const studentNames = students.map(s => s.name).join('、')
+
+            // 创建缺勤提醒通知
+            await db.collection('notifications').add({
+                data: {
+                    type: 'absence_warning',
+                    recipientId: classTeacher._openid,
+                    title: `${clubName} 缺勤提醒`,
+                    content: `您班有 ${students.length} 名学生在 ${date} 的 ${clubName} 社团活动中缺勤：${studentNames}`,
+                    data: {
+                        clubName,
+                        date,
+                        className,
+                        studentIds: students.map(s => s._id),
+                        studentNames
+                    },
+                    read: false,
+                    createTime: db.serverDate()
+                }
+            })
+        }
+    } catch (error) {
+        console.error('创建缺勤通知失败:', error)
+        // 不影响主流程，只记录错误
+    }
+}
+
+/**
  * 云函数入口
  * @param {Object} event - 请求参数
  * @param {string} event.action - 操作类型
@@ -98,6 +168,9 @@ async function handleSubmit(event) {
         const result = await db.collection('attendance_records').add({
             data: { clubName, teacherId, teacherName, date, time, records, createTime: db.serverDate() }
         })
+
+        // 检查缺勤情况并发送通知
+        await checkAbsenceAndNotify(records, clubName, date)
 
         return { success: true, data: { _id: result._id } }
     } catch (error) {
