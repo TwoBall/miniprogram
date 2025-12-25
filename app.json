@@ -16,6 +16,8 @@
     "pages/classTeacher/overview/overview",
     "pages/classTeacher/feedback/feedback",
     "pages/classTeacher/profile/profile",
+    "pages/classTeacher/students/students",
+    "pages/classTeacher/studentDetail/studentDetail",
     "pages/leader/dashboard/dashboard",
     "pages/leader/detail/detail",
     "pages/leader/profile/profile",

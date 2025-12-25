@@ -1,0 +1,92 @@
+<view class="students-container">
+  <!-- 班级信息卡片 -->
+  <view class="class-info">
+    <view class="class-header">
+      <view class="class-name">
+        <van-icon name="friends-o" size="20px" color="#1890ff" />
+        <text>{{ className }}</text>
+      </view>
+      <view class="student-count">共 {{ totalCount }} 人</view>
+    </view>
+
+    <!-- 社团分布 -->
+    <view class="club-distribution">
+      <view class="section-title">社团分布</view>
+      <view class="club-tags">
+        <view
+          class="club-tag"
+          bindtap="onClubFilter"
+          data-club="全部"
+        >
+          <text class="club-name">全部</text>
+          <text class="club-count">{{ totalCount }}</text>
+        </view>
+        <view
+          wx:for="{{ clubDistribution }}"
+          wx:key="clubName"
+          class="club-tag"
+          bindtap="onClubFilter"
+          data-club="{{ item.clubName }}"
+        >
+          <text class="club-name">{{ item.clubName }}</text>
+          <text class="club-count">{{ item.count }}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-wrapper">
+    <van-search
+      value="{{ searchValue }}"
+      placeholder="搜索学生姓名或社团"
+      bind:search="onSearch"
+      bind:clear="onSearchClear"
+      bind:change="onSearch"
+    />
+  </view>
+
+  <!-- 学生列表 -->
+  <view class="students-list">
+    <view
+      wx:for="{{ filteredStudents }}"
+      wx:key="_id"
+      class="student-item"
+      bindtap="onStudentTap"
+      data-id="{{ item._id }}"
+    >
+      <view class="student-avatar">
+        <van-icon name="user-circle-o" size="40px" color="#1890ff" />
+      </view>
+
+      <view class="student-info">
+        <view class="student-header">
+          <text class="student-name">{{ item.name }}</text>
+          <van-tag wx:if="{{ item.gender }}" plain type="primary" size="medium">
+            {{ item.gender === 'male' ? '男' : '女' }}
+          </van-tag>
+        </view>
+
+        <view class="student-details">
+          <view class="detail-item">
+            <van-icon name="apps-o" size="14px" color="#999" />
+            <text>{{ item.clubName || '未分配社团' }}</text>
+          </view>
+        </view>
+      </view>
+
+      <van-icon name="arrow" size="16px" color="#ccc" />
+    </view>
+
+    <!-- 空状态 -->
+    <van-empty
+      wx:if="{{ !loading && filteredStudents.length === 0 }}"
+      description="暂无学生数据"
+    />
+
+    <!-- 加载中 -->
+    <view wx:if="{{ loading }}" class="loading-wrapper">
+      <van-loading type="spinner" size="24px">加载中...</van-loading>
+    </view>
+  </view>
+</view>

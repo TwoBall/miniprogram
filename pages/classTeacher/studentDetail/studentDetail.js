@@ -1,0 +1,146 @@
+// 学生详情页面
+const request = require('../../../utils/request')
+
+Page({
+  data: {
+    studentId: '',
+    student: null,
+    attendanceHistory: [],
+    loading: false,
+    activeTab: 'info',
+
+    // 统计数据
+    totalRecords: 0,
+    presentCount: 0,
+    absentCount: 0,
+    lateCount: 0,
+    attendanceRate: 0
+  },
+
+  onLoad(options) {
+    const { studentId } = options
+    if (studentId) {
+      this.setData({ studentId })
+      this.loadStudentDetail()
+      this.loadAttendanceHistory()
+    }
+  },
+
+  onPullDownRefresh() {
+    this.loadStudentDetail()
+    this.loadAttendanceHistory()
+  },
+
+  // 加载学生详情
+  async loadStudentDetail() {
+    try {
+      const db = wx.cloud.database()
+      const result = await db.collection('students')
+        .doc(this.data.studentId)
+        .get()
+
+      if (result.data) {
+        this.setData({ student: result.data })
+      }
+    } catch (error) {
+      console.error('加载学生详情失败:', error)
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      })
+    }
+  },
+
+  // 加载考勤历史
+  async loadAttendanceHistory() {
+    this.setData({ loading: true })
+
+    try {
+      const result = await request.callCloud('attendance', {
+        action: 'getByStudent',
+        studentId: this.data.studentId
+      })
+
+      if (result.success) {
+        const records = result.data || []
+
+        // 计算统计数据
+        let presentCount = 0
+        let absentCount = 0
+        let lateCount = 0
+
+        records.forEach(record => {
+          const studentRecord = record.students.find(s => s.studentId === this.data.studentId)
+          if (studentRecord) {
+            switch (studentRecord.status) {
+              case 'present':
+                presentCount++
+                break
+              case 'absent':
+                absentCount++
+                break
+              case 'late':
+                lateCount++
+                break
+            }
+          }
+        })
+
+        const totalRecords = records.length
+        const attendanceRate = totalRecords > 0
+          ? Math.round(((presentCount + lateCount) / totalRecords) * 100)
+          : 0
+
+        this.setData({
+          attendanceHistory: records,
+          totalRecords,
+          presentCount,
+          absentCount,
+          lateCount,
+          attendanceRate,
+          loading: false
+        })
+
+        wx.stopPullDownRefresh()
+      } else {
+        wx.showToast({
+          title: result.message || '加载失败',
+          icon: 'none'
+        })
+        this.setData({ loading: false })
+      }
+    } catch (error) {
+      console.error('加载考勤历史失败:', error)
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      })
+      this.setData({ loading: false })
+      wx.stopPullDownRefresh()
+    }
+  },
+
+  // 切换标签
+  onTabChange(e) {
+    this.setData({ activeTab: e.detail.name })
+  },
+
+  // 格式化状态
+  getStatusText(status) {
+    const statusMap = {
+      present: '正常',
+      absent: '缺勤',
+      late: '迟到'
+    }
+    return statusMap[status] || status
+  },
+
+  getStatusType(status) {
+    const typeMap = {
+      present: 'success',
+      absent: 'danger',
+      late: 'warning'
+    }
+    return typeMap[status] || 'default'
+  }
+})

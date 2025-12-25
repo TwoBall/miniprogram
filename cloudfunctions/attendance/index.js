@@ -122,7 +122,8 @@ exports.main = async (event, context) => {
         checkTodaySubmissions: handleCheckTodaySubmissions,
         updateRecords: handleUpdateRecords,
         getClubRank: handleGetClubRank,
-        getClubRanking: handleGetClubRanking
+        getClubRanking: handleGetClubRanking,
+        getByStudent: handleGetByStudent
     }
 
     const handler = handlers[action]
@@ -556,5 +557,34 @@ async function handleGetClubRanking(event) {
     } catch (error) {
         console.error('获取学部社团排行失败:', error)
         return { success: false, message: '获取排行失败', data: [] }
+    }
+}
+
+/**
+ * 按学生ID获取考勤记录
+ */
+async function handleGetByStudent(event) {
+    const { studentId } = event
+
+    try {
+        // 查询包含该学生的所有考勤记录
+        const allRecords = await getAllData(
+            db.collection('attendance_records'),
+            {},
+            { _id: true, date: true, clubName: true, students: true, createTime: true }
+        )
+
+        // 筛选出包含该学生的记录
+        const studentRecords = allRecords
+            .filter(record => record.students.some(s => s.studentId === studentId))
+            .sort((a, b) => {
+                // 按日期降序排序
+                return b.date.localeCompare(a.date)
+            })
+
+        return { success: true, data: studentRecords }
+    } catch (error) {
+        console.error('获取学生考勤记录失败:', error)
+        return { success: false, message: '获取考勤记录失败', data: [] }
     }
 }

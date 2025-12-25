@@ -1,0 +1,102 @@
+<view class="student-detail-container">
+  <!-- 学生基本信息 -->
+  <view class="student-card">
+    <view class="student-avatar">
+      <van-icon name="user-circle-o" size="64px" color="#1890ff" />
+    </view>
+    <view class="student-basic">
+      <view class="student-name">{{ student.name || '加载中...' }}</view>
+      <view class="student-meta">
+        <van-tag wx:if="{{ student.gender }}" plain type="primary" size="medium">
+          {{ student.gender === 'male' ? '男' : '女' }}
+        </van-tag>
+        <text class="meta-text">{{ student.className }}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签页 -->
+  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>
+    <van-tab title="基本信息" name="info">
+      <view class="tab-content">
+        <van-cell-group>
+          <van-cell title="姓名" value="{{ student.name }}" />
+          <van-cell title="性别" value="{{ student.gender === 'male' ? '男' : '女' }}" />
+          <van-cell title="班级" value="{{ student.className }}" />
+          <van-cell title="学部" value="{{ student.department }}" />
+          <van-cell title="社团" value="{{ student.clubName || '未分配' }}" />
+          <van-cell wx:if="{{ student.classTeacher }}" title="班主任" value="{{ student.classTeacher }}" />
+          <van-cell wx:if="{{ student.classTeacherPhone }}" title="班主任电话" value="{{ student.classTeacherPhone }}" />
+        </van-cell-group>
+      </view>
+    </van-tab>
+
+    <van-tab title="考勤记录" name="attendance">
+      <view class="tab-content">
+        <!-- 考勤统计 -->
+        <view class="attendance-stats">
+          <view class="stat-item">
+            <view class="stat-value">{{ totalRecords }}</view>
+            <view class="stat-label">总次数</view>
+          </view>
+          <view class="stat-item success">
+            <view class="stat-value">{{ presentCount }}</view>
+            <view class="stat-label">正常</view>
+          </view>
+          <view class="stat-item warning">
+            <view class="stat-value">{{ lateCount }}</view>
+            <view class="stat-label">迟到</view>
+          </view>
+          <view class="stat-item danger">
+            <view class="stat-value">{{ absentCount }}</view>
+            <view class="stat-label">缺勤</view>
+          </view>
+          <view class="stat-item primary">
+            <view class="stat-value">{{ attendanceRate }}%</view>
+            <view class="stat-label">出勤率</view>
+          </view>
+        </view>
+
+        <!-- 考勤历史列表 -->
+        <view class="attendance-list">
+          <view
+            wx:for="{{ attendanceHistory }}"
+            wx:key="_id"
+            class="attendance-item"
+          >
+            <view class="attendance-header">
+              <view class="date">{{ item.date }}</view>
+              <van-tag
+                type="{{ item.students.find(s => s.studentId === studentId).status === 'present' ? 'success' : item.students.find(s => s.studentId === studentId).status === 'late' ? 'warning' : 'danger' }}"
+                size="medium"
+              >
+                {{ item.students.find(s => s.studentId === studentId).status === 'present' ? '正常' : item.students.find(s => s.studentId === studentId).status === 'late' ? '迟到' : '缺勤' }}
+              </van-tag>
+            </view>
+            <view class="attendance-info">
+              <view class="info-row">
+                <van-icon name="apps-o" size="14px" color="#999" />
+                <text>{{ item.clubName }}</text>
+              </view>
+              <view wx:if="{{ item.students.find(s => s.studentId === studentId).note }}" class="info-row">
+                <van-icon name="comment-o" size="14px" color="#999" />
+                <text>{{ item.students.find(s => s.studentId === studentId).note }}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 空状态 -->
+          <van-empty
+            wx:if="{{ !loading && attendanceHistory.length === 0 }}"
+            description="暂无考勤记录"
+          />
+
+          <!-- 加载中 -->
+          <view wx:if="{{ loading }}" class="loading-wrapper">
+            <van-loading type="spinner" size="24px">加载中...</van-loading>
+          </view>
+        </view>
+      </view>
+    </van-tab>
+  </van-tabs>
+</view>
