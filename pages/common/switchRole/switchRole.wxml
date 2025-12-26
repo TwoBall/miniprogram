@@ -10,7 +10,7 @@
   <!-- 角色列表 -->
   <view class="role-list" wx:if="{{!loading}}">
     <view 
-      class="role-card {{item.isCurrent ? 'current' : ''}}"
+      class="card role-card {{item.isCurrent ? 'current' : ''}}"
       wx:for="{{roles}}"
       wx:key="_id"
       bindtap="switchRole"

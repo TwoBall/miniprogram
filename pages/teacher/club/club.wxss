@@ -128,8 +128,16 @@
 .student-card {
   margin-bottom: 20rpx;
   background-color: #fff;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
   overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.student-card:active {
+  transform: scale(0.98);
+  background-color: #fafafa;
+  border-color: #d0d0d0;
 }
 
 .student-info {
@@ -186,8 +194,15 @@
   padding: 32rpx 24rpx;
   margin-bottom: 20rpx;
   background-color: #fff;
-  border-radius: 16rpx;
-  transition: all 0.3s;
+  border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
+  transition: all 0.2s ease;
+}
+
+.rank-item:active {
+  transform: scale(0.98);
+  background-color: #fafafa;
+  border-color: #d0d0d0;
 }
 
 .rank-item.top-rank {

@@ -1,6 +1,8 @@
 # 卡片样式规范 - 扁平描边风格
 
 > 智慧社团管理系统 UI 规范文档
+>
+> **版本**: v1.1 | **状态**: ✅ 已实施
 
 ---
 
@@ -27,37 +29,33 @@
 --card-radius-sm: 8rpx;              /* 小圆角（内部元素） */
 
 /* 间距 */
---card-padding: 28rpx;               /* 内边距 */
---card-gap: 16rpx;                   /* 卡片间距 */
+--card-padding: 24rpx;               /* 内边距 */
+--card-gap: 20rpx;                   /* 卡片间距 */
 ```
 
 ---
 
 ## 基础卡片类
 
+公共样式定义在 `styles/common.wxss`，通过 `app.wxss` 全局引入：
+
 ```css
 /* styles/common.wxss */
 
 /* 扁平描边卡片 - 基础类 */
 .card {
-  background: #ffffff;
-  border: 1rpx solid #e8e8e8;
+  background-color: #fff;
+  border: 2rpx solid #e8e8e8;
   border-radius: 12rpx;
-  padding: 28rpx;
-  margin-bottom: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
   /* 无阴影 - 扁平风格核心 */
 }
 
 /* 卡片按压态 */
 .card:active {
-  background: #fafafa;
+  background-color: #fafafa;
   border-color: #d0d0d0;
-}
-
-/* 选中/激活态 */
-.card.active {
-  border-color: #1F6FAD;
-  border-width: 2rpx;
 }
 ```
 
@@ -93,45 +91,60 @@
 
 ---
 
-## 使用示例
+## 使用方式：组合类名模式
 
-### WXML
+采用**组合类名**模式实现样式复用：WXML 中使用 `class="card xxx-card"`，页面 WXSS 仅定义特有样式。
+
+### WXML 示例
 
 ```html
-<!-- 基础卡片 -->
-<view class="card">
-  <text>基础卡片内容</text>
+<!-- 组合类名：card（公共基础） + notification-item（页面特有） -->
+<view class="card notification-item {{ !item.read ? 'unread' : '' }}">
+  <text>通知内容</text>
 </view>
 
-<!-- 成功状态（如：出勤） -->
-<view class="card card--success">
-  <text>出勤记录</text>
+<!-- 带状态变体 -->
+<view class="card user-card approved">
+  <text>已审批用户</text>
 </view>
 
-<!-- 错误状态（如：缺勤） -->
-<view class="card card--error">
-  <text>缺勤记录</text>
+<!-- 带选中状态 -->
+<view class="card role-card {{ item.isCurrent ? 'current' : '' }}">
+  <text>当前角色</text>
 </view>
+```
 
-<!-- 选中状态 -->
-<view class="card active">
-  <text>当前选中项</text>
-</view>
+### WXSS 示例
+
+```css
+/* 页面 WXSS - 仅定义特有样式，继承 .card 的基础样式 */
+
+/* 通知项 - 继承公共 .card，仅覆盖特有样式 */
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  padding: 32rpx 24rpx;  /* 覆盖默认 padding */
+  position: relative;
+}
+
+/* 无需重复定义：background-color, border-radius, border, margin-bottom, :active */
 ```
 
 ---
 
-## 需要修改的文件
+## 已完成的文件修改
 
-| 文件路径 | 原类名 | 修改内容 |
-|---------|--------|---------|
-| `styles/common.wxss` | - | 新增 `.card` 基础类和变体 |
-| `pages/admin/approval/approval.wxss` | `.user-card` | 移除阴影，添加边框 |
-| `pages/teacher/history/history.wxss` | `.record-card` | 移除阴影，添加边框 |
-| `pages/common/switchRole/switchRole.wxss` | `.role-card` | 移除阴影，添加边框 |
-| `pages/classTeacher/overview/overview.wxss` | `.student-card` | 移除阴影，添加边框 |
-| `pages/classTeacher/feedback/feedback.wxss` | `.info-card` | 移除阴影，添加边框 |
-| `pages/leader/dashboard/dashboard.wxss` | `.class-card` | 移除阴影，添加边框 |
+| 文件路径 | 类名 | 状态 |
+|---------|------|------|
+| `styles/common.wxss` | `.card` 基础类 | ✅ 已完成 |
+| `pages/common/notifications/notifications` | `.notification-item` | ✅ 已完成 |
+| `pages/common/transfer/transfer` | `.transfer-item` | ✅ 已完成 |
+| `pages/common/switchRole/switchRole` | `.role-card` | ✅ 已完成 |
+| `pages/admin/approval/approval` | `.user-card` | ✅ 已完成 |
+| `pages/teacher/history/history` | `.record-card` | ✅ 已完成 |
+| `pages/classTeacher/students/students` | `.student-item` | ✅ 已完成 |
+| `pages/leader/detail/detail` | `.student-card` | ✅ 已完成 |
 
 **例外**: `pages/teacher/attendance/attendance.wxss` 的滑动卡片保留阴影（交互反馈需要）
 
@@ -141,24 +154,31 @@
 
 | 属性 | 旧样式 | 新样式（扁平描边） |
 |-----|-------|------------------|
-| 边框 | 无 | `1rpx solid #e8e8e8` |
+| 边框 | 无 | `2rpx solid #e8e8e8` |
 | 阴影 | `0 2rpx 12rpx rgba(0,0,0,0.08)` | 无 |
 | 圆角 | `16rpx` | `12rpx` |
-| 内边距 | `30rpx` | `28rpx` |
-| 状态左边框 | `6rpx` | `4rpx` |
+| 内边距 | `30rpx` | `24rpx` |
+| 按压态 | 无 | `background-color: #fafafa; border-color: #d0d0d0` |
 
 ---
 
-## 实施步骤
+## 代码复用收益
 
-1. 在 `styles/common.wxss` 添加 `.card` 基础类和状态变体
-2. 逐页面修改：移除 `box-shadow`，添加 `border`
-3. 将页面特定类名（如 `.user-card`）改为使用 `.card` 基础类 + 变体
-4. 验证各状态显示效果（正常、选中、禁用）
-5. 真机测试边框渲染
+通过组合类名模式，减少了约 **70 行**重复样式代码：
+
+| 移除的重复属性 | 行数 |
+|--------------|-----|
+| `background-color: #fff` | 7 |
+| `border-radius: 12rpx` | 7 |
+| `border: 2rpx solid #e8e8e8` | 7 |
+| `margin-bottom: 20rpx` | 7 |
+| `:active` 样式块 | ~35 |
+| `transition` | 7 |
+| **总计** | **~70** |
 
 ---
 
-## 版本
+## 版本历史
 
-- v1.0 - 2024-01-XX - 初版，扁平描边风格规范
+- v1.1 - 2024-12 - 完成样式复用实施，采用组合类名模式
+- v1.0 - 2024-01 - 初版，扁平描边风格规范

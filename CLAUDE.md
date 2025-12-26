@@ -50,6 +50,7 @@
 - [@cloudfunctions/README.md](./cloudfunctions/README.md) - 云函数模块文档
 - [@components/README.md](./components/README.md) - 组件模块文档
 - [@utils/README.md](./utils/README.md) - 工具函数模块文档
+- [@styles/README.md](./styles/README.md) - 全局样式模块文档
 
 ## 开发规范
 

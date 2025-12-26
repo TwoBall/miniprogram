@@ -1,5 +1,6 @@
 /* 学部领导仪表盘页面 - 页面特有样式 */
 /* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .stat-item, .ranking-item, .rank-badge, .rate-badge */
 
 .dashboard-container {
   min-height: 100vh;
@@ -69,11 +70,11 @@
 }
 
 .value.present {
-  color: #07c160;
+  color: #52c41a;
 }
 
 .value.absent {
-  color: #ee0a24;
+  color: #ff4d4f;
 }
 
 .stat-number.warning {
@@ -90,6 +91,7 @@
   margin-bottom: 20rpx;
   background-color: #fff;
   border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
   font-size: 28rpx;
   color: #1890ff;
   font-weight: 500;
@@ -100,14 +102,20 @@
   margin-bottom: 32rpx;
 }
 
+/* 使用公共 .ranking-item 样式，仅覆盖特定样式 */
 .ranking-item {
-  display: flex;
-  align-items: center;
-  gap: 24rpx;
   padding: 32rpx 24rpx;
   margin-bottom: 20rpx;
   background-color: #fff;
   border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
+  transition: all 0.2s ease;
+}
+
+.ranking-item:active {
+  transform: scale(0.98);
+  background-color: #fafafa;
+  border-color: #d0d0d0;
 }
 
 .ranking-item.top-rank {
@@ -115,15 +123,10 @@
   border: 2rpx solid #ffd700;
 }
 
+/* 使用公共 .rank-badge 样式 */
 .rank-badge {
   flex-shrink: 0;
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: #f5f5f5;
-  border-radius: 50%;
 }
 
 .rank-number {
@@ -165,31 +168,11 @@
   color: #999;
 }
 
+/* 使用公共 .rate-badge 样式，仅覆盖特定样式 */
 .rate-badge {
   flex-shrink: 0;
   padding: 12rpx 24rpx;
-  border-radius: 20rpx;
   font-weight: 600;
-}
-
-.rate-badge.excellent {
-  background-color: #f0f9ff;
-  color: #1890ff;
-}
-
-.rate-badge.good {
-  background-color: #f0fdf4;
-  color: #52c41a;
-}
-
-.rate-badge.normal {
-  background-color: #fffbeb;
-  color: #ff9800;
-}
-
-.rate-badge.poor {
-  background-color: #fef2f2;
-  color: #ff4d4f;
 }
 
 .rate-value {

@@ -1,4 +1,6 @@
 /* 通知中心页面样式 */
+/* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .tabs, .tab-item, .loading-wrapper, .no-more */
 
 .notifications-container {
   min-height: 100vh;
@@ -6,7 +8,7 @@
   padding-bottom: 40rpx;
 }
 
-/* Tab 切换 */
+/* Tab 切换 - 扩展公共 .tabs */
 .tabs-wrapper {
   background-color: #fff;
   border-bottom: 2rpx solid #f0f0f0;
@@ -16,38 +18,19 @@
 }
 
 .tabs {
-  display: flex;
-  align-items: center;
   height: 88rpx;
 }
 
 .tab-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 8rpx;
   height: 100%;
-  font-size: 28rpx;
-  color: #666;
-  position: relative;
   transition: all 0.3s;
 }
 
-.tab-item.active {
-  color: #1890ff;
-  font-weight: 500;
-}
-
 .tab-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 60rpx;
   height: 4rpx;
-  background-color: #1890ff;
   border-radius: 2rpx;
 }
 
@@ -55,7 +38,7 @@
   min-width: 32rpx;
   height: 32rpx;
   padding: 0 8rpx;
-  background-color: #ee0a24;
+  background-color: #ff4d4f;
   color: #fff;
   font-size: 20rpx;
   border-radius: 16rpx;
@@ -79,13 +62,13 @@
   background-color: #fff;
   border-radius: 8rpx;
   font-size: 28rpx;
-  color: #07c160;
-  border: 2rpx solid #07c160;
+  color: #52c41a;
+  border: 2rpx solid #52c41a;
   transition: all 0.3s;
 }
 
 .mark-all-btn:active {
-  opacity: 0.7;
+  background-color: #f6ffed;
   transform: scale(0.98);
 }
 
@@ -94,21 +77,13 @@
   padding: 24rpx 30rpx 0;
 }
 
+/* 通知项 - 继承公共 .card，仅覆盖特有样式 */
 .notification-item {
   display: flex;
   align-items: flex-start;
   gap: 24rpx;
   padding: 32rpx 24rpx;
-  margin-bottom: 20rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
   position: relative;
-  transition: all 0.3s;
-}
-
-.notification-item:active {
-  transform: scale(0.98);
-  opacity: 0.9;
 }
 
 .notification-item.unread {
@@ -123,7 +98,7 @@
   left: 8rpx;
   width: 12rpx;
   height: 12rpx;
-  background-color: #ee0a24;
+  background-color: #ff4d4f;
   border-radius: 50%;
 }
 
@@ -164,7 +139,7 @@
 }
 
 .type-badge.type-transfer_result {
-  background-color: #f0fdf4;
+  background-color: #f6ffed;
   color: #52c41a;
 }
 
@@ -214,19 +189,4 @@
 
 .mark-read-btn:active {
   background-color: #f0f9ff;
-}
-
-/* 加载中 */
-.loading-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 60rpx 0;
-}
-
-/* 没有更多 */
-.no-more {
-  text-align: center;
-  padding: 40rpx 0;
-  font-size: 24rpx;
-  color: #999;
 }

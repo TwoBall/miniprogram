@@ -33,12 +33,9 @@
   padding: 20rpx;
 }
 
+/* 学生卡片 - 继承公共 .card，仅覆盖特有样式 */
 .student-card {
-  margin-bottom: 24rpx;
-  background: #fff;
-  border-radius: 16rpx;
   padding: 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
 }
 
 .student-info {

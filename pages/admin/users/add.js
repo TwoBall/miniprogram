@@ -1,4 +1,5 @@
 const app = getApp()
+const storage = require('../../../utils/storage')
 
 Page({
   data: {
@@ -13,23 +14,28 @@ Page({
       clubName: ''
     },
 
+    roleLabel: '社团老师', // 默认角色标签
+
     roleOptions: [
-      { value: 'teacher', label: '社团老师' },
-      { value: 'classTeacher', label: '班主任' },
-      { value: 'leader', label: '学部领导' }
+      { name: '社团老师', value: 'teacher' },
+      { name: '班主任', value: 'classTeacher' },
+      { name: '学部领导', value: 'leader' }
     ],
 
-    departmentOptions: [
-      { value: '小学部', label: '小学部' },
-      { value: '初中部', label: '初中部' },
-      { value: '高中部', label: '高中部' }
-    ],
+    departmentOptions: [], // 从数据库获取
+    classOptions: [], // 从数据库获取
+    clubOptions: [], // 从数据库获取
 
     showRolePicker: false,
-    showDepartmentPicker: false
+    showDepartmentPicker: false,
+    showClassPicker: false,
+    showClubPicker: false
   },
 
   onLoad(options) {
+    // 获取筛选选项（学部、班级、社团）
+    this.fetchFilterOptions()
+
     if (options.id) {
       this.setData({
         mode: 'edit',
@@ -37,6 +43,65 @@ Page({
       })
       this.loadUserData(options.id)
     }
+  },
+
+  /**
+   * 获取筛选选项（学部、班级、社团）
+   */
+  async fetchFilterOptions() {
+    // 尝试从缓存读取
+    const cached = storage.getWithCache(
+      storage.STORAGE_KEYS.FILTER_OPTIONS,
+      storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
+      storage.CACHE_DURATION.ONE_DAY
+    )
+
+    if (cached) {
+      this.applyFilterOptions(cached)
+      return
+    }
+
+    // 从云端获取
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'students',
+        data: { action: 'getFilterOptions' }
+      })
+
+      if (res.result.success && res.result.data) {
+        // 存入缓存
+        storage.setWithCache(
+          storage.STORAGE_KEYS.FILTER_OPTIONS,
+          storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
+          res.result.data
+        )
+        this.applyFilterOptions(res.result.data)
+      }
+    } catch (error) {
+      console.error('获取筛选选项失败:', error)
+      // 使用默认值
+      this.applyFilterOptions({
+        departments: ['小学部', '初中部', '高中部'],
+        classes: [],
+        clubs: []
+      })
+    }
+  },
+
+  /**
+   * 应用筛选选项到 action-sheet 格式
+   */
+  applyFilterOptions(data) {
+    const toOptions = (list) => (list || []).map(item => ({
+      name: item,
+      value: item
+    }))
+
+    this.setData({
+      departmentOptions: toOptions(data.departments),
+      classOptions: toOptions(data.classes),
+      clubOptions: toOptions(data.clubs)
+    })
   },
 
   async loadUserData(userId) {
@@ -57,14 +122,16 @@ Page({
       if (res.result.success) {
         const user = res.result.data.find(u => u._id === userId)
         if (user) {
+          const role = user.role || 'teacher'
           this.setData({
             formData: {
               userName: user.userName || '',
-              role: user.role || 'teacher',
+              role,
               department: user.department || '',
               className: user.className || '',
               clubName: user.clubName || ''
-            }
+            },
+            roleLabel: this.getRoleLabel(role)
           })
         }
       }
@@ -89,8 +156,10 @@ Page({
 
   onRoleConfirm(e) {
     const role = e.detail.value
+    const roleLabel = this.getRoleLabel(role)
     this.setData({
       'formData.role': role,
+      roleLabel,
       showRolePicker: false
     })
   },
@@ -115,21 +184,41 @@ Page({
     this.setData({ showDepartmentPicker: false })
   },
 
-  onClassInput(e) {
+  showClassPicker() {
+    this.setData({ showClassPicker: true })
+  },
+
+  onClassConfirm(e) {
+    const className = e.detail.value
     this.setData({
-      'formData.className': e.detail.value
+      'formData.className': className,
+      showClassPicker: false
     })
   },
 
-  onClubInput(e) {
+  onClassCancel() {
+    this.setData({ showClassPicker: false })
+  },
+
+  showClubPicker() {
+    this.setData({ showClubPicker: true })
+  },
+
+  onClubConfirm(e) {
+    const clubName = e.detail.value
     this.setData({
-      'formData.clubName': e.detail.value
+      'formData.clubName': clubName,
+      showClubPicker: false
     })
+  },
+
+  onClubCancel() {
+    this.setData({ showClubPicker: false })
   },
 
   getRoleLabel(role) {
     const option = this.data.roleOptions.find(opt => opt.value === role)
-    return option ? option.label : role
+    return option ? option.name : role
   },
 
   validateForm() {
@@ -153,7 +242,7 @@ Page({
 
     if (role === 'classTeacher' && !className) {
       wx.showToast({
-        title: '班主任必须填写班级',
+        title: '班主任必须选择班级',
         icon: 'none'
       })
       return false
@@ -161,7 +250,7 @@ Page({
 
     if (role === 'teacher' && !clubName) {
       wx.showToast({
-        title: '社团老师必须填写社团名称',
+        title: '社团老师必须选择社团',
         icon: 'none'
       })
       return false

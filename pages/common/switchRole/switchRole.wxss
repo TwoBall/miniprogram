@@ -28,19 +28,11 @@
   padding: 30rpx;
 }
 
+/* 角色卡片 - 继承公共 .card，仅覆盖特有样式 */
 .role-card {
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.role-card:active {
-  transform: scale(0.98);
 }
 
 .role-card.current {

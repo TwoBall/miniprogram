@@ -32,6 +32,6 @@
   padding: 40rpx 32rpx;
 }
 
-.action-buttons .van-button {
+.btn-wrapper {
   flex: 1;
 }

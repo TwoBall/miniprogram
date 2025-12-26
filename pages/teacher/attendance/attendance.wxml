@@ -74,7 +74,7 @@
       >
         <!-- 滑动反馈图标 -->
         <view class="swipe-indicator present-indicator" style="opacity: {{presentOpacity}}">
-          <van-icon name="success" size="120rpx" color="#07c160" />
+          <van-icon name="success" size="120rpx" color="#52c41a" />
           <text>到课</text>
         </view>
         <view class="swipe-indicator absent-indicator" style="opacity: {{absentOpacity}}">
@@ -120,7 +120,7 @@
         <van-icon name="revoke" size="40rpx" color="{{currentIndex === 0 ? '#ccc' : '#999'}}" />
       </view>
       <view class="action-btn present-btn" bindtap="markPresentByBtn">
-        <van-icon name="success" size="56rpx" color="#07c160" />
+        <van-icon name="success" size="56rpx" color="#52c41a" />
       </view>
     </view>
 

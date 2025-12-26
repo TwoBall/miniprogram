@@ -86,7 +86,7 @@
 
 .present-stat {
   font-size: 32rpx;
-  color: #07c160;
+  color: #52c41a;
   font-weight: 500;
 }
 
@@ -218,7 +218,7 @@
 
 .present-indicator {
   right: 40rpx;
-  color: #07c160;
+  color: #52c41a;
   transform: rotate(15deg);
 }
 
@@ -230,7 +230,7 @@
 
 /* 滑动中的卡片边框效果 */
 .swiping-right {
-  border: 4rpx solid #07c160;
+  border: 4rpx solid #52c41a;
 }
 
 .swiping-left {
@@ -264,7 +264,7 @@
 }
 
 .present-btn {
-  border: 4rpx solid #07c160;
+  border: 4rpx solid #52c41a;
 }
 
 .absent-btn {
@@ -313,7 +313,7 @@
 }
 
 .stat-num.present {
-  color: #07c160;
+  color: #52c41a;
 }
 
 .stat-num.absent {

@@ -99,16 +99,8 @@
     </view>
   </view>
 
-  <view class="add-btn-wrapper">
-    <van-button
-      type="primary"
-      round
-      icon="plus"
-      bind:click="goToAddUser"
-      custom-class="add-btn"
-    >
-      添加用户
-    </van-button>
+  <view class="fab-btn" bind:tap="goToAddUser">
+    <van-icon name="plus" size="48rpx" color="#fff" />
   </view>
 
   <van-toast id="van-toast" />

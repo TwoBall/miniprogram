@@ -13,7 +13,7 @@
         title="角色"
         is-link
         required
-        value="{{ getRoleLabel(formData.role) }}"
+        value="{{ roleLabel || '请选择角色' }}"
         bind:click="showRolePicker"
       />
     </van-cell-group>
@@ -28,22 +28,22 @@
         bind:click="showDepartmentPicker"
       />
 
-      <van-field
+      <van-cell
         wx:if="{{ formData.role === 'classTeacher' }}"
-        label="班级"
-        value="{{ formData.className }}"
-        placeholder="请输入班级（如：一年级1班）"
+        title="班级"
+        is-link
         required
-        bind:change="onClassInput"
+        value="{{ formData.className || '请选择班级' }}"
+        bind:click="showClassPicker"
       />
 
-      <van-field
+      <van-cell
         wx:if="{{ formData.role === 'teacher' }}"
-        label="社团名称"
-        value="{{ formData.clubName }}"
-        placeholder="请输入社团名称"
+        title="社团"
+        is-link
         required
-        bind:change="onClubInput"
+        value="{{ formData.clubName || '请选择社团' }}"
+        bind:click="showClubPicker"
       />
     </van-cell-group>
 
@@ -56,20 +56,26 @@
   </view>
 
   <view class="action-buttons">
-    <van-button
-      type="default"
-      size="large"
-      bind:click="cancel"
-    >
-      取消
-    </van-button>
-    <van-button
-      type="primary"
-      size="large"
-      bind:click="submitForm"
-    >
-      {{ mode === 'add' ? '添加' : '保存' }}
-    </van-button>
+    <view class="btn-wrapper">
+      <van-button
+        type="default"
+        size="large"
+        block
+        bind:click="cancel"
+      >
+        取消
+      </van-button>
+    </view>
+    <view class="btn-wrapper">
+      <van-button
+        type="primary"
+        size="large"
+        block
+        bind:click="submitForm"
+      >
+        {{ mode === 'add' ? '添加' : '保存' }}
+      </van-button>
+    </view>
   </view>
 
   <!-- 角色选择器 -->
@@ -87,6 +93,24 @@
     actions="{{ departmentOptions }}"
     bind:select="onDepartmentConfirm"
     bind:close="onDepartmentCancel"
+    cancel-text="取消"
+  />
+
+  <!-- 班级选择器 -->
+  <van-action-sheet
+    show="{{ showClassPicker }}"
+    actions="{{ classOptions }}"
+    bind:select="onClassConfirm"
+    bind:close="onClassCancel"
+    cancel-text="取消"
+  />
+
+  <!-- 社团选择器 -->
+  <van-action-sheet
+    show="{{ showClubPicker }}"
+    actions="{{ clubOptions }}"
+    bind:select="onClubConfirm"
+    bind:close="onClubCancel"
     cancel-text="取消"
   />
 

@@ -1,16 +1,44 @@
 /**
  * 公共样式 - 统一所有页面的基础样式
- * 在 app.wxss 中通过 @import 引入
+ * 在 app.wxss 中通过 @import 引入，分包页面自动继承
+ *
+ * ========== 设计规范 ==========
+ *
+ * 【品牌色系】
+ * - 主品牌色: #1F6FAD
+ * - 主渐变: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%)
+ *
+ * 【角色主题色】
+ * - 管理员: linear-gradient(135deg, #722ed1 0%, #9254de 100%)
+ * - 教师: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%)
+ * - 班主任: linear-gradient(135deg, #52c41a 0%, #95de64 100%)
+ * - 领导: linear-gradient(135deg, #faad14 0%, #ffd666 100%)
+ *
+ * 【状态色】
+ * - 成功/到课: #52c41a, 背景: #f6ffed
+ * - 错误/缺课: #ff4d4f, 背景: #fff1f0
+ * - 警告: #ff9800, 背景: #fff7e6
+ * - 信息: #1890ff, 背景: #e6f7ff
+ *
+ * 【文本色】
+ * - 主文本: #333333
+ * - 次文本: #666666
+ * - 辅助文本: #999999
+ *
+ * 【背景色】
+ * - 页面背景: #f5f5f5
+ * - 卡片背景: #ffffff
+ * - 元素背景: #f5f7fa
+ *
+ * 【边框与圆角】
+ * - 边框色: #e8e8e8, 悬停: #d0d0d0
+ * - 卡片圆角: 12rpx
+ * - 标签圆角: 20rpx
+ *
+ * 【卡片风格】扁平描边风格，无阴影
+ * - border: 2rpx solid #e8e8e8
+ * - border-radius: 12rpx
  */
-
-/* ========== 颜色变量（注释说明） ========== */
-/* 主渐变: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%) */
-/* 成功/到课: #07c160 */
-/* 危险/缺课: #ee0a24 或 #ff4d4f */
-/* 文字主色: #333 */
-/* 文字次色: #666 */
-/* 文字灰色: #999 */
-/* 背景色: #f5f5f5 */
 
 /* ========== 顶部信息栏 ========== */
 .header-section {
@@ -78,11 +106,11 @@
 }
 
 .stat-number.present {
-  color: #07c160;
+  color: #52c41a;
 }
 
 .stat-number.absent {
-  color: #ee0a24;
+  color: #ff4d4f;
 }
 
 .stat-label {
@@ -143,4 +171,231 @@
 .empty-state text {
   margin-top: 20rpx;
   font-size: 28rpx;
+}
+
+/* ========== 2.1 页面容器 ========== */
+.page-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+.page-container.with-tabbar {
+  padding-bottom: 140rpx;
+}
+
+/* ========== 2.2 通用卡片 - 扁平描边风格 ========== */
+.card {
+  background-color: #fff;
+  border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.card:active {
+  background-color: #fafafa;
+  border-color: #d0d0d0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ========== 2.3 状态标签 ========== */
+.status-badge {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.status-badge.success,
+.status-badge.present {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.status-badge.error,
+.status-badge.absent {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.status-badge.warning {
+  background: #fff7e6;
+  color: #ff9800;
+}
+
+.status-badge.info,
+.status-badge.pending {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+/* ========== 2.4 加载状态 ========== */
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80rpx 0;
+}
+
+.no-more {
+  text-align: center;
+  padding: 30rpx 0;
+  color: #999;
+  font-size: 26rpx;
+}
+
+/* ========== 2.5 信息行 ========== */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.info-row .label {
+  color: #999;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  color: #333;
+  font-weight: 500;
+}
+
+/* ========== 2.6 统计项 ========== */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-value.primary {
+  color: #1890ff;
+}
+
+.stat-value.success {
+  color: #52c41a;
+}
+
+.stat-value.error {
+  color: #ff4d4f;
+}
+
+/* ========== 2.7 Tab 切换 ========== */
+.tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 2rpx solid #e8e8e8;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 60rpx;
+  height: 6rpx;
+  background-color: #1890ff;
+  border-radius: 3rpx;
+}
+
+/* ========== 2.8 排名样式 ========== */
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  border: 2rpx solid #e8e8e8;
+}
+
+.rank-badge {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.rank-badge.first {
+  background: #fffbe6;
+  color: #ffd700;
+}
+
+.rank-badge.second {
+  background: #f5f5f5;
+  color: #c0c0c0;
+}
+
+.rank-badge.third {
+  background: #fff7e6;
+  color: #cd7f32;
+}
+
+.rate-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.rate-badge.excellent {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.rate-badge.good {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.rate-badge.normal {
+  background: #fff7e6;
+  color: #ff9800;
+}
+
+.rate-badge.poor {
+  background: #fff1f0;
+  color: #ff4d4f;
 }

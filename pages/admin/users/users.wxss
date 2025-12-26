@@ -105,18 +105,22 @@
   font-size: 28rpx;
 }
 
-.add-btn-wrapper {
+.fab-btn {
   position: fixed;
-  bottom: 120rpx;
-  left: 0;
-  right: 0;
-  padding: 0 32rpx;
+  right: 32rpx;
+  bottom: 180rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(114, 46, 209, 0.4);
   z-index: 100;
 }
 
-.add-btn {
-  width: 100%;
-  height: 88rpx;
-  font-size: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.3);
+.fab-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
 }

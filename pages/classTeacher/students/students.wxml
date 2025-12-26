@@ -57,7 +57,7 @@
     <view
       wx:for="{{ filteredStudents }}"
       wx:key="_id"
-      class="student-item"
+      class="card student-item"
       bindtap="onStudentTap"
       data-id="{{ item._id }}"
     >

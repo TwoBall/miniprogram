@@ -17,7 +17,7 @@
           <skeleton type="card" count="{{3}}" avatar="{{true}}" />
         </view>
         <view class="user-list" wx:elif="{{pendingUsers.length > 0}}">
-          <view class="user-card" wx:for="{{pendingUsers}}" wx:key="_id">
+          <view class="card user-card" wx:for="{{pendingUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
                 <view class="user-name">
@@ -97,11 +97,11 @@
           <skeleton type="card" count="{{3}}" avatar="{{true}}" />
         </view>
         <view class="user-list" wx:elif="{{approvedUsers.length > 0}}">
-          <view class="user-card approved" wx:for="{{approvedUsers}}" wx:key="_id">
+          <view class="card user-card approved" wx:for="{{approvedUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
                 <view class="user-name">
-                  <van-icon name="user-o" size="32rpx" color="#07c160" />
+                  <van-icon name="user-o" size="32rpx" color="#52c41a" />
                   <text>{{item.userName}}</text>
                 </view>
                 <van-tag type="success" size="medium">已通过</van-tag>
@@ -153,11 +153,11 @@
           <skeleton type="card" count="{{3}}" avatar="{{true}}" />
         </view>
         <view class="user-list" wx:elif="{{rejectedUsers.length > 0}}">
-          <view class="user-card rejected" wx:for="{{rejectedUsers}}" wx:key="_id">
+          <view class="card user-card rejected" wx:for="{{rejectedUsers}}" wx:key="_id">
             <view class="user-header">
               <view class="user-info">
                 <view class="user-name">
-                  <van-icon name="user-o" size="32rpx" color="#ee0a24" />
+                  <van-icon name="user-o" size="32rpx" color="#ff4d4f" />
                   <text>{{item.userName}}</text>
                 </view>
                 <van-tag type="danger" size="medium">已拒绝</van-tag>

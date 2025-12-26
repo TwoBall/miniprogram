@@ -15,7 +15,7 @@
 
   <view class="student-list">
     <block wx:if="{{students.length > 0}}">
-      <view class="student-card" wx:for="{{students}}" wx:key="_id">
+      <view class="card student-card" wx:for="{{students}}" wx:key="_id">
         <view class="student-header">
           <view class="student-name">
             <text>{{item.studentName}}</text>

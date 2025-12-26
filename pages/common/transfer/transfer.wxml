@@ -13,7 +13,7 @@
     <view
       wx:for="{{ transfers }}"
       wx:key="_id"
-      class="transfer-item"
+      class="card transfer-item"
       bindtap="onViewDetail"
       data-transfer="{{ item }}"
     >

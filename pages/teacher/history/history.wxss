@@ -1,5 +1,6 @@
 /* 历史记录页面 - 页面特有样式 */
 /* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .card, .stat-item, .load-more, .no-more */
 
 .history-container {
   min-height: 100vh;
@@ -24,13 +25,10 @@
   padding-bottom: 100rpx;
 }
 
+/* 记录卡片 - 继承公共 .card，仅覆盖特有样式 */
 .record-card {
   position: relative;
-  background-color: #ffffff;
-  border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .record-header {
@@ -99,18 +97,4 @@
   transform: translateY(-50%);
   font-size: 48rpx;
   color: #cccccc;
-}
-
-/* 加载更多 */
-.load-more {
-  display: flex;
-  justify-content: center;
-  padding: 30rpx 0;
-}
-
-.no-more {
-  text-align: center;
-  padding: 30rpx 0;
-  color: #999999;
-  font-size: 26rpx;
 }

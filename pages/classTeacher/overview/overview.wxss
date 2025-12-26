@@ -1,5 +1,6 @@
 /* 班主任概览页面 - 页面特有样式 */
 /* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .card, .status-badge */
 
 .overview-container {
   min-height: 100vh;
@@ -28,12 +29,19 @@
 .student-card {
   margin-bottom: 24rpx;
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   padding: 24rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid #e8e8e8;
+  transition: all 0.2s ease;
+}
+
+.student-card:active {
+  transform: scale(0.98);
+  background-color: #fafafa;
+  border-color: #d0d0d0;
 }
 
 .student-info {
@@ -78,22 +86,9 @@
   margin-right: 8rpx;
 }
 
-/* 出勤状态标签 */
+/* 出勤状态标签 - 扩展公共 .status-badge */
 .status-badge {
-  padding: 8rpx 20rpx;
   border-radius: 30rpx;
-  font-size: 24rpx;
-  font-weight: 500;
-}
-
-.status-badge.present {
-  background: #f6ffed;
-  color: #52c41a;
-}
-
-.status-badge.absent {
-  background: #fff1f0;
-  color: #ff4d4f;
 }
 
 .status-badge.default {

@@ -1,5 +1,6 @@
 /* 管理员审批页面 - 页面特有样式 */
 /* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .tabs, .tab-item, .card, .load-more, .no-more */
 
 .approval-container {
   min-height: 100vh;
@@ -16,21 +17,17 @@
   padding-bottom: 40rpx;
 }
 
-/* 用户卡片 */
+/* 用户卡片 - 继承公共 .card，仅覆盖特有样式 */
 .user-card {
-  background-color: #ffffff;
-  border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .user-card.approved {
-  border-left: 6rpx solid #07c160;
+  border-left: 6rpx solid #52c41a;
 }
 
 .user-card.rejected {
-  border-left: 6rpx solid #ee0a24;
+  border-left: 6rpx solid #ff4d4f;
 }
 
 .user-header {
@@ -70,7 +67,7 @@
 }
 
 .value.reason {
-  color: #ee0a24;
+  color: #ff4d4f;
   line-height: 1.6;
 }
 
@@ -102,18 +99,4 @@
   display: flex;
   gap: 20rpx;
   justify-content: flex-end;
-}
-
-/* 加载更多 */
-.load-more {
-  display: flex;
-  justify-content: center;
-  padding: 30rpx 0;
-}
-
-.no-more {
-  text-align: center;
-  padding: 30rpx 0;
-  color: #999999;
-  font-size: 26rpx;
 }

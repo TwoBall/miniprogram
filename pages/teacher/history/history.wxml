@@ -16,7 +16,7 @@
 
   <!-- 记录列表 -->
   <view class="record-list" wx:elif="{{records.length > 0}}">
-    <view class="record-card" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
+    <view class="card record-card" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
       <view class="record-header">
         <view class="date">{{item.date}}</view>
         <view class="time">{{item.time}}</view>

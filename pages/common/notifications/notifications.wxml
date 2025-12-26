@@ -40,7 +40,7 @@
     <view
       wx:for="{{ notifications }}"
       wx:key="_id"
-      class="notification-item {{ !item.read ? 'unread' : '' }}"
+      class="card notification-item {{ !item.read ? 'unread' : '' }}"
       bindtap="onNotificationTap"
       data-notification="{{ item }}"
       data-id="{{ item._id }}"
@@ -76,7 +76,7 @@
           catchtap="markAsRead"
           data-id="{{ item._id }}"
         >
-          <van-icon name="success" size="32rpx" color="#07c160" />
+          <van-icon name="success" size="32rpx" color="#52c41a" />
         </view>
       </view>
     </view>

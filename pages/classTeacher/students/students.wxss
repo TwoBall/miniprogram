@@ -109,20 +109,12 @@
   padding: 0 30rpx;
 }
 
+/* 学生项 - 继承公共 .card，仅覆盖特有样式 */
 .student-item {
   display: flex;
   align-items: center;
   gap: 24rpx;
   padding: 32rpx 24rpx;
-  margin-bottom: 20rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
-  transition: all 0.3s;
-}
-
-.student-item:active {
-  transform: scale(0.98);
-  opacity: 0.9;
 }
 
 .student-avatar {

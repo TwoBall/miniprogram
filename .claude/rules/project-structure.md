@@ -52,7 +52,16 @@
 
 ## 其他重要目录
 
-- `styles/` - 全局样式
+### 全局样式模块
+@styles/README.md
+
+全局样式层提供统一的 UI 规范和可复用的公共样式类：
+- `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
+- `profile-base.wxss` - Profile 页面公共样式基类
+
+**样式复用模式**：采用组合类名（`class="card xxx-card"`），页面 WXSS 仅定义特有样式。
+
+### 其他目录
 - `images/` - 图片资源
 - `miniprogram_npm/` - 小程序 npm 包编译产物
 - `node_modules/` - Node.js 依赖包
