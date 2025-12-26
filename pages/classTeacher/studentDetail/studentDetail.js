@@ -70,7 +70,7 @@ Page({
         let lateCount = 0
 
         const processedRecords = records.map(record => {
-          const studentRecord = record.students.find(s => s.studentId === this.data.studentId)
+          const studentRecord = record.records.find(s => s.studentId === this.data.studentId)
 
           if (studentRecord) {
             switch (studentRecord.status) {

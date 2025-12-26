@@ -17,13 +17,48 @@ Page({
 
   /**
    * 检查自动登录
-   * 验证本地存储的用户信息是否有效
+   * 验证本地存储的用户信息和云端登录态是否有效
    */
-  checkAutoLogin() {
+  async checkAutoLogin() {
     const userInfo = wx.getStorageSync('userInfo')
-    if (userInfo && userInfo.role && userInfo.status === 'approved') {
-      // 已有有效登录信息，直接跳转
-      this.redirectByRole(userInfo.role)
+    if (!userInfo || !userInfo.role || userInfo.status !== 'approved') {
+      return
+    }
+
+    try {
+      // 检查微信登录态是否过期
+      const checkRes = await wx.checkSession().catch(() => ({ expired: true }))
+      if (checkRes.expired) {
+        // 登录态过期，清除缓存，需要重新登录
+        wx.removeStorageSync('userInfo')
+        wx.removeStorageSync('allUserRoles')
+        return
+      }
+
+      // 验证云端用户状态
+      const result = await request.callCloud('user', { action: 'login' }, {
+        showLoading: false,
+        showError: false
+      })
+
+      if (result.success && result.status === 'approved' && result.userList?.length > 0) {
+        // 云端验证通过，更新本地缓存并跳转
+        wx.setStorageSync('allUserRoles', result.userList)
+        // 尝试匹配当前角色，否则使用第一个
+        const currentRole = result.userList.find(u => u.role === userInfo.role) || result.userList[0]
+        wx.setStorageSync('userInfo', currentRole)
+        app.globalData.userInfo = currentRole
+        this.redirectByRole(currentRole.role)
+      } else {
+        // 云端验证失败，清除缓存
+        wx.removeStorageSync('userInfo')
+        wx.removeStorageSync('allUserRoles')
+      }
+    } catch (error) {
+      console.error('自动登录验证失败:', error)
+      // 验证失败，清除缓存，让用户手动登录
+      wx.removeStorageSync('userInfo')
+      wx.removeStorageSync('allUserRoles')
     }
   },
 

@@ -20,7 +20,8 @@ exports.main = async (event, context) => {
         getByClub: handleGetByClub,
         getByClass: handleGetByClass,
         getByDepartment: handleGetByDepartment,
-        getFilterOptions: handleGetFilterOptions
+        getFilterOptions: handleGetFilterOptions,
+        getAll: handleGetAll
     }
 
     const handler = handlers[action]
@@ -126,5 +127,24 @@ async function handleGetByDepartment(event) {
     } catch (error) {
         console.error('获取学部学生失败:', error)
         return { success: false, message: '获取学部学生失败', data: [] }
+    }
+}
+
+/**
+ * 获取所有学生列表
+ * 用于管理员数据统计
+ */
+async function handleGetAll(event) {
+    try {
+        const students = await getAllData(
+            db.collection('students'),
+            {},
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true }
+        )
+
+        return { success: true, data: students }
+    } catch (error) {
+        console.error('获取所有学生失败:', error)
+        return { success: false, message: '获取所有学生失败', data: [] }
     }
 }

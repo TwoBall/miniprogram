@@ -1,8 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(powershell:*)",
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "Bash(done)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: 统一命名规范，openid改为_openid，添加项目文档\n\n- 将 users 表的 openid 字段统一为 _openid（符合微信云开发规范）\n- 更新 cloudfunctions/user/index.js 中所有 openid 查询和写入\n- 创建 migrateFields 云函数支持数据库字段迁移\n- 添加项目文档系统（CLAUDE.md 及各模块 README.md）\n- 添加文档维护规则和项目结构规范\n- 更新 DATABASE_SCHEMA.md 至 v2.1\n- 清理 tools/data 目录中的临时数据文件\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: 修复_openid字段命名不一致问题，重命名系统名称\n\n- 修复前端代码中 openid 与 _openid 字段不一致的问题\n  - users.wxml: item.openid → item._openid\n  - switchRole.js: roles[0]?.openid → roles[0]?._openid  \n  - data.js: user.openid → user._openid\n- 云函数 user/handleLogin 返回数据添加 status 字段\n- 登录页添加自动登录检查，解决首页图标跳转问题\n- 系统名称统一更名为\"智慧社团管理系统\"\n- 添加/更新相关模块文档和头部注释\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: 极限代码复用优化，减少重复代码约400行\n\n## 主要变更\n\n### 云函数公共模块\n- 创建 cloudfunctions/common/ 公共模块（db-utils, auth-utils, constants）\n- 各云函数添加 utils.js 合并版公共工具（微信云开发不支持 file: 依赖）\n- 修改引用方式为 require\\(''./utils''\\)\n\n### Profile 页面样式合并\n- 创建 styles/profile-base.wxss 公共样式基类\n- 各角色 profile.wxss 仅保留渐变色差异（减少约210行）\n\n### 时间格式化函数提取\n- utils/date.js 添加 formatRelativeTime 函数\n- 统一 notifications.js 和 transfer.js 的相对时间格式化\n\n### Behavior 模块优化\n- profileBehavior.js 保留在主包 behaviors/ 目录（分包间不能互相引用）\n- 创建 pages/common/behaviors/ 存放 datePickerBehavior 和 paginationBehavior\n\n### 其他优化\n- utils/storage.js 添加 getUserInfo/setUserInfo/clearUserInfo 便捷函数\n- styles/common.wxss 添加 .load-more 和 .empty-state 公共样式\n- 修复 export.js 重复的 formatDate 函数\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
