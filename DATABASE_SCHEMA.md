@@ -81,13 +81,18 @@
 | `clubName` | String | 是 | 社团名称 |
 | `teacherId` | String | 是 | 点名老师ID |
 | `teacherName` | String | 是 | 点名老师姓名 |
-| `department` | String | 否 | 学部 |
+| `departments` | Array | 否 | 学部列表（从学生记录中提取的所有不重复学部） |
 | `date` | String | 是 | 点名日期（格式：YYYY-MM-DD） |
 | `time` | String | 是 | 点名时间（格式：HH:mm） |
 | `records` | Array | 是 | 学生考勤记录数组 |
 | `records[].studentId` | String | 是 | 学生ID |
 | `records[].studentName` | String | 是 | 学生姓名 |
 | `records[].className` | String | 是 | 学生班级 |
+| `records[].department` | String | 否 | 学生学部 |
+| `records[].gender` | String | 否 | 学生性别 |
+| `records[].clubName` | String | 否 | 学生社团 |
+| `records[].classTeacher` | String | 否 | 班主任姓名 |
+| `records[].classTeacherPhone` | String | 否 | 班主任电话 |
 | `records[].status` | String | 是 | 考勤状态（present/absent） |
 | `createTime` | Date | 是 | 创建时间 |
 | `updateTime` | Date | 否 | 更新时间 |
@@ -280,7 +285,7 @@ db.collection('attendance_records')
 
 - **v2.2** (2025-12-27)
   - 新增 `export_records` 集合，用于保存导出历史记录
-  - `attendance_records` 表新增 `department` 字段（从学生记录中提取）
+  - `attendance_records` 表新增 `departments` 数组字段（支持多学部，从学生记录中提取所有不重复学部）
   - 新增 export 云函数接口：`getHistory`、`getDownloadUrl`、`deleteRecord`
 
 - **v2.1** (2025-12-26)

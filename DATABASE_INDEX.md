@@ -66,7 +66,7 @@ db.collection('users').where({ status: 'pending' }).orderBy('createTime', 'desc'
 |--------|----------|----------|
 | `clubName_1_date_-1` | `clubName: 1, date: -1` | 查询社团考勤记录（最常用） |
 | `date_-1` | `date: -1` | 按日期查询所有考勤记录 |
-| `department_1_date_-1` | `department: 1, date: -1` | 学部考勤统计 |
+| `departments_1_date_-1` | `departments: 1, date: -1` | 学部考勤统计（数组字段） |
 | `teacherId_1_date_-1` | `teacherId: 1, date: -1` | 查询教师的点名记录 |
 | `records.studentId_1` | `records.studentId: 1` | 按学生ID查询考勤历史（嵌套数组字段） |
 

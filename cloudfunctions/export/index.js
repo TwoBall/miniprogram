@@ -200,7 +200,8 @@ async function exportAttendance(event, openid) {
     if (startDate && endDate) {
       condition.date = _.gte(startDate).and(_.lte(endDate))
     }
-    if (department) condition.department = department
+    // departments 是数组，使用数组包含查询
+    if (department) condition.departments = department
     if (clubName) condition.clubName = clubName
 
     // 获取考勤记录
@@ -299,7 +300,8 @@ async function exportSummary(event, openid) {
     if (startDate && endDate) {
       condition.date = _.gte(startDate).and(_.lte(endDate))
     }
-    if (department) condition.department = department
+    // departments 是数组，使用数组包含查询
+    if (department) condition.departments = department
     if (clubName) condition.clubName = clubName
 
     // 获取考勤记录
