@@ -161,6 +161,9 @@ async function handleSubmit(event) {
     const { clubName, teacherId, teacherName, date, time, records, mode } = event
 
     try {
+        // 从学生记录中提取学部信息（取第一个学生的学部）
+        const department = records && records.length > 0 ? records[0].department : ''
+
         // 如果是覆盖模式，先删除当天的旧记录
         if (mode === 'cover') {
             await db.collection('attendance_records')
@@ -169,7 +172,7 @@ async function handleSubmit(event) {
         }
 
         const result = await db.collection('attendance_records').add({
-            data: { clubName, teacherId, teacherName, date, time, records, createTime: db.serverDate() }
+            data: { clubName, department, teacherId, teacherName, date, time, records, createTime: db.serverDate() }
         })
 
         // 检查缺勤情况并发送通知

@@ -7,11 +7,12 @@
 | 集合名 | 索引数量 | 主要查询场景 |
 |--------|----------|--------------|
 | students | 5 | 按社团/班级/学部查询学生 |
-| users | 5 | 用户登录、角色筛选、审批列表 |
-| attendance_records | 4 | 考勤记录查询、统计分析 |
+| users | 7 | 用户登录、角色筛选、审批列表、通知发送 |
+| attendance_records | 5 | 考勤记录查询、统计分析、学生历史 |
 | feedbacks | 3 | 反馈记录查询 |
 | transfer_requests | 4 | 转社团申请处理 |
 | notifications | 2 | 用户通知列表 |
+| export_records | 2 | 导出历史查询 |
 
 ## 详细索引配置
 
@@ -45,6 +46,8 @@ db.collection('students').where({ clubName: '篮球社', className: '24级护理
 | `role_1_status_1` | `role: 1, status: 1` | 按角色筛选已审批用户 |
 | `status_1_createTime_-1` | `status: 1, createTime: -1` | 待审批用户列表（按时间倒序） |
 | `clubName_1_status_1` | `clubName: 1, status: 1` | 按社团查询教师账号 |
+| `role_1_clubName_1_status_1` | `role: 1, clubName: 1, status: 1` | 按角色+社团查询教师（通知发送） |
+| `role_1_className_1_status_1` | `role: 1, className: 1, status: 1` | 按角色+班级查询班主任（通知发送） |
 
 **典型查询**：
 ```javascript
@@ -65,6 +68,7 @@ db.collection('users').where({ status: 'pending' }).orderBy('createTime', 'desc'
 | `date_-1` | `date: -1` | 按日期查询所有考勤记录 |
 | `department_1_date_-1` | `department: 1, date: -1` | 学部考勤统计 |
 | `teacherId_1_date_-1` | `teacherId: 1, date: -1` | 查询教师的点名记录 |
+| `records.studentId_1` | `records.studentId: 1` | 按学生ID查询考勤历史（嵌套数组字段） |
 
 **典型查询**：
 ```javascript
@@ -154,6 +158,30 @@ db.collection('notifications')
   .orderBy('createTime', 'desc')
   .limit(50)
   .get()
+```
+
+---
+
+### export_records（导出记录表）
+
+| 索引名 | 字段配置 | 用途说明 |
+|--------|----------|----------|
+| `_openid_1_createTime_-1` | `_openid: 1, createTime: -1` | 用户导出历史列表（最常用） |
+| `_openid_1_fileID_1` | `_openid: 1, fileID: 1` | 验证文件归属权限 |
+
+**典型查询**：
+```javascript
+// 查询用户导出历史
+db.collection('export_records')
+  .where({ _openid: 'xxx' })
+  .orderBy('createTime', 'desc')
+  .limit(20)
+  .get()
+
+// 验证文件归属
+db.collection('export_records')
+  .where({ _openid: 'xxx', fileID: 'cloud://xxx' })
+  .count()
 ```
 
 ---
@@ -262,6 +290,15 @@ db.collection('students')
 ---
 
 ## 版本历史
+
+- **v1.2** (2025-12-27)
+  - `attendance_records` 新增 `records.studentId_1` 索引（嵌套数组字段，优化学生考勤历史查询）
+  - `users` 新增 `role_1_clubName_1_status_1` 和 `role_1_className_1_status_1` 索引（优化通知发送查询）
+  - 总索引数量更新为 28 个
+
+- **v1.1** (2025-12-27)
+  - 新增 `export_records` 集合索引配置
+  - 总索引数量更新为 25 个
 
 - **v1.0** (2025-12-26)
   - 初始版本

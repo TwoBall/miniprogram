@@ -171,6 +171,31 @@
 - `transfer_result`：转社团结果
 - `register_result`：注册审批结果
 
+### export_records（导出记录表）
+
+导出历史记录表，用于追踪和重新下载导出文件
+
+| 字段名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| `_id` | String | 是 | 记录唯一标识（系统生成） |
+| `_openid` | String | 是 | 导出用户的openid |
+| `exportType` | String | 是 | 导出类型（attendance/summary/students） |
+| `fileName` | String | 是 | 导出文件名 |
+| `fileID` | String | 是 | 云存储文件ID |
+| `recordCount` | Number | 是 | 导出记录条数 |
+| `filters` | Object | 否 | 筛选条件 |
+| `filters.startDate` | String | 否 | 开始日期 |
+| `filters.endDate` | String | 否 | 结束日期 |
+| `filters.department` | String | 否 | 学部筛选 |
+| `filters.clubName` | String | 否 | 社团筛选 |
+| `filters.className` | String | 否 | 班级筛选 |
+| `createTime` | Date | 是 | 创建时间 |
+
+**导出类型**：
+- `attendance`：考勤明细
+- `summary`：考勤汇总
+- `students`：学生名单
+
 ## 字段迁移说明
 
 ### 从旧版本迁移
@@ -252,6 +277,11 @@ db.collection('attendance_records')
 4. **版本控制**：数据库结构变更应创建迁移脚本并记录版本
 
 ## 版本历史
+
+- **v2.2** (2025-12-27)
+  - 新增 `export_records` 集合，用于保存导出历史记录
+  - `attendance_records` 表新增 `department` 字段（从学生记录中提取）
+  - 新增 export 云函数接口：`getHistory`、`getDownloadUrl`、`deleteRecord`
 
 - **v2.1** (2025-12-26)
   - 统一 `openid` 字段为 `_openid`（带下划线前缀），符合微信云开发规范
