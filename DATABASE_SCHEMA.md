@@ -287,6 +287,7 @@ db.collection('attendance_records')
   - 新增 `export_records` 集合，用于保存导出历史记录
   - `attendance_records` 表新增 `departments` 数组字段（支持多学部，从学生记录中提取所有不重复学部）
   - 新增 export 云函数接口：`getHistory`、`getDownloadUrl`、`deleteRecord`
+  - migrateFields 云函数新增 `addDepartments` 操作（为现有考勤记录添加 departments 字段）
 
 - **v2.1** (2025-12-26)
   - 统一 `openid` 字段为 `_openid`（带下划线前缀），符合微信云开发规范

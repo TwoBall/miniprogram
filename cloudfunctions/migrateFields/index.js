@@ -20,6 +20,7 @@ exports.main = async (event) => {
         check: checkStatus,
         migrateOpenid: migrateOpenidField,
         migrateName: migrateNameFields,
+        addDepartments: addDepartmentsField,
         rollbackOpenid: rollbackOpenidField
     }
 
@@ -67,6 +68,12 @@ async function checkStatus() {
             db.collection('users').where({ userName: _.exists(true) }).count()
         ])
 
+        // 检查 attendance_records 的 departments 字段情况
+        const [withDepartments, withoutDepartments] = await Promise.all([
+            db.collection('attendance_records').where({ departments: _.exists(true) }).count(),
+            db.collection('attendance_records').where({ departments: _.exists(false) }).count()
+        ])
+
         return {
             success: true,
             message: '检查完成',
@@ -86,6 +93,11 @@ async function checkStatus() {
                     with_name: usersWithName.total,
                     with_userName: usersWithUserName.total,
                     needMigration: usersWithName.total > 0
+                },
+                attendance_departments: {
+                    with_departments: withDepartments.total,
+                    without_departments: withoutDepartments.total,
+                    needMigration: withoutDepartments.total > 0
                 }
             }
         }
@@ -219,6 +231,63 @@ async function migrateNameFields() {
     } catch (error) {
         console.error('迁移 name 失败:', error)
         return { success: false, message: '迁移失败：' + error.message }
+    }
+}
+
+/**
+ * 为 attendance_records 添加 departments 字段
+ * 从 records 数组中提取所有不重复的学部
+ */
+async function addDepartmentsField() {
+    try {
+        const MAX_LIMIT = 100
+        let migrated = 0
+        let hasMore = true
+
+        while (hasMore) {
+            // 查找没有 departments 字段的记录
+            const res = await db.collection('attendance_records')
+                .where({
+                    departments: _.exists(false)
+                })
+                .limit(MAX_LIMIT)
+                .get()
+
+            if (res.data.length === 0) {
+                hasMore = false
+                break
+            }
+
+            // 逐条更新
+            for (const record of res.data) {
+                // 从 records 数组中提取所有不重复的学部
+                const departments = [...new Set(
+                    (record.records || [])
+                        .map(r => r.department)
+                        .filter(d => d) // 过滤掉空值
+                )]
+
+                await db.collection('attendance_records').doc(record._id).update({
+                    data: {
+                        departments: departments
+                    }
+                })
+                migrated++
+            }
+
+            if (res.data.length < MAX_LIMIT) {
+                hasMore = false
+            }
+        }
+
+        return {
+            success: true,
+            message: 'departments 字段添加完成',
+            migrated
+        }
+    } catch (error) {
+        console.error('添加 departments 失败:', error)
+        return { success: false, message: '添加失败：' + error.message }
     }
 }
 
