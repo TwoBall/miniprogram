@@ -24,6 +24,14 @@ Page({
   },
 
   onShow() {
+    // 检查是否有登录信息，没有则跳转登录页
+    const userInfo = auth.getUserInfo()
+    const allRoles = auth.getAllUserRoles()
+    if (!userInfo && allRoles.length === 0) {
+      wx.reLaunch({ url: '/pages/login/login' })
+      return
+    }
+
     // 每次显示时刷新，因为可能刚注册了新角色
     this.loadRoles()
   },
@@ -116,7 +124,7 @@ Page({
      */
   redirectByRole(role) {
     const routes = {
-      'admin': '/pages/admin/approval/approval',
+      'admin': '/pages/admin/home/home',
       'teacher': '/pages/teacher/attendance/attendance',
       'classTeacher': '/pages/classTeacher/overview/overview',
       'leader': '/pages/leader/dashboard/dashboard'

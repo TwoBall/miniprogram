@@ -1,8 +1,10 @@
 const { formatDate } = require('../../../utils/date')
+const auth = require('../../../utils/auth')
 
 Page({
   data: {
     userInfo: null,
+    pageLoading: true,
     stats: {
       totalUsers: 0,
       pendingUsers: 0,
@@ -12,14 +14,33 @@ Page({
   },
 
   onLoad() {
-    const userInfo = wx.getStorageSync('userInfo')
-    this.setData({ userInfo })
+    const userInfo = auth.checkRole('admin')
+    if (userInfo) {
+      this.setData({ userInfo })
+    }
     this.loadStats()
   },
 
   onShow() {
+    // 检查登录状态，防止后台恢复时登录态丢失
+    const userInfo = auth.checkRole('admin')
+    if (!userInfo) return
+
+    // 恢复页面数据（小程序被销毁后 userInfo 会丢失）
+    if (!this.data.userInfo) {
+      this.setData({ userInfo })
+    }
+
     // 刷新统计数据
     this.loadStats()
+  },
+
+  onPullDownRefresh() {
+    this.loadStats().then(() => {
+      wx.stopPullDownRefresh()
+    }).catch(() => {
+      wx.stopPullDownRefresh()
+    })
   },
 
   async loadStats() {
@@ -77,6 +98,7 @@ Page({
       }
 
       this.setData({
+        pageLoading: false,
         stats: {
           totalUsers,
           pendingUsers,
@@ -86,6 +108,7 @@ Page({
       })
     } catch (error) {
       console.error('加载统计数据失败:', error)
+      this.setData({ pageLoading: false })
       wx.showToast({
         title: '加载统计数据失败',
         icon: 'none'

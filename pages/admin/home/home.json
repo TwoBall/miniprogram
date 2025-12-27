@@ -1,6 +1,8 @@
 {
   "navigationBarTitleText": "管理工作台",
+  "enablePullDownRefresh": true,
   "usingComponents": {
+    "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
     "van-grid": "@vant/weapp/grid/index",
     "van-grid-item": "@vant/weapp/grid-item/index",
