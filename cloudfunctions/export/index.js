@@ -38,7 +38,10 @@ exports.main = async (event, context) => {
   const handlers = {
     attendance: exportAttendance,
     summary: exportSummary,
-    students: exportStudents
+    students: exportStudents,
+    getHistory: getExportHistory,
+    getDownloadUrl: getDownloadUrl,
+    deleteRecord: deleteExportRecord
   }
 
   const handler = handlers[action]
@@ -50,9 +53,145 @@ exports.main = async (event, context) => {
 }
 
 /**
+ * 保存导出记录到数据库
+ */
+async function saveExportRecord(openid, exportType, fileName, fileID, recordCount, filters) {
+  try {
+    await db.collection('export_records').add({
+      data: {
+        _openid: openid,
+        exportType,
+        fileName,
+        fileID,
+        recordCount,
+        filters,
+        createTime: db.serverDate()
+      }
+    })
+  } catch (error) {
+    console.error('保存导出记录失败:', error)
+  }
+}
+
+/**
+ * 获取导出历史记录
+ */
+async function getExportHistory(event, openid) {
+  const { page = 1, pageSize = 20 } = event
+
+  try {
+    // 获取总数
+    const countRes = await db.collection('export_records')
+      .where({ _openid: openid })
+      .count()
+    const total = countRes.total
+
+    // 分页查询
+    const skip = (page - 1) * pageSize
+    const result = await db.collection('export_records')
+      .where({ _openid: openid })
+      .orderBy('createTime', 'desc')
+      .skip(skip)
+      .limit(pageSize)
+      .get()
+
+    return {
+      success: true,
+      data: result.data,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        hasMore: skip + result.data.length < total
+      }
+    }
+  } catch (error) {
+    console.error('获取导出历史失败:', error)
+    return { success: false, message: '获取导出历史失败' }
+  }
+}
+
+/**
+ * 重新获取下载链接
+ */
+async function getDownloadUrl(event, openid) {
+  const { fileID } = event
+
+  if (!fileID) {
+    return { success: false, message: '缺少文件ID' }
+  }
+
+  try {
+    // 验证文件属于当前用户
+    const recordCheck = await db.collection('export_records')
+      .where({ _openid: openid, fileID })
+      .count()
+
+    if (recordCheck.total === 0) {
+      return { success: false, message: '无权访问该文件' }
+    }
+
+    // 获取临时链接
+    const { fileList } = await cloud.getTempFileURL({
+      fileList: [fileID]
+    })
+
+    if (fileList[0].status !== 0) {
+      return { success: false, message: '文件已过期或不存在' }
+    }
+
+    return {
+      success: true,
+      data: {
+        tempFileURL: fileList[0].tempFileURL
+      }
+    }
+  } catch (error) {
+    console.error('获取下载链接失败:', error)
+    return { success: false, message: '获取下载链接失败' }
+  }
+}
+
+/**
+ * 删除导出记录（同时删除云存储文件）
+ */
+async function deleteExportRecord(event, openid) {
+  const { recordId, fileID } = event
+
+  if (!recordId) {
+    return { success: false, message: '缺少记录ID' }
+  }
+
+  try {
+    // 验证记录属于当前用户
+    const record = await db.collection('export_records').doc(recordId).get()
+    if (!record.data || record.data._openid !== openid) {
+      return { success: false, message: '无权删除该记录' }
+    }
+
+    // 删除云存储文件
+    if (fileID) {
+      try {
+        await cloud.deleteFile({ fileList: [fileID] })
+      } catch (e) {
+        console.log('文件可能已被删除:', e)
+      }
+    }
+
+    // 删除数据库记录
+    await db.collection('export_records').doc(recordId).remove()
+
+    return { success: true, message: '删除成功' }
+  } catch (error) {
+    console.error('删除导出记录失败:', error)
+    return { success: false, message: '删除失败' }
+  }
+}
+
+/**
  * 导出考勤明细
  */
-async function exportAttendance(event) {
+async function exportAttendance(event, openid) {
   const { startDate, endDate, department, clubName, className } = event
 
   try {
@@ -128,6 +267,11 @@ async function exportAttendance(event) {
       fileList: [result.fileID]
     })
 
+    // 保存导出记录
+    await saveExportRecord(openid, 'attendance', fileName, result.fileID, exportData.length, {
+      startDate, endDate, department, clubName, className
+    })
+
     return {
       success: true,
       data: {
@@ -146,7 +290,7 @@ async function exportAttendance(event) {
 /**
  * 导出汇总统计
  */
-async function exportSummary(event) {
+async function exportSummary(event, openid) {
   const { startDate, endDate, department, clubName, className } = event
 
   try {
@@ -247,6 +391,11 @@ async function exportSummary(event) {
       fileList: [result.fileID]
     })
 
+    // 保存导出记录
+    await saveExportRecord(openid, 'summary', fileName, result.fileID, exportData.length, {
+      startDate, endDate, department, clubName, className
+    })
+
     return {
       success: true,
       data: {
@@ -265,7 +414,7 @@ async function exportSummary(event) {
 /**
  * 导出学生名单
  */
-async function exportStudents(event) {
+async function exportStudents(event, openid) {
   const { department, clubName, className } = event
 
   try {
@@ -323,6 +472,11 @@ async function exportStudents(event) {
     // 获取临时链接
     const { fileList } = await cloud.getTempFileURL({
       fileList: [result.fileID]
+    })
+
+    // 保存导出记录
+    await saveExportRecord(openid, 'students', fileName, result.fileID, exportData.length, {
+      department, clubName, className
     })
 
     return {

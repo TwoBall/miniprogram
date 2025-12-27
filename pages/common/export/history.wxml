@@ -1,0 +1,68 @@
+<view class="history-container">
+  <!-- 空状态 -->
+  <view wx:if="{{ !loading && records.length === 0 }}" class="empty-state">
+    <van-icon name="orders-o" size="80px" color="#ccc" />
+    <text class="empty-text">暂无导出记录</text>
+  </view>
+
+  <!-- 记录列表 -->
+  <view wx:else class="record-list">
+    <view
+      wx:for="{{ records }}"
+      wx:key="_id"
+      class="record-item card"
+    >
+      <view class="record-header">
+        <view class="record-type">
+          <text class="type-tag {{ item.exportType }}">{{ item.typeName }}</text>
+        </view>
+        <text class="record-time">{{ item.createTimeStr }}</text>
+      </view>
+
+      <view class="record-body">
+        <view class="record-info">
+          <text class="file-name">{{ item.fileName }}</text>
+          <text class="record-count">共 {{ item.recordCount }} 条记录</text>
+        </view>
+        <view wx:if="{{ item.filterDesc }}" class="filter-desc">
+          <van-icon name="filter-o" size="14px" />
+          <text>{{ item.filterDesc }}</text>
+        </view>
+      </view>
+
+      <view class="record-actions">
+        <van-button
+          size="small"
+          type="primary"
+          icon="down"
+          loading="{{ downloading[item._id] }}"
+          data-id="{{ item._id }}"
+          data-file-id="{{ item.fileID }}"
+          bind:click="onDownload"
+        >
+          下载
+        </van-button>
+        <van-button
+          size="small"
+          type="default"
+          icon="delete-o"
+          data-id="{{ item._id }}"
+          data-file-id="{{ item.fileID }}"
+          bind:click="onDelete"
+        >
+          删除
+        </van-button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{ loading }}" class="loading-wrapper">
+    <van-loading size="24px">加载中...</van-loading>
+  </view>
+
+  <!-- 无更多数据 -->
+  <view wx:if="{{ !loading && records.length > 0 && !hasMore }}" class="no-more">
+    没有更多了
+  </view>
+</view>

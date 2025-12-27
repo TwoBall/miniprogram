@@ -41,6 +41,8 @@
   - `transfer.js` - 申请列表页面（查看和审批）
   - `create.js` - 发起申请页面（教师/班主任入口）
 - `common/export/` - 数据导出页面
+  - `export.js` - 导出配置和执行页面
+  - `history.js` - 导出历史记录页面（支持重新下载）
 
 ### 认证模块
 - `login/` - 登录页面

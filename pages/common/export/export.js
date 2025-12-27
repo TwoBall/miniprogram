@@ -55,6 +55,13 @@ Page({
     this.setDateRange('today')
   },
 
+  // 跳转到导出历史页面
+  goToHistory() {
+    wx.navigateTo({
+      url: '/pages/common/export/history'
+    })
+  },
+
   // 加载筛选选项（使用带缓存的方法）
   async loadFilterOptions() {
     try {

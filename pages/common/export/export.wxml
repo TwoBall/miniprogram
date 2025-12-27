@@ -1,4 +1,11 @@
 <view class="export-container">
+  <!-- 历史记录入口 -->
+  <view class="history-entry" bind:tap="goToHistory">
+    <van-icon name="orders-o" size="20px" />
+    <text>查看导出历史</text>
+    <van-icon name="arrow" size="16px" color="#999" />
+  </view>
+
   <!-- 导出类型选择 -->
   <view class="section">
     <view class="section-title">导出类型</view>
