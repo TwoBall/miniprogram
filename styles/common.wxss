@@ -329,6 +329,8 @@
   content: '';
   position: absolute;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 60rpx;
   height: 6rpx;
   background-color: #1890ff;
