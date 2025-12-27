@@ -1,15 +1,14 @@
 // 转社团申请页面
 const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
+const paginationBehavior = require('../../../behaviors/paginationBehavior')
 
 Page({
+  behaviors: [paginationBehavior],
+
   data: {
     activeTab: 'pending',
     transfers: [],
-    loading: false,
-    hasMore: true,
-    page: 1,
-    pageSize: 20,
     userInfo: null,
     role: '',
 
@@ -32,45 +31,39 @@ Page({
       userInfo,
       role: userInfo?.role || 'teacher'
     })
-    this.loadTransfers(true)
+    this.loadList(true)
   },
 
   onPullDownRefresh() {
-    this.loadTransfers(true)
+    this.setData({ transfers: [] })
+    this.handlePullDownRefresh()
   },
 
   onReachBottom() {
-    if (this.data.hasMore && !this.data.loading) {
-      this.loadTransfers(false)
-    }
+    this.handleReachBottom()
   },
 
   // 切换标签
   onTabChange(e) {
     const tab = e.detail.name
-    this.setData({
-      activeTab: tab,
-      transfers: [],
-      page: 1,
-      hasMore: true
-    })
-    this.loadTransfers(true)
+    this.setData({ activeTab: tab, transfers: [] })
+    this.resetPagination()
+    this.loadList(true)
   },
 
   // 加载转社团申请列表
-  async loadTransfers(refresh = false) {
+  async loadList(refresh = false) {
     if (this.data.loading) return
 
     this.setData({ loading: true })
 
     try {
       const { activeTab, role, page, pageSize } = this.data
-      const currentPage = refresh ? 1 : page
 
       const result = await request.callCloud('transfer', {
         action: 'getList',
         role,
-        page: currentPage,
+        page,
         pageSize,
         status: activeTab === 'all' ? 'all' : activeTab
       })
@@ -83,16 +76,7 @@ Page({
           updateTime: this.formatTime(item.updateTime)
         }))
 
-        const newTransfers = refresh
-          ? formattedData
-          : [...this.data.transfers, ...formattedData]
-
-        this.setData({
-          transfers: newTransfers,
-          page: currentPage + 1,
-          hasMore: result.pagination.hasMore,
-          loading: false
-        })
+        this.handleLoadSuccess(formattedData, result.pagination, refresh, 'transfers')
 
         if (refresh) {
           wx.stopPullDownRefresh()
@@ -142,7 +126,7 @@ Page({
                 icon: 'success'
               })
               // 刷新列表
-              this.loadTransfers(true)
+              this.loadList(true)
             } else {
               wx.showToast({
                 title: result.message || '确认失败',
@@ -187,7 +171,7 @@ Page({
                 icon: 'success'
               })
               // 刷新列表
-              this.loadTransfers(true)
+              this.loadList(true)
             } else {
               wx.showToast({
                 title: result.message || '审批失败',
@@ -249,7 +233,7 @@ Page({
         // 清空输入
         this.setData({ rejectReason: '', currentRequestId: '' })
         // 刷新列表
-        this.loadTransfers(true)
+        this.loadList(true)
       } else {
         wx.showToast({
           title: result.message || '拒绝失败',

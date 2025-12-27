@@ -54,6 +54,7 @@
         "switchRole/switchRole",
         "notifications/notifications",
         "transfer/transfer",
+        "transfer/create",
         "export/export"
       ]
     }

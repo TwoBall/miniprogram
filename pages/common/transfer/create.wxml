@@ -1,0 +1,95 @@
+<view class="page-container">
+  <!-- 学生信息卡片 -->
+  <view class="card student-info-card">
+    <view class="card-header">
+      <van-icon name="user-circle-o" size="40rpx" color="#1890ff" />
+      <text class="card-title">学生信息</text>
+    </view>
+    <view class="info-content">
+      <view class="info-row">
+        <text class="label">姓名</text>
+        <text class="value">{{ studentName }}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">班级</text>
+        <text class="value">{{ className }}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">当前社团</text>
+        <text class="value highlight">{{ fromClub }}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 转社团表单 -->
+  <view class="card form-card">
+    <view class="card-header">
+      <van-icon name="exchange" size="40rpx" color="#1890ff" />
+      <text class="card-title">转入信息</text>
+    </view>
+
+    <van-cell-group border="{{ false }}">
+      <van-cell
+        title="目标社团"
+        is-link
+        required
+        value="{{ toClub || '请选择' }}"
+        value-class="{{ toClub ? '' : 'placeholder' }}"
+        bind:click="showClubPicker"
+      />
+    </van-cell-group>
+
+    <view class="form-item">
+      <view class="form-label">申请理由（选填）</view>
+      <van-field
+        type="textarea"
+        placeholder="请输入转社团理由..."
+        value="{{ reason }}"
+        autosize="{{ { minHeight: 80 } }}"
+        maxlength="200"
+        show-word-limit
+        bind:change="onReasonInput"
+      />
+    </view>
+  </view>
+
+  <!-- 流程说明 -->
+  <view class="tips-section">
+    <van-icon name="info-o" size="32rpx" color="#1890ff" />
+    <text class="tips-text">
+      提交后需转出老师和转入老师确认，最后由班主任审批通过
+    </text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <view class="btn-wrapper">
+      <van-button type="default" size="large" block bind:click="cancel">
+        取消
+      </van-button>
+    </view>
+    <view class="btn-wrapper">
+      <van-button
+        type="primary"
+        size="large"
+        block
+        loading="{{ submitting }}"
+        disabled="{{ submitting }}"
+        bind:click="submitForm"
+      >
+        提交申请
+      </van-button>
+    </view>
+  </view>
+
+  <!-- 社团选择器 -->
+  <van-action-sheet
+    show="{{ showClubPicker }}"
+    actions="{{ clubOptions }}"
+    bind:select="onClubConfirm"
+    bind:close="onClubCancel"
+    cancel-text="取消"
+  />
+
+  <van-toast id="van-toast" />
+</view>

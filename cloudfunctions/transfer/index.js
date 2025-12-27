@@ -57,6 +57,7 @@ async function handleCreate(event, wxContext) {
         // 查询发起人信息
         const initiatorRes = await db.collection('users')
             .where({ _openid: openid, status: 'approved' })
+            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
             .get()
 
         if (initiatorRes.data.length === 0) {
@@ -136,6 +137,7 @@ async function handleGetList(event, wxContext) {
         // 查询当前用户信息
         const userRes = await db.collection('users')
             .where({ _openid: openid, status: 'approved' })
+            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -210,6 +212,7 @@ async function handleConfirm(event, wxContext) {
         // 查询用户信息
         const userRes = await db.collection('users')
             .where({ _openid: openid, status: 'approved' })
+            .field({ _id: true, userName: true, role: true, clubName: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -297,6 +300,7 @@ async function handleApprove(event, wxContext) {
         // 查询班主任信息
         const userRes = await db.collection('users')
             .where({ _openid: openid, role: 'classTeacher', status: 'approved' })
+            .field({ _id: true, userName: true, className: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -383,6 +387,7 @@ async function handleReject(event, wxContext) {
         // 查询用户信息
         const userRes = await db.collection('users')
             .where({ _openid: openid, status: 'approved' })
+            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
             .get()
 
         if (userRes.data.length === 0) {
@@ -462,7 +467,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
             ]
 
             for (const condition of teacherConditions) {
-                const teachersRes = await db.collection('users').where(condition).get()
+                const teachersRes = await db.collection('users').where(condition).field({ _openid: true }).get()
                 for (const teacher of teachersRes.data) {
                     if (!teacher._openid) continue
                     await db.collection('notifications').add({
@@ -482,6 +487,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
             // 通知班主任
             const classTeachersRes = await db.collection('users')
                 .where({ role: 'classTeacher', className, status: 'approved' })
+                .field({ _openid: true })
                 .get()
 
             for (const classTeacher of classTeachersRes.data) {
@@ -508,6 +514,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
             // 通知班主任
             const classTeachersRes = await db.collection('users')
                 .where({ role: 'classTeacher', className, status: 'approved' })
+                .field({ _openid: true })
                 .get()
 
             for (const classTeacher of classTeachersRes.data) {
@@ -532,7 +539,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
             ]
 
             for (const condition of teacherConditions) {
-                const teachersRes = await db.collection('users').where(condition).get()
+                const teachersRes = await db.collection('users').where(condition).field({ _openid: true }).get()
                 for (const teacher of teachersRes.data) {
                     if (!teacher._openid) continue
                     await db.collection('notifications').add({
