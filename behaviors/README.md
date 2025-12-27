@@ -11,6 +11,8 @@
 ## 文件索引
 
 - `profileBehavior.js` - Profile 页面通用行为，提供菜单配置和用户信息加载
+- `datePickerBehavior.js` - 日期选择器通用行为，提供日期选择器状态管理和事件处理
+- `paginationBehavior.js` - 分页加载通用行为，提供列表分页状态管理和事件处理
 
 ## 使用方式
 
@@ -27,7 +29,18 @@ Page({
 
 ## 使用该 Behavior 的页面
 
+### profileBehavior
 - `pages/admin/profile/profile.js`
 - `pages/teacher/profile/profile.js`
 - `pages/classTeacher/profile/profile.js`
 - `pages/leader/profile/profile.js`
+
+### datePickerBehavior
+- `pages/leader/dashboard/dashboard.js`
+- `pages/classTeacher/overview/overview.js`
+
+### paginationBehavior
+- `pages/admin/users/users.js`
+- `pages/teacher/history/history.js`
+- `pages/common/transfer/transfer.js`
+- `pages/common/notifications/notifications.js`

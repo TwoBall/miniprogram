@@ -39,16 +39,12 @@
 ### 工具模块
 @utils/README.md
 
-工具函数层，提供通用功能：
-
-**主包工具**（供登录/注册页面使用）：
+工具函数层，提供通用功能（全部放在主包，供所有分包引用）：
+- auth.js - 身份认证
+- date.js - 日期处理
 - error.js - 错误处理
 - request.js - 网络请求
 - storage.js - 本地存储
-
-**分包工具**（位于 pages/common/utils/）：
-- auth.js - 身份认证
-- date.js - 日期处理
 
 ## 其他重要目录
 
@@ -69,20 +65,12 @@
 ### 行为混入模块
 @behaviors/README.md
 
-**主包 Behavior**（被多个分包使用，必须放在主包）：
+**主包 Behavior**（放在主包供所有分包引用）：
 - `behaviors/profileBehavior.js` - Profile 页面通用行为
-
-**分包 Behavior**（仅 common 分包内部使用）：
-- `pages/common/behaviors/datePickerBehavior.js` - 日期选择器行为
-- `pages/common/behaviors/paginationBehavior.js` - 分页加载行为
+- `behaviors/datePickerBehavior.js` - 日期选择器行为
+- `behaviors/paginationBehavior.js` - 分页加载行为
 
 **注意**：微信小程序分包之间不能互相引用，但所有分包都可以引用主包。因此被多个分包使用的 Behavior 必须放在主包 `behaviors/` 目录。
-
-## 分包共享资源
-
-为优化主包体积，仅被 common 分包内部使用的资源放置在 `pages/common/` 目录：
-- `pages/common/behaviors/` - common 分包内部使用的行为混入
-- `pages/common/utils/` - 分包共享工具函数（auth、date）
 
 ## 配置文件
 

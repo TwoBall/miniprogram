@@ -69,4 +69,5 @@
 ## 其他文档
 
 - [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) - 数据库架构文档
+- [DATABASE_INDEX.md](./DATABASE_INDEX.md) - 数据库索引配置指南
 - [CARD_STYLE_GUIDE.md](./CARD_STYLE_GUIDE.md) - 卡片样式指南

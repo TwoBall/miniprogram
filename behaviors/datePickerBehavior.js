@@ -1,15 +1,15 @@
 // input: 日期选择器交互事件
 // output: 日期选择器状态管理和事件处理
-// pos: 分包层 > 公共模块 > Behavior
+// pos: 主包 > behaviors > 日期选择器通用行为
 
-const dateUtil = require('../../../utils/date')
+const dateUtil = require('../utils/date')
 
 /**
  * 日期选择器 Behavior
  * 提供日期选择器的通用状态和方法
  *
  * 使用方式：
- * 1. 引入: const datePickerBehavior = require('../../common/behaviors/datePickerBehavior')
+ * 1. 引入: const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
  * 2. 混入: behaviors: [datePickerBehavior]
  * 3. 调用: this.initDate() 初始化日期
  * 4. 重写: onDateChange(dateStr) 处理日期变化

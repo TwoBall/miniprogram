@@ -1,13 +1,13 @@
 // input: 分页加载交互事件
 // output: 分页状态管理和事件处理
-// pos: 分包层 > 公共模块 > Behavior
+// pos: 主包 > behaviors > 分页加载通用行为
 
 /**
  * 分页加载 Behavior
  * 提供列表分页的通用状态和方法
  *
  * 使用方式：
- * 1. 引入: const paginationBehavior = require('../../common/behaviors/paginationBehavior')
+ * 1. 引入: const paginationBehavior = require('../../../behaviors/paginationBehavior')
  * 2. 混入: behaviors: [paginationBehavior]
  * 3. 重写: loadList(refresh) 加载数据的实际方法
  * 4. 调用: this.handleLoadSuccess(data, pagination, refresh) 处理加载成功

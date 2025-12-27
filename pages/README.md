@@ -37,10 +37,10 @@
 ### 公共模块
 - `common/switchRole/` - 角色切换页面
 - `common/notifications/` - 通知列表页面
-- `common/transfer/` - 转班申请页面
+- `common/transfer/` - 转社团申请模块
+  - `transfer.js` - 申请列表页面（查看和审批）
+  - `create.js` - 发起申请页面（教师/班主任入口）
 - `common/export/` - 数据导出页面
-- `common/behaviors/` - 分包共享行为混入
-- `common/utils/` - 分包共享工具函数
 
 ### 认证模块
 - `login/` - 登录页面
