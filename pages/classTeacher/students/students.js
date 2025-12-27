@@ -1,22 +1,20 @@
-// 班主任学生管理页面
+// input: 班级名称、学生列表、考勤数据
+// output: 班级学生管理界面、出勤排行、缺勤预警
+// pos: 页面层 > 班主任模块 > 学生管理
+
+const studentListBehavior = require('../../../behaviors/studentListBehavior')
 const request = require('../../../utils/request')
 
 Page({
+  behaviors: [studentListBehavior],
+
   data: {
-    students: [],
-    filteredStudents: [],
-    loading: false,
-    searchValue: '',
     userInfo: null,
     className: '',
 
-    // 统计数据
-    totalCount: 0,
+    // 社团分布
     clubDistribution: [],
-
-    // 缺勤预警
-    absenceWarnings: [],
-    warningStudentIds: []
+    distributionField: 'clubName'
   },
 
   onLoad() {
@@ -39,7 +37,7 @@ Page({
   onPullDownRefresh() {
     Promise.all([
       this.loadStudents(),
-      this.loadAbsenceWarnings()
+      this.loadAbsenceWarnings({ className: this.data.className })
     ]).then(() => {
       wx.stopPullDownRefresh()
     }).catch(() => {
@@ -58,27 +56,21 @@ Page({
       })
 
       if (result.success) {
-        // 计算社团分布
-        const clubMap = {}
-        result.data.forEach(student => {
-          const club = student.clubName || '未分配'
-          clubMap[club] = (clubMap[club] || 0) + 1
-        })
+        const students = result.data || []
 
-        const clubDistribution = Object.entries(clubMap)
-          .map(([clubName, count]) => ({ clubName, count }))
-          .sort((a, b) => b.count - a.count)
+        // 计算社团分布
+        const clubDistribution = this.calculateDistribution(students, 'clubName')
 
         this.setData({
-          students: result.data,
-          filteredStudents: result.data,
-          totalCount: result.data.length,
+          students,
+          filteredStudents: students,
+          'stats.totalCount': students.length,
           clubDistribution,
           loading: false
         })
 
         // 加载缺勤预警
-        this.loadAbsenceWarnings()
+        this.loadAbsenceWarnings({ className: this.data.className })
 
         wx.stopPullDownRefresh()
       } else {
@@ -99,60 +91,45 @@ Page({
     }
   },
 
-  // 搜索
-  onSearch(e) {
-    const value = e.detail.trim()
-    this.setData({ searchValue: value })
-    this.filterStudents(value)
-  },
-
-  onSearchClear() {
-    this.setData({ searchValue: '' })
-    this.filterStudents('')
-  },
-
-  filterStudents(keyword) {
-    if (!keyword) {
-      this.setData({ filteredStudents: this.data.students })
+  // 加载出勤排行
+  async loadAttendanceRank() {
+    if (!this.data.className) {
       return
     }
 
-    const filtered = this.data.students.filter(student => {
-      return student.studentName.includes(keyword) ||
-             student.clubName?.includes(keyword)
-    })
+    this.setData({ loading: true })
 
-    this.setData({ filteredStudents: filtered })
-  },
-
-  // 加载缺勤预警
-  async loadAbsenceWarnings() {
     try {
-      // 获取当前月份 (YYYY-MM)
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const currentMonth = `${year}-${month}`
-
       const result = await request.callCloud('attendance', {
-        action: 'getAbsenceWarnings',
-        month: currentMonth,
+        action: 'getClassRank',
         className: this.data.className
       })
 
       if (result.success) {
-        const warnings = result.data || []
+        const rank = result.data || []
 
-        // 创建预警学生ID集合
-        const warningIds = warnings.map(w => w.studentId)
+        // 计算平均出勤率
+        let totalRate = 0
+        rank.forEach(item => {
+          totalRate += parseFloat(item.rate)
+        })
+        const avgRate = rank.length > 0 ? (totalRate / rank.length).toFixed(1) : 0
 
         this.setData({
-          absenceWarnings: warnings,
-          warningStudentIds: warningIds
+          attendanceRank: rank,
+          'stats.avgAttendanceRate': avgRate,
+          loading: false
         })
+      } else {
+        throw new Error(result.message)
       }
     } catch (error) {
-      console.error('加载缺勤预警失败:', error)
+      console.error('加载出勤率排行失败:', error)
+      this.setData({ loading: false })
+      wx.showToast({
+        title: error.message || '加载失败',
+        icon: 'none'
+      })
     }
   },
 
@@ -162,23 +139,5 @@ Page({
     wx.navigateTo({
       url: `/pages/classTeacher/studentDetail/studentDetail?studentId=${id}`
     })
-  },
-
-  // 按社团筛选
-  onClubFilter(e) {
-    const { club } = e.currentTarget.dataset
-
-    if (club === '全部') {
-      this.setData({
-        filteredStudents: this.data.students,
-        searchValue: ''
-      })
-    } else {
-      const filtered = this.data.students.filter(s => s.clubName === club)
-      this.setData({
-        filteredStudents: filtered,
-        searchValue: ''
-      })
-    }
   }
 })

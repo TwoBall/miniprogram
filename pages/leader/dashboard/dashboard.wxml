@@ -76,29 +76,27 @@
   </view>
 
   <view class="class-list">
-    <!-- 社团排名按钮 -->
+    <!-- 班级排名按钮 -->
     <view class="ranking-toggle" bindtap="onToggleRanking">
       <van-icon name="{{ showRanking ? 'arrow-up' : 'bar-chart-o' }}" size="32rpx" color="#1890ff" />
-      <text>{{ showRanking ? '收起社团排名' : '查看社团排名（本月）' }}</text>
+      <text>{{ showRanking ? '收起班级排名' : '查看班级排名（本月）' }}</text>
     </view>
 
-    <!-- 社团排名列表 -->
+    <!-- 班级排名列表 -->
     <view wx:if="{{ showRanking }}" class="club-ranking-section">
-      <van-cell-group title="社团出勤率排名（本月）" wx:if="{{clubRanking.length > 0}}">
+      <van-cell-group title="班级出勤率排名（本月）" wx:if="{{classRanking.length > 0}}">
         <view
-          wx:for="{{clubRanking}}"
-          wx:key="clubName"
+          wx:for="{{classRanking}}"
+          wx:key="className"
           class="ranking-item {{ index < 3 ? 'top-rank' : '' }}"
         >
           <view class="rank-badge">
-            <text class="rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">
-              {{ index + 1 }}
-            </text>
+            <text class="rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">{{ index + 1 }}</text>
           </view>
           <view class="club-info">
             <view class="club-name">
-              <van-icon name="cluster-o" size="32rpx" color="#1890ff" />
-              <text>{{item.clubName}}</text>
+              <van-icon name="home-o" size="32rpx" color="#1890ff" />
+              <text>{{item.className}}</text>
             </view>
             <view class="club-stats">
               <text class="stat-detail">到课 {{item.present}} / 总计 {{item.total}} 次</text>
@@ -112,7 +110,7 @@
 
       <van-empty
         wx:else
-        description="暂无社团排名数据"
+        description="暂无班级排名数据"
         image="search"
       />
     </view>

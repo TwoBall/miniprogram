@@ -1,36 +1,61 @@
-<view class="club-container">
+<view class="student-list-container">
   <!-- 社团信息卡片 -->
-  <view class="club-header">
-    <view class="club-info">
-      <view class="club-name-wrapper">
-        <van-icon name="cluster-o" size="40rpx" color="#1890ff" />
-        <text class="club-name">{{ clubInfo.name }}</text>
+  <view class="list-header teacher-header">
+    <view class="header-info">
+      <view class="header-title-wrapper">
+        <van-icon name="cluster-o" size="40rpx" color="#fff" />
+        <text class="header-title">{{ clubInfo.name }}</text>
       </view>
-      <view class="club-meta">
-        <text class="teacher-name">负责人：{{ clubInfo.teacher }}</text>
-        <text class="department">{{ clubInfo.department }}</text>
+      <view class="header-meta">
+        <text class="header-meta-item">负责人：{{ clubInfo.teacher }}</text>
+        <text class="header-meta-item">{{ clubInfo.department }}</text>
       </view>
     </view>
-    <view class="stats-quick">
-      <view class="stat-item">
-        <text class="stat-value">{{ stats.totalStudents }}</text>
-        <text class="stat-label">学生数</text>
+    <view class="header-stats">
+      <view class="header-stat-item">
+        <text class="header-stat-value">{{ stats.totalCount }}</text>
+        <text class="header-stat-label">学生数</text>
       </view>
-      <view class="stat-item" wx:if="{{ activeTab === 'rank' }}">
-        <text class="stat-value">{{ stats.avgAttendanceRate }}%</text>
-        <text class="stat-label">平均出勤率</text>
+      <view class="header-stat-item" wx:if="{{ activeTab === 'rank' }}">
+        <text class="header-stat-value">{{ stats.avgAttendanceRate }}%</text>
+        <text class="header-stat-label">平均出勤率</text>
       </view>
-      <view class="stat-item warning" wx:if="{{ activeTab === 'students' && absenceWarnings.length > 0 }}">
-        <text class="stat-value">{{ absenceWarnings.length }}</text>
-        <text class="stat-label">缺勤预警</text>
+      <view class="header-stat-item warning" wx:if="{{ activeTab === 'students' && stats.warningCount > 0 }}">
+        <text class="header-stat-value">{{ stats.warningCount }}</text>
+        <text class="header-stat-label">缺勤预警</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 班级分布 -->
+  <view class="distribution-section" wx:if="{{ classDistribution.length > 0 }}">
+    <view class="distribution-title">班级分布</view>
+    <view class="distribution-tags">
+      <view
+        class="distribution-tag {{ selectedDistribution === '全部' || !selectedDistribution ? 'active' : '' }}"
+        bindtap="onDistributionFilter"
+        data-value="全部"
+      >
+        <text class="distribution-tag-name">全部</text>
+        <text class="distribution-tag-count">{{ stats.totalCount }}</text>
+      </view>
+      <view
+        wx:for="{{ classDistribution }}"
+        wx:key="name"
+        class="distribution-tag {{ selectedDistribution === item.name ? 'active' : '' }}"
+        bindtap="onDistributionFilter"
+        data-value="{{ item.name }}"
+      >
+        <text class="distribution-tag-name">{{ item.name }}</text>
+        <text class="distribution-tag-count">{{ item.count }}</text>
       </view>
     </view>
   </view>
 
   <!-- Tab 切换 -->
-  <view class="tabs">
+  <view class="student-list-tabs">
     <view
-      class="tab-item {{ activeTab === 'students' ? 'active' : '' }}"
+      class="student-list-tab-item {{ activeTab === 'students' ? 'active' : '' }}"
       data-tab="students"
       bindtap="onTabChange"
     >
@@ -38,7 +63,7 @@
       <text>学生名单</text>
     </view>
     <view
-      class="tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
+      class="student-list-tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
       data-tab="rank"
       bindtap="onTabChange"
     >
@@ -47,32 +72,44 @@
     </view>
   </view>
 
+  <!-- 搜索框 -->
+  <view class="student-list-search" wx:if="{{ activeTab === 'students' }}">
+    <van-search
+      value="{{ searchValue }}"
+      placeholder="搜索学生姓名或班级"
+      bind:search="onSearch"
+      bind:clear="onSearchClear"
+      bind:change="onSearch"
+    />
+  </view>
+
   <!-- 学生名单 -->
-  <view wx:if="{{ activeTab === 'students' }}" class="content">
-    <view wx:if="{{ loading }}" class="loading-wrapper">
+  <view wx:if="{{ activeTab === 'students' }}" class="student-list-content">
+    <view wx:if="{{ loading }}" class="student-list-loading">
       <van-loading type="spinner" size="48rpx">加载中...</van-loading>
     </view>
 
-    <van-cell-group wx:elif="{{ students.length > 0 }}">
-      <van-cell
-        wx:for="{{ students }}"
+    <view wx:elif="{{ filteredStudents.length > 0 }}" class="student-list-wrapper">
+      <view
+        wx:for="{{ filteredStudents }}"
         wx:key="_id"
-        border="{{ false }}"
-        custom-class="student-card"
-        is-link
-        bind:click="viewStudentDetail"
+        class="student-card"
+        bindtap="onStudentTap"
+        bindlongpress="onStudentLongPress"
         data-student="{{ item }}"
       >
-        <view slot="title" class="student-info">
-          <view class="student-header">
-            <view class="name-wrapper">
-              <text class="student-name">{{ item.studentName }}</text>
+        <view class="student-card-avatar">
+          <van-icon name="user-circle-o" size="40px" color="#1890ff" />
+        </view>
+        <view class="student-card-info">
+          <view class="student-card-header">
+            <view class="student-card-name-wrapper">
+              <text class="student-card-name">{{ item.studentName }}</text>
               <van-tag
-                wx:if="{{ warningStudentIds.includes(item.studentId) }}"
+                wx:if="{{ warningStudentIds.includes(item._id) }}"
                 type="danger"
                 plain
                 size="medium"
-                custom-class="warning-tag"
               >
                 <van-icon name="warning-o" size="14px" />
                 缺勤预警
@@ -80,19 +117,15 @@
             </view>
             <van-tag type="primary" plain size="medium">{{ item.className }}</van-tag>
           </view>
-          <view class="student-meta">
-            <view class="meta-item">
+          <view class="student-card-meta">
+            <view class="student-card-meta-item">
               <van-icon name="location-o" size="28rpx" color="#999" />
               <text>{{ item.department }}</text>
             </view>
-            <view class="meta-item" wx:if="{{ item.studentId }}">
-              <van-icon name="idcard" size="28rpx" color="#999" />
-              <text>{{ item.studentId }}</text>
-            </view>
           </view>
         </view>
-      </van-cell>
-    </van-cell-group>
+      </view>
+    </view>
 
     <van-empty
       wx:else
@@ -102,35 +135,31 @@
   </view>
 
   <!-- 出勤率排行 -->
-  <view wx:if="{{ activeTab === 'rank' }}" class="content">
-    <view wx:if="{{ loading }}" class="loading-wrapper">
+  <view wx:if="{{ activeTab === 'rank' }}" class="student-list-content">
+    <view wx:if="{{ loading }}" class="student-list-loading">
       <van-loading type="spinner" size="48rpx">加载中...</van-loading>
     </view>
 
-    <view wx:elif="{{ attendanceRank.length > 0 }}" class="rank-list">
+    <view wx:elif="{{ attendanceRank.length > 0 }}" class="student-rank-list">
       <view
         wx:for="{{ attendanceRank }}"
         wx:key="studentName"
-        class="rank-item {{ index < 3 ? 'top-rank' : '' }}"
+        class="student-rank-item {{ index < 3 ? 'top-rank' : '' }}"
       >
-        <view class="rank-badge">
-          <text class="rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">
-            {{ index + 1 }}
-          </text>
+        <view class="student-rank-badge">
+          <text class="student-rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">{{ index + 1 }}</text>
         </view>
-        <view class="rank-info">
-          <view class="rank-header">
-            <text class="student-name">{{ item.studentName }}</text>
-            <text class="class-name">{{ item.className }}</text>
+        <view class="student-rank-info">
+          <view class="student-rank-header">
+            <text class="student-rank-name">{{ item.studentName }}</text>
+            <text class="student-rank-class">{{ item.className }}</text>
           </view>
-          <view class="rank-stats">
-            <text class="attendance-detail">
-              到课 {{ item.present }} / 总计 {{ item.total }} 次
-            </text>
+          <view class="student-rank-stats">
+            <text>到课 {{ item.present }} / 总计 {{ item.total }} 次</text>
           </view>
         </view>
-        <view class="rank-rate {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
-          <text class="rate-value">{{ item.rate }}%</text>
+        <view class="student-rank-rate {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
+          <text class="student-rank-rate-value">{{ item.rate }}%</text>
         </view>
       </view>
     </view>

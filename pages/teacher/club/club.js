@@ -1,22 +1,18 @@
-const app = getApp()
+// input: 社团名称、学生列表、考勤数据
+// output: 社团学生管理界面、出勤排行、缺勤预警
+// pos: 页面层 > 教师模块 > 社团管理
+
+const studentListBehavior = require('../../../behaviors/studentListBehavior')
 
 Page({
+  behaviors: [studentListBehavior],
+
   data: {
     clubInfo: null,
-    students: [],
-    attendanceRank: [],
-    activeTab: 'students',
-    loading: false,
 
-    // 统计数据
-    stats: {
-      totalStudents: 0,
-      avgAttendanceRate: 0
-    },
-
-    // 缺勤预警
-    absenceWarnings: [],
-    warningStudentIds: new Set(),
+    // 班级分布
+    classDistribution: [],
+    distributionField: 'className',
 
     // 学生操作菜单
     showStudentActions: false,
@@ -41,7 +37,7 @@ Page({
   onPullDownRefresh() {
     Promise.all([
       this.loadStudents(),
-      this.loadAbsenceWarnings()
+      this.loadAbsenceWarnings({ clubName: this.data.clubInfo?.name })
     ]).then(() => {
       wx.stopPullDownRefresh()
     }).catch(() => {
@@ -73,14 +69,20 @@ Page({
 
       if (res.result.success) {
         const students = res.result.data || []
+
+        // 计算班级分布
+        const classDistribution = this.calculateDistribution(students, 'className')
+
         this.setData({
           students,
-          'stats.totalStudents': students.length,
+          filteredStudents: students,
+          'stats.totalCount': students.length,
+          classDistribution,
           loading: false
         })
 
         // 加载缺勤预警
-        this.loadAbsenceWarnings()
+        this.loadAbsenceWarnings({ clubName: userInfo.clubName })
       } else {
         throw new Error(res.result.message)
       }
@@ -140,56 +142,19 @@ Page({
     }
   },
 
-  // 加载缺勤预警
-  async loadAbsenceWarnings() {
-    const userInfo = wx.getStorageSync('userInfo')
-
-    if (!userInfo.clubName) {
-      return
-    }
-
-    try {
-      // 获取当前月份 (YYYY-MM)
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const currentMonth = `${year}-${month}`
-
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getAbsenceWarnings',
-          month: currentMonth,
-          clubName: userInfo.clubName
-        }
-      })
-
-      if (res.result.success) {
-        const warnings = res.result.data || []
-
-        // 创建预警学生ID集合
-        const warningIds = warnings.map(w => w.studentId)
-
-        this.setData({
-          absenceWarnings: warnings,
-          warningStudentIds: warningIds
-        })
-      }
-    } catch (error) {
-      console.error('加载缺勤预警失败:', error)
-    }
+  // 点击学生卡片 - 跳转详情
+  onStudentTap(e) {
+    const student = e.currentTarget.dataset.student
+    // 跳转到学生详情页（如有）
+    // 目前保持原有行为：弹出操作菜单
+    this.setData({
+      currentStudent: student,
+      showStudentActions: true
+    })
   },
 
-  onTabChange(e) {
-    const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
-
-    if (tab === 'rank' && this.data.attendanceRank.length === 0) {
-      this.loadAttendanceRank()
-    }
-  },
-
-  viewStudentDetail(e) {
+  // 长按学生卡片 - 弹出操作菜单
+  onStudentLongPress(e) {
     const student = e.currentTarget.dataset.student
     this.setData({
       currentStudent: student,

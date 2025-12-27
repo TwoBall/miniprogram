@@ -17,7 +17,7 @@ Page({
     presentToday: 0,
     absentToday: 0,
     classes: [],
-    clubRanking: [],
+    classRanking: [],
     showRanking: false,
 
     // 缺勤预警
@@ -163,9 +163,9 @@ Page({
   },
 
   /**
-   * 加载社团排名
+   * 加载班级排名
    */
-  async loadClubRanking() {
+  async loadClassRanking() {
     const userInfo = auth.getUserInfo()
     if (!userInfo) return
 
@@ -177,15 +177,15 @@ Page({
       })
 
       const result = await request.callCloud('attendance', {
-        action: 'getClubRanking',
+        action: 'getDepartmentClassRanking',
         department: userInfo.department
       }, { showLoading: false, showError: false })
 
       if (result.success) {
-        this.setData({ clubRanking: result.data || [] })
+        this.setData({ classRanking: result.data || [] })
       }
     } catch (error) {
-      console.error('加载社团排名失败:', error)
+      console.error('加载班级排名失败:', error)
       Toast.fail('加载失败')
     } finally {
       Toast.clear()
@@ -193,11 +193,11 @@ Page({
   },
 
   /**
-   * 切换社团排名显示
+   * 切换班级排名显示
    */
   onToggleRanking() {
-    if (!this.data.showRanking && this.data.clubRanking.length === 0) {
-      this.loadClubRanking()
+    if (!this.data.showRanking && this.data.classRanking.length === 0) {
+      this.loadClassRanking()
     }
     this.setData({ showRanking: !this.data.showRanking })
   },

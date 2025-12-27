@@ -13,6 +13,7 @@
 - `profileBehavior.js` - Profile 页面通用行为，提供菜单配置、用户信息加载和未读通知数获取
 - `datePickerBehavior.js` - 日期选择器通用行为，提供日期选择器状态管理和事件处理
 - `paginationBehavior.js` - 分页加载通用行为，提供列表分页状态管理和事件处理
+- `studentListBehavior.js` - 学生列表通用行为，提供搜索、筛选、缺勤预警、分布统计等功能
 
 ## profileBehavior 功能
 
@@ -62,3 +63,32 @@ Page({
 - `pages/teacher/history/history.js`
 - `pages/common/transfer/transfer.js`
 - `pages/common/notifications/notifications.js`
+
+### studentListBehavior
+- `pages/teacher/club/club.js`
+- `pages/classTeacher/students/students.js`
+
+## studentListBehavior 功能
+
+### 数据字段
+- `students` - 原始学生列表
+- `filteredStudents` - 过滤后的学生列表
+- `loading` - 加载状态
+- `searchValue` - 搜索关键词
+- `absenceWarnings` - 缺勤预警列表
+- `warningStudentIds` - 预警学生ID数组
+- `distribution` - 分布统计
+- `selectedDistribution` - 当前选中的分布筛选
+- `stats` - 统计数据（totalCount, warningCount, avgAttendanceRate）
+- `activeTab` - 当前激活的Tab
+- `attendanceRank` - 出勤排行
+
+### 方法
+- `onSearch(e)` - 搜索输入处理
+- `onSearchClear()` - 清除搜索
+- `filterStudents()` - 过滤学生列表
+- `onDistributionFilter(e)` - 分布筛选
+- `calculateDistribution(students, field)` - 计算分布统计
+- `loadAbsenceWarnings(params)` - 加载缺勤预警
+- `onTabChange(e)` - Tab切换
+- `hasWarning(studentId)` - 检查学生是否有预警

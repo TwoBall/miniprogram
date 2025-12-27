@@ -10,6 +10,7 @@
 
 - `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
 - `profile-base.wxss` - Profile 页面公共样式基类
+- `student-list-base.wxss` - 学生列表页面公共样式基类
 
 ## common.wxss 公共样式类
 
@@ -67,3 +68,39 @@
 ## 相关文档
 
 - [CARD_STYLE_GUIDE.md](../CARD_STYLE_GUIDE.md) - 卡片样式详细规范
+
+## student-list-base.wxss 学生列表样式
+
+### 使用方式
+
+在页面 WXSS 中引入：
+
+```css
+@import '../../../styles/student-list-base.wxss';
+
+/* 页面特有样式 */
+.teacher-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+```
+
+### 可复用样式类
+
+| 类名 | 用途 |
+|-----|------|
+| `.student-list-container` | 页面容器 |
+| `.list-header` | 头部信息卡片 |
+| `.distribution-section` | 分布统计区域 |
+| `.distribution-tag` | 分布标签 |
+| `.student-list-tabs` | Tab 切换容器 |
+| `.student-list-tab-item` | Tab 项 |
+| `.student-list-search` | 搜索框容器 |
+| `.student-card` | 学生卡片 |
+| `.student-rank-list` | 排行榜容器 |
+| `.student-rank-item` | 排行项 |
+| `.student-rank-rate` | 出勤率徽章（支持 .excellent/.good/.normal/.poor）|
+
+### 使用该样式的页面
+
+- `pages/teacher/club/club.wxss`
+- `pages/classTeacher/students/students.wxss`

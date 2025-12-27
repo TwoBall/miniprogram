@@ -18,6 +18,24 @@
 - `migrateFields/` - 字段迁移云函数，处理数据库字段的迁移和更新
 - `common/` - 公共模块模板（不需要上传，仅作为参考）
 
+## attendance 云函数 Action 列表
+
+| Action | 用途 | 调用页面 |
+|--------|------|---------|
+| `submit` | 提交点名记录 | 教师点名页 |
+| `getHistory` | 获取历史点名记录（分页） | 教师历史页 |
+| `getDetail` | 获取单条点名记录详情 | 教师详情页 |
+| `getByClass` | 按班级获取考勤情况 | 班主任概览页 |
+| `getByDepartment` | 按学部获取考勤统计 | 领导看板页 |
+| `checkTodaySubmissions` | 检查今日是否已点名 | 教师点名页 |
+| `updateRecords` | 更新点名记录 | 教师详情页 |
+| `getClubRank` | 获取社团学生出勤率排行 | 教师社团页 |
+| `getClassRank` | 获取班级学生出勤率排行 | 班主任学生页 |
+| `getDepartmentClassRanking` | 获取学部班级出勤率排名（本月） | 领导看板页 |
+| `getByStudent` | 按学生ID获取考勤记录 | 学生详情页 |
+| `getAbsenceWarnings` | 获取缺勤预警列表（>=3次） | 各角色页面 |
+| `getStatistics` | 获取考勤统计数据 | 数据中心页 |
+
 ## 云函数结构
 
 每个云函数目录包含：

@@ -121,7 +121,8 @@ exports.main = async (event, context) => {
         checkTodaySubmissions: handleCheckTodaySubmissions,
         updateRecords: handleUpdateRecords,
         getClubRank: handleGetClubRank,
-        getClubRanking: handleGetClubRanking,
+        getClassRank: handleGetClassRank,
+        getDepartmentClassRanking: handleGetDepartmentClassRanking,
         getByStudent: handleGetByStudent,
         getAbsenceWarnings: handleGetAbsenceWarnings,
         getStatistics: handleGetStatistics
@@ -514,10 +515,84 @@ async function handleGetClubRank(event) {
 }
 
 /**
- * 获取学部社团出勤率排名
- * 返回学部所有社团的出勤统计，按出勤率排序
+ * 获取班级学生出勤率排名（按所有社团汇总）
+ * 返回班级所有学生的出勤统计，按出勤率排序
  */
-async function handleGetClubRanking(event) {
+async function handleGetClassRank(event) {
+    const { className } = event
+    const _ = db.command
+
+    try {
+        // 获取班级所有学生
+        const students = await getAllData(
+            db.collection('students'),
+            { className },
+            { _id: true, studentName: true, clubName: true }
+        )
+
+        if (students.length === 0) {
+            return { success: true, data: [] }
+        }
+
+        // 获取学生所在社团的所有考勤记录
+        const clubNames = [...new Set(students.map(s => s.clubName).filter(Boolean))]
+        const attendanceRecords = await getAllData(
+            db.collection('attendance_records'),
+            { clubName: _.in(clubNames) },
+            { records: true }
+        )
+
+        // 统计每个学生的出勤情况
+        const studentStats = {}
+        students.forEach(s => {
+            studentStats[s._id] = {
+                studentName: s.studentName,
+                clubName: s.clubName || '未分配',
+                present: 0,
+                total: 0,
+                rate: 0
+            }
+        })
+
+        // 遍历所有考勤记录，累计出勤次数
+        attendanceRecords.forEach(record => {
+            record.records.forEach(r => {
+                if (studentStats[r.studentId]) {
+                    studentStats[r.studentId].total++
+                    if (r.status === 'present') {
+                        studentStats[r.studentId].present++
+                    }
+                }
+            })
+        })
+
+        // 计算出勤率并转换为数组
+        const rankList = Object.values(studentStats)
+            .map(item => ({
+                ...item,
+                rate: item.total > 0 ? parseFloat(((item.present / item.total) * 100).toFixed(1)) : 0
+            }))
+            .filter(item => item.total > 0)
+            .sort((a, b) => {
+                if (b.rate !== a.rate) return b.rate - a.rate
+                return b.total - a.total
+            })
+
+        return {
+            success: true,
+            data: rankList
+        }
+    } catch (error) {
+        console.error('获取班级排行失败:', error)
+        return { success: false, message: '获取排行失败', data: [] }
+    }
+}
+
+/**
+ * 获取学部班级出勤率排名
+ * 返回学部所有班级的出勤统计，按出勤率排序
+ */
+async function handleGetDepartmentClassRanking(event) {
     const { department } = event
     const _ = db.command
 
@@ -527,12 +602,18 @@ async function handleGetClubRanking(event) {
         const startDate = event.startDate || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
         const endDate = event.endDate || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-31`
 
-        // 获取学部所有学生（获取社团信息）
+        // 获取学部所有学生（获取班级信息）
         const students = await getAllData(
             db.collection('students'),
             { department },
-            { _id: true, clubName: true }
+            { _id: true, className: true }
         )
+
+        // 建立学生ID到班级的映射
+        const studentClassMap = {}
+        students.forEach(s => {
+            studentClassMap[s._id] = s.className
+        })
 
         // 获取指定时间范围内的考勤记录
         const records = await getAllData(
@@ -540,39 +621,41 @@ async function handleGetClubRanking(event) {
             {
                 date: _.gte(startDate).and(_.lte(endDate))
             },
-            { records: true, clubName: true }
+            { records: true }
         )
 
-        // 按社团统计出勤率
-        const clubStats = {}
+        // 按班级统计出勤率
+        const classStats = {}
 
-        // 初始化社团统计数据
+        // 初始化班级统计数据
         students.forEach(s => {
-            if (s.clubName && !clubStats[s.clubName]) {
-                clubStats[s.clubName] = { total: 0, present: 0 }
+            if (s.className && !classStats[s.className]) {
+                classStats[s.className] = { total: 0, present: 0 }
             }
         })
 
-        // 统计考勤数据
+        // 统计考勤数据（按学生所属班级归类）
         records.forEach(record => {
-            if (record.clubName && clubStats[record.clubName] !== undefined) {
-                record.records.forEach(r => {
-                    clubStats[record.clubName].total++
+            record.records.forEach(r => {
+                const className = studentClassMap[r.studentId]
+                if (className && classStats[className]) {
+                    classStats[className].total++
                     if (r.status === 'present') {
-                        clubStats[record.clubName].present++
+                        classStats[className].present++
                     }
-                })
-            }
+                }
+            })
         })
 
         // 计算出勤率并排序
-        const ranking = Object.entries(clubStats)
+        const ranking = Object.entries(classStats)
             .map(([name, stats]) => ({
-                clubName: name,
+                className: name,
                 total: stats.total,
                 present: stats.present,
                 rate: stats.total > 0 ? parseFloat(((stats.present / stats.total) * 100).toFixed(1)) : 0
             }))
+            .filter(item => item.total > 0) // 过滤没有考勤记录的班级
             .sort((a, b) => {
                 // 先按出勤率降序，再按总次数降序
                 if (b.rate !== a.rate) return b.rate - a.rate
@@ -581,7 +664,7 @@ async function handleGetClubRanking(event) {
 
         return { success: true, data: ranking }
     } catch (error) {
-        console.error('获取学部社团排行失败:', error)
+        console.error('获取学部班级排行失败:', error)
         return { success: false, message: '获取排行失败', data: [] }
     }
 }
