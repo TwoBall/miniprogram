@@ -93,7 +93,7 @@ db.collection('attendance_records')
 |--------|----------|----------|
 | `studentId_1_date_-1` | `studentId: 1, date: -1` | 查询学生的反馈记录 |
 | `className_1_date_-1` | `className: 1, date: -1` | 查询班级的反馈列表 |
-| `teacherId_1_createTime_-1` | `teacherId: 1, createTime: -1` | 查询班主任提交的反馈 |
+| `teacherName_1_createTime_-1` | `teacherName: 1, createTime: -1` | 查询班主任提交的反馈 |
 
 **典型查询**：
 ```javascript

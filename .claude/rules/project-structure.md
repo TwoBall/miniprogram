@@ -27,7 +27,6 @@
 - notification/ - 通知推送
 - transfer/ - 转班处理
 - submitFeedback/ - 反馈提交
-- migrateFields/ - 字段迁移
 
 ### 组件模块
 @components/README.md

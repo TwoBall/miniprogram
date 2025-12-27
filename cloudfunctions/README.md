@@ -15,7 +15,6 @@
 - `notification/` - 通知推送云函数，发送系统通知和消息提醒
 - `transfer/` - 转班处理云函数，处理学生转班申请和审批
 - `submitFeedback/` - 反馈提交云函数，处理用户反馈信息的提交
-- `migrateFields/` - 字段迁移云函数，处理数据库字段的迁移和更新
 - `common/` - 公共模块模板（不需要上传，仅作为参考）
 
 ## attendance 云函数 Action 列表
