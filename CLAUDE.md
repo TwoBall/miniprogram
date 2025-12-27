@@ -68,8 +68,11 @@
 3. 配置云开发环境
 4. 上传并部署云函数
 
-## 其他文档
+## 数据库文档
 
 - [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) - 数据库架构文档
 - [DATABASE_INDEX.md](./DATABASE_INDEX.md) - 数据库索引配置指南
+
+## 样式规范
+
 - [CARD_STYLE_GUIDE.md](./CARD_STYLE_GUIDE.md) - 卡片样式指南

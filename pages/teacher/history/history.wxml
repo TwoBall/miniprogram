@@ -46,7 +46,7 @@
     </view>
 
     <!-- 加载更多提示 -->
-    <view class="load-more" wx:if="{{loadingMore}}">
+    <view class="load-more" wx:if="{{loading && !pageLoading}}">
       <van-loading size="24px">加载中...</van-loading>
     </view>
     <view class="no-more" wx:elif="{{!hasMore}}">

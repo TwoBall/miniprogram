@@ -36,6 +36,33 @@
 | `getAbsenceWarnings` | 获取缺勤预警列表（>=3次） | 各角色页面 |
 | `getStatistics` | 获取考勤统计数据 | 数据中心页 |
 
+## students 云函数 Action 列表
+
+| Action | 用途 | 调用页面 |
+|--------|------|---------|
+| `getByClub` | 按社团获取学生列表 | 教师社团页 |
+| `getByClass` | 按班级获取学生列表 | 班主任学生页 |
+| `getByDepartment` | 按学部获取学生列表 | 领导看板页 |
+| `getFilterOptions` | 获取筛选选项（学部/班级/社团）| 多个页面 |
+| `getStatistics` | 获取学生统计数据（聚合查询）| 数据中心页 |
+| `getAll` | 获取所有学生列表 | 管理员页面 |
+
+## user 云函数 Action 列表
+
+| Action | 用途 | 调用页面 |
+|--------|------|---------|
+| `login` | 用户登录 | 登录页 |
+| `register` | 用户注册 | 注册页 |
+| `approve` | 审批用户 | 审批页 |
+| `reject` | 拒绝用户 | 审批页 |
+| `getPending` | 获取待审批用户 | 审批页 |
+| `getAllByStatus` | 按状态获取用户 | 用户管理页 |
+| `getAll` | 获取所有用户（分页+搜索）| 用户管理页 |
+| `getStats` | 获取用户统计数据（count 查询）| 管理员首页 |
+| `add` | 添加用户（预注册）| 用户管理页 |
+| `delete` | 删除用户 | 用户管理页 |
+| `update` | 更新用户信息 | 用户管理页 |
+
 ## 云函数结构
 
 每个云函数目录包含：

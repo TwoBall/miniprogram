@@ -1,5 +1,6 @@
 const app = getApp()
 const { formatDate } = require('../../../utils/date')
+const request = require('../../../utils/request')
 
 Page({
   data: {
@@ -54,42 +55,36 @@ Page({
     this.setDateRange('today')
   },
 
-  // 加载筛选选项
+  // 加载筛选选项（使用带缓存的方法）
   async loadFilterOptions() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: { action: 'getFilterOptions' }
+      const data = await request.getFilterOptions()
+      const { departments, clubs, classes } = data
+
+      // 转换为 action-sheet 格式
+      const departmentActions = [
+        { name: '全部', value: '' },
+        ...(departments || []).map(d => ({ name: d, value: d }))
+      ]
+
+      const clubActions = [
+        { name: '全部', value: '' },
+        ...(clubs || []).map(c => ({ name: c, value: c }))
+      ]
+
+      const classActions = [
+        { name: '全部', value: '' },
+        ...(classes || []).map(c => ({ name: c, value: c }))
+      ]
+
+      this.setData({
+        departments,
+        clubs,
+        classes,
+        departmentActions,
+        clubActions,
+        classActions
       })
-
-      if (res.result.success) {
-        const { departments, clubs, classes } = res.result.data
-
-        // 转换为 action-sheet 格式
-        const departmentActions = [
-          { name: '全部', value: '' },
-          ...(departments || []).map(d => ({ name: d, value: d }))
-        ]
-
-        const clubActions = [
-          { name: '全部', value: '' },
-          ...(clubs || []).map(c => ({ name: c, value: c }))
-        ]
-
-        const classActions = [
-          { name: '全部', value: '' },
-          ...(classes || []).map(c => ({ name: c, value: c }))
-        ]
-
-        this.setData({
-          departments,
-          clubs,
-          classes,
-          departmentActions,
-          clubActions,
-          classActions
-        })
-      }
     } catch (error) {
       console.error('加载筛选选项失败:', error)
     }

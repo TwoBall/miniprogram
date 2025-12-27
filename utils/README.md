@@ -26,6 +26,39 @@ const request = require('../../../utils/request')
 const storage = require('../../../utils/storage')
 ```
 
+## request.js 接口说明
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `callCloud(name, data, options)` | 调用云函数 | 支持 loading、错误提示、超时、重试 |
+| `callCloudSilent(name, data)` | 静默调用云函数 | 不显示 loading 和错误提示 |
+| `getFilterOptions(forceRefresh)` | 获取筛选选项 | 带 10 分钟缓存，返回学部/班级/社团列表 |
+
+### getFilterOptions 使用示例
+
+```javascript
+const request = require('../../../utils/request')
+
+// 使用缓存（默认）
+const options = await request.getFilterOptions()
+console.log(options.departments) // ['小学部', '初中部', '高中部']
+console.log(options.classes)     // ['一年级1班', ...]
+console.log(options.clubs)       // ['篮球社', '足球社', ...]
+console.log(options.classDeptMap) // { '一年级1班': '小学部', ... }
+
+// 强制刷新缓存
+const freshOptions = await request.getFilterOptions(true)
+```
+
+## storage.js 缓存工具
+
+| 常量/函数 | 用途 |
+|----------|------|
+| `STORAGE_KEYS.FILTER_OPTIONS` | 筛选选项缓存键 |
+| `CACHE_DURATION.TEN_MINUTES` | 10 分钟缓存时长 |
+| `getWithCache(key, timeKey, duration)` | 获取带过期检查的缓存 |
+| `setWithCache(key, timeKey, data)` | 设置缓存及时间戳 |
+
 ## 工具函数规范
 
 - 所有工具函数应导出为 `module.exports`

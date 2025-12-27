@@ -49,20 +49,19 @@ Page({
 
   /**
    * 加载社团列表
+   * 使用带缓存的 getFilterOptions 减少云函数调用
    */
   async loadClubList() {
     try {
-      const result = await request.callCloud('students', {
-        action: 'getFilterOptions'
-      }, { showLoading: true, showError: false })
+      const options = await request.getFilterOptions()
 
-      if (result.success && result.data && result.data.clubs) {
+      if (options && options.clubs) {
         // 过滤掉当前社团
-        const options = result.data.clubs
+        const clubOptions = options.clubs
           .filter(club => club !== this.data.fromClub)
           .map(club => ({ name: club }))
 
-        this.setData({ clubOptions: options })
+        this.setData({ clubOptions })
       }
     } catch (error) {
       console.error('加载社团列表失败:', error)

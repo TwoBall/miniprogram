@@ -39,6 +39,7 @@ exports.main = async (event, context) => {
         getByClass: handleGetByClass,
         getByDepartment: handleGetByDepartment,
         getFilterOptions: handleGetFilterOptions,
+        getStatistics: handleGetStatistics,
         getAll: handleGetAll
     }
 
@@ -52,27 +53,46 @@ exports.main = async (event, context) => {
 
 /**
  * 获取筛选选项
+ * 使用聚合查询获取唯一值，避免加载全部学生数据
  * 返回所有学部、班级、社团列表及班级与学部的映射关系
  */
 async function handleGetFilterOptions(event) {
     try {
-        // 获取所有学生数据中的唯一值
-        const allStudents = await getAllData(
-            db.collection('students'),
-            {},
-            { department: true, className: true, clubName: true }
-        )
+        const $ = db.command.aggregate
+
+        // 使用聚合查询获取唯一值（性能优化：避免加载全部1300+学生）
+        const [deptRes, classRes, clubRes, classDeptRes] = await Promise.all([
+            // 获取所有学部
+            db.collection('students').aggregate()
+                .group({ _id: '$department' })
+                .end(),
+            // 获取所有班级
+            db.collection('students').aggregate()
+                .group({ _id: '$className' })
+                .end(),
+            // 获取所有社团
+            db.collection('students').aggregate()
+                .group({ _id: '$clubName' })
+                .end(),
+            // 获取班级-学部映射关系
+            db.collection('students').aggregate()
+                .group({
+                    _id: '$className',
+                    department: $.first('$department')
+                })
+                .end()
+        ])
 
         // 提取唯一值并按中文拼音排序
-        const departments = sortOptions([...new Set(allStudents.map(s => s.department).filter(v => v))])
-        const classes = sortOptions([...new Set(allStudents.map(s => s.className).filter(v => v))])
-        const clubs = sortOptions([...new Set(allStudents.map(s => s.clubName).filter(v => v))])
+        const departments = sortOptions(deptRes.list.map(d => d._id).filter(Boolean))
+        const classes = sortOptions(classRes.list.map(c => c._id).filter(Boolean))
+        const clubs = sortOptions(clubRes.list.map(c => c._id).filter(Boolean))
 
-        // 构建班级与学部的对应关系（根据学生数据）
+        // 构建班级与学部的对应关系
         const classDeptMap = {}
-        allStudents.forEach(s => {
-            if (s.className && s.department) {
-                classDeptMap[s.className] = s.department
+        classDeptRes.list.forEach(item => {
+            if (item._id && item.department) {
+                classDeptMap[item._id] = item.department
             }
         })
 
@@ -164,5 +184,76 @@ async function handleGetAll(event) {
     } catch (error) {
         console.error('获取所有学生失败:', error)
         return { success: false, message: '获取所有学生失败', data: [] }
+    }
+}
+
+/**
+ * 获取学生统计数据
+ * 使用聚合查询在云端完成统计，避免传输大量原始数据
+ * 用于数据中心页面
+ */
+async function handleGetStatistics(event) {
+    try {
+        const $ = db.command.aggregate
+
+        // 并行执行多个聚合查询
+        const [totalRes, genderRes, deptRes, clubRes] = await Promise.all([
+            // 总人数
+            db.collection('students').count(),
+            // 按性别统计
+            db.collection('students').aggregate()
+                .group({
+                    _id: '$gender',
+                    count: $.sum(1)
+                })
+                .end(),
+            // 按学部统计
+            db.collection('students').aggregate()
+                .group({
+                    _id: '$department',
+                    count: $.sum(1)
+                })
+                .end(),
+            // 按社团统计
+            db.collection('students').aggregate()
+                .group({
+                    _id: '$clubName',
+                    count: $.sum(1)
+                })
+                .end()
+        ])
+
+        // 格式化性别统计
+        const genderStats = {}
+        genderRes.list.forEach(item => {
+            if (item._id) {
+                genderStats[item._id] = item.count
+            }
+        })
+
+        // 格式化学部统计（按人数降序排序）
+        const deptStats = deptRes.list
+            .filter(item => item._id)
+            .map(item => ({ name: item._id, count: item.count }))
+            .sort((a, b) => b.count - a.count)
+
+        // 格式化社团统计（按人数降序排序）
+        const clubStats = clubRes.list
+            .filter(item => item._id)
+            .map(item => ({ name: item._id, count: item.count }))
+            .sort((a, b) => b.count - a.count)
+
+        return {
+            success: true,
+            data: {
+                total: totalRes.total,
+                genderStats,
+                deptStats,
+                clubStats
+            }
+        }
+    } catch (error) {
+        console.error('获取统计数据失败:', error)
+        return { success: false, message: '获取统计数据失败' }
     }
 }

@@ -366,10 +366,10 @@ async function handleGetByDepartment(event) {
     const { department, date } = event
 
     try {
-        // 并行查询
+        // 并行查询（添加学部筛选条件到考勤记录查询）
         const [students, attendanceRecords] = await Promise.all([
             getAllData(db.collection('students'), { department }, { _id: true, className: true }),
-            getAllData(db.collection('attendance_records'), { date }, { records: true })
+            getAllData(db.collection('attendance_records'), { date, department }, { records: true })
         ])
 
         // 按班级统计
@@ -448,12 +448,19 @@ async function handleUpdateRecords(event) {
 /**
  * 获取社团学生出勤率排行
  * 返回社团所有学生的出勤统计，按出勤率排序
+ * 默认统计最近3个月数据以优化性能
  */
 async function handleGetClubRank(event) {
-    const { clubName } = event
+    const { clubName, months = 3 } = event
+    const _ = db.command
 
     try {
-        // 并行查询学生列表和所有考勤记录
+        // 计算时间范围（默认最近3个月）
+        const startDate = new Date()
+        startDate.setMonth(startDate.getMonth() - months)
+        const startDateStr = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-01`
+
+        // 并行查询学生列表和时间范围内的考勤记录
         const [students, attendanceRecords] = await Promise.all([
             getAllData(
                 db.collection('students'),
@@ -462,7 +469,7 @@ async function handleGetClubRank(event) {
             ),
             getAllData(
                 db.collection('attendance_records'),
-                { clubName },
+                { clubName, date: _.gte(startDateStr) },
                 { records: true }
             )
         ])
@@ -517,12 +524,18 @@ async function handleGetClubRank(event) {
 /**
  * 获取班级学生出勤率排名（按所有社团汇总）
  * 返回班级所有学生的出勤统计，按出勤率排序
+ * 默认统计最近3个月数据以优化性能
  */
 async function handleGetClassRank(event) {
-    const { className } = event
+    const { className, months = 3 } = event
     const _ = db.command
 
     try {
+        // 计算时间范围（默认最近3个月）
+        const startDate = new Date()
+        startDate.setMonth(startDate.getMonth() - months)
+        const startDateStr = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-01`
+
         // 获取班级所有学生
         const students = await getAllData(
             db.collection('students'),
@@ -534,11 +547,11 @@ async function handleGetClassRank(event) {
             return { success: true, data: [] }
         }
 
-        // 获取学生所在社团的所有考勤记录
+        // 获取学生所在社团的时间范围内考勤记录
         const clubNames = [...new Set(students.map(s => s.clubName).filter(Boolean))]
         const attendanceRecords = await getAllData(
             db.collection('attendance_records'),
-            { clubName: _.in(clubNames) },
+            { clubName: _.in(clubNames), date: _.gte(startDateStr) },
             { records: true }
         )
 
@@ -671,27 +684,44 @@ async function handleGetDepartmentClassRanking(event) {
 
 /**
  * 按学生ID获取考勤记录
+ * 支持分页，优化性能避免加载全部记录
  */
 async function handleGetByStudent(event) {
-    const { studentId } = event
+    const { studentId, page = 1, pageSize = 20 } = event
+    const _ = db.command
 
     try {
-        // 查询包含该学生的所有考勤记录
-        const allRecords = await getAllData(
-            db.collection('attendance_records'),
-            {},
-            { _id: true, date: true, clubName: true, records: true, createTime: true }
-        )
+        // 使用数据库查询条件筛选包含该学生的记录
+        const condition = {
+            'records.studentId': studentId
+        }
 
-        // 筛选出包含该学生的记录
-        const studentRecords = allRecords
-            .filter(record => record.records.some(s => s.studentId === studentId))
-            .sort((a, b) => {
-                // 按日期降序排序
-                return b.date.localeCompare(a.date)
-            })
+        // 获取总数
+        const countRes = await db.collection('attendance_records')
+            .where(condition)
+            .count()
+        const total = countRes.total
 
-        return { success: true, data: studentRecords }
+        // 分页查询
+        const skip = (page - 1) * pageSize
+        const result = await db.collection('attendance_records')
+            .where(condition)
+            .orderBy('date', 'desc')
+            .skip(skip)
+            .limit(pageSize)
+            .field({ _id: true, date: true, clubName: true, records: true, createTime: true })
+            .get()
+
+        return {
+            success: true,
+            data: result.data,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                hasMore: skip + result.data.length < total
+            }
+        }
     } catch (error) {
         console.error('获取学生考勤记录失败:', error)
         return { success: false, message: '获取考勤记录失败', data: [] }

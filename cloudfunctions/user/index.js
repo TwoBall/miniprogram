@@ -24,6 +24,7 @@ exports.main = async (event, context) => {
         getPending: handleGetPending,
         getAllByStatus: handleGetAllByStatus,
         getAll: handleGetAll,
+        getStats: handleGetStats,
         add: handleAdd,
         delete: handleDelete,
         update: handleUpdate
@@ -410,14 +411,15 @@ async function handleGetAllByStatus(event, wxContext) {
 
 /**
  * 获取所有用户（管理员专用）
- * 支持按角色、状态筛选和分页
+ * 支持按角色、状态、关键词筛选和分页
  * @param {string} role - 角色筛选（可选）
  * @param {string} status - 状态筛选（可选）
+ * @param {string} keyword - 搜索关键词（可选），支持姓名、学部、班级、社团模糊搜索
  * @param {number} page - 页码
  * @param {number} pageSize - 每页数量
  */
 async function handleGetAll(event, wxContext) {
-    const { role, status, page = 1, pageSize = 20 } = event
+    const { role, status, keyword, page = 1, pageSize = 20 } = event
     const adminOpenid = wxContext.OPENID
 
     try {
@@ -435,6 +437,20 @@ async function handleGetAll(event, wxContext) {
         const condition = { deleted: _.neq(true) }
         if (role) condition.role = role
         if (status) condition.status = status
+
+        // 关键词搜索（支持姓名、学部、班级、社团）
+        if (keyword && keyword.trim()) {
+            const searchRegex = db.RegExp({
+                regexp: keyword.trim(),
+                options: 'i'
+            })
+            condition._or = [
+                { userName: searchRegex },
+                { department: searchRegex },
+                { className: searchRegex },
+                { clubName: searchRegex }
+            ]
+        }
 
         // 获取总数
         const countRes = await db.collection('users').where(condition).count()
@@ -608,5 +624,49 @@ async function handleUpdate(event, wxContext) {
     } catch (error) {
         console.error('更新用户失败:', error)
         return { success: false, message: '更新用户失败：' + error.message }
+    }
+}
+
+/**
+ * 获取用户统计数据
+ * 使用 count 查询避免加载全部用户数据
+ * 返回总用户数和各状态用户数
+ */
+async function handleGetStats(event, wxContext) {
+    const adminOpenid = wxContext.OPENID
+
+    try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
+        const baseCondition = { deleted: _.neq(true) }
+
+        // 并行执行 count 查询
+        const [totalRes, pendingRes, approvedRes, rejectedRes] = await Promise.all([
+            db.collection('users').where(baseCondition).count(),
+            db.collection('users').where({ ...baseCondition, status: 'pending' }).count(),
+            db.collection('users').where({ ...baseCondition, status: 'approved' }).count(),
+            db.collection('users').where({ ...baseCondition, status: 'rejected' }).count()
+        ])
+
+        return {
+            success: true,
+            data: {
+                total: totalRes.total,
+                pending: pendingRes.total,
+                approved: approvedRes.total,
+                rejected: rejectedRes.total
+            }
+        }
+    } catch (error) {
+        console.error('获取用户统计失败:', error)
+        return { success: false, message: '获取用户统计失败：' + error.message }
     }
 }

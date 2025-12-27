@@ -94,8 +94,11 @@
     </van-loading>
 
     <view wx:if="{{ hasMore && users.length > 0 }}" class="load-more">
-      <van-loading type="spinner" size="20px" />
-      <text>加载更多...</text>
+      <van-loading wx:if="{{ loading }}" type="spinner" size="20px" />
+      <text wx:if="{{ loading }}">加载更多...</text>
+    </view>
+    <view wx:if="{{ !hasMore && users.length > 0 }}" class="no-more">
+      — 没有更多了 —
     </view>
   </view>
 

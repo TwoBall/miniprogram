@@ -4,6 +4,7 @@
  */
 import Toast from '@vant/weapp/toast/toast'
 const errorUtil = require('./error')
+const storage = require('./storage')
 
 /**
  * 延迟函数
@@ -123,7 +124,38 @@ async function callCloudSilent(name, data = {}) {
   })
 }
 
+/**
+ * 获取筛选选项（带缓存）
+ * 使用10分钟缓存，减少云函数调用
+ * @param {boolean} forceRefresh - 是否强制刷新缓存
+ * @returns {Promise<Object>} 筛选选项 { departments, classes, clubs, classDeptMap }
+ */
+async function getFilterOptions(forceRefresh = false) {
+  const cacheKey = storage.STORAGE_KEYS.FILTER_OPTIONS
+  const cacheTimeKey = storage.STORAGE_KEYS.FILTER_OPTIONS_TIME
+
+  // 尝试从缓存获取
+  if (!forceRefresh) {
+    const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.TEN_MINUTES)
+    if (cached) {
+      return cached
+    }
+  }
+
+  // 调用云函数获取
+  const result = await callCloudSilent('students', { action: 'getFilterOptions' })
+
+  if (result && result.success) {
+    // 存入缓存
+    storage.setWithCache(cacheKey, cacheTimeKey, result.data)
+    return result.data
+  }
+
+  throw new Error(result?.message || '获取筛选选项失败')
+}
+
 module.exports = {
   callCloud,
-  callCloudSilent
+  callCloudSilent,
+  getFilterOptions
 }

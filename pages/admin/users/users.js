@@ -62,7 +62,10 @@ Page({
   },
 
   async loadList(refresh = false) {
-    if (this.data.loading || !this.data.hasMore) return
+    // 加载中则跳过
+    if (this.data.loading) return
+    // 非刷新模式下，无更多数据则跳过
+    if (!refresh && !this.data.hasMore) return
 
     this.setData({ loading: true })
 
@@ -77,25 +80,18 @@ Page({
         params.role = this.data.activeTab
       }
 
+      // 服务端搜索
+      if (this.data.searchKeyword) {
+        params.keyword = this.data.searchKeyword
+      }
+
       const res = await wx.cloud.callFunction({
         name: 'user',
         data: params
       })
 
       if (res.result.success) {
-        let users = res.result.data
-
-        // 客户端搜索过滤
-        if (this.data.searchKeyword) {
-          const keyword = this.data.searchKeyword.toLowerCase()
-          users = users.filter(user =>
-            user.userName.toLowerCase().includes(keyword) ||
-            user.department?.toLowerCase().includes(keyword) ||
-            user.className?.toLowerCase().includes(keyword) ||
-            user.clubName?.toLowerCase().includes(keyword)
-          )
-        }
-
+        const users = res.result.data
         this.handleLoadSuccess(users, res.result.pagination, refresh, 'users')
         this.setData({ total: res.result.pagination.total })
       } else {

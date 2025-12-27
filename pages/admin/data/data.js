@@ -157,52 +157,27 @@ Page({
 
   async loadStudentStats() {
     try {
+      // 使用云端聚合统计，避免加载全部1300+学生数据
       const res = await wx.cloud.callFunction({
         name: 'students',
         data: {
-          action: 'getFilterOptions'
+          action: 'getStatistics'
         }
       })
 
       if (res.result.success) {
-        const options = res.result.data
+        const stats = res.result.data
         const studentStats = {
-          total: 0,
+          total: stats.total,
           byDepartment: {},
-          byGrade: {}
+          byGrade: {},
+          byGender: stats.genderStats || {}
         }
 
-        // 统计各学部学生数
-        if (options.departments) {
-          options.departments.forEach(dept => {
-            studentStats.byDepartment[dept] = 0
-          })
-        }
-
-        // 获取所有学生详情进行统计
-        const studentsRes = await wx.cloud.callFunction({
-          name: 'students',
-          data: {
-            action: 'getAll',
-            page: 1,
-            pageSize: 10000
-          }
-        })
-
-        if (studentsRes.result && studentsRes.result.data) {
-          const students = studentsRes.result.data
-          studentStats.total = students.length
-
-          students.forEach(student => {
-            if (student.department) {
-              studentStats.byDepartment[student.department] =
-                (studentStats.byDepartment[student.department] || 0) + 1
-            }
-
-            if (student.className) {
-              const grade = student.className.split('年级')[0] + '年级'
-              studentStats.byGrade[grade] = (studentStats.byGrade[grade] || 0) + 1
-            }
+        // 格式化学部统计
+        if (stats.deptStats) {
+          stats.deptStats.forEach(item => {
+            studentStats.byDepartment[item.name] = item.count
           })
         }
 
@@ -215,26 +190,20 @@ Page({
 
   async loadClubStats() {
     try {
+      // 使用云端聚合统计获取社团数据
       const res = await wx.cloud.callFunction({
         name: 'students',
         data: {
-          action: 'getFilterOptions'
+          action: 'getStatistics'
         }
       })
 
       if (res.result.success) {
-        const options = res.result.data
+        const stats = res.result.data
         const clubStats = {
-          total: options.clubs ? options.clubs.length : 0,
-          byDepartment: {}
-        }
-
-        // 通过社团名称统计（简化版本）
-        if (options.clubs) {
-          options.clubs.forEach(club => {
-            // 这里可以根据社团名称推断学部，或从数据库获取更详细信息
-            clubStats.byDepartment['全部'] = (clubStats.byDepartment['全部'] || 0) + 1
-          })
+          total: stats.clubStats ? stats.clubStats.length : 0,
+          list: stats.clubStats || [],
+          byDepartment: { '全部': stats.clubStats ? stats.clubStats.length : 0 }
         }
 
         this.setData({ clubStats })

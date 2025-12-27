@@ -1,5 +1,6 @@
 const { formatDate } = require('../../../utils/date')
 const auth = require('../../../utils/auth')
+const request = require('../../../utils/request')
 
 Page({
   data: {
@@ -47,24 +48,15 @@ Page({
     try {
       const today = formatDate(new Date())
 
-      // 并行调用所有云函数获取统计数据
-      const [userRes, clubRes, attendanceRes] = await Promise.all([
-        // 获取用户统计
+      // 并行调用所有接口获取统计数据
+      const [userRes, filterOptions, attendanceRes] = await Promise.all([
+        // 获取用户统计（使用 count 查询，不加载全部用户）
         wx.cloud.callFunction({
           name: 'user',
-          data: {
-            action: 'getAll',
-            page: 1,
-            pageSize: 10000
-          }
+          data: { action: 'getStats' }
         }),
-        // 获取社团统计
-        wx.cloud.callFunction({
-          name: 'students',
-          data: {
-            action: 'getFilterOptions'
-          }
-        }),
+        // 获取社团统计（使用缓存）
+        request.getFilterOptions(),
         // 获取今日考勤统计
         wx.cloud.callFunction({
           name: 'attendance',
@@ -80,15 +72,14 @@ Page({
       let totalUsers = 0
       let pendingUsers = 0
       if (userRes.result.success && userRes.result.data) {
-        const users = userRes.result.data
-        totalUsers = users.length
-        pendingUsers = users.filter(u => u.status === 'pending').length
+        totalUsers = userRes.result.data.total
+        pendingUsers = userRes.result.data.pending
       }
 
-      // 处理社团统计
+      // 处理社团统计（从缓存数据获取）
       let totalClubs = 0
-      if (clubRes.result.success && clubRes.result.data && clubRes.result.data.clubs) {
-        totalClubs = clubRes.result.data.clubs.length
+      if (filterOptions && filterOptions.clubs) {
+        totalClubs = filterOptions.clubs.length
       }
 
       // 处理今日考勤统计
