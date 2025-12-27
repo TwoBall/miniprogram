@@ -191,6 +191,22 @@ async function verifyUserRoles(db, openid, roles, fields = null) {
   return res.data.length > 0 ? res.data[0] : null
 }
 
+// ========== 排序工具函数 ==========
+
+/**
+ * 中文拼音排序比较器
+ */
+const zhCompare = (a, b) => {
+  return (a || '').localeCompare(b || '', 'zh-CN')
+}
+
+/**
+ * 按姓名排序学生列表
+ */
+const sortStudentsByName = (students) => {
+  return students.sort((a, b) => zhCompare(a.studentName, b.studentName))
+}
+
 module.exports = {
   MAX_LIMIT,
   ROLES,
@@ -201,5 +217,7 @@ module.exports = {
   paginate,
   verifyAdmin,
   verifyUser,
-  verifyUserRoles
+  verifyUserRoles,
+  // 排序工具
+  sortStudentsByName
 }

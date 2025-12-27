@@ -107,8 +107,9 @@ Page({
           status: null
         }))
 
-        // 根据星期过滤学部
-        const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))].sort()
+        // 根据星期过滤学部（按中文拼音排序）
+        const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))]
+          .sort((a, b) => a.localeCompare(b, 'zh-CN'))
         const day = dateUtil.getDayOfWeek()
         let defaultDepts = []
         let isClassDay = true

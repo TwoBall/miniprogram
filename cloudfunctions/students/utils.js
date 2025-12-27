@@ -1,6 +1,6 @@
 // input: 数据库集合、查询条件、字段选择、排序规则
 // output: 查询结果数组、验证结果
-// pos: 云函数层 > attendance > 公共工具模块
+// pos: 云函数层 > students > 公共工具模块
 
 /**
  * 云数据库单次查询最大限制
@@ -191,6 +191,47 @@ async function verifyUserRoles(db, openid, roles, fields = null) {
   return res.data.length > 0 ? res.data[0] : null
 }
 
+// ========== 排序工具函数 ==========
+
+/**
+ * 中文拼音排序比较器
+ */
+const zhCompare = (a, b) => {
+  return (a || '').localeCompare(b || '', 'zh-CN')
+}
+
+/**
+ * 中文拼音 + 数字自然排序比较器
+ */
+const zhNumericCompare = (a, b) => {
+  return (a || '').localeCompare(b || '', 'zh-CN', { numeric: true })
+}
+
+/**
+ * 按班级+姓名排序学生列表
+ */
+const sortStudentsByClassAndName = (students) => {
+  return students.sort((a, b) => {
+    const classCompare = zhNumericCompare(a.className, b.className)
+    if (classCompare !== 0) return classCompare
+    return zhCompare(a.studentName, b.studentName)
+  })
+}
+
+/**
+ * 按姓名排序学生列表
+ */
+const sortStudentsByName = (students) => {
+  return students.sort((a, b) => zhCompare(a.studentName, b.studentName))
+}
+
+/**
+ * 排序选项列表（学部/班级/社团等）
+ */
+const sortOptions = (options) => {
+  return options.sort((a, b) => zhNumericCompare(a, b))
+}
+
 module.exports = {
   MAX_LIMIT,
   ROLES,
@@ -201,5 +242,11 @@ module.exports = {
   paginate,
   verifyAdmin,
   verifyUser,
-  verifyUserRoles
+  verifyUserRoles,
+  // 排序工具
+  zhCompare,
+  zhNumericCompare,
+  sortStudentsByClassAndName,
+  sortStudentsByName,
+  sortOptions
 }

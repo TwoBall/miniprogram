@@ -36,6 +36,7 @@ cloudfunctions/
     db-utils.js     # 数据库工具
     auth-utils.js   # 权限验证
     constants.js    # 常量定义
+    sort-utils.js   # 排序工具（中文拼音排序）
   attendance/
     utils.js        # 复制自 common，合并版公共工具
   students/
@@ -45,10 +46,22 @@ cloudfunctions/
 
 **使用方式**：
 ```javascript
-const { getAllData, getAllDataSorted } = require('./utils')
+const { getAllData, sortStudentsByName, sortOptions } = require('./utils')
 ```
 
 **维护说明**：修改公共代码时，需要同步更新所有云函数目录下的 `utils.js`。
+
+### 排序工具函数
+
+`utils.js` 中包含以下排序工具：
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `zhCompare` | 中文拼音比较器 | 使用 `localeCompare('zh-CN')` |
+| `zhNumericCompare` | 中文拼音+数字自然排序 | 支持 "1班" < "2班" < "10班" |
+| `sortStudentsByName` | 按姓名排序学生列表 | 中文拼音排序 |
+| `sortStudentsByClassAndName` | 按班级+姓名排序 | 先班级后姓名 |
+| `sortOptions` | 排序选项列表 | 学部/班级/社团等 |
 
 ## 调用方式
 

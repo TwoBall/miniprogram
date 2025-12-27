@@ -3,7 +3,7 @@
  * 提供按社团、班级、学部查询学生的接口
  */
 const cloud = require('wx-server-sdk')
-const { getAllData, getAllDataSorted } = require('./utils')
+const { getAllData, sortStudentsByClassAndName, sortStudentsByName, sortOptions } = require('./utils')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
@@ -63,10 +63,10 @@ async function handleGetFilterOptions(event) {
             { department: true, className: true, clubName: true }
         )
 
-        // 提取唯一值
-        const departments = [...new Set(allStudents.map(s => s.department).filter(v => v))].sort()
-        const classes = [...new Set(allStudents.map(s => s.className).filter(v => v))].sort()
-        const clubs = [...new Set(allStudents.map(s => s.clubName).filter(v => v))].sort()
+        // 提取唯一值并按中文拼音排序
+        const departments = sortOptions([...new Set(allStudents.map(s => s.department).filter(v => v))])
+        const classes = sortOptions([...new Set(allStudents.map(s => s.className).filter(v => v))])
+        const clubs = sortOptions([...new Set(allStudents.map(s => s.clubName).filter(v => v))])
 
         // 构建班级与学部的对应关系（根据学生数据）
         const classDeptMap = {}
@@ -93,14 +93,14 @@ async function handleGetByClub(event) {
     const { clubName } = event
 
     try {
-        const students = await getAllDataSorted(
+        const students = await getAllData(
             db.collection('students'),
             { clubName },
-            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
-            { className: 1, studentName: 1 }  // 按班级、姓名排序
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }
         )
 
-        return { success: true, data: students }
+        // 按班级+姓名中文拼音排序
+        return { success: true, data: sortStudentsByClassAndName(students) }
     } catch (error) {
         console.error('获取社团学生失败:', error)
         return { success: false, message: '获取社团学生失败', data: [] }
@@ -114,14 +114,14 @@ async function handleGetByClass(event) {
     const { className } = event
 
     try {
-        const students = await getAllDataSorted(
+        const students = await getAllData(
             db.collection('students'),
             { className },
-            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true },
-            { studentName: 1 }  // 按姓名排序
+            { _id: true, studentName: true, department: true, className: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }
         )
 
-        return { success: true, data: students }
+        // 按姓名中文拼音排序
+        return { success: true, data: sortStudentsByName(students) }
     } catch (error) {
         console.error('获取班级学生失败:', error)
         return { success: false, message: '获取班级学生失败', data: [] }

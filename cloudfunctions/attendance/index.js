@@ -3,7 +3,7 @@
  * 处理点名记录的提交、查询和统计
  */
 const cloud = require('wx-server-sdk')
-const { getAllData, getAllDataSorted } = require('./utils')
+const { getAllData, sortStudentsByName } = require('./utils')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
@@ -303,11 +303,14 @@ async function handleGetByClass(event) {
 
     try {
         // 并行查询学生、考勤记录、反馈信息
-        const [students, attendanceRecords, feedbacks] = await Promise.all([
-            getAllDataSorted(db.collection('students'), { className }, { _id: true, studentName: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }, { studentName: 1 }),
+        const [studentsRaw, attendanceRecords, feedbacks] = await Promise.all([
+            getAllData(db.collection('students'), { className }, { _id: true, studentName: true, gender: true, clubName: true, classTeacher: true, classTeacherPhone: true }),
             getAllData(db.collection('attendance_records'), { date }, { records: true, date: true, time: true }),
             getAllData(db.collection('feedbacks'), { className, date }, { studentId: true, feedback: true })
         ])
+
+        // 按姓名中文拼音排序
+        const students = sortStudentsByName(studentsRaw)
 
         // 构建反馈映射
         const feedbackMap = {}
@@ -335,8 +338,8 @@ async function handleGetByClass(event) {
             })
         })
 
-        // 保持数据库返回的姓名排序
-        const result = students.map(s => studentMap[s._id])
+        // 按姓名中文拼音排序返回
+        const result = sortStudentsByName(students.map(s => studentMap[s._id]))
 
         return {
             success: true,
