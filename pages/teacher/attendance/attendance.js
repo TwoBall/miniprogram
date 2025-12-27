@@ -39,7 +39,9 @@ Page({
     selectedDepts: [],
     // 已点名列表
     showMarkedList: false,
-    markedStudents: []
+    markedStudents: [],
+    // 节流时间戳
+    lastMoveTime: 0
   },
 
   onLoad() {
@@ -52,7 +54,25 @@ Page({
   },
 
   onShow() {
+    // 检查登录状态，防止后台恢复时登录态丢失
+    const userInfo = auth.checkRole('teacher')
+    if (!userInfo) return
+
+    // 恢复页面数据（小程序被销毁后 clubName 会丢失）
+    if (!this.data.clubName) {
+      this.setData({ clubName: userInfo.clubName })
+      this.loadStudents()
+    }
+
     this.updateDateTime()
+  },
+
+  onPullDownRefresh() {
+    this.loadStudents().then(() => {
+      wx.stopPullDownRefresh()
+    }).catch(() => {
+      wx.stopPullDownRefresh()
+    })
   },
 
   updateDateTime() {
@@ -146,6 +166,10 @@ Page({
   },
 
   onTouchMove(e) {
+    // 节流：限制 setData 频率（约 60fps）
+    const now = Date.now()
+    if (now - this.data.lastMoveTime < 16) return
+
     const moveX = e.touches[0].clientX - this.data.startX
     const moveY = e.touches[0].clientY - this.data.startY
 
@@ -160,6 +184,7 @@ Page({
 
     this.setData({
       moveX,
+      lastMoveTime: now,
       cardStyle: `transform: translateX(${moveX}px) rotate(${rotation}deg); transition: none;`,
       presentOpacity: presentOpacity > 0 ? presentOpacity : 0,
       absentOpacity: absentOpacity > 0 ? absentOpacity : 0,

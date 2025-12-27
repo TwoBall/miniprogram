@@ -274,8 +274,19 @@ async function handleApprove(event, wxContext) {
  */
 async function handleGetPending(event, wxContext) {
     const { status, page = 1, pageSize = 20 } = event
+    const adminOpenid = wxContext.OPENID
 
     try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
         const condition = { role: _.neq('admin') }
         if (status && status !== 'all') {
             condition.status = status
@@ -320,14 +331,25 @@ async function handleGetPending(event, wxContext) {
  * @param {number} approvedPageSize - 已通过列表每页数量
  * @param {number} rejectedPageSize - 已拒绝列表每页数量
  */
-async function handleGetAllByStatus(event, _wxContext) {
+async function handleGetAllByStatus(event, wxContext) {
     const {
         pendingPageSize = 100,
         approvedPageSize = 20,
         rejectedPageSize = 20
     } = event
+    const adminOpenid = wxContext.OPENID
 
     try {
+        // 验证管理员权限
+        const adminRes = await db.collection('users')
+            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
+            .field({ _id: true })
+            .get()
+
+        if (adminRes.data.length === 0) {
+            return { success: false, message: '无权限执行此操作' }
+        }
+
         const baseCondition = { role: _.neq('admin') }
 
         // 并行查询三种状态

@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "社团考勤",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",

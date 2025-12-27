@@ -2,17 +2,15 @@
 // output: 用户列表展示、用户增删改操作
 // pos: 页面层 > 管理员模块 > 用户管理
 
-const app = getApp()
+const paginationBehavior = require('../../../behaviors/paginationBehavior')
 
 Page({
+  behaviors: [paginationBehavior],
+
   data: {
     activeTab: 'all',
     searchKeyword: '',
     users: [],
-    loading: false,
-    page: 1,
-    pageSize: 20,
-    hasMore: true,
     total: 0,
 
     roleOptions: [
@@ -37,18 +35,14 @@ Page({
   },
 
   onLoad() {
-    this.loadUsers()
+    this.loadList()
   },
 
   onTabChange(e) {
     const role = e.detail.name
-    this.setData({
-      activeTab: role,
-      users: [],
-      page: 1,
-      hasMore: true
-    })
-    this.loadUsers()
+    this.setData({ activeTab: role, users: [] })
+    this.resetPagination()
+    this.loadList()
   },
 
   onSearchChange(e) {
@@ -56,25 +50,18 @@ Page({
   },
 
   onSearch() {
-    this.setData({
-      users: [],
-      page: 1,
-      hasMore: true
-    })
-    this.loadUsers()
+    this.setData({ users: [] })
+    this.resetPagination()
+    this.loadList()
   },
 
   onSearchClear() {
-    this.setData({
-      searchKeyword: '',
-      users: [],
-      page: 1,
-      hasMore: true
-    })
-    this.loadUsers()
+    this.setData({ searchKeyword: '', users: [] })
+    this.resetPagination()
+    this.loadList()
   },
 
-  async loadUsers() {
+  async loadList(refresh = false) {
     if (this.data.loading || !this.data.hasMore) return
 
     this.setData({ loading: true })
@@ -109,12 +96,8 @@ Page({
           )
         }
 
-        this.setData({
-          users: this.data.page === 1 ? users : [...this.data.users, ...users],
-          hasMore: res.result.pagination.hasMore,
-          total: res.result.pagination.total,
-          loading: false
-        })
+        this.handleLoadSuccess(users, res.result.pagination, refresh, 'users')
+        this.setData({ total: res.result.pagination.total })
       } else {
         throw new Error(res.result.message)
       }
@@ -129,21 +112,12 @@ Page({
   },
 
   onReachBottom() {
-    if (this.data.hasMore && !this.data.loading) {
-      this.setData({ page: this.data.page + 1 })
-      this.loadUsers()
-    }
+    this.handleReachBottom()
   },
 
   onPullDownRefresh() {
-    this.setData({
-      users: [],
-      page: 1,
-      hasMore: true
-    })
-    this.loadUsers().then(() => {
-      wx.stopPullDownRefresh()
-    })
+    this.setData({ users: [] })
+    this.handlePullDownRefresh()
   },
 
   goToAddUser() {
@@ -195,12 +169,9 @@ Page({
               })
 
               // 刷新列表
-              this.setData({
-                users: [],
-                page: 1,
-                hasMore: true
-              })
-              this.loadUsers()
+              this.setData({ users: [] })
+              this.resetPagination()
+              this.loadList()
             } else {
               throw new Error(result.result.message)
             }

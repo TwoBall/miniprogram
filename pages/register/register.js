@@ -77,7 +77,6 @@ Page({
     )
 
     if (cached) {
-      console.log('使用筛选选项缓存')
       this.applyFilterOptions(cached)
       return
     }

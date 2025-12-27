@@ -71,6 +71,8 @@
         type="primary"
         size="large"
         block
+        loading="{{ submitting }}"
+        disabled="{{ submitting }}"
         bind:click="submitForm"
       >
         {{ mode === 'add' ? '添加' : '保存' }}

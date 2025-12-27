@@ -76,6 +76,9 @@ Page({
   },
 
   onShow() {
+    // 检查登录状态，防止后台恢复时登录态丢失
+    if (!auth.checkRole('admin')) return
+
     // 10秒内不重复加载（防抖）
     const now = Date.now()
     if (now - this.lastLoadTime < 10000) return
@@ -144,7 +147,6 @@ Page({
       if (!forceRefresh) {
         const cached = storage.getWithCache(pendingCacheKey, pendingCacheTimeKey, storage.CACHE_DURATION.TWO_MINUTES)
         if (cached) {
-          console.log('使用待审批用户缓存')
           pendingFromCache = cached
         }
       }

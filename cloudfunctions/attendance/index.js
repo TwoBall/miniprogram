@@ -85,6 +85,32 @@ async function checkAbsenceAndNotify(records, clubName, date) {
  */
 exports.main = async (event, context) => {
     const { action } = event
+    const wxContext = cloud.getWXContext()
+    const openid = wxContext.OPENID
+
+    // 需要验证身份的操作
+    const authRequiredActions = ['submit', 'updateRecords']
+    // 需要验证教师/管理员身份的操作
+    const teacherActions = ['submit', 'updateRecords', 'getHistory', 'getDetail']
+
+    // 基本身份验证
+    if (!openid) {
+        return { success: false, message: '未授权访问' }
+    }
+
+    // 敏感操作需要验证教师身份
+    if (authRequiredActions.includes(action)) {
+        const userCheck = await db.collection('users')
+            .where({
+                _openid: openid,
+                role: db.command.in(['teacher', 'admin']),
+                status: 'approved'
+            })
+            .count()
+        if (userCheck.total === 0) {
+            return { success: false, message: '无权执行此操作' }
+        }
+    }
 
     const handlers = {
         submit: handleSubmit,
@@ -106,7 +132,7 @@ exports.main = async (event, context) => {
         return { success: false, message: '无效的操作类型' }
     }
 
-    return handler(event)
+    return handler(event, openid)
 }
 
 /**

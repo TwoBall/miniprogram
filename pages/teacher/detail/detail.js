@@ -25,7 +25,6 @@ Page({
       // 优先使用预传递的数据
       const cachedRecord = wx.getStorageSync('temp_record_detail')
       if (cachedRecord && cachedRecord._id === options.recordId && cachedRecord.records) {
-        console.log('使用预传递的记录数据')
         wx.removeStorageSync('temp_record_detail')
         this.applyRecordData(cachedRecord)
       } else {

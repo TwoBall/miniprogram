@@ -29,7 +29,8 @@ Page({
     showRolePicker: false,
     showDepartmentPicker: false,
     showClassPicker: false,
-    showClubPicker: false
+    showClubPicker: false,
+    submitting: false // 防重复提交
   },
 
   onLoad(options) {
@@ -264,6 +265,10 @@ Page({
       return
     }
 
+    // 防止重复提交
+    if (this.data.submitting) return
+    this.setData({ submitting: true })
+
     const { mode, userId, formData } = this.data
 
     try {
@@ -304,6 +309,8 @@ Page({
         title: error.message || '操作失败',
         icon: 'none'
       })
+    } finally {
+      this.setData({ submitting: false })
     }
   },
 

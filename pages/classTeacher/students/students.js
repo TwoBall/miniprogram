@@ -42,6 +42,8 @@ Page({
       this.loadAbsenceWarnings()
     ]).then(() => {
       wx.stopPullDownRefresh()
+    }).catch(() => {
+      wx.stopPullDownRefresh()
     })
   },
 

@@ -15,6 +15,24 @@ const db = cloud.database()
  */
 exports.main = async (event, context) => {
     const { action } = event
+    const wxContext = cloud.getWXContext()
+    const openid = wxContext.OPENID
+
+    // 基本身份验证
+    if (!openid) {
+        return { success: false, message: '未授权访问' }
+    }
+
+    // 验证用户是否为已审批的角色
+    const userCheck = await db.collection('users')
+        .where({
+            _openid: openid,
+            status: 'approved'
+        })
+        .count()
+    if (userCheck.total === 0) {
+        return { success: false, message: '无权访问学生数据' }
+    }
 
     const handlers = {
         getByClub: handleGetByClub,
@@ -29,7 +47,7 @@ exports.main = async (event, context) => {
         return { success: false, message: '无效的操作类型' }
     }
 
-    return handler(event)
+    return handler(event, openid)
 }
 
 /**

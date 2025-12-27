@@ -150,5 +150,29 @@ Page({
       late: 'warning'
     }
     return typeMap[status] || 'default'
+  },
+
+  /**
+   * 申请转社团
+   */
+  goToTransfer() {
+    const { student } = this.data
+    if (!student) {
+      wx.showToast({ title: '学生信息加载中', icon: 'none' })
+      return
+    }
+
+    const params = [
+      `studentId=${student._id}`,
+      `studentName=${encodeURIComponent(student.studentName)}`,
+      `className=${encodeURIComponent(student.className || '')}`,
+      `department=${encodeURIComponent(student.department || '')}`,
+      `fromClub=${encodeURIComponent(student.clubName || '')}`,
+      `initiatorType=classTeacher`
+    ].join('&')
+
+    wx.navigateTo({
+      url: `/pages/common/transfer/create?${params}`
+    })
   }
 })

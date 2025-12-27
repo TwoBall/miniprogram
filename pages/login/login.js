@@ -27,8 +27,14 @@ Page({
 
     try {
       // 检查微信登录态是否过期
-      const checkRes = await wx.checkSession().catch(() => ({ expired: true }))
-      if (checkRes.expired) {
+      let sessionExpired = false
+      try {
+        await wx.checkSession()
+      } catch {
+        sessionExpired = true
+      }
+
+      if (sessionExpired) {
         // 登录态过期，清除缓存，需要重新登录
         wx.removeStorageSync('userInfo')
         wx.removeStorageSync('allUserRoles')

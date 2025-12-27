@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "考勤总览",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",

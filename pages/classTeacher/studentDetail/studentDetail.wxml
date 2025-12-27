@@ -99,4 +99,17 @@
       </view>
     </van-tab>
   </van-tabs>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions" wx:if="{{ student && student.clubName }}">
+    <van-button
+      type="primary"
+      icon="exchange"
+      size="large"
+      block
+      bind:click="goToTransfer"
+    >
+      申请转社团
+    </van-button>
+  </view>
 </view>

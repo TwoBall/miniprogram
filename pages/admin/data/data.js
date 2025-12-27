@@ -64,6 +64,8 @@ Page({
   onPullDownRefresh() {
     this.loadAllStats().then(() => {
       wx.stopPullDownRefresh()
+    }).catch(() => {
+      wx.stopPullDownRefresh()
     })
   },
 

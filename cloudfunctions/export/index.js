@@ -15,6 +15,25 @@ const _ = db.command
  */
 exports.main = async (event, context) => {
   const { action } = event
+  const wxContext = cloud.getWXContext()
+  const openid = wxContext.OPENID
+
+  // 基本身份验证
+  if (!openid) {
+    return { success: false, message: '未授权访问' }
+  }
+
+  // 验证用户是否有导出权限（教师、班主任、领导、管理员）
+  const userCheck = await db.collection('users')
+    .where({
+      _openid: openid,
+      role: _.in(['teacher', 'classTeacher', 'leader', 'admin']),
+      status: 'approved'
+    })
+    .count()
+  if (userCheck.total === 0) {
+    return { success: false, message: '无权执行导出操作' }
+  }
 
   const handlers = {
     attendance: exportAttendance,
@@ -27,7 +46,7 @@ exports.main = async (event, context) => {
     return { success: false, message: '无效的操作类型' }
   }
 
-  return handler(event)
+  return handler(event, openid)
 }
 
 /**

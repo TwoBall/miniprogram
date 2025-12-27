@@ -1,7 +1,7 @@
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
-const datePickerBehavior = require('../../common/behaviors/datePickerBehavior')
+const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
@@ -36,6 +36,16 @@ Page({
    * 页面显示（30秒内不重复加载）
    */
   onShow() {
+    // 检查登录状态，防止后台恢复时登录态丢失
+    const userInfo = auth.checkRole('classTeacher')
+    if (!userInfo) return
+
+    // 恢复页面数据（小程序被销毁后 className 会丢失）
+    if (!this.data.className) {
+      this.setData({ className: userInfo.className })
+      this.initDate()
+    }
+
     const now = Date.now()
     if (this.lastLoadTime && now - this.lastLoadTime < 30000) return
     this.loadData()
@@ -83,7 +93,6 @@ Page({
     if (!forceRefresh) {
       const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
       if (cached) {
-        console.log('使用班级考勤缓存')
         this.applyData(cached)
         this.setData({ pageLoading: false })
         return

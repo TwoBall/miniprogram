@@ -16,7 +16,14 @@ Page({
 
     // 缺勤预警
     absenceWarnings: [],
-    warningStudentIds: new Set()
+    warningStudentIds: new Set(),
+
+    // 学生操作菜单
+    showStudentActions: false,
+    currentStudent: null,
+    studentActions: [
+      { name: '申请转社团', code: 'transfer' }
+    ]
   },
 
   onLoad() {
@@ -36,6 +43,8 @@ Page({
       this.loadStudents(),
       this.loadAbsenceWarnings()
     ]).then(() => {
+      wx.stopPullDownRefresh()
+    }).catch(() => {
       wx.stopPullDownRefresh()
     })
   },
@@ -182,9 +191,49 @@ Page({
 
   viewStudentDetail(e) {
     const student = e.currentTarget.dataset.student
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none'
+    this.setData({
+      currentStudent: student,
+      showStudentActions: true
+    })
+  },
+
+  /**
+   * 学生操作菜单选择
+   */
+  onStudentActionSelect(e) {
+    const { code } = e.detail
+    const student = this.data.currentStudent
+
+    this.setData({ showStudentActions: false })
+
+    if (code === 'transfer') {
+      this.goToTransfer(student)
+    }
+  },
+
+  /**
+   * 关闭学生操作菜单
+   */
+  onStudentActionClose() {
+    this.setData({ showStudentActions: false })
+  },
+
+  /**
+   * 跳转到转社团申请页面
+   */
+  goToTransfer(student) {
+    const userInfo = wx.getStorageSync('userInfo')
+    const params = [
+      `studentId=${student._id}`,
+      `studentName=${encodeURIComponent(student.studentName)}`,
+      `className=${encodeURIComponent(student.className || '')}`,
+      `department=${encodeURIComponent(student.department || '')}`,
+      `fromClub=${encodeURIComponent(userInfo.clubName)}`,
+      `initiatorType=fromTeacher`
+    ].join('&')
+
+    wx.navigateTo({
+      url: `/pages/common/transfer/create?${params}`
     })
   }
 })

@@ -143,4 +143,14 @@
   </view>
 
   <van-toast id="van-toast" />
+
+  <!-- 学生操作菜单 -->
+  <van-action-sheet
+    show="{{ showStudentActions }}"
+    actions="{{ studentActions }}"
+    cancel-text="取消"
+    description="{{ currentStudent.studentName }}"
+    bind:select="onStudentActionSelect"
+    bind:close="onStudentActionClose"
+  />
 </view>
