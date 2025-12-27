@@ -7,6 +7,7 @@ const { getAllData } = require('./utils')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
+const _ = db.command
 
 /**
  * 云函数入口
@@ -14,6 +15,37 @@ const db = cloud.database()
 exports.main = async (event, context) => {
     const { action } = event
     const wxContext = cloud.getWXContext()
+    const openid = wxContext.OPENID
+
+    // 基本身份验证
+    if (!openid) {
+        return { success: false, message: '未授权访问' }
+    }
+
+    // 验证用户是否为已审批用户
+    const userCheck = await db.collection('users')
+        .where({
+            _openid: openid,
+            status: 'approved'
+        })
+        .count()
+    if (userCheck.total === 0) {
+        return { success: false, message: '无权访问通知' }
+    }
+
+    // 创建通知需要特定角色权限
+    if (action === 'create') {
+        const roleCheck = await db.collection('users')
+            .where({
+                _openid: openid,
+                role: _.in(['teacher', 'classTeacher', 'leader', 'admin']),
+                status: 'approved'
+            })
+            .count()
+        if (roleCheck.total === 0) {
+            return { success: false, message: '无权创建通知' }
+        }
+    }
 
     const handlers = {
         create: handleCreate,

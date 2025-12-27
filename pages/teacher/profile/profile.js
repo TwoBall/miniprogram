@@ -9,7 +9,7 @@ Page({
   },
 
   onShow() {
-    // 刷新用户信息
+    if (!this.checkAuth()) return
     this.loadProfileData()
   }
 })

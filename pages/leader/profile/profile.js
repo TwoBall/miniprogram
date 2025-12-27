@@ -9,6 +9,7 @@ Page({
   },
 
   onShow() {
+    if (!this.checkAuth()) return
     this.loadProfileData()
   }
 })

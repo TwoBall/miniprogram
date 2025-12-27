@@ -30,6 +30,7 @@
         title="{{ item.text }}"
         icon="{{ item.icon }}"
         is-link="{{ !item.action }}"
+        value="{{ item.showBadge && unreadCount > 0 ? (unreadCount > 99 ? '99+' : unreadCount) : '' }}"
         data-url="{{ item.url }}"
         data-action="{{ item.action }}"
         bindtap="onMenuTap"

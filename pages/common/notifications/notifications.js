@@ -1,42 +1,36 @@
 const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
+const paginationBehavior = require('../../../behaviors/paginationBehavior')
 import Toast from '@vant/weapp/toast/toast'
 
 Page({
+  behaviors: [paginationBehavior],
+
   data: {
     notifications: [],
-    loading: false,
-    hasMore: true,
-    page: 1,
-    pageSize: 20,
     activeTab: 'all',
     unreadCount: 0
   },
 
   onLoad() {
-    this.loadNotifications()
+    this.loadList()
     this.loadUnreadCount()
   },
 
   onPullDownRefresh() {
-    this.setData({ page: 1, hasMore: true })
-    this.loadNotifications(true).then(() => {
-      wx.stopPullDownRefresh()
-    })
+    this.setData({ notifications: [] })
+    this.handlePullDownRefresh()
     this.loadUnreadCount()
   },
 
   onReachBottom() {
-    if (this.data.hasMore && !this.data.loading) {
-      this.setData({ page: this.data.page + 1 })
-      this.loadNotifications()
-    }
+    this.handleReachBottom()
   },
 
   /**
    * 加载通知列表
    */
-  async loadNotifications(refresh = false) {
+  async loadList(refresh = false) {
     if (this.data.loading) return
 
     this.setData({ loading: true })
@@ -68,15 +62,7 @@ Page({
           createTime: this.formatTime(item.createTime)
         }))
 
-        const newNotifications = refresh
-          ? formattedData
-          : [...this.data.notifications, ...formattedData]
-
-        this.setData({
-          notifications: newNotifications,
-          hasMore: result.pagination.hasMore,
-          loading: false
-        })
+        this.handleLoadSuccess(formattedData, result.pagination, refresh, 'notifications')
       }
     } catch (error) {
       console.error('加载通知失败:', error)
@@ -110,13 +96,9 @@ Page({
    */
   onTabChange(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({
-      activeTab: tab,
-      page: 1,
-      notifications: [],
-      hasMore: true
-    })
-    this.loadNotifications(true)
+    this.setData({ activeTab: tab, notifications: [] })
+    this.resetPagination()
+    this.loadList(true)
   },
 
   /**
@@ -167,8 +149,9 @@ Page({
       if (result.success) {
         Toast.success(result.message)
         // 刷新列表
-        this.setData({ page: 1, notifications: [], hasMore: true })
-        this.loadNotifications(true)
+        this.setData({ notifications: [] })
+        this.resetPagination()
+        this.loadList(true)
         this.loadUnreadCount()
       }
     } catch (error) {

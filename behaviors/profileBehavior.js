@@ -2,12 +2,16 @@
 // output: 用户信息、菜单列表、菜单点击处理
 // pos: 主包 > behaviors > Profile 页面通用行为
 
+const auth = require('../utils/auth')
+const request = require('../utils/request')
+
 // Profile 页面通用行为
 const profileBehavior = Behavior({
   data: {
     userInfo: null,
     menuList: [],
-    role: '' // 将在各页面中设置
+    role: '', // 将在各页面中设置
+    unreadCount: 0 // 未读通知数量
   },
 
   attached() {
@@ -15,6 +19,16 @@ const profileBehavior = Behavior({
   },
 
   methods: {
+    /**
+     * 检查登录状态（供页面 onShow 调用）
+     * @returns {boolean} 是否已登录
+     */
+    checkAuth() {
+      const role = this.data.role
+      const userInfo = auth.checkRole(role)
+      return !!userInfo
+    },
+
     loadProfileData() {
       const userInfo = wx.getStorageSync('userInfo')
       const role = this.data.role || userInfo?.role || 'teacher'
@@ -26,26 +40,26 @@ const profileBehavior = Behavior({
           { id: 'club', icon: 'friends', text: '社团管理', url: '/pages/teacher/club/club' },
           { id: 'history', icon: 'records', text: '历史记录', url: '/pages/teacher/history/history' },
           { id: 'transfer', icon: 'orders-o', text: '转社团申请', url: '/pages/common/transfer/transfer' },
-          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications' }
+          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications', showBadge: true }
         ],
         // 班主任菜单
         classTeacher: [
           { id: 'students', icon: 'friends-o', text: '学生管理', url: '/pages/classTeacher/students/students' },
-          { id: 'messages', icon: 'chat-o', text: '消息中心', url: '/pages/classTeacher/messages/messages' },
+          { id: 'transfer', icon: 'orders-o', text: '转社团审批', url: '/pages/common/transfer/transfer' },
           { id: 'export', icon: 'down', text: '数据导出', url: '/pages/common/export/export' },
-          { id: 'transfer', icon: 'orders-o', text: '转社团审批', url: '/pages/common/transfer/transfer' }
+          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications', showBadge: true }
         ],
         // 学部领导菜单
         leader: [
           { id: 'export', icon: 'down', text: '数据导出', url: '/pages/common/export/export' },
-          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications' }
+          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications', showBadge: true }
         ],
         // 管理员菜单
         admin: [
           { id: 'userManage', icon: 'manager-o', text: '用户管理', url: '/pages/admin/users/users' },
           { id: 'data', icon: 'bar-chart-o', text: '数据中心', url: '/pages/admin/data/data' },
           { id: 'approval', icon: 'orders-o', text: '审批中心', url: '/pages/admin/approval/approval' },
-          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications' }
+          { id: 'notifications', icon: 'bell', text: '通知中心', url: '/pages/common/notifications/notifications', showBadge: true }
         ]
       }
 
@@ -68,6 +82,26 @@ const profileBehavior = Behavior({
         menuList,
         role
       })
+
+      // 加载未读通知数量
+      this.loadUnreadCount()
+    },
+
+    /**
+     * 加载未读通知数量
+     */
+    async loadUnreadCount() {
+      try {
+        const result = await request.callCloud('notification', {
+          action: 'getUnreadCount'
+        }, { showLoading: false, showError: false })
+
+        if (result.success) {
+          this.setData({ unreadCount: result.data.count })
+        }
+      } catch (error) {
+        console.error('获取未读通知数失败:', error)
+      }
     },
 
     onMenuTap(e) {
