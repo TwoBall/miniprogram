@@ -10,9 +10,27 @@
 
 ## 文件索引
 
-- `profileBehavior.js` - Profile 页面通用行为，提供菜单配置和用户信息加载
+- `profileBehavior.js` - Profile 页面通用行为，提供菜单配置、用户信息加载和未读通知数获取
 - `datePickerBehavior.js` - 日期选择器通用行为，提供日期选择器状态管理和事件处理
 - `paginationBehavior.js` - 分页加载通用行为，提供列表分页状态管理和事件处理
+
+## profileBehavior 功能
+
+### 数据字段
+- `userInfo` - 用户信息
+- `menuList` - 菜单列表配置
+- `role` - 当前角色
+- `unreadCount` - 未读通知数
+
+### 方法
+- `loadUserInfo()` - 加载用户信息
+- `loadUnreadCount()` - 获取未读通知数量
+- `getMenuListByRole(role)` - 根据角色获取菜单配置
+- `onMenuTap(e)` - 菜单点击事件处理
+- `onLogout()` - 退出登录
+
+### 菜单配置
+各角色菜单中的通知入口配置了 `showBadge: true`，用于显示未读通知数徽章。
 
 ## 使用方式
 
