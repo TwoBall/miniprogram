@@ -39,5 +39,5 @@ students.json
 teachers_pre_reg.json
 *.xlsx
 
-# Claude Code 本地设置
-.claude/settings.local.json
+# Claude Code
+.claude/

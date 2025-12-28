@@ -78,37 +78,99 @@
 每个云函数目录包含：
 - `index.js` - 云函数入口文件
 - `package.json` - 依赖配置
-- `utils.js` - 公共工具函数（复制自 common 模块）
+- `common/` - 公共模块目录（由同步脚本自动生成）
 - `config.json` (可选) - 云函数配置
 
-## 公共工具模块
+## 公共模块机制
 
-由于微信云开发不支持 `file:` 本地依赖，公共代码采用**复制方式**共享：
+### 架构设计
+
+采用**构建脚本自动同步**方式实现公共模块复用：
 
 ```
 cloudfunctions/
-  common/           # 公共模块模板（不上传）
-    db-utils.js     # 数据库工具
-    auth-utils.js   # 权限验证
-    constants.js    # 常量定义
-    sort-utils.js   # 排序工具（中文拼音排序）
-  attendance/
-    utils.js        # 复制自 common，合并版公共工具
-  students/
-    utils.js        # 复制自 common
-  ...
+├── common/                    # 公共模块源码（单一真相源）
+│   ├── index.js              # 统一导出入口
+│   ├── db-utils.js           # 数据库工具
+│   ├── auth-utils.js         # 权限验证工具
+│   ├── response-utils.js     # 统一响应格式
+│   ├── sort-utils.js         # 排序工具
+│   └── constants.js          # 常量定义
+├── scripts/
+│   └── sync-common.js        # 同步脚本
+├── attendance/
+│   ├── index.js
+│   ├── package.json
+│   └── common/               # 自动同步的公共模块
+│       ├── index.js
+│       └── ...
+└── ...
 ```
 
-**使用方式**：
+### 使用方式
+
 ```javascript
-const { getAllData, sortStudentsByName, sortOptions } = require('./utils')
+// 在云函数中引用公共模块
+const {
+  getAllData,
+  paginate,
+  verifyAdmin,
+  ROLES,
+  USER_STATUS,
+  success,
+  fail,
+  unauthorized,
+  sortStudentsByName
+} = require('./common')
 ```
 
-**维护说明**：修改公共代码时，需要同步更新所有云函数目录下的 `utils.js`。
+### 同步公共模块
+
+修改 `cloudfunctions/common/` 下的文件后，运行同步脚本：
+
+```bash
+# 在项目根目录执行
+node cloudfunctions/scripts/sync-common.js
+
+# 强制覆盖所有文件
+node cloudfunctions/scripts/sync-common.js --force
+```
+
+### 公共模块清单
+
+| 模块 | 文件 | 导出函数 |
+|------|------|----------|
+| 数据库工具 | `db-utils.js` | `getAllData`, `getAllDataSorted`, `paginate`, `MAX_LIMIT` |
+| 权限验证 | `auth-utils.js` | `verifyAdmin`, `verifyUser`, `verifyUserRoles` |
+| 响应格式 | `response-utils.js` | `success`, `successWithPagination`, `fail`, `badRequest`, `unauthorized`, `forbidden`, `notFound`, `wrapHandler`, `createDispatcher` |
+| 排序工具 | `sort-utils.js` | `zhCompare`, `zhNumericCompare`, `sortStudentsByName`, `sortStudentsByClassAndName`, `sortOptions` |
+| 常量定义 | `constants.js` | `MAX_LIMIT`, `ROLES`, `USER_STATUS`, `ATTENDANCE_STATUS` |
+
+### 响应格式工具
+
+`response-utils.js` 提供统一的响应格式：
+
+```javascript
+// 成功响应
+success(data, message)
+// 返回: { success: true, code: 0, message, data }
+
+// 带分页的成功响应
+successWithPagination(data, pagination, message)
+// 返回: { success: true, code: 0, message, data, pagination }
+
+// 失败响应
+fail(message, code)
+// 返回: { success: false, code, message, data: null }
+
+// 快捷错误响应
+unauthorized(message)  // 401 未授权
+forbidden(message)     // 403 无权限
+badRequest(message)    // 400 参数错误
+notFound(message)      // 404 资源不存在
+```
 
 ### 排序工具函数
-
-`utils.js` 中包含以下排序工具：
 
 | 函数名 | 用途 | 说明 |
 |--------|------|------|
@@ -117,6 +179,13 @@ const { getAllData, sortStudentsByName, sortOptions } = require('./utils')
 | `sortStudentsByName` | 按姓名排序学生列表 | 中文拼音排序 |
 | `sortStudentsByClassAndName` | 按班级+姓名排序 | 先班级后姓名 |
 | `sortOptions` | 排序选项列表 | 学部/班级/社团等 |
+
+### 维护说明
+
+1. **修改公共模块**：只修改 `cloudfunctions/common/` 下的源文件
+2. **运行同步脚本**：`node cloudfunctions/scripts/sync-common.js`
+3. **测试云函数**：在微信开发者工具中测试各云函数
+4. **部署云函数**：上传并部署修改过的云函数
 
 ## 调用方式
 

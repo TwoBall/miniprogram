@@ -3,7 +3,17 @@
  * 处理点名记录的提交、查询和统计
  */
 const cloud = require('wx-server-sdk')
-const { getAllData, sortStudentsByName } = require('./utils')
+const {
+  getAllData,
+  paginate,
+  sortStudentsByName,
+  ROLES,
+  success,
+  successWithPagination,
+  fail,
+  unauthorized,
+  badRequest
+} = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()

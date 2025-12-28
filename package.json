@@ -11,7 +11,10 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
+    "lint:fix": "eslint . --ext .js --fix",
+    "sync-common": "node cloudfunctions/scripts/sync-common.js",
+    "sync-common:force": "node cloudfunctions/scripts/sync-common.js --force",
+    "test:common": "node cloudfunctions/scripts/test-common.js"
   },
   "author": "",
   "license": "ISC"

@@ -1,42 +1,16 @@
 // input: 数据库集合、查询条件、字段选择、排序规则
-// output: 查询结果数组、验证结果
-// pos: 云函数层 > attendance > 公共工具模块
+// output: 查询结果数组
+// pos: 云函数层 > 公共模块 > 数据库工具
 
-/**
- * 云数据库单次查询最大限制
- */
-const MAX_LIMIT = 100
-
-/**
- * 用户角色枚举
- */
-const ROLES = {
-  ADMIN: 'admin',
-  TEACHER: 'teacher',
-  CLASS_TEACHER: 'classTeacher',
-  LEADER: 'leader'
-}
-
-/**
- * 用户状态枚举
- */
-const USER_STATUS = {
-  PENDING: 'pending',
-  APPROVED: 'approved',
-  REJECTED: 'rejected'
-}
-
-/**
- * 考勤状态枚举
- */
-const ATTENDANCE_STATUS = {
-  PRESENT: 'present',
-  ABSENT: 'absent'
-}
+const { MAX_LIMIT } = require('./constants')
 
 /**
  * 获取所有数据的辅助函数
  * 突破云数据库单次查询100条的限制
+ * @param {Object} collection - 数据库集合对象
+ * @param {Object} condition - 查询条件
+ * @param {Object|null} fields - 返回字段，可选
+ * @returns {Promise<Array>} 查询结果数组
  */
 async function getAllData(collection, condition, fields = null) {
   const countResult = await collection.where(condition).count()
@@ -64,6 +38,12 @@ async function getAllData(collection, condition, fields = null) {
 
 /**
  * 获取所有数据的辅助函数（支持排序）
+ * 突破云数据库单次查询100条的限制
+ * @param {Object} collection - 数据库集合对象
+ * @param {Object} condition - 查询条件
+ * @param {Object|null} fields - 返回字段，可选
+ * @param {Object|null} orderBy - 排序规则，如 { className: 1, name: 1 }，1为升序，-1为降序
+ * @returns {Promise<Array>} 查询结果数组
  */
 async function getAllDataSorted(collection, condition, fields = null, orderBy = null) {
   const countResult = await collection.where(condition).count()
@@ -74,6 +54,7 @@ async function getAllDataSorted(collection, condition, fields = null, orderBy = 
   let query = collection.where(condition)
   if (fields) query = query.field(fields)
 
+  // 添加排序
   if (orderBy) {
     for (const [field, order] of Object.entries(orderBy)) {
       query = query.orderBy(field, order === 1 ? 'asc' : 'desc')
@@ -85,6 +66,7 @@ async function getAllDataSorted(collection, condition, fields = null, orderBy = 
     return res.data
   }
 
+  // 分批查询时按顺序执行，保证排序稳定性
   const batchTimes = Math.ceil(total / MAX_LIMIT)
   const allData = []
   for (let i = 0; i < batchTimes; i++) {
@@ -97,6 +79,15 @@ async function getAllDataSorted(collection, condition, fields = null, orderBy = 
 
 /**
  * 通用分页查询函数
+ * @param {Object} collection - 数据库集合对象
+ * @param {Object} condition - 查询条件
+ * @param {Object} options - 分页选项
+ * @param {number} options.page - 页码，从1开始
+ * @param {number} options.pageSize - 每页数量
+ * @param {string} options.orderField - 排序字段，默认 'createTime'
+ * @param {string} options.orderDirection - 排序方向，'asc' 或 'desc'，默认 'desc'
+ * @param {Object|null} options.fields - 返回字段，可选
+ * @returns {Promise<Object>} 包含 data 和 pagination 的对象
  */
 async function paginate(collection, condition, options = {}) {
   const {
@@ -107,11 +98,14 @@ async function paginate(collection, condition, options = {}) {
     fields = null
   } = options
 
+  // 获取总数
   const countRes = await collection.where(condition).count()
   const total = countRes.total
 
+  // 计算跳过的记录数
   const skip = (page - 1) * pageSize
 
+  // 构建查询
   let query = collection.where(condition)
     .orderBy(orderField, orderDirection)
     .skip(skip)
@@ -132,74 +126,9 @@ async function paginate(collection, condition, options = {}) {
   }
 }
 
-/**
- * 验证管理员权限
- */
-async function verifyAdmin(db, openid, fields = { _id: true, userName: true }) {
-  const res = await db.collection('users')
-    .where({
-      _openid: openid,
-      role: ROLES.ADMIN,
-      status: USER_STATUS.APPROVED
-    })
-    .field(fields)
-    .get()
-
-  return res.data.length > 0 ? res.data[0] : null
-}
-
-/**
- * 验证用户身份
- */
-async function verifyUser(db, openid, role = null, fields = null) {
-  const condition = {
-    _openid: openid,
-    status: USER_STATUS.APPROVED
-  }
-
-  if (role) {
-    condition.role = role
-  }
-
-  let query = db.collection('users').where(condition)
-  if (fields) {
-    query = query.field(fields)
-  }
-
-  const res = await query.get()
-  return res.data.length > 0 ? res.data[0] : null
-}
-
-/**
- * 验证用户是否有指定角色之一
- */
-async function verifyUserRoles(db, openid, roles, fields = null) {
-  const _ = db.command
-
-  const condition = {
-    _openid: openid,
-    status: USER_STATUS.APPROVED,
-    role: _.in(roles)
-  }
-
-  let query = db.collection('users').where(condition)
-  if (fields) {
-    query = query.field(fields)
-  }
-
-  const res = await query.get()
-  return res.data.length > 0 ? res.data[0] : null
-}
-
 module.exports = {
-  MAX_LIMIT,
-  ROLES,
-  USER_STATUS,
-  ATTENDANCE_STATUS,
   getAllData,
   getAllDataSorted,
   paginate,
-  verifyAdmin,
-  verifyUser,
-  verifyUserRoles
+  MAX_LIMIT
 }

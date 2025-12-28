@@ -3,6 +3,13 @@
  * 班主任对学生缺课情况提交反馈信息
  */
 const cloud = require('wx-server-sdk')
+const {
+  ROLES,
+  success,
+  fail,
+  unauthorized
+} = require('./common')
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command

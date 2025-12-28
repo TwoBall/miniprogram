@@ -3,7 +3,15 @@
  * 提供按社团、班级、学部查询学生的接口
  */
 const cloud = require('wx-server-sdk')
-const { getAllData, sortStudentsByClassAndName, sortStudentsByName, sortOptions } = require('./utils')
+const {
+  getAllData,
+  sortStudentsByClassAndName,
+  sortStudentsByName,
+  sortOptions,
+  success,
+  fail,
+  unauthorized
+} = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()

@@ -86,9 +86,22 @@
 │   ├── storage.js                  # 本地存储封装
 │   └── error.js                    # 错误处理工具
 ├── cloudfunctions/                 # 云函数目录
+│   ├── common/                     # 公共模块源码
+│   │   ├── auth-utils.js           # 权限验证工具
+│   │   ├── db-utils.js             # 数据库工具
+│   │   ├── response-utils.js       # 统一响应格式
+│   │   ├── sort-utils.js           # 排序工具
+│   │   ├── constants.js            # 常量定义
+│   │   └── index.js                # 模块导出入口
+│   ├── scripts/                    # 构建脚本
+│   │   ├── sync-common.js          # 同步公共模块脚本
+│   │   └── test-common.js          # 公共模块测试脚本
 │   ├── user/                       # 用户管理（登录/注册/审批）
 │   ├── students/                   # 学生管理
 │   ├── attendance/                 # 考勤管理（提交/查询）
+│   ├── export/                     # 数据导出
+│   ├── notification/               # 通知管理
+│   ├── transfer/                   # 转社团申请
 │   └── submitFeedback/             # 提交反馈
 ├── images/                         # 图片资源
 ├── styles/                         # 公共样式
@@ -248,6 +261,55 @@ npm run lint
 npm run lint:fix
 ```
 
+### 云函数公共模块
+
+云函数采用公共模块复用机制，所有云函数共享 `cloudfunctions/common/` 目录下的工具函数。
+
+#### 公共模块结构
+
+| 模块 | 功能 |
+|------|------|
+| `auth-utils.js` | 权限验证（verifyAdmin, verifyUser, verifyUserRoles） |
+| `db-utils.js` | 数据库工具（getAllData, paginate, getAllDataSorted） |
+| `response-utils.js` | 统一响应格式（success, fail, unauthorized 等） |
+| `sort-utils.js` | 中文排序（sortStudentsByName, sortOptions） |
+| `constants.js` | 常量定义（ROLES, USER_STATUS, MAX_LIMIT） |
+
+#### 使用方式
+
+```javascript
+// 在云函数中引用公共模块
+const {
+  getAllData,
+  verifyAdmin,
+  success,
+  fail,
+  unauthorized,
+  ROLES
+} = require('./common')
+```
+
+#### npm 脚本命令
+
+```bash
+# 同步公共模块到所有云函数（修改 common/ 后执行）
+npm run sync-common
+
+# 强制覆盖同步
+npm run sync-common:force
+
+# 运行公共模块测试（19 个测试用例）
+npm run test:common
+```
+
+#### 开发流程
+
+1. 修改 `cloudfunctions/common/` 下的公共模块
+2. 运行 `npm run sync-common` 同步到所有云函数
+3. 运行 `npm run test:common` 验证修改
+4. 在微信开发者工具中测试云函数
+5. 上传并部署修改过的云函数
+
 ### 项目特点
 
 ✅ **代码质量**
@@ -287,6 +349,19 @@ chore: 构建/工具链相关
 ```
 
 ## 📝 更新日志
+
+### v1.3.0 (2025-12-28)
+- ✨ 创建云函数公共模块目录 `cloudfunctions/common/`
+- ✨ 添加权限验证工具 `auth-utils.js`
+- ✨ 添加数据库工具 `db-utils.js`
+- ✨ 添加统一响应格式工具 `response-utils.js`
+- ✨ 添加中文排序工具 `sort-utils.js`
+- ✨ 创建自动同步脚本 `sync-common.js`
+- ✨ 创建本地测试脚本 `test-common.js`（19 个测试用例）
+- ♻️ 重构 7 个云函数使用公共模块
+- 🗑️ 删除各云函数独立的 `utils.js`（消除约 885 行重复代码）
+- 📝 更新云函数开发文档
+- 🔧 添加 npm 脚本：sync-common、sync-common:force、test:common
 
 ### v1.2.0 (2025-12-24)
 - ✨ 添加管理员用户审批功能

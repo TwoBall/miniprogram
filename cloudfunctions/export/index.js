@@ -4,7 +4,15 @@
  */
 const cloud = require('wx-server-sdk')
 const xlsx = require('xlsx')
-const { getAllData } = require('./utils')
+const {
+  getAllData,
+  ROLES,
+  success,
+  successWithPagination,
+  fail,
+  unauthorized,
+  badRequest
+} = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()

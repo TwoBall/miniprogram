@@ -3,6 +3,19 @@
  * 处理用户登录、注册、审批等操作
  */
 const cloud = require('wx-server-sdk')
+const {
+  verifyAdmin,
+  paginate,
+  ROLES,
+  USER_STATUS,
+  success,
+  successWithPagination,
+  fail,
+  unauthorized,
+  badRequest,
+  notFound
+} = require('./common')
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command

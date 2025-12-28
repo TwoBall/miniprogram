@@ -3,6 +3,15 @@
  * 处理学生转社团的申请、审批和确认流程
  */
 const cloud = require('wx-server-sdk')
+const {
+  ROLES,
+  success,
+  successWithPagination,
+  fail,
+  unauthorized,
+  badRequest
+} = require('./common')
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 

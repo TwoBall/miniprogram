@@ -3,7 +3,15 @@
  * 处理站内通知的创建、查询、标记已读等操作
  */
 const cloud = require('wx-server-sdk')
-const { getAllData } = require('./utils')
+const {
+  getAllData,
+  ROLES,
+  success,
+  successWithPagination,
+  fail,
+  unauthorized,
+  badRequest
+} = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
