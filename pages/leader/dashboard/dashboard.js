@@ -34,11 +34,14 @@ Page({
       this.setData({ department: userInfo.department })
     }
     this.initDate()
-    // 延迟加载数据，确保 van-toast 节点已渲染
-    wx.nextTick(() => {
-      this.loadData()
-      this.loadAbsenceWarnings()
-    })
+  },
+
+  /**
+   * 页面初次渲染完成
+   */
+  onReady() {
+    this.loadData()
+    this.loadAbsenceWarnings()
   },
 
   /**

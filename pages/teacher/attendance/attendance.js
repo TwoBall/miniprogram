@@ -52,10 +52,10 @@ Page({
       this.setData({ clubName: userInfo.clubName })
     }
     this.updateDateTime()
-    // 延迟加载数据，确保 van-toast 节点已渲染
-    wx.nextTick(() => {
-      this.loadStudents()
-    })
+  },
+
+  onReady() {
+    this.loadStudents()
   },
 
   onShow() {

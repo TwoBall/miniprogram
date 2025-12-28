@@ -1,6 +1,7 @@
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
+const throttleBehavior = require('../../../behaviors/throttleBehavior')
 import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -42,6 +43,8 @@ function formatUserTimes(users) {
 }
 
 Page({
+  behaviors: [throttleBehavior],
+
   data: {
     activeTab: 0,
     pendingUsers: [],
@@ -72,10 +75,13 @@ Page({
    */
   onLoad() {
     auth.checkRole('admin')
-    // 延迟加载数据，确保 van-toast 节点已渲染
-    wx.nextTick(() => {
-      this.loadAllTabs()
-    })
+  },
+
+  /**
+   * 页面初次渲染完成
+   */
+  onReady() {
+    this.loadAllTabs()
   },
 
   onShow() {
@@ -294,12 +300,16 @@ Page({
    */
   handleApprove(e) {
     const user = e.currentTarget.dataset.user
+    const btnKey = `approve_${user._id}`
+
+    // 使用节流防止重复点击
+    if (this.data.btnLoadingMap[btnKey]) return
 
     Dialog.confirm({
       title: '确认通过',
       message: `确定通过 ${user.userName} 的注册申请吗？`
     }).then(() => {
-      this.doApprove(user._id)
+      this.doApprove(user._id, btnKey)
     }).catch(() => {
       // 用户取消
     })
@@ -310,10 +320,15 @@ Page({
    */
   handleReject(e) {
     const user = e.currentTarget.dataset.user
+    const btnKey = `reject_${user._id}`
+
+    // 使用节流防止重复点击
+    if (this.data.btnLoadingMap[btnKey]) return
 
     this.setData({
       showRejectDialog: true,
       currentUser: user,
+      currentBtnKey: btnKey,
       rejectReason: ''
     })
   },
@@ -333,35 +348,35 @@ Page({
   },
 
   confirmReject() {
-    const { currentUser, rejectReason } = this.data
+    const { currentUser, currentBtnKey, rejectReason } = this.data
 
     if (!rejectReason || rejectReason.trim() === '') {
       Toast.fail('请输入拒绝原因')
+      // 震动提示
+      wx.vibrateShort({ type: 'heavy' })
       return
     }
 
-    this.doReject(currentUser._id, rejectReason)
+    this.doReject(currentUser._id, rejectReason, currentBtnKey)
     this.closeRejectDialog()
   },
 
   /**
    * 执行审批通过操作
    */
-  async doApprove(userId) {
-    Toast.loading({
-      message: '处理中...',
-      forbidClick: true,
-      duration: 0
-    })
+  async doApprove(userId, btnKey) {
+    this.setBtnLoading(btnKey, true)
 
     try {
       const result = await request.callCloud('user', {
         action: 'approve',
         userId
-      }, { showLoading: false, showError: false })
+      }, { showLoading: true, showError: false })
 
       if (result.success) {
         Toast.success('审批通过')
+        // 成功震动反馈
+        wx.vibrateShort({ type: 'medium' })
         setTimeout(() => {
           this.loadAllTabs(true)
         }, 1500)
@@ -371,28 +386,28 @@ Page({
     } catch (error) {
       console.error('审批失败:', error)
       Toast.fail('操作失败')
+    } finally {
+      this.setBtnLoading(btnKey, false)
     }
   },
 
   /**
    * 执行审批拒绝操作
    */
-  async doReject(userId, rejectReason) {
-    Toast.loading({
-      message: '处理中...',
-      forbidClick: true,
-      duration: 0
-    })
+  async doReject(userId, rejectReason, btnKey) {
+    this.setBtnLoading(btnKey, true)
 
     try {
       const result = await request.callCloud('user', {
         action: 'reject',
         userId,
         rejectReason
-      }, { showLoading: false, showError: false })
+      }, { showLoading: true, showError: false })
 
       if (result.success) {
         Toast.success('已拒绝')
+        // 成功震动反馈
+        wx.vibrateShort({ type: 'medium' })
         setTimeout(() => {
           this.loadAllTabs(true)
         }, 1500)
@@ -402,6 +417,8 @@ Page({
     } catch (error) {
       console.error('拒绝失败:', error)
       Toast.fail('操作失败')
+    } finally {
+      this.setBtnLoading(btnKey, false)
     }
   }
 })
