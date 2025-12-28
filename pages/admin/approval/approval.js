@@ -72,7 +72,10 @@ Page({
    */
   onLoad() {
     auth.checkRole('admin')
-    this.loadAllTabs()
+    // 延迟加载数据，确保 van-toast 节点已渲染
+    wx.nextTick(() => {
+      this.loadAllTabs()
+    })
   },
 
   onShow() {
