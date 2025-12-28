@@ -1,5 +1,10 @@
 <view class="dashboard-container">
-  <view class="header-section">
+  <!-- 加载骨架屏 -->
+  <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+    <skeleton type="dashboard" count="{{1}}" />
+  </view>
+
+  <view class="header-section" wx:if="{{!pageLoading}}">
     <view class="header-top">
       <view class="department-info">
         <van-icon name="cluster-o" size="40rpx" color="#ffffff" />
@@ -13,7 +18,7 @@
     </view>
   </view>
 
-  <view class="stats-section">
+  <view class="stats-section" wx:if="{{!pageLoading}}">
     <van-grid column-num="4" border="{{ false }}" wx:if="{{ warningCount === 0 }}">
       <van-grid-item use-slot>
         <view class="stat-content">
@@ -75,7 +80,7 @@
     </van-grid>
   </view>
 
-  <view class="class-list">
+  <view class="class-list" wx:if="{{!pageLoading}}">
     <!-- 班级排名按钮 -->
     <view class="ranking-toggle" bindtap="onToggleRanking">
       <van-icon name="{{ showRanking ? 'arrow-up' : 'bar-chart-o' }}" size="32rpx" color="#1890ff" />

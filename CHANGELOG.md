@@ -5,6 +5,81 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.6.0] - 2025-12-28
+
+### 用户体验优化（第三阶段）
+- **登录延迟优化**：`pages/login/login.js` 使用 Toast 的 onClose 回调替代 setTimeout
+  - 跳转延迟从 2 秒缩短至 1.5 秒
+  - 提供更好的用户反馈体验
+- **骨架屏增强**：`pages/leader/dashboard/dashboard.wxml` 添加骨架屏支持
+  - 页面加载时显示骨架屏，避免空白
+- **网络错误重试**：`utils/request.js` 添加用户友好的重试对话框
+  - 网络错误时显示重试按钮
+  - 用户可主动选择重试或取消
+
+### 性能优化
+- **用时注入配置**：`app.json` 添加 `componentPlaceholder` 配置
+  - 为 vant 组件和自定义组件配置占位组件
+  - 提升页面首次渲染速度
+- **渲染缓存扩展**：`pages/classTeacher/overview/overview.json` 添加 dynamic 渲染缓存
+
+### 安全增强
+- **代码加固配置**：创建 `.codeobfuscation.json`
+  - 对敏感文件（auth.js、request.js、storage.js）启用混淆
+  - 配置字符串加密和调用转换
+
+### 新增文件
+- `.codeobfuscation.json` - 代码加固配置文件
+
+---
+
+## [1.5.0] - 2025-12-28
+
+### 性能优化（第二阶段）
+- **WXS 滑动优化**：创建 `pages/teacher/attendance/swipe.wxs`，在视图层直接处理触摸事件
+  - 减少逻辑层与视图层通信，提升滑动流畅度
+  - 添加 WXS 回调方法 `onWxsTouchStart`、`onWxsTouchEnd`
+  - 保留原生触摸事件作为降级方案
+- **初始渲染缓存**：为高频访问页面配置 `initialRenderingCache`
+  - `pages/login/login.json` - static 缓存
+  - `pages/register/register.json` - static 缓存
+  - `pages/teacher/attendance/attendance.json` - dynamic 缓存
+  - `pages/leader/dashboard/dashboard.json` - dynamic 缓存
+- **分包预下载优化**：在注册页配置 WiFi 环境下预下载所有角色分包
+  - `app.json` 新增 `pages/register/register` 预下载规则
+
+### 安全增强
+- **状态机验证**：为转社团申请流程添加状态机验证
+  - 定义 `TRANSFER_STATUS` 状态常量
+  - 定义 `STATE_TRANSITIONS` 状态流转规则
+  - 添加 `canTransition()` 验证函数
+  - 添加 `isTerminalState()` 终态检查函数
+  - 在 `handleApprove` 和 `handleReject` 中应用状态验证
+
+### 新增文件
+- `pages/teacher/attendance/swipe.wxs` - WXS 滑动手势处理模块
+
+---
+
+## [1.4.0] - 2025-12-28
+
+### 安全增强（第一阶段）
+- 配置云函数安全规则 `{"*": {"invoke": "auth != null"}}`，确保只有登录用户可调用云函数
+
+### 性能优化
+- 优化 `app.js` 中的 `checkUserAuth()` 方法，将同步 `wx.getStorageSync` 改为异步 `wx.getStorage`，避免阻塞小程序启动流程
+
+### 文档
+- 创建 `plans/miniprogram-audit-report.md` v2.0 审查报告，集成知识库最佳实践
+- 创建 `plans/implementation-plan.md` 分阶段实施工作计划
+- 创建 `plans/phase1-console-operations-guide.md` 控制台操作指南
+
+### 技术评估
+- 云函数频率限制：确认微信小程序云开发暂不支持控制台限频配置（腾讯云 CloudBase 支持），提供代码层替代方案
+- 数据库安全规则：评估后标记为待优化，当前所有操作通过云函数进行，安全性由代码层保证
+
+---
+
 ## [1.3.0] - 2025-12-28
 
 ### 新增

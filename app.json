@@ -64,6 +64,10 @@
     "pages/login/login": {
       "network": "all",
       "packages": ["common"]
+    },
+    "pages/register/register": {
+      "network": "wifi",
+      "packages": ["teacher", "classTeacher", "leader", "admin"]
     }
   },
   "window": {
@@ -74,6 +78,21 @@
   },
   "usingComponents": {},
   "lazyCodeLoading": "requiredComponents",
+  "componentPlaceholder": {
+    "skeleton": "view",
+    "custom-tabbar": "view",
+    "van-button": "button",
+    "van-toast": "view",
+    "van-dialog": "view",
+    "van-icon": "view",
+    "van-cell": "view",
+    "van-cell-group": "view",
+    "van-field": "view",
+    "van-picker": "view",
+    "van-popup": "view",
+    "van-empty": "view",
+    "van-tag": "view"
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "cloud": true

@@ -97,11 +97,14 @@ Page({
       }
 
       if (result.needRegister) {
-        Toast('未找到账号，请先注册')
-
-        setTimeout(() => {
-          wx.redirectTo({ url: `/pages/register/register?openid=${result.openid}` })
-        }, 2000)
+        // 使用 Toast 的 onClose 回调，缩短等待时间
+        Toast({
+          message: '未找到账号，即将跳转注册',
+          duration: 1500,
+          onClose: () => {
+            wx.redirectTo({ url: `/pages/register/register?openid=${result.openid}` })
+          }
+        })
         return
       }
 

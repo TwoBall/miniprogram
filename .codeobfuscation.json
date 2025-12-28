@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developers.weixin.qq.com/miniprogram/dev/devtools/ci/schema/codeobfuscation.json",
+  "switch": true,
+  "comment": "代码加固配置 - 仅对敏感文件启用混淆",
+  "include": [
+    "utils/auth.js",
+    "utils/request.js",
+    "utils/storage.js"
+  ],
+  "exclude": [
+    "node_modules/**",
+    "miniprogram_npm/**",
+    "components/**"
+  ],
+  "options": {
+    "stringEncryption": true,
+    "propertyEncryption": false,
+    "callTransform": true,
+    "deadCodeInjection": false,
+    "selfDefending": false,
+    "debugProtection": false
+  }
+}

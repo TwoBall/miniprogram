@@ -105,7 +105,32 @@ async function callCloud(name, data = {}, options = {}) {
   }
 
   if (showError) {
-    errorUtil.handleError(lastError, { context: `云函数 ${name}` })
+    // 显示友好的错误提示，提供重试选项
+    const isNetworkError = lastError?.message?.includes('网络') ||
+                          lastError?.message?.includes('timeout') ||
+                          lastError?.errMsg?.includes('request:fail')
+    
+    if (isNetworkError) {
+      // 网络错误时显示重试对话框
+      wx.showModal({
+        title: '网络异常',
+        content: '请检查网络连接后重试',
+        confirmText: '重试',
+        cancelText: '取消',
+        success: async (res) => {
+          if (res.confirm) {
+            // 用户点击重试，重新调用
+            try {
+              return await callCloud(name, data, options)
+            } catch (e) {
+              console.error('重试失败:', e)
+            }
+          }
+        }
+      })
+    } else {
+      errorUtil.handleError(lastError, { context: `云函数 ${name}` })
+    }
   }
 
   throw lastError
