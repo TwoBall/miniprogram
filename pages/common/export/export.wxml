@@ -149,6 +149,8 @@
     actions="{{ departmentActions }}"
     bind:select="onSelectDepartment"
     bind:close="onCloseDepartmentPicker"
+    bind:cancel="onCloseDepartmentPicker"
+    cancel-text="取消"
   />
 
   <!-- 社团选择器 -->
@@ -157,6 +159,8 @@
     actions="{{ clubActions }}"
     bind:select="onSelectClub"
     bind:close="onCloseClubPicker"
+    bind:cancel="onCloseClubPicker"
+    cancel-text="取消"
   />
 
   <!-- 班级选择器 -->
@@ -165,5 +169,7 @@
     actions="{{ classActions }}"
     bind:select="onSelectClass"
     bind:close="onCloseClassPicker"
+    bind:cancel="onCloseClassPicker"
+    cancel-text="取消"
   />
 </view>

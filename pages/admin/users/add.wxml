@@ -86,6 +86,7 @@
     actions="{{ roleOptions }}"
     bind:select="onRoleConfirm"
     bind:close="onRoleCancel"
+    bind:cancel="onRoleCancel"
     cancel-text="取消"
   />
 
@@ -95,6 +96,7 @@
     actions="{{ departmentOptions }}"
     bind:select="onDepartmentConfirm"
     bind:close="onDepartmentCancel"
+    bind:cancel="onDepartmentCancel"
     cancel-text="取消"
   />
 
@@ -104,6 +106,7 @@
     actions="{{ classOptions }}"
     bind:select="onClassConfirm"
     bind:close="onClassCancel"
+    bind:cancel="onClassCancel"
     cancel-text="取消"
   />
 
@@ -113,6 +116,7 @@
     actions="{{ clubOptions }}"
     bind:select="onClubConfirm"
     bind:close="onClubCancel"
+    bind:cancel="onClubCancel"
     cancel-text="取消"
   />
 

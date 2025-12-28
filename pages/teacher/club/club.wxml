@@ -178,8 +178,9 @@
     show="{{ showStudentActions }}"
     actions="{{ studentActions }}"
     cancel-text="取消"
-    description="{{ currentStudent.studentName }}"
+    description="{{ currentStudent.studentName || '' }}"
     bind:select="onStudentActionSelect"
     bind:close="onStudentActionClose"
+    bind:cancel="onStudentActionClose"
   />
 </view>
