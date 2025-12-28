@@ -1,0 +1,42 @@
+<view class="empty-state">
+  <!-- 图片或图标 -->
+  <view class="empty-state-image" style="width: {{imageSize}}; height: {{imageSize}};">
+    <image
+      wx:if="{{currentConfig.image}}"
+      src="{{currentConfig.image}}"
+      mode="aspectFit"
+      class="custom-image"
+    />
+    <van-icon
+      wx:else
+      name="{{currentConfig.icon}}"
+      size="{{imageSize}}"
+      color="#dcdee0"
+    />
+  </view>
+
+  <!-- 标题 -->
+  <view class="empty-state-title" wx:if="{{currentConfig.title}}">
+    {{currentConfig.title}}
+  </view>
+
+  <!-- 描述 -->
+  <view class="empty-state-description" wx:if="{{currentConfig.description}}">
+    {{currentConfig.description}}
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="empty-state-action" wx:if="{{buttonText}}">
+    <van-button
+      type="{{buttonType}}"
+      size="small"
+      round
+      bind:click="onActionTap"
+    >
+      {{buttonText}}
+    </van-button>
+  </view>
+
+  <!-- 插槽：自定义内容 -->
+  <slot name="extra"></slot>
+</view>

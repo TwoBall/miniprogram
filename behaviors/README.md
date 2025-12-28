@@ -14,6 +14,8 @@
 - `datePickerBehavior.js` - 日期选择器通用行为，提供日期选择器状态管理和事件处理
 - `paginationBehavior.js` - 分页加载通用行为，提供列表分页状态管理和事件处理
 - `studentListBehavior.js` - 学生列表通用行为，提供搜索、筛选、缺勤预警、分布统计等功能
+- `throttleBehavior.js` - 节流防抖通用行为，提供按钮节流、防抖和异步操作状态管理
+- `formFeedbackBehavior.js` - 表单反馈通用行为，提供表单提交状态管理、震动反馈和错误处理
 
 ## profileBehavior 功能
 
@@ -92,3 +94,95 @@ Page({
 - `loadAbsenceWarnings(params)` - 加载缺勤预警
 - `onTabChange(e)` - Tab切换
 - `hasWarning(studentId)` - 检查学生是否有预警
+
+## throttleBehavior 功能
+
+### 数据字段
+- `btnLoadingMap` - 按钮加载状态映射表
+
+### 方法
+- `throttle(fn, delay, key)` - 节流函数，在指定时间内只执行一次
+- `debounce(fn, delay, key)` - 防抖函数，延迟执行，每次调用重置计时器
+- `setBtnLoading(btnKey, loading)` - 设置按钮加载状态
+- `safeAsyncAction(btnKey, asyncFn)` - 安全的异步操作包装器，自动管理加载状态
+- `resetBtnLoading(btnKeys)` - 批量重置按钮状态
+
+### 使用示例
+
+```javascript
+const throttleBehavior = require('../../../behaviors/throttleBehavior')
+
+Page({
+  behaviors: [throttleBehavior],
+
+  // 方式1：使用节流函数
+  onSubmit() {
+    this.throttle(() => this.doSubmit(), 1000, 'submit')
+  },
+
+  // 方式2：使用安全异步操作
+  async onApprove() {
+    await this.safeAsyncAction('approve', async () => {
+      return await this.callApproveAPI()
+    })
+  }
+})
+```
+
+```xml
+<!-- WXML 中使用加载状态 -->
+<van-button loading="{{btnLoadingMap.submit}}" bind:click="onSubmit">提交</van-button>
+```
+
+## formFeedbackBehavior 功能
+
+### 数据字段
+- `formSubmitting` - 表单是否正在提交
+- `formErrors` - 字段级错误信息
+- `formDirty` - 表单是否有修改
+
+### 方法
+- `markFormDirty()` - 标记表单已修改
+- `resetFormState()` - 重置表单状态
+- `setFieldError(field, message)` - 设置字段错误
+- `clearFieldError(field)` - 清除字段错误
+- `setFormErrors(errors)` - 批量设置错误
+- `validateRequired(data, requiredFields)` - 验证必填字段
+- `submitForm(submitFn, options)` - 提交表单的包装函数
+- `vibrateOnSuccess()` - 成功时震动反馈
+- `vibrateOnError()` - 错误时震动反馈
+- `checkBeforeLeave()` - 页面离开前检查
+
+### 使用示例
+
+```javascript
+const formFeedbackBehavior = require('../../../behaviors/formFeedbackBehavior')
+
+Page({
+  behaviors: [formFeedbackBehavior],
+
+  async onSubmit() {
+    // 验证必填字段
+    if (!this.validateRequired(this.data.formData, [
+      { field: 'name', label: '姓名' },
+      { field: 'phone', label: '手机号' }
+    ])) return
+
+    // 提交表单
+    await this.submitForm(async () => {
+      return await this.callSubmitAPI()
+    }, {
+      successMessage: '注册成功',
+      onSuccess: () => wx.navigateBack()
+    })
+  }
+})
+```
+
+### 使用该 Behavior 的页面
+
+### throttleBehavior
+- `pages/admin/approval/approval.js`
+
+### formFeedbackBehavior
+- （待集成）

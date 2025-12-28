@@ -65,4 +65,67 @@
       </view>
     </view>
   </block>
+
+  <!-- 概览页骨架（统计卡片 + 预警列表） -->
+  <block wx:elif="{{type === 'overview'}}">
+    <view class="skeleton-overview">
+      <!-- 顶部统计卡片 -->
+      <view class="skeleton-overview-stats">
+        <view class="skeleton-overview-stat-item" wx:for="{{3}}" wx:key="*this">
+          <view class="skeleton-stat-value-lg"></view>
+          <view class="skeleton-stat-label"></view>
+        </view>
+      </view>
+      <!-- 图表区域 -->
+      <view class="skeleton-chart-card">
+        <view class="skeleton-chart-title"></view>
+        <view class="skeleton-chart-area"></view>
+      </view>
+      <!-- 预警列表 -->
+      <view class="skeleton-section-title"></view>
+      <view class="skeleton-warning-list">
+        <view class="skeleton-warning-item" wx:for="{{3}}" wx:key="*this">
+          <view class="skeleton-avatar round"></view>
+          <view class="skeleton-warning-content">
+            <view class="skeleton-title" style="width: 50%"></view>
+            <view class="skeleton-subtitle" style="width: 70%"></view>
+          </view>
+          <view class="skeleton-warning-badge"></view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 审批卡片骨架 -->
+  <block wx:elif="{{type === 'approval'}}">
+    <view class="skeleton-approval-card" wx:for="{{items}}" wx:key="*this">
+      <view class="skeleton-approval-header">
+        <view class="skeleton-avatar round"></view>
+        <view class="skeleton-approval-info">
+          <view class="skeleton-title" style="width: 40%"></view>
+          <view class="skeleton-subtitle" style="width: 60%"></view>
+        </view>
+        <view class="skeleton-approval-status"></view>
+      </view>
+      <view class="skeleton-approval-body">
+        <view class="skeleton-row" style="width: 80%"></view>
+        <view class="skeleton-row" style="width: 60%"></view>
+      </view>
+      <view class="skeleton-approval-actions">
+        <view class="skeleton-btn"></view>
+        <view class="skeleton-btn"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 表单骨架 -->
+  <block wx:elif="{{type === 'form'}}">
+    <view class="skeleton-form">
+      <view class="skeleton-form-item" wx:for="{{row}}" wx:key="*this">
+        <view class="skeleton-form-label"></view>
+        <view class="skeleton-form-input"></view>
+      </view>
+      <view class="skeleton-form-btn"></view>
+    </view>
+  </block>
 </view>

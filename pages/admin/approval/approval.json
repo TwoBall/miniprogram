@@ -5,7 +5,6 @@
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
     "van-dialog": "@vant/weapp/dialog/index",
-    "van-empty": "@vant/weapp/empty/index",
     "van-field": "@vant/weapp/field/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-loading": "@vant/weapp/loading/index",
@@ -14,6 +13,7 @@
     "van-tabs": "@vant/weapp/tabs/index",
     "van-tag": "@vant/weapp/tag/index",
     "van-toast": "@vant/weapp/toast/index",
-    "skeleton": "/components/skeleton/skeleton"
+    "skeleton": "/components/skeleton/skeleton",
+    "empty-state": "/components/empty-state/empty-state"
   }
 }

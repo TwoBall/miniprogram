@@ -5,6 +5,60 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.7.0] - 2025-12-28
+
+### 第四阶段：用户体验优化组件库
+
+#### 新增 Behaviors
+- **throttleBehavior.js** - 节流防抖通用行为
+  - `throttle(fn, delay, key)` - 节流函数，在指定时间内只执行一次
+  - `debounce(fn, delay, key)` - 防抖函数，延迟执行
+  - `setBtnLoading(btnKey, loading)` - 按钮加载状态管理
+  - `safeAsyncAction(btnKey, asyncFn)` - 安全的异步操作包装器
+- **formFeedbackBehavior.js** - 表单反馈通用行为
+  - `validateRequired(data, requiredFields)` - 必填字段验证
+  - `submitForm(submitFn, options)` - 表单提交包装器
+  - `vibrateOnSuccess()` / `vibrateOnError()` - 震动反馈
+  - `checkBeforeLeave()` - 离开前确认
+
+#### 新增组件
+- **lazy-image** - 懒加载图片组件
+  - 使用 IntersectionObserver 实现视口内懒加载
+  - 支持占位图、加载动画、错误处理
+  - 支持圆形和方形样式
+- **empty-state** - 空状态组件
+  - 10 种预设场景：default, students, attendance, approval, notification, search, network, history, transfer, warning
+  - 支持自定义图片、标题、描述和操作按钮
+
+#### 骨架屏增强
+- 新增 3 种骨架屏类型：
+  - `overview` - 概览页骨架（统计卡片 + 图表 + 列表）
+  - `approval` - 审批卡片骨架
+  - `form` - 表单骨架
+
+#### 动画样式库
+- 创建 `styles/animations.wxss` 全局动画库
+  - 淡入动画：fadeIn, fadeInUp, fadeInDown
+  - 滑入动画：slideInLeft, slideInRight, slideInBottom
+  - 弹出动画：popIn, cardPopIn
+  - 列表动画：listItemEnter, cardListEnter（支持交错动画）
+  - 交互反馈：btnActive, cardTap, listItemTap, iconTap
+  - 加载动画：pulse, spin, shimmer, bounceLoading
+  - 状态动画：shake, heartbeat, successBounce, errorShake
+
+#### 页面集成
+- `pages/admin/approval` - 集成 throttleBehavior、empty-state、动画类名
+  - 审批按钮添加加载状态和节流保护
+  - 使用 empty-state 替换 van-empty
+  - 卡片列表添加入场动画
+
+### 文档更新
+- 更新 `behaviors/README.md` 添加新 Behavior 文档
+- 更新 `components/README.md` 添加新组件文档
+- 在 `app.wxss` 中引入动画样式库
+
+---
+
 ## [1.6.0] - 2025-12-28
 
 ### 用户体验优化（第三阶段）

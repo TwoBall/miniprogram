@@ -9,6 +9,7 @@
 ## 文件索引
 
 - `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
+- `animations.wxss` - 动画样式库（入场动画、交互反馈、加载状态）
 - `profile-base.wxss` - Profile 页面公共样式基类
 - `student-list-base.wxss` - 学生列表页面公共样式基类
 
@@ -68,6 +69,74 @@
 ## 相关文档
 
 - [CARD_STYLE_GUIDE.md](../CARD_STYLE_GUIDE.md) - 卡片样式详细规范
+
+## animations.wxss 动画样式库
+
+动画样式库提供统一的动画效果，提升用户交互体验。已在 `app.wxss` 中全局引入。
+
+### 入场动画
+
+| 类名 | 效果 | 时长 |
+|-----|------|------|
+| `.fade-in` | 淡入 | 0.3s |
+| `.fade-in-up` | 向上淡入 | 0.4s |
+| `.slide-in-left` | 从左滑入 | 0.3s |
+| `.pop-in` | 弹入缩放 | 0.3s |
+| `.card-pop-in` | 卡片弹入 | 0.35s |
+
+### 列表动画
+
+| 类名 | 效果 | 说明 |
+|-----|------|------|
+| `.list-item-enter` | 列表项入场 | 从左淡入，0.3s |
+| `.card-list-enter` | 卡片列表入场 | 向上弹入，支持延迟 |
+| `.delay-1` ~ `.delay-5` | 延迟修饰符 | 用于交错动画效果 |
+
+### 交互反馈
+
+| 类名 | 效果 | 用途 |
+|-----|------|------|
+| `.btn-active` | 按钮点击缩放 | 配合 `:active` 使用 |
+| `.card-tap` | 卡片点击缩放 | 配合 `:active` 使用 |
+| `.list-item-tap` | 列表项点击 | 背景色变化 + 缩放 |
+
+### 加载动画
+
+| 类名 | 效果 | 用途 |
+|-----|------|------|
+| `.pulse` | 脉冲闪烁 | 加载占位 |
+| `.spin` | 旋转 | 加载图标 |
+| `.shimmer` | 微光扫过 | 骨架屏效果 |
+| `.bounce-loading` | 弹跳加载 | 加载指示器 |
+
+### 状态动画
+
+| 类名 | 效果 | 用途 |
+|-----|------|------|
+| `.shake` | 左右抖动 | 错误提示 |
+| `.heartbeat` | 心跳 | 强调元素 |
+| `.success-bounce` | 成功弹跳 | 成功状态 |
+| `.error-shake` | 错误抖动 | 错误状态 |
+
+### 使用示例
+
+```html
+<!-- 列表项入场动画，带延迟 -->
+<view class="card card-list-enter delay-{{index}}" wx:for="{{list}}" wx:key="id">
+  {{item.name}}
+</view>
+
+<!-- 按钮点击反馈 -->
+<button class="btn-active">提交</button>
+
+<!-- 骨架屏微光效果 -->
+<view class="skeleton-item shimmer"></view>
+
+<!-- 错误状态抖动 -->
+<view class="input-wrapper {{hasError ? 'error-shake' : ''}}">
+  <input />
+</view>
+```
 
 ## student-list-base.wxss 学生列表样式
 
