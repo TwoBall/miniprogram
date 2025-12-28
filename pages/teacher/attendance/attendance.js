@@ -41,7 +41,9 @@ Page({
     showMarkedList: false,
     markedStudents: [],
     // 节流时间戳
-    lastMoveTime: 0
+    lastMoveTime: 0,
+    // WXS 重置触发器
+    resetCardTrigger: false
   },
 
   onLoad() {
@@ -157,7 +159,37 @@ Page({
     }
   },
 
-  // ========== 触摸事件处理 ==========
+  // ========== WXS 触摸事件回调 ==========
+  /**
+   * WXS 触摸开始回调
+   * 仅记录起始位置，不执行 setData
+   */
+  onWxsTouchStart(data) {
+    this._startX = data.startX
+    this._startY = data.startY
+  },
+
+  /**
+   * WXS 触摸结束回调
+   * 根据滑动距离判断操作类型
+   */
+  onWxsTouchEnd(data) {
+    const { moveX, threshold } = data
+
+    if (moveX > threshold) {
+      this.markPresent()
+    } else if (moveX < -threshold) {
+      this.markAbsent()
+    } else {
+      // 回弹：触发 WXS resetCard
+      this.setData({
+        resetCardTrigger: !this.data.resetCardTrigger
+      })
+    }
+  },
+
+  // ========== 降级方案：原生触摸事件处理 ==========
+  // 当 WXS 不生效时使用（如开发者工具调试）
   onTouchStart(e) {
     this.setData({
       startX: e.touches[0].clientX,

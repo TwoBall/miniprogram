@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "注册",
+  "initialRenderingCache": "static",
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
     "van-cell": "@vant/weapp/cell/index",

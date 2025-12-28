@@ -15,6 +15,64 @@ const {
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 
+// ========== 状态机定义 ==========
+/**
+ * 转社团申请状态机
+ * 定义所有有效的状态流转路径
+ */
+const TRANSFER_STATUS = {
+  PENDING_TEACHER: 'pending_teacher',           // 待老师确认
+  PENDING_CLASS_TEACHER: 'pending_classTeacher', // 待班主任审批
+  APPROVED: 'approved',                          // 已通过（终态）
+  REJECTED: 'rejected'                           // 已拒绝（终态）
+}
+
+/**
+ * 状态流转规则
+ * key: 当前状态
+ * value: 允许流转到的状态数组
+ */
+const STATE_TRANSITIONS = {
+  [TRANSFER_STATUS.PENDING_TEACHER]: [
+    TRANSFER_STATUS.PENDING_CLASS_TEACHER, // 双方老师都确认后
+    TRANSFER_STATUS.REJECTED               // 任意老师拒绝
+  ],
+  [TRANSFER_STATUS.PENDING_CLASS_TEACHER]: [
+    TRANSFER_STATUS.APPROVED,              // 班主任通过
+    TRANSFER_STATUS.REJECTED               // 班主任拒绝
+  ],
+  [TRANSFER_STATUS.APPROVED]: [],          // 终态，不可流转
+  [TRANSFER_STATUS.REJECTED]: []           // 终态，不可流转
+}
+
+/**
+ * 验证状态流转是否合法
+ * @param {string} currentStatus - 当前状态
+ * @param {string} newStatus - 目标状态
+ * @returns {boolean} 是否允许流转
+ */
+function canTransition(currentStatus, newStatus) {
+  const validNextStates = STATE_TRANSITIONS[currentStatus]
+  if (!validNextStates) {
+    console.error(`[状态机] 未知状态: ${currentStatus}`)
+    return false
+  }
+  const allowed = validNextStates.includes(newStatus)
+  if (!allowed) {
+    console.warn(`[状态机] 非法状态流转: ${currentStatus} -> ${newStatus}`)
+  }
+  return allowed
+}
+
+/**
+ * 检查是否为终态
+ * @param {string} status - 状态
+ * @returns {boolean} 是否为终态
+ */
+function isTerminalState(status) {
+  return status === TRANSFER_STATUS.APPROVED || status === TRANSFER_STATUS.REJECTED
+}
+
 /**
  * 云函数入口
  */
@@ -334,9 +392,12 @@ async function handleApprove(event, wxContext) {
             return { success: false, message: '该学生不在您的班级' }
         }
 
-        // 验证状态
-        if (request.status !== 'pending_classTeacher') {
-            return { success: false, message: '该申请当前无法审批' }
+        // 状态机验证：检查是否可以流转到 approved 状态
+        if (!canTransition(request.status, TRANSFER_STATUS.APPROVED)) {
+            if (isTerminalState(request.status)) {
+                return { success: false, message: '该申请已处于终态，无法操作' }
+            }
+            return { success: false, message: `当前状态(${request.status})无法直接审批通过` }
         }
 
         // 更新申请状态
@@ -416,15 +477,23 @@ async function handleReject(event, wxContext) {
 
         const request = requestRes.data
 
-        // 验证权限
-        let canReject = false
-        if (user.role === 'teacher') {
-            canReject = request.fromClub === user.clubName || request.toClub === user.clubName
-        } else if (user.role === 'classTeacher') {
-            canReject = request.className === user.className
+        // 状态机验证：检查是否可以流转到 rejected 状态
+        if (!canTransition(request.status, TRANSFER_STATUS.REJECTED)) {
+            if (isTerminalState(request.status)) {
+                return { success: false, message: '该申请已处于终态，无法操作' }
+            }
+            return { success: false, message: `当前状态(${request.status})无法拒绝` }
         }
 
-        if (!canReject) {
+        // 验证权限
+        let canRejectPermission = false
+        if (user.role === 'teacher') {
+            canRejectPermission = request.fromClub === user.clubName || request.toClub === user.clubName
+        } else if (user.role === 'classTeacher') {
+            canRejectPermission = request.className === user.className
+        }
+
+        if (!canRejectPermission) {
             return { success: false, message: '无权限拒绝该申请' }
         }
 

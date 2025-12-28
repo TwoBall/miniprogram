@@ -1,3 +1,5 @@
+<wxs module="swipe" src="./swipe.wxs"></wxs>
+
 <view class="attendance-container">
   <!-- 顶部信息栏 -->
   <view class="header-section">
@@ -64,13 +66,15 @@
         </view>
       </view>
 
-      <!-- 当前卡片（可滑动） -->
-      <view 
+      <!-- 当前卡片（可滑动） - 使用 WXS 处理触摸事件提升性能 -->
+      <view
         class="student-card card-current {{swipeDirection}}"
         style="{{cardStyle}}"
-        bindtouchstart="onTouchStart"
-        bindtouchmove="onTouchMove"
-        bindtouchend="onTouchEnd"
+        bindtouchstart="{{swipe.handleTouchStart}}"
+        bindtouchmove="{{swipe.handleTouchMove}}"
+        bindtouchend="{{swipe.handleTouchEnd}}"
+        change:prop="{{swipe.resetCard}}"
+        prop="{{resetCardTrigger}}"
       >
         <!-- 滑动反馈图标 -->
         <view class="swipe-indicator present-indicator" style="opacity: {{presentOpacity}}">

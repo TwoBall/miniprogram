@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "登录",
+  "initialRenderingCache": "static",
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
     "van-icon": "@vant/weapp/icon/index",

@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "考勤看板",
   "enablePullDownRefresh": true,
+  "initialRenderingCache": "dynamic",
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
