@@ -55,11 +55,17 @@ App({
   /**
    * 检查用户认证状态
    * 从本地缓存恢复用户信息到全局数据
+   * 使用异步 API 避免阻塞启动流程
    */
-  checkUserAuth() {
-    const userInfo = wx.getStorageSync('userInfo')
-    if (userInfo) {
-      this.globalData.userInfo = userInfo
+  async checkUserAuth() {
+    try {
+      const res = await wx.getStorage({ key: 'userInfo' })
+      if (res.data) {
+        this.globalData.userInfo = res.data
+      }
+    } catch (e) {
+      // 无缓存数据，忽略错误
+      // 这是正常情况，用户首次使用或缓存已清除
     }
   },
 
