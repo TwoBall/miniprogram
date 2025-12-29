@@ -64,9 +64,9 @@ const profileBehavior = Behavior({
       }
 
       // 通用菜单（所有角色共享）
+      // 注：添加新身份入口统一使用 switchRole 页面，避免重复入口导致行为不一致
       const commonMenus = [
         { id: 'switchRole', icon: 'exchange', text: '切换身份', url: '/pages/common/switchRole/switchRole' },
-        { id: 'addRole', icon: 'add-o', text: '添加新身份', url: '/pages/register/register' },
         { id: 'help', icon: 'question-o', text: '使用帮助', url: '/pages/common/help/help' },
         { id: 'logout', icon: 'revoke', text: '退出登录', action: 'logout' }
       ]

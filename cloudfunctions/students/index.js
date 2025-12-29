@@ -70,24 +70,28 @@ async function handleGetFilterOptions(event) {
 
         // 使用聚合查询获取唯一值（性能优化：避免加载全部1300+学生）
         const [deptRes, classRes, clubRes, classDeptRes] = await Promise.all([
-            // 获取所有学部
+            // 获取所有学部（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({ _id: '$department' })
+                .limit(1000)
                 .end(),
-            // 获取所有班级
+            // 获取所有班级（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({ _id: '$className' })
+                .limit(1000)
                 .end(),
-            // 获取所有社团
+            // 获取所有社团（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({ _id: '$clubName' })
+                .limit(1000)
                 .end(),
-            // 获取班级-学部映射关系
+            // 获取班级-学部映射关系（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({
                     _id: '$className',
                     department: $.first('$department')
                 })
+                .limit(1000)
                 .end()
         ])
 
@@ -208,26 +212,29 @@ async function handleGetStatistics(event) {
         const [totalRes, genderRes, deptRes, clubRes] = await Promise.all([
             // 总人数
             db.collection('students').count(),
-            // 按性别统计
+            // 按性别统计（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({
                     _id: '$gender',
                     count: $.sum(1)
                 })
+                .limit(1000)
                 .end(),
-            // 按学部统计
+            // 按学部统计（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({
                     _id: '$department',
                     count: $.sum(1)
                 })
+                .limit(1000)
                 .end(),
-            // 按社团统计
+            // 按社团统计（添加limit防止默认20条限制）
             db.collection('students').aggregate()
                 .group({
                     _id: '$clubName',
                     count: $.sum(1)
                 })
+                .limit(1000)
                 .end()
         ])
 
