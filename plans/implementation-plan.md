@@ -947,7 +947,7 @@ git checkout tags/v1.0-stable
 
 - [微信小程序性能优化指南](https://developers.weixin.qq.com/miniprogram/dev/framework/performance/tips/start.html)
 - [云开发最佳实践](https://docs.cloudbase.net/)
-- [限频设置指南](https://docs.cloudbase.net/envconfig/ratelimit/intro)
+- [限频设置指南][def]
 
 ### 7.3 版本历史
 
@@ -958,3 +958,5 @@ git checkout tags/v1.0-stable
 ---
 
 **文档结束**
+
+[def]: https://docs.cloudbase.net/envconfig/ratelimit/intro

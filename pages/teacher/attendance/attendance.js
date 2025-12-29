@@ -281,7 +281,7 @@ Page({
 
     // 添加到已点名列表
     markedStudents.push({
-      name: student.studentName,
+      studentName: student.studentName,
       className: student.className,
       status: status
     })
@@ -387,7 +387,7 @@ Page({
         students[i].status = 'present'
         actionHistory.push({ index: i, status: 'present' })
         markedStudents.push({
-          name: students[i].studentName,
+          studentName: students[i].studentName,
           className: students[i].className,
           status: 'present'
         })
