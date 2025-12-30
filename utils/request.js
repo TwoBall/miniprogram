@@ -151,7 +151,7 @@ async function callCloudSilent(name, data = {}) {
 
 /**
  * 获取筛选选项（带缓存）
- * 使用10分钟缓存，减少云函数调用
+ * 优先使用预拉取数据，其次本地缓存，最后云函数调用
  * @param {boolean} forceRefresh - 是否强制刷新缓存
  * @returns {Promise<Object>} 筛选选项 { departments, classes, clubs, classDeptMap }
  */
@@ -159,15 +159,26 @@ async function getFilterOptions(forceRefresh = false) {
   const cacheKey = storage.STORAGE_KEYS.FILTER_OPTIONS
   const cacheTimeKey = storage.STORAGE_KEYS.FILTER_OPTIONS_TIME
 
-  // 尝试从缓存获取
   if (!forceRefresh) {
+    // 1. 优先使用预拉取数据（10分钟内有效）
+    const app = getApp()
+    const prefetchData = app?.globalData?.prefetchData
+    if (prefetchData?.filterOptions) {
+      const age = Date.now() - (prefetchData.timestamp || 0)
+      if (age < storage.CACHE_DURATION.TEN_MINUTES) {
+        console.log('[request] 使用预拉取的筛选选项')
+        return prefetchData.filterOptions
+      }
+    }
+
+    // 2. 尝试从本地缓存获取
     const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.TEN_MINUTES)
     if (cached) {
       return cached
     }
   }
 
-  // 调用云函数获取
+  // 3. 调用云函数获取
   const result = await callCloudSilent('students', { action: 'getFilterOptions' })
 
   if (result && result.success) {

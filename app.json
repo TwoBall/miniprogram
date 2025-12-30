@@ -64,10 +64,6 @@
     "pages/login/login": {
       "network": "all",
       "packages": ["common"]
-    },
-    "pages/register/register": {
-      "network": "wifi",
-      "packages": ["teacher", "classTeacher", "leader", "admin"]
     }
   },
   "window": {
@@ -95,5 +91,7 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "cloud": true
+  "cloud": true,
+  "plugins": {},
+  "fetchDataUrl": "cloudfunctions://prefetch"
 }
