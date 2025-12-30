@@ -387,11 +387,30 @@ async function handleGetByDepartment(event) {
     const { department, date } = event
 
     try {
-        // 并行查询（添加学部筛选条件到考勤记录查询）
-        const [students, attendanceRecords] = await Promise.all([
-            getAllData(db.collection('students'), { department }, { _id: true, className: true }),
-            getAllData(db.collection('attendance_records'), { date, department }, { records: true })
-        ])
+        // 获取该学部所有学生（用于统计总人数和确认班级）
+        const students = await getAllData(db.collection('students'), { department }, { _id: true, className: true })
+
+        // 获取当天所有考勤记录
+        // 策略调整：先拉取当天所有记录，在内存中过滤，以应对 departments 字段可能是数组也可能是字符串的情况，
+        // 以及避免云数据库数组查询的潜在兼容性问题。
+        const allDayRecords = await getAllData(db.collection('attendance_records'), { date }, { records: true, departments: true })
+
+        // 内存过滤：筛选出包含当前学部的记录
+        const attendanceRecords = allDayRecords.filter(record => {
+            if (!record.departments) return false
+            
+            // 情况1: departments 是数组 (["职教一部", "职教二部"])
+            if (Array.isArray(record.departments)) {
+                return record.departments.includes(department)
+            }
+            
+            // 情况2: departments 是字符串 ("职教一部")
+            if (typeof record.departments === 'string') {
+                return record.departments === department
+            }
+
+            return false
+        })
 
         // 按班级统计
         const classMap = {}
@@ -763,17 +782,29 @@ async function handleGetAbsenceWarnings(event) {
         const endDate = `${month}-31`
 
         // 查询该月所有考勤记录
+        // 策略调整：先按时间范围和社团（如果有）查询，然后在内存中过滤学部
+        // 这样可以兼容 departments 为数组或字符串的情况
         let condition = {
             date: _.gte(startDate).and(_.lte(endDate))
         }
-        if (department) condition.department = department
         if (clubName) condition.clubName = clubName
 
-        const records = await getAllData(
+        let records = await getAllData(
             db.collection('attendance_records'),
             condition,
-            { records: true, clubName: true, date: true }
+            { records: true, clubName: true, date: true, departments: true }
         )
+
+        // 如果指定了学部，在内存中过滤
+        if (department) {
+            records = records.filter(record => {
+                if (!record.departments) return false
+                if (Array.isArray(record.departments)) {
+                    return record.departments.includes(department)
+                }
+                return record.departments === department
+            })
+        }
 
         // 统计每个学生的缺勤次数
         const absenceCount = {}
