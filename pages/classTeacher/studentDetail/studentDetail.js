@@ -1,5 +1,6 @@
 // 学生详情页面
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -44,10 +45,7 @@ Page({
       }
     } catch (error) {
       console.error('加载学生详情失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
     }
   },
 
@@ -111,18 +109,12 @@ Page({
 
         wx.stopPullDownRefresh()
       } else {
-        wx.showToast({
-          title: result.message || '加载失败',
-          icon: 'none'
-        })
+        SafeToast.fail(result.message || '加载失败')
         this.setData({ loading: false })
       }
     } catch (error) {
       console.error('加载考勤历史失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
       this.setData({ loading: false })
       wx.stopPullDownRefresh()
     }
@@ -158,7 +150,7 @@ Page({
   goToTransfer() {
     const { student } = this.data
     if (!student) {
-      wx.showToast({ title: '学生信息加载中', icon: 'none' })
+      SafeToast.fail('学生信息加载中')
       return
     }
 

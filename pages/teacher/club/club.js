@@ -3,6 +3,7 @@
 // pos: 页面层 > 教师模块 > 社团管理
 
 const studentListBehavior = require('../../../behaviors/studentListBehavior')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [studentListBehavior],
@@ -50,10 +51,7 @@ Page({
     const userInfo = wx.getStorageSync('userInfo')
 
     if (!userInfo.clubName) {
-      wx.showToast({
-        title: '未关联社团',
-        icon: 'none'
-      })
+      SafeToast.fail('未关联社团')
       return
     }
 
@@ -91,10 +89,7 @@ Page({
     } catch (error) {
       console.error('加载学生列表失败:', error)
       this.setData({ loading: false, pageLoading: false })
-      wx.showToast({
-        title: error.message || '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail(error.message || '加载失败')
     }
   },
 
@@ -137,10 +132,7 @@ Page({
     } catch (error) {
       console.error('加载出勤率排行失败:', error)
       this.setData({ loading: false })
-      wx.showToast({
-        title: error.message || '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail(error.message || '加载失败')
     }
   },
 

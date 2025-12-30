@@ -1,5 +1,6 @@
 const auth = require('../../../utils/auth')
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -51,10 +52,7 @@ Page({
       }
     } catch (error) {
       console.error('加载详情失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
     } finally {
       wx.hideLoading()
     }

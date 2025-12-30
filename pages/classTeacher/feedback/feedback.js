@@ -1,6 +1,7 @@
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -38,10 +39,7 @@ Page({
     const userInfo = auth.getUserInfo()
 
     if (!feedback.trim()) {
-      wx.showToast({
-        title: '请输入反馈内容',
-        icon: 'none'
-      })
+      SafeToast.fail('请输入反馈内容')
       return
     }
 
@@ -60,26 +58,17 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (result.success) {
-        wx.showToast({
-          title: '反馈已发送',
-          icon: 'success'
-        })
+        SafeToast.success('反馈已发送')
 
         setTimeout(() => {
           wx.navigateBack()
         }, 1500)
       } else {
-        wx.showToast({
-          title: result.message || '发送失败',
-          icon: 'none'
-        })
+        SafeToast.fail(result.message || '发送失败')
       }
     } catch (error) {
       console.error('发送反馈失败:', error)
-      wx.showToast({
-        title: '发送失败，请重试',
-        icon: 'none'
-      })
+      SafeToast.fail('发送失败，请重试')
     } finally {
       this.setData({ loading: false })
     }

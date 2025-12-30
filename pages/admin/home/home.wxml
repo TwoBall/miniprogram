@@ -69,3 +69,5 @@
   <!-- 底部 TabBar -->
   <custom-tabbar role="admin" active="0" />
 </view>
+
+<van-toast id="van-toast" />

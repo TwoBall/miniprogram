@@ -2,6 +2,7 @@
   "navigationBarTitleText": "班级详情",
   "usingComponents": {
     "van-empty": "@vant/weapp/empty/index",
-    "van-icon": "@vant/weapp/icon/index"
+    "van-icon": "@vant/weapp/icon/index",
+    "van-toast": "@vant/weapp/toast/index"
   }
 }

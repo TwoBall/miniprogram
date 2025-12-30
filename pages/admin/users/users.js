@@ -3,6 +3,7 @@
 // pos: 页面层 > 管理员模块 > 用户管理
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [paginationBehavior],
@@ -100,10 +101,7 @@ Page({
       }
     } catch (error) {
       console.error('加载用户列表失败:', error)
-      wx.showToast({
-        title: error.message || '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail(error.message || '加载失败')
       this.setData({ loading: false, pageLoading: false })
     }
   },
@@ -134,10 +132,7 @@ Page({
     const user = e.currentTarget.dataset.user
 
     if (user.role === 'admin') {
-      wx.showToast({
-        title: '不能删除管理员',
-        icon: 'none'
-      })
+      SafeToast.fail('不能删除管理员')
       return
     }
 
@@ -160,10 +155,7 @@ Page({
             wx.hideLoading()
 
             if (result.result.success) {
-              wx.showToast({
-                title: '删除成功',
-                icon: 'success'
-              })
+              SafeToast.success('删除成功')
 
               // 刷新列表
               this.setData({ users: [] })
@@ -174,10 +166,7 @@ Page({
             }
           } catch (error) {
             wx.hideLoading()
-            wx.showToast({
-              title: error.message || '删除失败',
-              icon: 'none'
-            })
+            SafeToast.fail(error.message || '删除失败')
           }
         }
       }

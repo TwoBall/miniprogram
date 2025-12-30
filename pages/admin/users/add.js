@@ -1,5 +1,6 @@
 const app = getApp()
 const storage = require('../../../utils/storage')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -138,10 +139,7 @@ Page({
       }
     } catch (error) {
       wx.hideLoading()
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
     }
   },
 
@@ -226,34 +224,22 @@ Page({
     const { userName, role, department, className, clubName } = this.data.formData
 
     if (!userName.trim()) {
-      wx.showToast({
-        title: '请输入姓名',
-        icon: 'none'
-      })
+      SafeToast.fail('请输入姓名')
       return false
     }
 
     if (role === 'leader' && !department) {
-      wx.showToast({
-        title: '学部领导必须选择学部',
-        icon: 'none'
-      })
+      SafeToast.fail('学部领导必须选择学部')
       return false
     }
 
     if (role === 'classTeacher' && !className) {
-      wx.showToast({
-        title: '班主任必须选择班级',
-        icon: 'none'
-      })
+      SafeToast.fail('班主任必须选择班级')
       return false
     }
 
     if (role === 'teacher' && !clubName) {
-      wx.showToast({
-        title: '社团老师必须选择社团',
-        icon: 'none'
-      })
+      SafeToast.fail('社团老师必须选择社团')
       return false
     }
 
@@ -292,10 +278,7 @@ Page({
       wx.hideLoading()
 
       if (res.result.success) {
-        wx.showToast({
-          title: mode === 'add' ? '添加成功' : '更新成功',
-          icon: 'success'
-        })
+        SafeToast.success(mode === 'add' ? '添加成功' : '更新成功')
 
         setTimeout(() => {
           wx.navigateBack()
@@ -305,10 +288,7 @@ Page({
       }
     } catch (error) {
       wx.hideLoading()
-      wx.showToast({
-        title: error.message || '操作失败',
-        icon: 'none'
-      })
+      SafeToast.fail(error.message || '操作失败')
     } finally {
       this.setData({ submitting: false })
     }

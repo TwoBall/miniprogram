@@ -3,6 +3,7 @@
 // pos: 页面层 > 公共模块 > 发起转社团申请
 
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -65,7 +66,7 @@ Page({
       }
     } catch (error) {
       console.error('加载社团列表失败:', error)
-      wx.showToast({ title: '加载社团失败', icon: 'none' })
+      SafeToast.fail('加载社团失败')
     }
   },
 
@@ -74,7 +75,7 @@ Page({
    */
   showClubPicker() {
     if (this.data.clubOptions.length === 0) {
-      wx.showToast({ title: '暂无可选社团', icon: 'none' })
+      SafeToast.fail('暂无可选社团')
       return
     }
     this.setData({ showClubPicker: true })
@@ -112,7 +113,7 @@ Page({
 
     // 表单验证
     if (!toClub) {
-      wx.showToast({ title: '请选择目标社团', icon: 'none' })
+      SafeToast.fail('请选择目标社团')
       return
     }
 
@@ -131,16 +132,16 @@ Page({
       })
 
       if (result.success) {
-        wx.showToast({ title: '申请已提交', icon: 'success' })
+        SafeToast.success('申请已提交')
         setTimeout(() => {
           wx.navigateBack()
         }, 1500)
       } else {
-        wx.showToast({ title: result.message || '提交失败', icon: 'none' })
+        SafeToast.fail(result.message || '提交失败')
       }
     } catch (error) {
       console.error('提交转社团申请失败:', error)
-      wx.showToast({ title: '提交失败', icon: 'none' })
+      SafeToast.fail('提交失败')
     } finally {
       this.setData({ submitting: false })
     }

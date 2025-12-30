@@ -27,3 +27,5 @@
     {{loading ? '发送中...' : '发送反馈'}}
   </button>
 </view>
+
+<van-toast id="van-toast" />

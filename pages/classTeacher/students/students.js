@@ -4,6 +4,7 @@
 
 const studentListBehavior = require('../../../behaviors/studentListBehavior')
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [studentListBehavior],
@@ -28,10 +29,7 @@ Page({
     if (this.data.className) {
       this.loadStudents()
     } else {
-      wx.showToast({
-        title: '未找到班级信息',
-        icon: 'none'
-      })
+      SafeToast.fail('未找到班级信息')
     }
   },
 
@@ -76,18 +74,12 @@ Page({
 
         wx.stopPullDownRefresh()
       } else {
-        wx.showToast({
-          title: result.message || '加载失败',
-          icon: 'none'
-        })
+        SafeToast.fail(result.message || '加载失败')
         this.setData({ loading: false, pageLoading: false })
       }
     } catch (error) {
       console.error('加载学生列表失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
       this.setData({ loading: false, pageLoading: false })
       wx.stopPullDownRefresh()
     }
@@ -128,10 +120,7 @@ Page({
     } catch (error) {
       console.error('加载出勤率排行失败:', error)
       this.setData({ loading: false })
-      wx.showToast({
-        title: error.message || '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail(error.message || '加载失败')
     }
   },
 

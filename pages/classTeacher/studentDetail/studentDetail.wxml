@@ -113,3 +113,5 @@
     </van-button>
   </view>
 </view>
+
+<van-toast id="van-toast" />

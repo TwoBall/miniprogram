@@ -173,3 +173,5 @@
     cancel-text="取消"
   />
 </view>
+
+<van-toast id="van-toast" />

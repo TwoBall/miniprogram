@@ -2,6 +2,7 @@ const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [paginationBehavior],
@@ -117,10 +118,7 @@ Page({
       }
     } catch (error) {
       console.error('加载历史记录失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
       this.setData({ loading: false })
     } finally {
       wx.hideLoading()

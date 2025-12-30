@@ -1,6 +1,7 @@
 const { formatDate } = require('../../../utils/date')
 const auth = require('../../../utils/auth')
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -100,10 +101,7 @@ Page({
     } catch (error) {
       console.error('加载统计数据失败:', error)
       this.setData({ pageLoading: false })
-      wx.showToast({
-        title: '加载统计数据失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载统计数据失败')
     }
   },
 
@@ -112,10 +110,7 @@ Page({
     wx.navigateTo({
       url,
       fail: () => {
-        wx.showToast({
-          title: '功能开发中',
-          icon: 'none'
-        })
+        SafeToast.fail('功能开发中')
       }
     })
   }

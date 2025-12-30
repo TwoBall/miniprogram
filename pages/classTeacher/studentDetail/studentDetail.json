@@ -10,6 +10,7 @@
     "van-empty": "@vant/weapp/empty/index",
     "van-loading": "@vant/weapp/loading/index",
     "van-tabs": "@vant/weapp/tabs/index",
-    "van-tab": "@vant/weapp/tab/index"
+    "van-tab": "@vant/weapp/tab/index",
+    "van-toast": "@vant/weapp/toast/index"
   }
 }

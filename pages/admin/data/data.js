@@ -3,6 +3,7 @@
 // pos: 页面层 > 管理员模块 > 数据中心
 
 const app = getApp()
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -101,10 +102,7 @@ Page({
       this.setData({ loading: false })
     } catch (error) {
       this.setData({ loading: false })
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
     }
   },
 

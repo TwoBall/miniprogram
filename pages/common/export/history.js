@@ -3,6 +3,7 @@
 // pos: 页面层 > 公共模块 > 导出历史
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [paginationBehavior],
@@ -60,17 +61,11 @@ Page({
           total: res.result.pagination.total
         })
       } else {
-        wx.showToast({
-          title: res.result.message || '加载失败',
-          icon: 'none'
-        })
+        SafeToast.fail(res.result.message || '加载失败')
       }
     } catch (error) {
       console.error('加载导出历史失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
     } finally {
       this.setData({ loading: false })
     }
@@ -200,10 +195,7 @@ Page({
                           fileType: 'xlsx',
                           fail: (err) => {
                             console.error('打开文件失败:', err)
-                            wx.showToast({
-                              title: '打开失败',
-                              icon: 'none'
-                            })
+                            SafeToast.fail('打开失败')
                           }
                         })
                       }
@@ -212,41 +204,26 @@ Page({
                 },
                 fail: (err) => {
                   console.error('保存文件失败:', err)
-                  wx.showToast({
-                    title: '保存失败',
-                    icon: 'none'
-                  })
+                  SafeToast.fail('保存失败')
                 }
               })
             } else {
-              wx.showToast({
-                title: '下载失败',
-                icon: 'none'
-              })
+              SafeToast.fail('下载失败')
             }
           },
           fail: (err) => {
             wx.hideLoading()
             console.error('下载文件失败:', err)
-            wx.showToast({
-              title: '下载失败',
-              icon: 'none'
-            })
+            SafeToast.fail('下载失败')
           }
         })
       } else {
-        wx.showToast({
-          title: res.result.message || '获取链接失败',
-          icon: 'none'
-        })
+        SafeToast.fail(res.result.message || '获取链接失败')
       }
     } catch (error) {
       wx.hideLoading()
       console.error('获取下载链接失败:', error)
-      wx.showToast({
-        title: '获取链接失败',
-        icon: 'none'
-      })
+      SafeToast.fail('获取链接失败')
     } finally {
       this.setData({ [`downloading.${id}`]: false })
     }
@@ -279,23 +256,14 @@ Page({
               // 从列表中移除
               const records = this.data.records.filter(r => r._id !== id)
               this.setData({ records })
-              wx.showToast({
-                title: '删除成功',
-                icon: 'success'
-              })
+              SafeToast.success('删除成功')
             } else {
-              wx.showToast({
-                title: result.result.message || '删除失败',
-                icon: 'none'
-              })
+              SafeToast.fail(result.result.message || '删除失败')
             }
           } catch (error) {
             wx.hideLoading()
             console.error('删除失败:', error)
-            wx.showToast({
-              title: '删除失败',
-              icon: 'none'
-            })
+            SafeToast.fail('删除失败')
           }
         }
       }

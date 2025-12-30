@@ -54,3 +54,5 @@
     <van-empty wx:else description="暂无数据" image="search" />
   </view>
 </view>
+
+<van-toast id="van-toast" />

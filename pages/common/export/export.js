@@ -1,6 +1,7 @@
 const app = getApp()
 const { formatDate } = require('../../../utils/date')
 const request = require('../../../utils/request')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -238,10 +239,7 @@ Page({
 
     // 验证日期范围
     if ((exportType === 'attendance' || exportType === 'summary') && (!startDate || !endDate)) {
-      wx.showToast({
-        title: '请选择日期范围',
-        icon: 'none'
-      })
+      SafeToast.fail('请选择日期范围')
       return
     }
 
@@ -290,10 +288,7 @@ Page({
                           fileType: 'xlsx',
                           fail: (err) => {
                             console.error('打开文件失败:', err)
-                            wx.showToast({
-                              title: '文件已保存，但打开失败',
-                              icon: 'none'
-                            })
+                            SafeToast.fail('文件已保存，但打开失败')
                           }
                         })
                       }
@@ -302,40 +297,25 @@ Page({
                 },
                 fail: (err) => {
                   console.error('保存文件失败:', err)
-                  wx.showToast({
-                    title: '保存文件失败',
-                    icon: 'none'
-                  })
+                  SafeToast.fail('保存文件失败')
                 }
               })
             } else {
-              wx.showToast({
-                title: '下载文件失败',
-                icon: 'none'
-              })
+              SafeToast.fail('下载文件失败')
             }
           },
           fail: (err) => {
             console.error('下载文件失败:', err)
-            wx.showToast({
-              title: '下载文件失败',
-              icon: 'none'
-            })
+            SafeToast.fail('下载文件失败')
           }
         })
       } else {
-        wx.showToast({
-          title: res.result.message || '导出失败',
-          icon: 'none'
-        })
+        SafeToast.fail(res.result.message || '导出失败')
       }
     } catch (error) {
       wx.hideLoading()
       console.error('导出失败:', error)
-      wx.showToast({
-        title: '导出失败',
-        icon: 'none'
-      })
+      SafeToast.fail('导出失败')
     } finally {
       this.setData({ exporting: false })
     }

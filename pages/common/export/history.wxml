@@ -66,3 +66,5 @@
     没有更多了
   </view>
 </view>
+
+<van-toast id="van-toast" />

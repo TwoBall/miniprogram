@@ -3,6 +3,7 @@ const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const throttleBehavior = require('../../../behaviors/throttleBehavior')
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [paginationBehavior, throttleBehavior],
@@ -83,18 +84,12 @@ Page({
           wx.stopPullDownRefresh()
         }
       } else {
-        wx.showToast({
-          title: result.message || '加载失败',
-          icon: 'none'
-        })
+        SafeToast.fail(result.message || '加载失败')
         this.setData({ loading: false })
       }
     } catch (error) {
       console.error('加载转社团申请失败:', error)
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      })
+      SafeToast.fail('加载失败')
       this.setData({ loading: false })
       if (refresh) {
         wx.stopPullDownRefresh()
@@ -118,17 +113,11 @@ Page({
             })
 
             if (result.success) {
-              wx.showToast({
-                title: result.message,
-                icon: 'success'
-              })
+              SafeToast.success(result.message)
               // 刷新列表
               this.loadList(true)
             } else {
-              wx.showToast({
-                title: result.message || '确认失败',
-                icon: 'none'
-              })
+              SafeToast.fail(result.message || '确认失败')
             }
           })
         }
@@ -152,17 +141,11 @@ Page({
             })
 
             if (result.success) {
-              wx.showToast({
-                title: result.message,
-                icon: 'success'
-              })
+              SafeToast.success(result.message)
               // 刷新列表
               this.loadList(true)
             } else {
-              wx.showToast({
-                title: result.message || '审批失败',
-                icon: 'none'
-              })
+              SafeToast.fail(result.message || '审批失败')
             }
           })
         }
@@ -185,10 +168,7 @@ Page({
     const { currentRequestId, rejectReason } = this.data
 
     if (!rejectReason.trim()) {
-      wx.showToast({
-        title: '请输入拒绝原因',
-        icon: 'none'
-      })
+      SafeToast.fail('请输入拒绝原因')
       return
     }
 
@@ -202,19 +182,13 @@ Page({
       })
 
       if (result.success) {
-        wx.showToast({
-          title: result.message,
-          icon: 'success'
-        })
+        SafeToast.success(result.message)
         // 清空输入
         this.setData({ rejectReason: '', currentRequestId: '' })
         // 刷新列表
         this.loadList(true)
       } else {
-        wx.showToast({
-          title: result.message || '拒绝失败',
-          icon: 'none'
-        })
+        SafeToast.fail(result.message || '拒绝失败')
       }
     })
   },
