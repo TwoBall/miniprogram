@@ -1,0 +1,89 @@
+var startX = 0;
+var startY = 0;
+var lastMoveTime = 0;
+var instance = null;
+
+function touchStart(e, ins) {
+  var touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
+  instance = ins.selectComponent('.card-current');
+}
+
+function touchMove(e, ins) {
+  if (!instance) return;
+  
+  var touch = e.touches[0];
+  var moveX = touch.clientX - startX;
+  var moveY = touch.clientY - startY;
+
+  // 忽略垂直滑动
+  if (Math.abs(moveY) > Math.abs(moveX) && Math.abs(moveX) < 30) {
+    return;
+  }
+
+  // 限制滑动范围和角度
+  var rotation = moveX * 0.05;
+  var opacity = Math.min(Math.abs(moveX) / 100, 1);
+  
+  // 设置卡片样式
+  instance.setStyle({
+    'transform': 'translateX(' + moveX + 'px) rotate(' + rotation + 'deg)',
+    'transition': 'none'
+  });
+
+  // 设置指示器透明度
+  var presentIndicator = ins.selectComponent('.present-indicator');
+  var absentIndicator = ins.selectComponent('.absent-indicator');
+
+  if (moveX > 0) {
+    // 右滑 - 到课
+    if (presentIndicator) presentIndicator.setStyle({ 'opacity': opacity });
+    if (absentIndicator) absentIndicator.setStyle({ 'opacity': 0 });
+    instance.addClass('swiping-right');
+    instance.removeClass('swiping-left');
+  } else {
+    // 左滑 - 缺课
+    if (presentIndicator) presentIndicator.setStyle({ 'opacity': 0 });
+    if (absentIndicator) absentIndicator.setStyle({ 'opacity': opacity });
+    instance.addClass('swiping-left');
+    instance.removeClass('swiping-right');
+  }
+}
+
+function touchEnd(e, ins) {
+  if (!instance) return;
+
+  var touch = e.changedTouches[0];
+  var moveX = touch.clientX - startX;
+  var threshold = 100;
+
+  var presentIndicator = ins.selectComponent('.present-indicator');
+  var absentIndicator = ins.selectComponent('.absent-indicator');
+
+  if (moveX > threshold) {
+    // 触发到课
+    ins.callMethod('markPresent');
+    // 动画由 JS 层接管或重置，这里先不做处理以免冲突
+  } else if (moveX < -threshold) {
+    // 触发缺课
+    ins.callMethod('markAbsent');
+  } else {
+    // 回弹
+    instance.setStyle({
+      'transform': 'translateX(0) rotate(0)',
+      'transition': 'all 0.3s ease'
+    });
+    
+    if (presentIndicator) presentIndicator.setStyle({ 'opacity': 0 });
+    if (absentIndicator) absentIndicator.setStyle({ 'opacity': 0 });
+    instance.removeClass('swiping-right');
+    instance.removeClass('swiping-left');
+  }
+}
+
+module.exports = {
+  touchStart: touchStart,
+  touchMove: touchMove,
+  touchEnd: touchEnd
+};

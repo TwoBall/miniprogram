@@ -160,60 +160,8 @@ Page({
     }
   },
 
-  // ========== 触摸事件处理 ==========
-  onTouchStart(e) {
-    this.setData({
-      startX: e.touches[0].clientX,
-      startY: e.touches[0].clientY,
-      moveX: 0
-    })
-  },
-
-  onTouchMove(e) {
-    // 节流：限制 setData 频率（约 60fps）
-    const now = Date.now()
-    if (now - this.data.lastMoveTime < 16) return
-
-    const moveX = e.touches[0].clientX - this.data.startX
-    const moveY = e.touches[0].clientY - this.data.startY
-
-    // 忽略垂直滑动
-    if (Math.abs(moveY) > Math.abs(moveX) && Math.abs(moveX) < 30) {
-      return
-    }
-
-    const rotation = moveX * 0.05
-    const presentOpacity = Math.min(moveX / 100, 1)
-    const absentOpacity = Math.min(-moveX / 100, 1)
-
-    this.setData({
-      moveX,
-      lastMoveTime: now,
-      cardStyle: `transform: translateX(${moveX}px) rotate(${rotation}deg); transition: none;`,
-      presentOpacity: presentOpacity > 0 ? presentOpacity : 0,
-      absentOpacity: absentOpacity > 0 ? absentOpacity : 0,
-      swipeDirection: moveX > 50 ? 'swiping-right' : (moveX < -50 ? 'swiping-left' : '')
-    })
-  },
-
-  onTouchEnd(_e) {
-    const { moveX } = this.data
-    const threshold = 100
-
-    if (moveX > threshold) {
-      this.markPresent()
-    } else if (moveX < -threshold) {
-      this.markAbsent()
-    } else {
-      // 回弹
-      this.setData({
-        cardStyle: 'transform: translateX(0) rotate(0); transition: all 0.3s ease;',
-        presentOpacity: 0,
-        absentOpacity: 0,
-        swipeDirection: ''
-      })
-    }
-  },
+  // ========== 触摸事件处理 (已迁移至 WXS) ==========
+  // 仅保留业务逻辑方法供 WXS 调用
 
   /**
    * 标记学生到课
