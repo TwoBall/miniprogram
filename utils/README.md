@@ -75,14 +75,18 @@ const freshOptions = await request.getFilterOptions(true)
 
 解决 `van-toast` 组件在页面 `onReady` 时可能未完全初始化导致的 "未找到 van-toast 节点" 错误。
 
+**工作原理**：
+1. 使用 `selectComponent('#van-toast')` 检测组件是否存在
+2. 通过轮询等待组件就绪（最多 1 秒）
+3. 组件未就绪时降级使用 `wx.showLoading`
+4. 使用 `try-catch` 捕获错误，避免控制台报错
+
 | 函数名 | 用途 | 说明 |
 |--------|------|------|
-| `SafeToast.loading(options)` | 显示加载提示 | 自动等待组件就绪，支持字符串或对象参数 |
+| `SafeToast.loading(options)` | 显示加载提示 | 自动等待组件就绪，未就绪时降级为 wx.showLoading |
 | `SafeToast.success(options)` | 显示成功提示 | 自动等待组件就绪 |
 | `SafeToast.fail(options)` | 显示失败提示 | 自动等待组件就绪 |
-| `SafeToast.clear()` | 清除提示 | 安全清除，组件未就绪时不报错 |
-| `SafeToast.markReady()` | 标记组件就绪 | 可在 onReady 中手动调用加速 |
-| `SafeToast.reset()` | 重置状态 | 在 onUnload 中调用 |
+| `SafeToast.clear()` | 清除提示 | 同时清除 Toast 和 wx.hideLoading |
 
 ### 使用示例
 

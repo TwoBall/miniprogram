@@ -5,55 +5,74 @@
 import Toast from '@vant/weapp/toast/toast'
 
 /**
- * Toast 是否已就绪
- * 用于跟踪当前页面的 van-toast 组件是否已渲染
+ * 获取当前页面实例
  */
-let toastReady = false
-let toastReadyPromise = null
+function getCurrentPage() {
+  const pages = getCurrentPages()
+  return pages.length > 0 ? pages[pages.length - 1] : null
+}
 
 /**
- * 标记 Toast 已就绪
- * 应在页面 onReady 生命周期后调用
+ * 检查当前页面的 van-toast 组件是否存在
+ * @returns {boolean}
  */
-function markToastReady() {
-  toastReady = true
-  if (toastReadyPromise) {
-    toastReadyPromise.resolve()
-    toastReadyPromise = null
+function checkToastComponent() {
+  const page = getCurrentPage()
+  if (!page) return false
+
+  try {
+    const toast = page.selectComponent('#van-toast')
+    return !!toast
+  } catch {
+    return false
   }
 }
 
 /**
- * 重置 Toast 状态
- * 应在页面 onUnload 时调用
- */
-function resetToastState() {
-  toastReady = false
-  toastReadyPromise = null
-}
-
-/**
- * 等待 Toast 就绪
- * @returns {Promise<void>}
+ * 等待 Toast 组件就绪
+ * 通过轮询检测组件是否存在，最多等待 1 秒
+ * @returns {Promise<boolean>} 组件是否就绪
  */
 function waitForToast() {
-  if (toastReady) return Promise.resolve()
+  return new Promise((resolve) => {
+    let attempts = 0
+    const maxAttempts = 20 // 最多尝试 20 次，每次 50ms，共 1 秒
 
-  if (!toastReadyPromise) {
-    let resolve
-    toastReadyPromise = new Promise(r => { resolve = r })
-    toastReadyPromise.resolve = resolve
-    // 设置超时，避免无限等待
-    setTimeout(() => {
-      toastReady = true
-      if (toastReadyPromise) {
-        toastReadyPromise.resolve()
-        toastReadyPromise = null
+    const check = () => {
+      if (checkToastComponent()) {
+        resolve(true)
+        return
       }
-    }, 500)
-  }
 
-  return toastReadyPromise
+      attempts++
+      if (attempts >= maxAttempts) {
+        // 超时后仍然尝试调用，让原生 Toast 自己处理
+        resolve(false)
+        return
+      }
+
+      setTimeout(check, 50)
+    }
+
+    // 先用 nextTick 确保当前渲染周期完成
+    wx.nextTick(check)
+  })
+}
+
+/**
+ * 安全调用 Toast，捕获组件未找到的错误
+ */
+function safeCallToast(method, options) {
+  try {
+    return Toast[method](options)
+  } catch (e) {
+    // 静默处理组件未找到的错误
+    if (e.message && e.message.includes('van-toast')) {
+      console.warn('[SafeToast] 组件未就绪，已跳过:', method)
+      return null
+    }
+    throw e
+  }
 }
 
 /**
@@ -61,13 +80,23 @@ function waitForToast() {
  * @param {Object|string} options - Toast 选项或消息
  */
 async function safeLoading(options) {
-  await waitForToast()
+  const ready = await waitForToast()
   const opts = typeof options === 'string' ? { message: options } : options
-  return Toast.loading({
-    forbidClick: true,
-    duration: 0,
-    ...opts
-  })
+
+  if (ready) {
+    return Toast.loading({
+      forbidClick: true,
+      duration: 0,
+      ...opts
+    })
+  } else {
+    // 组件未就绪时使用 wx.showLoading 作为降级方案
+    wx.showLoading({
+      title: opts.message || '加载中...',
+      mask: opts.forbidClick !== false
+    })
+    return null
+  }
 }
 
 /**
@@ -76,7 +105,7 @@ async function safeLoading(options) {
 async function safeSuccess(options) {
   await waitForToast()
   const opts = typeof options === 'string' ? { message: options } : options
-  return Toast.success(opts)
+  return safeCallToast('success', opts)
 }
 
 /**
@@ -85,15 +114,23 @@ async function safeSuccess(options) {
 async function safeFail(options) {
   await waitForToast()
   const opts = typeof options === 'string' ? { message: options } : options
-  return Toast.fail(opts)
+  return safeCallToast('fail', opts)
 }
 
 /**
  * 安全的 Toast.clear 包装器
  */
 function safeClear() {
-  if (toastReady) {
+  try {
     Toast.clear()
+  } catch {
+    // 静默处理
+  }
+  // 同时清除 wx.showLoading（降级方案）
+  try {
+    wx.hideLoading()
+  } catch {
+    // 静默处理
   }
 }
 
@@ -104,9 +141,7 @@ const SafeToast = {
   loading: safeLoading,
   success: safeSuccess,
   fail: safeFail,
-  clear: safeClear,
-  markReady: markToastReady,
-  reset: resetToastState
+  clear: safeClear
 }
 
 /**
