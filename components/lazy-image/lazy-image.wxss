@@ -24,22 +24,15 @@
 }
 
 /* 隐藏状态 */
-.lazy-image.hidden {
+.lazy-image.hidden-opacity {
   opacity: 0;
+  transition: opacity 0.3s ease-out;
 }
 
-/* 淡入动画 */
-.lazy-image.fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* 显示状态 */
+.lazy-image.visible-opacity {
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
 }
 
 /* 加载中指示器 */

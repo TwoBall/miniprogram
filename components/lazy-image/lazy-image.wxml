@@ -5,8 +5,7 @@
 >
   <!-- 占位图（加载前显示） -->
   <image
-    wx:if="{{status === 'pending' || status === 'loading'}}"
-    class="lazy-image placeholder"
+    class="lazy-image placeholder {{status === 'loaded' ? 'hidden-opacity' : ''}}"
     src="{{placeholder}}"
     mode="{{mode}}"
   />
@@ -19,7 +18,7 @@
   <!-- 实际图片 -->
   <image
     wx:if="{{currentSrc}}"
-    class="lazy-image main-image {{status === 'loaded' ? 'fade-in' : 'hidden'}}"
+    class="lazy-image main-image {{status === 'loaded' ? 'visible-opacity' : 'hidden-opacity'}}"
     src="{{currentSrc}}"
     mode="{{mode}}"
     bind:load="onLoad"
