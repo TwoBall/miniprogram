@@ -1,6 +1,6 @@
 const auth = require('../../../utils/auth')
 const request = require('../../../utils/request')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -133,14 +133,14 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (result.success) {
-        Toast.success('保存成功')
+        SafeToast.success('保存成功')
         this.setData({ hasChanges: false })
       } else {
-        Toast.fail(result.message || '保存失败')
+        SafeToast.fail(result.message || '保存失败')
       }
     } catch (error) {
       console.error('保存失败:', error)
-      Toast.fail('保存失败')
+      SafeToast.fail('保存失败')
     } finally {
       this.setData({ saving: false })
     }

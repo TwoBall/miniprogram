@@ -6,7 +6,7 @@ const app = getApp()
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   data: {
@@ -86,12 +86,12 @@ Page({
         this.loadRoles()
       } else {
         this.setData({ loading: false })
-        Toast.fail('获取角色失败')
+        SafeToast.fail('获取角色失败')
       }
     } catch (error) {
       console.error('获取角色失败:', error)
       this.setData({ loading: false })
-      Toast.fail('获取角色失败')
+      SafeToast.fail('获取角色失败')
     }
   },
 
@@ -111,7 +111,7 @@ Page({
     app.globalData.userInfo = role
     app.globalData.userRole = role.role
 
-    Toast.success('切换成功')
+    SafeToast.success('切换成功')
 
     // 跳转到对应页面
     setTimeout(() => {

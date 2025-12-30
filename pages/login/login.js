@@ -1,6 +1,6 @@
 const app = getApp()
 const request = require('../../utils/request')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../utils/error')
 
 Page({
   data: {
@@ -80,7 +80,7 @@ Page({
       const loginRes = await wx.login()
 
       if (!loginRes.code) {
-        Toast.fail('微信登录失败')
+        SafeToast.fail('微信登录失败')
         this.setData({ loading: false })
         return
       }
@@ -91,7 +91,7 @@ Page({
       })
 
       if (!result.success) {
-        Toast.fail(result.message || '登录失败')
+        SafeToast.fail(result.message || '登录失败')
         this.setData({ loading: false })
         return
       }
@@ -109,7 +109,7 @@ Page({
       }
 
       if (result.status === 'pending') {
-        Toast.fail(result.message || '申请正在审核中')
+        SafeToast.fail(result.message || '申请正在审核中')
         this.setData({ loading: false })
         return
       }
@@ -117,7 +117,7 @@ Page({
       if (result.status === 'approved') {
         const userList = result.userList || []
         if (userList.length === 0) {
-          Toast.fail('未找到有效的角色记录')
+          SafeToast.fail('未找到有效的角色记录')
           this.setData({ loading: false })
           return
         }
@@ -130,7 +130,7 @@ Page({
       }
     } catch (error) {
       console.error('登录失败:', error)
-      Toast.fail('登录失败，请重试')
+      SafeToast.fail('登录失败，请重试')
       this.setData({ loading: false })
     }
   },
@@ -144,7 +144,7 @@ Page({
     app.globalData.userInfo = userInfo
     app.globalData.userRole = userInfo.role
 
-    Toast.success('登录成功')
+    SafeToast.success('登录成功')
 
     // 根据角色跳转到不同页面
     setTimeout(() => {

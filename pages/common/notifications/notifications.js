@@ -1,7 +1,7 @@
 const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -68,7 +68,7 @@ Page({
     } catch (error) {
       console.error('加载通知失败:', error)
       this.setData({ loading: false })
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     }
   },
 
@@ -124,7 +124,7 @@ Page({
       }
     } catch (error) {
       console.error('标记已读失败:', error)
-      Toast.fail('操作失败')
+      SafeToast.fail('操作失败')
     }
   },
 
@@ -148,7 +148,7 @@ Page({
       })
 
       if (result.success) {
-        Toast.success(result.message)
+        SafeToast.success(result.message)
         // 刷新列表
         this.setData({ notifications: [] })
         this.resetPagination()
@@ -157,7 +157,7 @@ Page({
       }
     } catch (error) {
       console.error('批量标记失败:', error)
-      Toast.fail('操作失败')
+      SafeToast.fail('操作失败')
     }
   },
 

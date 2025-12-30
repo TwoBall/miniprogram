@@ -12,7 +12,7 @@
 
 - `auth.js` - 身份认证工具，处理用户登录状态、权限验证
 - `date.js` - 日期处理工具，提供日期格式化、计算等功能
-- `error.js` - 错误处理工具，统一处理异常和错误提示
+- `error.js` - 错误处理工具，统一处理异常和错误提示，提供安全的 Toast 包装器
 - `request.js` - 网络请求工具，封装云函数调用和 HTTP 请求
 - `storage.js` - 本地存储工具，封装 wx.getStorageSync 和 wx.setStorageSync
 - `performance.js` - 性能监控工具，提供 setData 性能追踪和云函数调用监控
@@ -68,6 +68,54 @@ const freshOptions = await request.getFilterOptions(true)
 - 添加必要的参数校验和错误处理
 - 避免在工具函数中使用全局状态
 - 保持函数的纯粹性和可测试性
+
+## error.js 错误处理与安全 Toast
+
+### SafeToast 安全 Toast 工具
+
+解决 `van-toast` 组件在页面 `onReady` 时可能未完全初始化导致的 "未找到 van-toast 节点" 错误。
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `SafeToast.loading(options)` | 显示加载提示 | 自动等待组件就绪，支持字符串或对象参数 |
+| `SafeToast.success(options)` | 显示成功提示 | 自动等待组件就绪 |
+| `SafeToast.fail(options)` | 显示失败提示 | 自动等待组件就绪 |
+| `SafeToast.clear()` | 清除提示 | 安全清除，组件未就绪时不报错 |
+| `SafeToast.markReady()` | 标记组件就绪 | 可在 onReady 中手动调用加速 |
+| `SafeToast.reset()` | 重置状态 | 在 onUnload 中调用 |
+
+### 使用示例
+
+```javascript
+const { SafeToast } = require('../../../utils/error')
+
+Page({
+  async loadData() {
+    try {
+      // 安全的 loading，自动等待 van-toast 组件就绪
+      await SafeToast.loading({ message: '加载中...' })
+
+      const result = await request.callCloud('xxx', data)
+
+      if (result.success) {
+        SafeToast.success('加载成功')
+      }
+    } catch (error) {
+      SafeToast.fail('加载失败')
+    } finally {
+      SafeToast.clear()
+    }
+  }
+})
+```
+
+### 错误处理函数
+
+| 函数名 | 用途 |
+|--------|------|
+| `handleError(error, options)` | 统一错误处理，自动显示友好提示 |
+| `checkNetwork()` | 检查网络状态 |
+| `showNetworkError()` | 显示网络异常提示 |
 
 ## performance.js 性能监控工具
 

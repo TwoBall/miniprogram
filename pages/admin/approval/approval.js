@@ -2,7 +2,7 @@ const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const throttleBehavior = require('../../../behaviors/throttleBehavior')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 /**
@@ -132,7 +132,7 @@ Page({
     this.setData({ pageLoading: true })
 
     try {
-      Toast.loading({
+      SafeToast.loading({
         message: '加载中...',
         forbidClick: true,
         duration: 0
@@ -224,9 +224,9 @@ Page({
       this.setData(updateData)
     } catch (error) {
       console.error('加载用户列表失败:', error)
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     } finally {
-      Toast.clear()
+      SafeToast.clear()
       this.setData({ pageLoading: false })
     }
   },
@@ -257,7 +257,7 @@ Page({
       }
     } catch (error) {
       console.error('加载更多已通过用户失败:', error)
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     } finally {
       this.setData({ approvedLoading: false })
     }
@@ -289,7 +289,7 @@ Page({
       }
     } catch (error) {
       console.error('加载更多已拒绝用户失败:', error)
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     } finally {
       this.setData({ rejectedLoading: false })
     }
@@ -351,7 +351,7 @@ Page({
     const { currentUser, currentBtnKey, rejectReason } = this.data
 
     if (!rejectReason || rejectReason.trim() === '') {
-      Toast.fail('请输入拒绝原因')
+      SafeToast.fail('请输入拒绝原因')
       // 震动提示
       wx.vibrateShort({ type: 'heavy' })
       return
@@ -374,18 +374,18 @@ Page({
       }, { showLoading: true, showError: false })
 
       if (result.success) {
-        Toast.success('审批通过')
+        SafeToast.success('审批通过')
         // 成功震动反馈
         wx.vibrateShort({ type: 'medium' })
         setTimeout(() => {
           this.loadAllTabs(true)
         }, 1500)
       } else {
-        Toast.fail(result.message || '操作失败')
+        SafeToast.fail(result.message || '操作失败')
       }
     } catch (error) {
       console.error('审批失败:', error)
-      Toast.fail('操作失败')
+      SafeToast.fail('操作失败')
     } finally {
       this.setBtnLoading(btnKey, false)
     }
@@ -405,18 +405,18 @@ Page({
       }, { showLoading: true, showError: false })
 
       if (result.success) {
-        Toast.success('已拒绝')
+        SafeToast.success('已拒绝')
         // 成功震动反馈
         wx.vibrateShort({ type: 'medium' })
         setTimeout(() => {
           this.loadAllTabs(true)
         }, 1500)
       } else {
-        Toast.fail(result.message || '操作失败')
+        SafeToast.fail(result.message || '操作失败')
       }
     } catch (error) {
       console.error('拒绝失败:', error)
-      Toast.fail('操作失败')
+      SafeToast.fail('操作失败')
     } finally {
       this.setBtnLoading(btnKey, false)
     }

@@ -1,4 +1,4 @@
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../utils/error')
 const storage = require('../../utils/storage')
 const request = require('../../utils/request')
 
@@ -189,7 +189,7 @@ Page({
 
     // 验证输入
     if (!name) {
-      Toast.fail('请输入姓名')
+      SafeToast.fail('请输入姓名')
       return
     }
 
@@ -197,17 +197,17 @@ Page({
 
     // 根据角色验证必填字段
     if (role === 'teacher' && !clubName) {
-      Toast.fail('请选择社团名称')
+      SafeToast.fail('请选择社团名称')
       return
     }
 
     if (role === 'classTeacher' && !className) {
-      Toast.fail('请选择班级')
+      SafeToast.fail('请选择班级')
       return
     }
 
     if (role === 'leader' && !department) {
-      Toast.fail('请选择学部')
+      SafeToast.fail('请选择学部')
       return
     }
 
@@ -226,7 +226,7 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (result.success) {
-        Toast.success('注册申请已提交，请等待管理员审核')
+        SafeToast.success('注册申请已提交，请等待管理员审核')
 
         setTimeout(() => {
           wx.redirectTo({
@@ -234,11 +234,11 @@ Page({
           })
         }, 2000)
       } else {
-        Toast.fail(result.message || '注册失败')
+        SafeToast.fail(result.message || '注册失败')
       }
     } catch (error) {
       console.error('注册失败:', error)
-      Toast.fail('注册失败，请重试')
+      SafeToast.fail('注册失败，请重试')
     } finally {
       this.setData({ loading: false })
     }

@@ -1,7 +1,7 @@
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const request = require('../../../utils/request')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -94,7 +94,7 @@ Page({
     if (!userInfo) return
 
     try {
-      Toast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
+      SafeToast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
 
       this.setData({ pageLoading: true })
 
@@ -153,9 +153,9 @@ Page({
       }
     } catch (error) {
       console.error('加载学生列表失败:', error)
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     } finally {
-      Toast.clear()
+      SafeToast.clear()
       this.setData({ pageLoading: false })
     }
   },
@@ -380,7 +380,7 @@ Page({
     // 检查是否全部点名
     const unmarked = students.filter(s => s.status === null)
     if (unmarked.length > 0) {
-      Toast.fail(`还有 ${unmarked.length} 人未点名`)
+      SafeToast.fail(`还有 ${unmarked.length} 人未点名`)
       return
     }
 
@@ -432,14 +432,14 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (submitResult.success) {
-        Toast.success(submitMode === 'cover' ? '已覆盖' : '提交成功')
+        SafeToast.success(submitMode === 'cover' ? '已覆盖' : '提交成功')
         setTimeout(() => this.loadStudents(), 1500)
       } else {
-        Toast.fail(submitResult.message || '提交失败')
+        SafeToast.fail(submitResult.message || '提交失败')
       }
     } catch (error) {
       console.error('提交失败:', error)
-      Toast.fail('提交失败')
+      SafeToast.fail('提交失败')
     } finally {
       this.setData({ loading: false })
     }

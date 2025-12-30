@@ -2,7 +2,7 @@ const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
-import Toast from '@vant/weapp/toast/toast'
+const { SafeToast } = require('../../../utils/error')
 
 Page({
   behaviors: [datePickerBehavior],
@@ -108,7 +108,7 @@ Page({
     this.setData({ pageLoading: true })
 
     try {
-      Toast.loading({
+      SafeToast.loading({
         message: '加载中...',
         forbidClick: true,
         duration: 0
@@ -128,9 +128,9 @@ Page({
       }
     } catch (error) {
       console.error('加载数据失败:', error)
-      Toast.fail('加载失败')
+      SafeToast.fail('加载失败')
     } finally {
-      Toast.clear()
+      SafeToast.clear()
       this.setData({ pageLoading: false })
     }
   },

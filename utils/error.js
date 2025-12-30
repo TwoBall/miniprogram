@@ -5,6 +5,111 @@
 import Toast from '@vant/weapp/toast/toast'
 
 /**
+ * Toast 是否已就绪
+ * 用于跟踪当前页面的 van-toast 组件是否已渲染
+ */
+let toastReady = false
+let toastReadyPromise = null
+
+/**
+ * 标记 Toast 已就绪
+ * 应在页面 onReady 生命周期后调用
+ */
+function markToastReady() {
+  toastReady = true
+  if (toastReadyPromise) {
+    toastReadyPromise.resolve()
+    toastReadyPromise = null
+  }
+}
+
+/**
+ * 重置 Toast 状态
+ * 应在页面 onUnload 时调用
+ */
+function resetToastState() {
+  toastReady = false
+  toastReadyPromise = null
+}
+
+/**
+ * 等待 Toast 就绪
+ * @returns {Promise<void>}
+ */
+function waitForToast() {
+  if (toastReady) return Promise.resolve()
+
+  if (!toastReadyPromise) {
+    let resolve
+    toastReadyPromise = new Promise(r => { resolve = r })
+    toastReadyPromise.resolve = resolve
+    // 设置超时，避免无限等待
+    setTimeout(() => {
+      toastReady = true
+      if (toastReadyPromise) {
+        toastReadyPromise.resolve()
+        toastReadyPromise = null
+      }
+    }, 500)
+  }
+
+  return toastReadyPromise
+}
+
+/**
+ * 安全的 Toast.loading 包装器
+ * @param {Object|string} options - Toast 选项或消息
+ */
+async function safeLoading(options) {
+  await waitForToast()
+  const opts = typeof options === 'string' ? { message: options } : options
+  return Toast.loading({
+    forbidClick: true,
+    duration: 0,
+    ...opts
+  })
+}
+
+/**
+ * 安全的 Toast.success 包装器
+ */
+async function safeSuccess(options) {
+  await waitForToast()
+  const opts = typeof options === 'string' ? { message: options } : options
+  return Toast.success(opts)
+}
+
+/**
+ * 安全的 Toast.fail 包装器
+ */
+async function safeFail(options) {
+  await waitForToast()
+  const opts = typeof options === 'string' ? { message: options } : options
+  return Toast.fail(opts)
+}
+
+/**
+ * 安全的 Toast.clear 包装器
+ */
+function safeClear() {
+  if (toastReady) {
+    Toast.clear()
+  }
+}
+
+/**
+ * 安全的 Toast 对象
+ */
+const SafeToast = {
+  loading: safeLoading,
+  success: safeSuccess,
+  fail: safeFail,
+  clear: safeClear,
+  markReady: markToastReady,
+  reset: resetToastState
+}
+
+/**
  * 错误类型枚举
  */
 const ErrorType = {
@@ -81,10 +186,10 @@ function handleError(error, options = {}) {
   const logMessage = context ? `[${context}] ${error.message}` : error.message
   console.error(`[${errorType}] ${logMessage}`, error)
 
-  // 显示用户友好提示
+  // 显示用户友好提示（使用安全 Toast）
   if (showToast) {
     const message = getFriendlyMessage(error)
-    Toast.fail(message)
+    SafeToast.fail(message)
   }
 
   return {
@@ -115,11 +220,12 @@ async function checkNetwork() {
  * 显示网络异常提示
  */
 function showNetworkError() {
-  Toast.fail('网络异常，请检查网络连接')
+  SafeToast.fail('网络异常，请检查网络连接')
 }
 
 module.exports = {
   handleError,
   checkNetwork,
-  showNetworkError
+  showNetworkError,
+  SafeToast
 }
