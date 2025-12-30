@@ -5,6 +5,21 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.7.1] - 2025-12-30
+
+### 修复
+- **滑动卡死问题修复**：回退 `pages/teacher/attendance/attendance` 页面的 WXS 滑动优化
+  - 问题根因：WXS 中 `selectComponent()` 无法选择普通 View 元素，导致触摸事件处理失败
+  - 解决方案：移除 WXS 事件绑定，恢复使用原生 JS 触摸事件处理
+  - 删除 `pages/teacher/attendance/swipe.wxs` 文件
+  - 清理 JS 中不再使用的 WXS 回调方法
+- **Dialog 按钮点击区域优化**：增大 `van-dialog` 弹窗按钮的点击区域
+  - 将按钮高度从 96rpx 增加到 100rpx
+  - 添加 `min-height` 确保最小点击区域
+  - 优化按钮内部元素的布局，确保整个区域可点击
+
+---
+
 ## [1.7.0] - 2025-12-28
 
 ### 第四阶段：用户体验优化组件库

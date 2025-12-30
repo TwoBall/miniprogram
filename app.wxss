@@ -27,16 +27,31 @@ button {
   line-height: 58rpx !important;
 }
 
-/* Dialog - 统一弹窗按钮样式 */
+/* Dialog - 统一弹窗按钮样式，增大点击区域 */
 .van-dialog__footer {
   display: flex !important;
+  min-height: 100rpx !important;
 }
 
 .van-dialog__button {
   flex: 1 !important;
-  height: 96rpx !important;
-  line-height: 96rpx !important;
+  height: 100rpx !important;
+  min-height: 100rpx !important;
+  line-height: 100rpx !important;
   text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 确保按钮内部元素也有足够的点击区域 */
+.van-dialog__button--bold,
+.van-dialog__button .van-button {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100rpx !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -45,6 +60,12 @@ button {
 .van-dialog__cancel,
 .van-dialog__confirm {
   font-size: 32rpx !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100rpx !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .van-dialog__cancel {
