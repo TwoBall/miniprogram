@@ -2,6 +2,7 @@ const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 import Toast from '@vant/weapp/toast/toast'
+import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   behaviors: [paginationBehavior],
@@ -179,14 +180,21 @@ Page({
    * 处理通知点击动作
    */
   handleNotificationAction(notification) {
-    const { type, data } = notification
+    const { type, data, title, content } = notification
 
     switch (type) {
       case 'absence_warning':
-        // 跳转到学生详情或反馈页面
-        if (data.studentId) {
+        // 缺勤提醒可能包含多个学生，如果没有单个studentId，则弹窗显示详情
+        if (data && data.studentId) {
           wx.navigateTo({
             url: `/pages/classTeacher/feedback/feedback?studentId=${data.studentId}`
+          })
+        } else {
+          // 显示完整通知内容
+          Dialog.alert({
+            title: title,
+            message: content,
+            confirmButtonText: '知道了'
           })
         }
         break
@@ -197,14 +205,28 @@ Page({
         })
         break
       case 'transfer_result':
-        // 显示结果提示
-        Toast(notification.content)
+        // 转社团结果通知通常较短，但也可能包含长原因，使用弹窗展示更佳
+        Dialog.alert({
+          title: title,
+          message: content,
+          confirmButtonText: '关闭'
+        })
         break
       case 'register_result':
-        // 显示结果提示
-        Toast(notification.content)
+        // 注册审批结果可能包含拒绝原因
+        Dialog.alert({
+          title: title,
+          message: content,
+          confirmButtonText: '关闭'
+        })
         break
       default:
+        // 默认行为：展示完整内容，防止被截断
+        Dialog.alert({
+          title: title || '通知详情',
+          message: content,
+          confirmButtonText: '关闭'
+        })
         break
     }
   },

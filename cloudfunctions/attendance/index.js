@@ -60,27 +60,31 @@ async function checkAbsenceAndNotify(records, clubName, date) {
 
             if (teachersRes.data.length === 0) continue
 
-            const classTeacher = teachersRes.data[0]
             const studentNames = students.map(s => s.studentName).join('、')
 
-            // 创建缺勤提醒通知
-            await db.collection('notifications').add({
-                data: {
-                    type: 'absence_warning',
-                    recipientId: classTeacher._openid,
-                    title: `${clubName} 缺勤提醒`,
-                    content: `您班有 ${students.length} 名学生在 ${date} 的 ${clubName} 社团活动中缺勤：${studentNames}`,
+            // 遍历所有班主任发送通知
+            for (const classTeacher of teachersRes.data) {
+                if (!classTeacher._openid) continue
+
+                // 创建缺勤提醒通知
+                await db.collection('notifications').add({
                     data: {
-                        clubName,
-                        date,
-                        className,
-                        studentIds: students.map(s => s._id),
-                        studentNames
-                    },
-                    read: false,
-                    createTime: db.serverDate()
-                }
-            })
+                        type: 'absence_warning',
+                        recipientId: classTeacher._openid,
+                        title: `${clubName} 缺勤提醒`,
+                        content: `您班有 ${students.length} 名学生在 ${date} 的 ${clubName} 社团活动中缺勤：${studentNames}`,
+                        data: {
+                            clubName,
+                            date,
+                            className,
+                            studentIds: students.map(s => s._id),
+                            studentNames
+                        },
+                        read: false,
+                        createTime: db.serverDate()
+                    }
+                })
+            }
         }
     } catch (error) {
         console.error('创建缺勤通知失败:', error)
