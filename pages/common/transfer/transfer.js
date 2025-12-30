@@ -2,9 +2,10 @@
 const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const throttleBehavior = require('../../../behaviors/throttleBehavior')
 
 Page({
-  behaviors: [paginationBehavior],
+  behaviors: [paginationBehavior, throttleBehavior],
 
   data: {
     activeTab: 'pending',
@@ -110,15 +111,11 @@ Page({
       content: '确定要确认这个转社团申请吗？',
       success: async (res) => {
         if (res.confirm) {
-          wx.showLoading({ title: '处理中...' })
-
-          try {
+          await this.safeAsyncAction(`confirm_${id}`, async () => {
             const result = await request.callCloud('transfer', {
               action: 'confirm',
               requestId: id
             })
-
-            wx.hideLoading()
 
             if (result.success) {
               wx.showToast({
@@ -133,14 +130,7 @@ Page({
                 icon: 'none'
               })
             }
-          } catch (error) {
-            wx.hideLoading()
-            console.error('确认申请失败:', error)
-            wx.showToast({
-              title: '确认失败',
-              icon: 'none'
-            })
-          }
+          })
         }
       }
     })
@@ -155,15 +145,11 @@ Page({
       content: '确定要通过这个转社团申请吗？学生的社团归属将被更新。',
       success: async (res) => {
         if (res.confirm) {
-          wx.showLoading({ title: '处理中...' })
-
-          try {
+          await this.safeAsyncAction(`approve_${id}`, async () => {
             const result = await request.callCloud('transfer', {
               action: 'approve',
               requestId: id
             })
-
-            wx.hideLoading()
 
             if (result.success) {
               wx.showToast({
@@ -178,14 +164,7 @@ Page({
                 icon: 'none'
               })
             }
-          } catch (error) {
-            wx.hideLoading()
-            console.error('审批申请失败:', error)
-            wx.showToast({
-              title: '审批失败',
-              icon: 'none'
-            })
-          }
+          })
         }
       }
     })
@@ -214,16 +193,13 @@ Page({
     }
 
     this.selectComponent('#rejectDialog').setData({ show: false })
-    wx.showLoading({ title: '处理中...' })
 
-    try {
+    await this.safeAsyncAction(`reject_${currentRequestId}`, async () => {
       const result = await request.callCloud('transfer', {
         action: 'reject',
         requestId: currentRequestId,
         reason: rejectReason
       })
-
-      wx.hideLoading()
 
       if (result.success) {
         wx.showToast({
@@ -240,14 +216,7 @@ Page({
           icon: 'none'
         })
       }
-    } catch (error) {
-      wx.hideLoading()
-      console.error('拒绝申请失败:', error)
-      wx.showToast({
-        title: '拒绝失败',
-        icon: 'none'
-      })
-    }
+    })
   },
 
   onRejectCancel() {
