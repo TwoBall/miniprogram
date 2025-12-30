@@ -8,6 +8,7 @@ const authUtils = require('./auth-utils')
 const responseUtils = require('./response-utils')
 const sortUtils = require('./sort-utils')
 const constants = require('./constants')
+const rateLimitUtils = require('./rate-limit')
 
 module.exports = {
   // 数据库工具
@@ -19,5 +20,7 @@ module.exports = {
   // 排序工具
   ...sortUtils,
   // 常量
-  ...constants
+  ...constants,
+  // 限频工具
+  ...rateLimitUtils
 }
