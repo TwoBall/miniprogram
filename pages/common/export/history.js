@@ -4,6 +4,7 @@
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const { SafeToast } = require('../../../utils/error')
+import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   behaviors: [paginationBehavior],
@@ -183,24 +184,25 @@ Page({
               fs.saveFile({
                 tempFilePath: downloadRes.tempFilePath,
                 filePath,
-                success: () => {
-                  wx.showModal({
-                    title: '下载成功',
-                    content: `文件：${record.fileName}`,
-                    confirmText: '打开文件',
-                    success: (modalRes) => {
-                      if (modalRes.confirm) {
-                        wx.openDocument({
-                          filePath,
-                          fileType: 'xlsx',
-                          fail: (err) => {
-                            console.error('打开文件失败:', err)
-                            SafeToast.fail('打开失败')
-                          }
-                        })
+                success: async () => {
+                  try {
+                    await Dialog.confirm({
+                      title: '下载成功',
+                      message: `文件：${record.fileName}`,
+                      confirmButtonText: '打开文件'
+                    })
+
+                    wx.openDocument({
+                      filePath,
+                      fileType: 'xlsx',
+                      fail: (err) => {
+                        console.error('打开文件失败:', err)
+                        SafeToast.fail('打开失败')
                       }
-                    }
-                  })
+                    })
+                  } catch (e) {
+                    // 用户取消
+                  }
                 },
                 fail: (err) => {
                   console.error('保存文件失败:', err)
@@ -230,43 +232,44 @@ Page({
   },
 
   // 删除记录
-  onDelete(e) {
+  async onDelete(e) {
     const { id, fileId } = e.currentTarget.dataset
 
-    wx.showModal({
-      title: '确认删除',
-      content: '删除后将无法恢复，确定要删除吗？',
-      success: async (res) => {
-        if (res.confirm) {
-          wx.showLoading({ title: '删除中...' })
+    try {
+      await Dialog.confirm({
+        title: '确认删除',
+        message: '删除后将无法恢复，确定要删除吗？'
+      })
 
-          try {
-            const result = await wx.cloud.callFunction({
-              name: 'export',
-              data: {
-                action: 'deleteRecord',
-                recordId: id,
-                fileID: fileId
-              }
-            })
+      wx.showLoading({ title: '删除中...' })
 
-            wx.hideLoading()
-
-            if (result.result.success) {
-              // 从列表中移除
-              const records = this.data.records.filter(r => r._id !== id)
-              this.setData({ records })
-              SafeToast.success('删除成功')
-            } else {
-              SafeToast.fail(result.result.message || '删除失败')
-            }
-          } catch (error) {
-            wx.hideLoading()
-            console.error('删除失败:', error)
-            SafeToast.fail('删除失败')
+      try {
+        const result = await wx.cloud.callFunction({
+          name: 'export',
+          data: {
+            action: 'deleteRecord',
+            recordId: id,
+            fileID: fileId
           }
+        })
+
+        wx.hideLoading()
+
+        if (result.result.success) {
+          // 从列表中移除
+          const records = this.data.records.filter(r => r._id !== id)
+          this.setData({ records })
+          SafeToast.success('删除成功')
+        } else {
+          SafeToast.fail(result.result.message || '删除失败')
         }
+      } catch (error) {
+        wx.hideLoading()
+        console.error('删除失败:', error)
+        SafeToast.fail('删除失败')
       }
-    })
+    } catch (e) {
+      // 用户取消
+    }
   }
 })

@@ -2,6 +2,7 @@ const app = getApp()
 const { formatDate } = require('../../../utils/date')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
+import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   data: {
@@ -276,24 +277,25 @@ Page({
               fs.saveFile({
                 tempFilePath: downloadRes.tempFilePath,
                 filePath,
-                success: () => {
-                  wx.showModal({
-                    title: '导出成功',
-                    content: `已导出 ${recordCount} 条记录\n文件：${fileName}`,
-                    confirmText: '打开文件',
-                    success: (modalRes) => {
-                      if (modalRes.confirm) {
-                        wx.openDocument({
-                          filePath,
-                          fileType: 'xlsx',
-                          fail: (err) => {
-                            console.error('打开文件失败:', err)
-                            SafeToast.fail('文件已保存，但打开失败')
-                          }
-                        })
+                success: async () => {
+                  try {
+                    await Dialog.confirm({
+                      title: '导出成功',
+                      message: `已导出 ${recordCount} 条记录\n文件：${fileName}`,
+                      confirmButtonText: '打开文件'
+                    })
+
+                    wx.openDocument({
+                      filePath,
+                      fileType: 'xlsx',
+                      fail: (err) => {
+                        console.error('打开文件失败:', err)
+                        SafeToast.fail('文件已保存，但打开失败')
                       }
-                    }
-                  })
+                    })
+                  } catch (e) {
+                    // 用户取消
+                  }
                 },
                 fail: (err) => {
                   console.error('保存文件失败:', err)

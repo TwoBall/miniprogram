@@ -4,6 +4,7 @@
 
 const auth = require('../utils/auth')
 const request = require('../utils/request')
+import Dialog from '@vant/weapp/dialog/dialog'
 
 // Profile 页面通用行为
 const profileBehavior = Behavior({
@@ -123,19 +124,20 @@ const profileBehavior = Behavior({
       }
     },
 
-    handleLogout() {
-      wx.showModal({
-        title: '确认退出',
-        content: '确定要退出登录吗？',
-        success: (res) => {
-          if (res.confirm) {
-            wx.clearStorageSync()
-            wx.reLaunch({
-              url: '/pages/login/login'
-            })
-          }
-        }
-      })
+    async handleLogout() {
+      try {
+        await Dialog.confirm({
+          title: '确认退出',
+          message: '确定要退出登录吗？'
+        })
+
+        wx.clearStorageSync()
+        wx.reLaunch({
+          url: '/pages/login/login'
+        })
+      } catch (e) {
+        // 用户取消
+      }
     }
   }
 })

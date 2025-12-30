@@ -114,6 +114,7 @@
   </view>
 
   <van-toast id="van-toast" />
+  <van-dialog id="van-dialog" />
   </block>
 
   <custom-tabbar role="admin" active="0" />

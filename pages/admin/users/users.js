@@ -4,6 +4,7 @@
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const { SafeToast } = require('../../../utils/error')
+import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   behaviors: [paginationBehavior],
@@ -128,7 +129,7 @@ Page({
     })
   },
 
-  deleteUser(e) {
+  async deleteUser(e) {
     const user = e.currentTarget.dataset.user
 
     if (user.role === 'admin') {
@@ -136,41 +137,42 @@ Page({
       return
     }
 
-    wx.showModal({
-      title: '确认删除',
-      content: `确定要删除用户"${user.userName}"吗？删除后该用户将无法登录系统。`,
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            wx.showLoading({ title: '删除中...' })
+    try {
+      await Dialog.confirm({
+        title: '确认删除',
+        message: `确定要删除用户"${user.userName}"吗？删除后该用户将无法登录系统。`
+      })
 
-            const result = await wx.cloud.callFunction({
-              name: 'user',
-              data: {
-                action: 'delete',
-                userId: user._id
-              }
-            })
+      try {
+        wx.showLoading({ title: '删除中...' })
 
-            wx.hideLoading()
-
-            if (result.result.success) {
-              SafeToast.success('删除成功')
-
-              // 刷新列表
-              this.setData({ users: [] })
-              this.resetPagination()
-              this.loadList()
-            } else {
-              throw new Error(result.result.message)
-            }
-          } catch (error) {
-            wx.hideLoading()
-            SafeToast.fail(error.message || '删除失败')
+        const result = await wx.cloud.callFunction({
+          name: 'user',
+          data: {
+            action: 'delete',
+            userId: user._id
           }
+        })
+
+        wx.hideLoading()
+
+        if (result.result.success) {
+          SafeToast.success('删除成功')
+
+          // 刷新列表
+          this.setData({ users: [] })
+          this.resetPagination()
+          this.loadList()
+        } else {
+          throw new Error(result.result.message)
         }
+      } catch (error) {
+        wx.hideLoading()
+        SafeToast.fail(error.message || '删除失败')
       }
-    })
+    } catch (e) {
+      // 用户取消
+    }
   },
 
   getUserExtraInfo(user) {

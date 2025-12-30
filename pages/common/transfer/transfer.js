@@ -4,6 +4,7 @@ const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const throttleBehavior = require('../../../behaviors/throttleBehavior')
 const { SafeToast } = require('../../../utils/error')
+import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   behaviors: [paginationBehavior, throttleBehavior],
@@ -98,59 +99,61 @@ Page({
   },
 
   // 确认申请（老师间确认）
-  onConfirm(e) {
+  async onConfirm(e) {
     const { id } = e.currentTarget.dataset
 
-    wx.showModal({
-      title: '确认',
-      content: '确定要确认这个转社团申请吗？',
-      success: async (res) => {
-        if (res.confirm) {
-          await this.safeAsyncAction(`confirm_${id}`, async () => {
-            const result = await request.callCloud('transfer', {
-              action: 'confirm',
-              requestId: id
-            })
+    try {
+      await Dialog.confirm({
+        title: '确认',
+        message: '确定要确认这个转社团申请吗？'
+      })
 
-            if (result.success) {
-              SafeToast.success(result.message)
-              // 刷新列表
-              this.loadList(true)
-            } else {
-              SafeToast.fail(result.message || '确认失败')
-            }
-          })
+      await this.safeAsyncAction(`confirm_${id}`, async () => {
+        const result = await request.callCloud('transfer', {
+          action: 'confirm',
+          requestId: id
+        })
+
+        if (result.success) {
+          SafeToast.success(result.message)
+          // 刷新列表
+          this.loadList(true)
+        } else {
+          SafeToast.fail(result.message || '确认失败')
         }
-      }
-    })
+      })
+    } catch (e) {
+      // 用户取消
+    }
   },
 
   // 审批通过（班主任）
-  onApprove(e) {
+  async onApprove(e) {
     const { id } = e.currentTarget.dataset
 
-    wx.showModal({
-      title: '审批通过',
-      content: '确定要通过这个转社团申请吗？学生的社团归属将被更新。',
-      success: async (res) => {
-        if (res.confirm) {
-          await this.safeAsyncAction(`approve_${id}`, async () => {
-            const result = await request.callCloud('transfer', {
-              action: 'approve',
-              requestId: id
-            })
+    try {
+      await Dialog.confirm({
+        title: '审批通过',
+        message: '确定要通过这个转社团申请吗？学生的社团归属将被更新。'
+      })
 
-            if (result.success) {
-              SafeToast.success(result.message)
-              // 刷新列表
-              this.loadList(true)
-            } else {
-              SafeToast.fail(result.message || '审批失败')
-            }
-          })
+      await this.safeAsyncAction(`approve_${id}`, async () => {
+        const result = await request.callCloud('transfer', {
+          action: 'approve',
+          requestId: id
+        })
+
+        if (result.success) {
+          SafeToast.success(result.message)
+          // 刷新列表
+          this.loadList(true)
+        } else {
+          SafeToast.fail(result.message || '审批失败')
         }
-      }
-    })
+      })
+    } catch (e) {
+      // 用户取消
+    }
   },
 
   // 拒绝申请
@@ -224,10 +227,9 @@ Page({
       detailContent += `拒绝时间：${transfer.rejectedTime ? this.formatTime(transfer.rejectedTime) : '-'}`
     }
 
-    wx.showModal({
+    Dialog.alert({
       title: '申请详情',
-      content: detailContent,
-      showCancel: false
+      message: detailContent
     })
   },
 

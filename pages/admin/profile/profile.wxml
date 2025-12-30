@@ -36,4 +36,6 @@
 
   <!-- 底部 TabBar -->
   <custom-tabbar role="admin" active="{{ tabIndex }}" />
+
+  <van-dialog id="van-dialog" />
 </view>

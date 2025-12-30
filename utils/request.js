@@ -3,6 +3,7 @@
  * 统一处理 loading、错误提示、超时、重试等
  */
 import Toast from '@vant/weapp/toast/toast'
+import Dialog from '@vant/weapp/dialog/dialog'
 const errorUtil = require('./error')
 const storage = require('./storage')
 
@@ -112,22 +113,23 @@ async function callCloud(name, data = {}, options = {}) {
     
     if (isNetworkError) {
       // 网络错误时显示重试对话框
-      wx.showModal({
-        title: '网络异常',
-        content: '请检查网络连接后重试',
-        confirmText: '重试',
-        cancelText: '取消',
-        success: async (res) => {
-          if (res.confirm) {
-            // 用户点击重试，重新调用
-            try {
-              return await callCloud(name, data, options)
-            } catch (e) {
-              console.error('重试失败:', e)
-            }
-          }
+      try {
+        await Dialog.confirm({
+          title: '网络异常',
+          message: '请检查网络连接后重试',
+          confirmButtonText: '重试',
+          cancelButtonText: '取消'
+        })
+
+        // 用户点击重试，重新调用
+        try {
+          return await callCloud(name, data, options)
+        } catch (e) {
+          console.error('重试失败:', e)
         }
-      })
+      } catch (e) {
+        // 用户取消
+      }
     } else {
       errorUtil.handleError(lastError, { context: `云函数 ${name}` })
     }

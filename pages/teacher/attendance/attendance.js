@@ -231,12 +231,10 @@ Page({
 
       // 点名完成时显示醒目提示
       if (isComplete) {
-        wx.showModal({
+        Dialog.alert({
           title: '点名完成',
-          content: '所有学生已点名完成，请点击提交按钮保存记录',
-          showCancel: false,
-          confirmText: '知道了',
-          confirmColor: '#1F6FAD'
+          message: '所有学生已点名完成，请点击提交按钮保存记录',
+          confirmButtonText: '知道了'
         })
       }
     }, 300)
@@ -321,12 +319,10 @@ Page({
       })
 
       // 显示醒目提交提示
-      wx.showModal({
+      Dialog.alert({
         title: '点名完成',
-        content: '所有学生已标记为到课，请点击提交按钮保存记录',
-        showCancel: false,
-        confirmText: '知道了',
-        confirmColor: '#1F6FAD'
+        message: '所有学生已标记为到课，请点击提交按钮保存记录',
+        confirmButtonText: '知道了'
       })
     }).catch(() => { })
   },

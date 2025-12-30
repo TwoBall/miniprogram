@@ -2,6 +2,8 @@
 // output: 表单状态管理和提交反馈
 // pos: 主包 > behaviors > 表单反馈通用行为
 
+import Dialog from '@vant/weapp/dialog/dialog'
+
 /**
  * 表单反馈 Behavior
  * 提供表单提交状态管理、震动反馈和错误处理
@@ -232,20 +234,17 @@ module.exports = Behavior({
         return true
       }
 
-      return new Promise((resolve) => {
-        wx.showModal({
+      try {
+        await Dialog.confirm({
           title: '提示',
-          content: '表单内容未保存，确定要离开吗？',
-          confirmText: '离开',
-          cancelText: '取消',
-          success: (res) => {
-            resolve(res.confirm)
-          },
-          fail: () => {
-            resolve(false)
-          }
+          message: '表单内容未保存，确定要离开吗？',
+          confirmButtonText: '离开',
+          cancelButtonText: '取消'
         })
-      })
+        return true
+      } catch (e) {
+        return false
+      }
     }
   }
 })

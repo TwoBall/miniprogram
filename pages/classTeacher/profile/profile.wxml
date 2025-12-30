@@ -40,4 +40,6 @@
 
   <!-- 底部 TabBar -->
   <custom-tabbar role="classTeacher" active="{{ tabIndex }}" />
+
+  <van-dialog id="van-dialog" />
 </view>
