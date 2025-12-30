@@ -92,6 +92,5 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "cloud": true,
-  "plugins": {},
-  "fetchDataUrl": "cloudfunctions://prefetch"
+  "plugins": {}
 }

@@ -19,7 +19,6 @@ App({
 
     this.checkUserAuth()
     this.setupNetworkListener()
-    this.handlePrefetchData()
   },
 
   /**
@@ -94,44 +93,9 @@ App({
     })
   },
 
-  /**
-   * 处理数据预拉取结果
-   * 微信客户端会在小程序冷启动前调用 prefetch 云函数
-   * 此方法获取预拉取的数据并缓存到 globalData
-   */
-  handlePrefetchData() {
-    wx.getBackgroundFetchData({
-      fetchType: 'pre',
-      success: (res) => {
-        if (res.fetchedData) {
-          try {
-            const data = JSON.parse(res.fetchedData)
-            if (data.success) {
-              // 缓存预拉取的筛选选项
-              if (data.data.filterOptions) {
-                this.globalData.prefetchData = {
-                  filterOptions: data.data.filterOptions,
-                  timestamp: Date.now()
-                }
-                console.log('[预拉取] 筛选选项已缓存')
-              }
-            }
-          } catch (e) {
-            console.error('[预拉取] 解析数据失败:', e)
-          }
-        }
-      },
-      fail: (err) => {
-        // 预拉取失败是正常情况（如首次启动、网络问题等）
-        console.log('[预拉取] 获取数据失败:', err.errMsg)
-      }
-    })
-  },
-
   globalData: {
     userInfo: null,
     wasOffline: false,
-    networkType: 'unknown',
-    prefetchData: null  // 预拉取的数据缓存
+    networkType: 'unknown'
   }
 })
