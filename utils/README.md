@@ -15,6 +15,8 @@
 - `error.js` - 错误处理工具，统一处理异常和错误提示
 - `request.js` - 网络请求工具，封装云函数调用和 HTTP 请求
 - `storage.js` - 本地存储工具，封装 wx.getStorageSync 和 wx.setStorageSync
+- `performance.js` - 性能监控工具，提供 setData 性能追踪和云函数调用监控
+- `offlineStorage.js` - 离线存储工具，提供离线队列和数据缓存管理
 
 ## 使用方式
 
@@ -66,3 +68,61 @@ const freshOptions = await request.getFilterOptions(true)
 - 添加必要的参数校验和错误处理
 - 避免在工具函数中使用全局状态
 - 保持函数的纯粹性和可测试性
+
+## performance.js 性能监控工具
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `initPerformanceMonitor()` | 初始化性能监控 | 返回监控实例 |
+| `wrapSetData(page)` | 包装 setData | 追踪 setData 耗时 |
+| `monitorCloudCall(name, callFn)` | 监控云函数调用 | 记录调用耗时和成功率 |
+| `performanceMixin` | 性能监控 Mixin | 自动追踪页面性能 |
+
+### 使用示例
+
+```javascript
+const { performanceMixin } = require('../../../utils/performance')
+
+Page({
+  ...performanceMixin,
+  // 页面逻辑
+})
+```
+
+## offlineStorage.js 离线存储工具
+
+### 离线队列
+
+| 函数名 | 用途 |
+|--------|------|
+| `offlineStorage.addOfflineRecord(action, data)` | 添加离线记录 |
+| `offlineStorage.syncOfflineData(syncFn)` | 同步离线数据 |
+| `offlineStorage.getOfflineCount()` | 获取待同步数量 |
+| `offlineStorage.clearOfflineData()` | 清空离线数据 |
+
+### 数据缓存
+
+| 函数名 | 用途 |
+|--------|------|
+| `dataCache.set(key, data, ttl)` | 设置缓存 |
+| `dataCache.get(key)` | 获取缓存 |
+| `dataCache.remove(key)` | 删除缓存 |
+| `dataCache.clear()` | 清空所有缓存 |
+
+### 使用示例
+
+```javascript
+const { offlineStorage, dataCache } = require('../../../utils/offlineStorage')
+
+// 离线保存考勤记录
+offlineStorage.addOfflineRecord('attendance', { studentId, status })
+
+// 网络恢复后同步
+await offlineStorage.syncOfflineData(async (record) => {
+  await wx.cloud.callFunction({ name: 'attendance', data: record.data })
+})
+
+// 缓存数据（10分钟过期）
+dataCache.set('students', studentList, 10 * 60 * 1000)
+const cached = dataCache.get('students')
+```

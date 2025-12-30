@@ -15,6 +15,7 @@
 - `notification/` - 通知推送云函数，发送系统通知和消息提醒
 - `transfer/` - 转班处理云函数，处理学生转班申请和审批
 - `submitFeedback/` - 反馈提交云函数，处理用户反馈信息的提交
+- `prefetch/` - 数据预拉取云函数，优化冷启动性能
 - `common/` - 公共模块模板（不需要上传，仅作为参考）
 
 ## attendance 云函数 Action 列表
@@ -145,6 +146,7 @@ node cloudfunctions/scripts/sync-common.js --force
 | 响应格式 | `response-utils.js` | `success`, `successWithPagination`, `fail`, `badRequest`, `unauthorized`, `forbidden`, `notFound`, `wrapHandler`, `createDispatcher` |
 | 排序工具 | `sort-utils.js` | `zhCompare`, `zhNumericCompare`, `sortStudentsByName`, `sortStudentsByClassAndName`, `sortOptions` |
 | 常量定义 | `constants.js` | `MAX_LIMIT`, `ROLES`, `USER_STATUS`, `ATTENDANCE_STATUS` |
+| 限频工具 | `rate-limit.js` | `checkRateLimit`, `cleanupExpiredRecords`, `RATE_LIMIT_CONFIGS` |
 
 ### 响应格式工具
 

@@ -16,6 +16,8 @@
 - `studentListBehavior.js` - 学生列表通用行为，提供搜索、筛选、缺勤预警、分布统计等功能
 - `throttleBehavior.js` - 节流防抖通用行为，提供按钮节流、防抖和异步操作状态管理
 - `formFeedbackBehavior.js` - 表单反馈通用行为，提供表单提交状态管理、震动反馈和错误处理
+- `lazyLoadBehavior.js` - 懒加载通用行为，使用 IntersectionObserver 实现列表项按需渲染
+- `virtualListBehavior.js` - 虚拟列表通用行为，只渲染可视区域的列表项提升长列表性能
 
 ## profileBehavior 功能
 
@@ -183,6 +185,82 @@ Page({
 
 ### throttleBehavior
 - `pages/admin/approval/approval.js`
+- `pages/common/transfer/transfer.js`
 
 ### formFeedbackBehavior
 - （待集成）
+
+## lazyLoadBehavior 功能
+
+### 数据字段
+- `visibleItemsSet` - 当前可见的项目索引集合
+- `itemsLoadState` - 项目加载状态映射 { index: 'visible' | 'hidden' }
+
+### 方法
+- `initListObserver(containerSelector, itemSelector, options)` - 初始化列表项观察器
+- `initViewportObserver(itemSelector, options)` - 使用视口作为参照的观察器
+- `isItemVisible(index)` - 检查项目是否可见
+- `resetLoadState()` - 重置所有项目状态
+
+### 使用示例
+
+```javascript
+const lazyLoadBehavior = require('../../../behaviors/lazyLoadBehavior')
+
+Page({
+  behaviors: [lazyLoadBehavior],
+
+  onReady() {
+    this.initViewportObserver('.list-item')
+  }
+})
+```
+
+```xml
+<!-- WXML 中使用 -->
+<view class="list-item" data-index="{{index}}">
+  <block wx:if="{{itemsLoadState[index] === 'visible'}}">完整内容</block>
+  <block wx:else>占位内容</block>
+</view>
+```
+
+## virtualListBehavior 功能
+
+### 数据字段
+- `visibleItems` - 可视区域内的列表项
+- `scrollTop` - 当前滚动位置
+- `containerHeight` - 容器高度
+- `itemHeight` - 每项高度
+- `bufferSize` - 缓冲区大小
+- `startIndex` - 可视区域起始索引
+- `endIndex` - 可视区域结束索引
+
+### 方法
+- `initVirtualList(options)` - 初始化虚拟列表
+- `updateFullList(list)` - 更新完整列表数据
+- `onVirtualScroll(e)` - 滚动事件处理
+- `scrollToIndex(index)` - 滚动到指定索引位置
+- `refreshVisibleItems()` - 刷新可视区域项目
+
+### 使用示例
+
+```javascript
+const virtualListBehavior = require('../../../behaviors/virtualListBehavior')
+
+Page({
+  behaviors: [virtualListBehavior],
+
+  onReady() {
+    this.initVirtualList({
+      itemHeight: 100,
+      containerHeight: wx.getSystemInfoSync().windowHeight,
+      bufferSize: 5
+    })
+  },
+
+  async loadData() {
+    const data = await fetchData()
+    this.updateFullList(data)
+  }
+})
+```
