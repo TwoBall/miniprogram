@@ -1,4 +1,11 @@
 <view class="users-container">
+  <!-- 初始加载骨架屏 -->
+  <block wx:if="{{ pageLoading }}">
+    <skeleton type="list" count="{{6}}" avatar="{{false}}" />
+  </block>
+
+  <!-- 实际内容 -->
+  <block wx:else>
   <view class="search-bar">
     <van-search
       value="{{ searchKeyword }}"
@@ -107,6 +114,7 @@
   </view>
 
   <van-toast id="van-toast" />
+  </block>
 
   <custom-tabbar role="admin" active="0" />
 </view>

@@ -1,4 +1,11 @@
 <view class="student-list-container">
+  <!-- 初始加载骨架屏 -->
+  <block wx:if="{{ pageLoading }}">
+    <skeleton type="list" count="{{6}}" avatar="{{true}}" />
+  </block>
+
+  <!-- 实际内容 -->
+  <block wx:else>
   <!-- 社团信息卡片 -->
   <view class="list-header teacher-header">
     <view class="header-info">
@@ -183,4 +190,5 @@
     bind:close="onStudentActionClose"
     bind:cancel="onStudentActionClose"
   />
+  </block>
 </view>

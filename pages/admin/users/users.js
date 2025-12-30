@@ -8,6 +8,7 @@ Page({
   behaviors: [paginationBehavior],
 
   data: {
+    pageLoading: true,
     activeTab: 'all',
     searchKeyword: '',
     users: [],
@@ -93,7 +94,7 @@ Page({
       if (res.result.success) {
         const users = res.result.data
         this.handleLoadSuccess(users, res.result.pagination, refresh, 'users')
-        this.setData({ total: res.result.pagination.total })
+        this.setData({ total: res.result.pagination.total, pageLoading: false })
       } else {
         throw new Error(res.result.message)
       }
@@ -103,7 +104,7 @@ Page({
         title: error.message || '加载失败',
         icon: 'none'
       })
-      this.setData({ loading: false })
+      this.setData({ loading: false, pageLoading: false })
     }
   },
 

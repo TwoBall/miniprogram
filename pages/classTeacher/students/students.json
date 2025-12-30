@@ -2,6 +2,8 @@
   "navigationBarTitleText": "学生管理",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "skeleton": "/components/skeleton/skeleton",
+    "empty-state": "/components/empty-state/empty-state",
     "van-search": "@vant/weapp/search/index",
     "van-empty": "@vant/weapp/empty/index",
     "van-loading": "@vant/weapp/loading/index",

@@ -2,6 +2,8 @@
   "navigationBarTitleText": "社团管理",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "skeleton": "/components/skeleton/skeleton",
+    "empty-state": "/components/empty-state/empty-state",
     "van-action-sheet": "@vant/weapp/action-sheet/index",
     "van-cell": "@vant/weapp/cell/index",
     "van-cell-group": "@vant/weapp/cell-group/index",

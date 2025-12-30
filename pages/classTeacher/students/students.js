@@ -9,6 +9,7 @@ Page({
   behaviors: [studentListBehavior],
 
   data: {
+    pageLoading: true,
     userInfo: null,
     className: '',
 
@@ -66,7 +67,8 @@ Page({
           filteredStudents: students,
           'stats.totalCount': students.length,
           clubDistribution,
-          loading: false
+          loading: false,
+          pageLoading: false
         })
 
         // 加载缺勤预警
@@ -78,7 +80,7 @@ Page({
           title: result.message || '加载失败',
           icon: 'none'
         })
-        this.setData({ loading: false })
+        this.setData({ loading: false, pageLoading: false })
       }
     } catch (error) {
       console.error('加载学生列表失败:', error)
@@ -86,7 +88,7 @@ Page({
         title: '加载失败',
         icon: 'none'
       })
-      this.setData({ loading: false })
+      this.setData({ loading: false, pageLoading: false })
       wx.stopPullDownRefresh()
     }
   },

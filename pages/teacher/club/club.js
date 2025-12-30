@@ -8,6 +8,7 @@ Page({
   behaviors: [studentListBehavior],
 
   data: {
+    pageLoading: true,
     clubInfo: null,
 
     // 班级分布
@@ -78,7 +79,8 @@ Page({
           filteredStudents: students,
           'stats.totalCount': students.length,
           classDistribution,
-          loading: false
+          loading: false,
+          pageLoading: false
         })
 
         // 加载缺勤预警
@@ -88,7 +90,7 @@ Page({
       }
     } catch (error) {
       console.error('加载学生列表失败:', error)
-      this.setData({ loading: false })
+      this.setData({ loading: false, pageLoading: false })
       wx.showToast({
         title: error.message || '加载失败',
         icon: 'none'
