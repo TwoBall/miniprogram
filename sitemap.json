@@ -3,5 +3,8 @@
   "rules": [{
     "action": "allow",
     "page": "*"
+  }, {
+    "action": "disallow",
+    "page": "pages/admin/*"
   }]
 }
