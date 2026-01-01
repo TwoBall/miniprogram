@@ -32,9 +32,9 @@ Page({
     showDepartmentPicker: false,
     showClubPicker: false,
     showClassPicker: false,
-    departmentActions: [],
-    clubActions: [],
-    classActions: [],
+    departmentColumns: [],
+    clubColumns: [],
+    classColumns: [],
 
     // 导出中
     exporting: false
@@ -70,29 +70,18 @@ Page({
       const data = await request.getFilterOptions()
       const { departments, clubs, classes } = data
 
-      // 转换为 action-sheet 格式
-      const departmentActions = [
-        { name: '全部', value: '' },
-        ...(departments || []).map(d => ({ name: d, value: d }))
-      ]
-
-      const clubActions = [
-        { name: '全部', value: '' },
-        ...(clubs || []).map(c => ({ name: c, value: c }))
-      ]
-
-      const classActions = [
-        { name: '全部', value: '' },
-        ...(classes || []).map(c => ({ name: c, value: c }))
-      ]
+      // 转换为 picker columns 格式
+      const departmentColumns = ['全部', ...(departments || [])]
+      const clubColumns = ['全部', ...(clubs || [])]
+      const classColumns = ['全部', ...(classes || [])]
 
       this.setData({
         departments,
         clubs,
         classes,
-        departmentActions,
-        clubActions,
-        classActions
+        departmentColumns,
+        clubColumns,
+        classColumns
       })
     } catch (error) {
       console.error('加载筛选选项失败:', error)
@@ -197,24 +186,27 @@ Page({
     }
   },
 
-  // 选择筛选项
-  onSelectDepartment(e) {
+  // 选择筛选项 (picker confirm)
+  onConfirmDepartment(e) {
+    const value = e.detail.value
     this.setData({
-      department: e.detail.value,
+      department: value === '全部' ? '' : value,
       showDepartmentPicker: false
     })
   },
 
-  onSelectClub(e) {
+  onConfirmClub(e) {
+    const value = e.detail.value
     this.setData({
-      clubName: e.detail.value,
+      clubName: value === '全部' ? '' : value,
       showClubPicker: false
     })
   },
 
-  onSelectClass(e) {
+  onConfirmClass(e) {
+    const value = e.detail.value
     this.setData({
-      className: e.detail.value,
+      className: value === '全部' ? '' : value,
       showClassPicker: false
     })
   },

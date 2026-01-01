@@ -383,10 +383,10 @@ Dialog.confirm({
   - common: transfer, notifications, switchRole
 - [x] 移除 app.json 中 van-empty 的 componentPlaceholder
 
-### 第二阶段：统一选择器风格
+### 第二阶段：统一选择器风格 ✅ 已完成
 - [x] club 页面筛选改为 van-popup + van-picker（已完成：学部+班级级联筛选）
-- [ ] export 页面筛选改为 van-popup + van-picker
-- [ ] 确保触发器样式统一
+- [x] export 页面筛选改为 van-popup + van-picker（学部/社团/班级选择器）
+- [x] 确保触发器样式统一（使用 van-cell is-link）
 
 ### 第三阶段：统一按钮样式
 - [ ] login 页面按钮改为 `type="primary"`
@@ -412,6 +412,6 @@ Dialog.confirm({
 
 ---
 
-*文档版本：1.1*
+*文档版本：1.2*
 *更新时间：2026-01-01*
 *项目：智慧社团管理系统*

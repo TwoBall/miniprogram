@@ -144,34 +144,37 @@
   </van-popup>
 
   <!-- 学部选择器 -->
-  <van-action-sheet
-    show="{{ showDepartmentPicker }}"
-    actions="{{ departmentActions }}"
-    bind:select="onSelectDepartment"
-    bind:close="onCloseDepartmentPicker"
-    bind:cancel="onCloseDepartmentPicker"
-    cancel-text="取消"
-  />
+  <van-popup show="{{ showDepartmentPicker }}" position="bottom" bind:close="onCloseDepartmentPicker">
+    <van-picker
+      show-toolbar
+      title="选择学部"
+      columns="{{ departmentColumns }}"
+      bind:confirm="onConfirmDepartment"
+      bind:cancel="onCloseDepartmentPicker"
+    />
+  </van-popup>
 
   <!-- 社团选择器 -->
-  <van-action-sheet
-    show="{{ showClubPicker }}"
-    actions="{{ clubActions }}"
-    bind:select="onSelectClub"
-    bind:close="onCloseClubPicker"
-    bind:cancel="onCloseClubPicker"
-    cancel-text="取消"
-  />
+  <van-popup show="{{ showClubPicker }}" position="bottom" bind:close="onCloseClubPicker">
+    <van-picker
+      show-toolbar
+      title="选择社团"
+      columns="{{ clubColumns }}"
+      bind:confirm="onConfirmClub"
+      bind:cancel="onCloseClubPicker"
+    />
+  </van-popup>
 
   <!-- 班级选择器 -->
-  <van-action-sheet
-    show="{{ showClassPicker }}"
-    actions="{{ classActions }}"
-    bind:select="onSelectClass"
-    bind:close="onCloseClassPicker"
-    bind:cancel="onCloseClassPicker"
-    cancel-text="取消"
-  />
+  <van-popup show="{{ showClassPicker }}" position="bottom" bind:close="onCloseClassPicker">
+    <van-picker
+      show-toolbar
+      title="选择班级"
+      columns="{{ classColumns }}"
+      bind:confirm="onConfirmClass"
+      bind:cancel="onCloseClassPicker"
+    />
+  </van-popup>
 </view>
 
 <van-toast id="van-toast" />
