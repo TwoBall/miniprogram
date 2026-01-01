@@ -67,14 +67,6 @@ Page({
     this.updateDateTime()
   },
 
-  onPullDownRefresh() {
-    this.loadStudents().then(() => {
-      wx.stopPullDownRefresh()
-    }).catch(() => {
-      wx.stopPullDownRefresh()
-    })
-  },
-
   updateDateTime() {
     this.setData({
       currentDate: dateUtil.getCurrentDate(),

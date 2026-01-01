@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "社团考勤",
-  "enablePullDownRefresh": true,
   "initialRenderingCache": "dynamic",
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
