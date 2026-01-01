@@ -60,7 +60,7 @@
             <view class="student-name">
               <van-icon name="user-o" size="32rpx" color="#1890ff" />
               <text>{{item.studentName}}</text>
-              <text class="gender-tag">{{item.gender}}</text>
+              <van-tag plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
             </view>
             <van-tag
               type="{{ item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'danger' : 'default' }}"

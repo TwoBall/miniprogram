@@ -120,8 +120,8 @@
                 预警
               </van-tag>
             </view>
-            <van-tag wx:if="{{ item.gender }}" plain type="primary" size="medium">
-              {{ item.gender === 'male' ? '男' : '女' }}
+            <van-tag wx:if="{{ item.gender }}" plain type="{{ item.gender === '男' ? 'primary' : 'danger' }}" size="medium">
+              {{ item.gender }}
             </van-tag>
           </view>
           <view class="student-card-meta">

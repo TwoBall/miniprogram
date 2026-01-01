@@ -7,8 +7,8 @@
     <view class="student-basic">
       <view class="student-name">{{ student.studentName || '加载中...' }}</view>
       <view class="student-meta">
-        <van-tag wx:if="{{ student.gender }}" plain type="primary" size="medium">
-          {{ student.gender === 'male' ? '男' : '女' }}
+        <van-tag wx:if="{{ student.gender }}" plain type="{{ student.gender === '男' ? 'primary' : 'danger' }}" size="medium">
+          {{ student.gender }}
         </van-tag>
         <text class="meta-text">{{ student.className }}</text>
       </view>
@@ -21,7 +21,7 @@
       <view class="tab-content">
         <van-cell-group>
           <van-cell title="姓名" value="{{ student.studentName }}" />
-          <van-cell title="性别" value="{{ student.gender === 'male' ? '男' : '女' }}" />
+          <van-cell title="性别" value="{{ student.gender }}" />
           <van-cell title="班级" value="{{ student.className }}" />
           <van-cell title="学部" value="{{ student.department }}" />
           <van-cell title="社团" value="{{ student.clubName || '未分配' }}" />

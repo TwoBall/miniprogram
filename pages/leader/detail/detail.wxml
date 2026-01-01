@@ -19,7 +19,7 @@
         <view class="student-header">
           <view class="student-name">
             <text>{{item.studentName}}</text>
-            <text class="gender-tag">{{item.gender}}</text>
+            <van-tag wx:if="{{item.gender}}" plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
           </view>
           <view class="status-badge {{item.todayStatus}}">
             {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
