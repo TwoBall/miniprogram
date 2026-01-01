@@ -409,11 +409,11 @@ async function handleGetByClass(event) {
 
 ### 第三阶段：低优先级（按需）
 
-| 任务 | 文件 | 预计耗时 |
-|------|------|----------|
-| 虚拟列表应用 | students, club 页面 | 4h |
-| 云函数代码拆分 | attendance 云函数 | 3h |
-| 敏感字段脱敏 | students 云函数 | 1h |
+| 任务 | 文件 | 状态 |
+|------|------|------|
+| 虚拟列表应用 | students, club 页面 | ✅ 已完成 |
+| 云函数代码拆分 | attendance 云函数 | 待实施 |
+| 敏感字段脱敏 | students 云函数 | 待实施 |
 
 ### 已移除的优化项
 

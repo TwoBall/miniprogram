@@ -54,7 +54,7 @@
     </view>
   </view>
 
-  <van-empty wx:if="{{!pageLoading && records.length === 0}}" description="暂无历史记录" image="search" />
+  <empty-state wx:if="{{!pageLoading && records.length === 0}}" type="history" />
 </view>
 
 <van-toast id="van-toast" />

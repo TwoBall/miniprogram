@@ -19,8 +19,8 @@
 
   <!-- 非上课日提示 -->
   <view class="no-class-section" wx:if="{{!isClassDay}}">
-    <van-empty
-      image="search"
+    <empty-state
+      type="default"
       description="{{noClassMessage}}"
     />
     <view class="no-class-tips">

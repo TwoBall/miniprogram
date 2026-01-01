@@ -41,10 +41,10 @@
   </view>
 
   <!-- 空状态 -->
-  <van-empty
+  <empty-state
     wx:if="{{!loading && roles.length === 0}}"
+    type="default"
     description="暂无其他身份，请注册新身份"
-    image="search"
   />
 
   <!-- 添加新身份 -->

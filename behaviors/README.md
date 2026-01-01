@@ -229,3 +229,9 @@ Page({
   }
 })
 ```
+
+### 使用该 Behavior 的页面
+
+### virtualListBehavior
+- `pages/teacher/club/club.js`
+- `pages/classTeacher/students/students.js`

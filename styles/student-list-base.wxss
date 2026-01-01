@@ -177,6 +177,11 @@
   margin-top: 20rpx;
 }
 
+/* 虚拟列表滚动容器 */
+.student-list-scroll {
+  width: 100%;
+}
+
 .student-list-wrapper {
   padding: 0 30rpx;
 }

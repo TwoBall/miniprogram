@@ -94,10 +94,10 @@
       </van-cell>
     </van-cell-group>
 
-    <van-empty
+    <empty-state
       wx:else
+      type="attendance"
       description="该班级暂无学生考勤数据"
-      image="search"
     />
   </view>
 

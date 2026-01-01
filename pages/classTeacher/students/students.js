@@ -3,11 +3,12 @@
 // pos: 页面层 > 班主任模块 > 学生管理
 
 const studentListBehavior = require('../../../behaviors/studentListBehavior')
+const virtualListBehavior = require('../../../behaviors/virtualListBehavior')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 
 Page({
-  behaviors: [studentListBehavior],
+  behaviors: [studentListBehavior, virtualListBehavior],
 
   data: {
     pageLoading: true,
@@ -68,6 +69,9 @@ Page({
           loading: false,
           pageLoading: false
         })
+
+        // 初始化虚拟列表（每项高度约 120px）
+        this.initVirtualList(students, { itemHeight: 120, bufferSize: 5 })
 
         // 加载缺勤预警
         this.loadAbsenceWarnings({ className: this.data.className })

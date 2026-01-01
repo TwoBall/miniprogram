@@ -86,7 +86,6 @@
     "van-field": "view",
     "van-picker": "view",
     "van-popup": "view",
-    "van-empty": "view",
     "van-tag": "view"
   },
   "style": "v2",

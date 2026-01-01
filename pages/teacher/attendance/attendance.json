@@ -5,9 +5,9 @@
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
+    "empty-state": "/components/empty-state/empty-state",
     "van-button": "@vant/weapp/button/index",
     "van-dialog": "@vant/weapp/dialog/index",
-    "van-empty": "@vant/weapp/empty/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-tag": "@vant/weapp/tag/index",
     "van-toast": "@vant/weapp/toast/index"

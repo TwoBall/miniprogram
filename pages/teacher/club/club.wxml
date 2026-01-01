@@ -34,28 +34,44 @@
     </view>
   </view>
 
-  <!-- 班级分布 -->
-  <view class="distribution-section" wx:if="{{ classDistribution.length > 0 }}">
-    <view class="distribution-title">班级分布</view>
-    <view class="distribution-tags">
-      <view
-        class="distribution-tag {{ selectedDistribution === '全部' || !selectedDistribution ? 'active' : '' }}"
-        bindtap="onDistributionFilter"
-        data-value="全部"
-      >
-        <text class="distribution-tag-name">全部</text>
-        <text class="distribution-tag-count">{{ stats.totalCount }}</text>
+  <!-- 学部班级筛选 -->
+  <view class="filter-section" wx:if="{{ departments.length > 1 }}">
+    <view class="filter-row">
+      <!-- 学部选择 -->
+      <view class="filter-picker" bindtap="onShowDeptPicker">
+        <view class="filter-picker-content">
+          <text class="filter-label">学部</text>
+          <view class="filter-value">
+            <text>{{ selectedDepartment }}</text>
+            <van-icon name="arrow-down" size="12px" color="#999" />
+          </view>
+        </view>
       </view>
-      <view
-        wx:for="{{ classDistribution }}"
-        wx:key="name"
-        class="distribution-tag {{ selectedDistribution === item.name ? 'active' : '' }}"
-        bindtap="onDistributionFilter"
-        data-value="{{ item.name }}"
-      >
-        <text class="distribution-tag-name">{{ item.name }}</text>
-        <text class="distribution-tag-count">{{ item.count }}</text>
+
+      <!-- 班级选择 -->
+      <view class="filter-picker" bindtap="onShowClassPicker">
+        <view class="filter-picker-content {{ selectedDepartment === '全部学部' ? 'disabled' : '' }}">
+          <text class="filter-label">班级</text>
+          <view class="filter-value">
+            <text>{{ selectedClass }}</text>
+            <van-icon name="arrow-down" size="12px" color="#999" />
+          </view>
+        </view>
       </view>
+
+      <!-- 重置按钮 -->
+      <view
+        class="filter-reset {{ selectedDepartment === '全部学部' && selectedClass === '全部班级' ? 'disabled' : '' }}"
+        bindtap="onResetFilter"
+      >
+        <van-icon name="replay" size="14px" />
+        <text>重置</text>
+      </view>
+    </view>
+
+    <!-- 筛选结果统计 -->
+    <view class="filter-result" wx:if="{{ selectedDepartment !== '全部学部' || selectedClass !== '全部班级' }}">
+      <text>筛选结果：{{ filteredStudents.length }} 人</text>
     </view>
   </view>
 
@@ -96,48 +112,57 @@
       <van-loading type="spinner" size="48rpx">加载中...</van-loading>
     </view>
 
-    <view wx:elif="{{ filteredStudents.length > 0 }}" class="student-list-wrapper">
-      <view
-        wx:for="{{ filteredStudents }}"
-        wx:key="_id"
-        class="student-card"
-        bindtap="onStudentTap"
-        bindlongpress="onStudentLongPress"
-        data-student="{{ item }}"
-      >
-        <view class="student-card-avatar">
-          <van-icon name="user-circle-o" size="40px" color="#1890ff" />
-        </view>
-        <view class="student-card-info">
-          <view class="student-card-header">
-            <view class="student-card-name-wrapper">
-              <text class="student-card-name">{{ item.studentName }}</text>
-              <van-tag
-                wx:if="{{ warningStudentIds.includes(item._id) }}"
-                type="danger"
-                plain
-                size="medium"
-              >
-                <van-icon name="warning-o" size="14px" />
-                缺勤预警
-              </van-tag>
+    <scroll-view
+      wx:elif="{{ filteredStudents.length > 0 }}"
+      class="student-list-scroll"
+      scroll-y
+      bindscroll="onVirtualScroll"
+      style="height: calc(100vh - 420rpx);"
+    >
+      <view class="student-list-wrapper" style="height: {{totalHeight}}px; position: relative;">
+        <view style="transform: translateY({{offsetY}}px);">
+          <view
+            wx:for="{{ virtualList }}"
+            wx:key="_id"
+            class="student-card"
+            bindtap="onStudentTap"
+            bindlongpress="onStudentLongPress"
+            data-student="{{ item }}"
+          >
+            <view class="student-card-avatar">
+              <van-icon name="user-circle-o" size="40px" color="#1890ff" />
             </view>
-            <van-tag type="primary" plain size="medium">{{ item.className }}</van-tag>
-          </view>
-          <view class="student-card-meta">
-            <view class="student-card-meta-item">
-              <van-icon name="location-o" size="28rpx" color="#999" />
-              <text>{{ item.department }}</text>
+            <view class="student-card-info">
+              <view class="student-card-header">
+                <view class="student-card-name-wrapper">
+                  <text class="student-card-name">{{ item.studentName }}</text>
+                  <van-tag
+                    wx:if="{{ warningStudentIds.includes(item._id) }}"
+                    type="danger"
+                    plain
+                    size="medium"
+                  >
+                    <van-icon name="warning-o" size="14px" />
+                    缺勤预警
+                  </van-tag>
+                </view>
+                <van-tag type="primary" plain size="medium">{{ item.className }}</van-tag>
+              </view>
+              <view class="student-card-meta">
+                <view class="student-card-meta-item">
+                  <van-icon name="location-o" size="28rpx" color="#999" />
+                  <text>{{ item.department }}</text>
+                </view>
+              </view>
             </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
 
-    <van-empty
+    <empty-state
       wx:else
-      description="暂无学生数据"
-      image="search"
+      type="students"
     />
   </view>
 
@@ -171,10 +196,9 @@
       </view>
     </view>
 
-    <van-empty
+    <empty-state
       wx:else
-      description="暂无考勤数据"
-      image="search"
+      type="attendance"
     />
   </view>
 
@@ -190,5 +214,27 @@
     bind:close="onStudentActionClose"
     bind:cancel="onStudentActionClose"
   />
+
+  <!-- 学部选择弹出层 -->
+  <van-popup show="{{ showDeptPicker }}" position="bottom" bind:close="onDeptPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择学部"
+      columns="{{ departments }}"
+      bind:confirm="onDeptPickerConfirm"
+      bind:cancel="onDeptPickerClose"
+    />
+  </van-popup>
+
+  <!-- 班级选择弹出层 -->
+  <van-popup show="{{ showClassPicker }}" position="bottom" bind:close="onClassPickerClose">
+    <van-picker
+      show-toolbar
+      title="选择班级"
+      columns="{{ classes }}"
+      bind:confirm="onClassPickerConfirm"
+      bind:cancel="onClassPickerClose"
+    />
+  </van-popup>
   </block>
 </view>

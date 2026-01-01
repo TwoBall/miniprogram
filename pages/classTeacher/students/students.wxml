@@ -95,50 +95,59 @@
       <van-loading type="spinner" size="48rpx">加载中...</van-loading>
     </view>
 
-    <view wx:elif="{{ filteredStudents.length > 0 }}" class="student-list-wrapper">
-      <view
-        wx:for="{{ filteredStudents }}"
-        wx:key="_id"
-        class="student-card"
-        bindtap="onStudentTap"
-        data-id="{{ item._id }}"
-      >
-        <view class="student-card-avatar">
-          <van-icon name="user-circle-o" size="40px" color="#1890ff" />
-        </view>
-        <view class="student-card-info">
-          <view class="student-card-header">
-            <view class="student-card-name-wrapper">
-              <text class="student-card-name">{{ item.studentName }}</text>
-              <van-tag
-                wx:if="{{ warningStudentIds.includes(item._id) }}"
-                type="danger"
-                plain
-                size="medium"
-              >
-                <van-icon name="warning-o" size="12px" />
-                预警
-              </van-tag>
+    <scroll-view
+      wx:elif="{{ filteredStudents.length > 0 }}"
+      class="student-list-scroll"
+      scroll-y
+      bindscroll="onVirtualScroll"
+      style="height: calc(100vh - 420rpx);"
+    >
+      <view class="student-list-wrapper" style="height: {{totalHeight}}px; position: relative;">
+        <view style="transform: translateY({{offsetY}}px);">
+          <view
+            wx:for="{{ virtualList }}"
+            wx:key="_id"
+            class="student-card"
+            bindtap="onStudentTap"
+            data-id="{{ item._id }}"
+          >
+            <view class="student-card-avatar">
+              <van-icon name="user-circle-o" size="40px" color="#1890ff" />
             </view>
-            <van-tag wx:if="{{ item.gender }}" plain type="{{ item.gender === '男' ? 'primary' : 'danger' }}" size="medium">
-              {{ item.gender }}
-            </van-tag>
-          </view>
-          <view class="student-card-meta">
-            <view class="student-card-meta-item">
-              <van-icon name="apps-o" size="28rpx" color="#999" />
-              <text>{{ item.clubName || '未分配社团' }}</text>
+            <view class="student-card-info">
+              <view class="student-card-header">
+                <view class="student-card-name-wrapper">
+                  <text class="student-card-name">{{ item.studentName }}</text>
+                  <van-tag
+                    wx:if="{{ warningStudentIds.includes(item._id) }}"
+                    type="danger"
+                    plain
+                    size="medium"
+                  >
+                    <van-icon name="warning-o" size="12px" />
+                    预警
+                  </van-tag>
+                </view>
+                <van-tag wx:if="{{ item.gender }}" plain type="{{ item.gender === '男' ? 'primary' : 'danger' }}" size="medium">
+                  {{ item.gender }}
+                </van-tag>
+              </view>
+              <view class="student-card-meta">
+                <view class="student-card-meta-item">
+                  <van-icon name="apps-o" size="28rpx" color="#999" />
+                  <text>{{ item.clubName || '未分配社团' }}</text>
+                </view>
+              </view>
             </view>
+            <van-icon name="arrow" size="16px" color="#ccc" />
           </view>
         </view>
-        <van-icon name="arrow" size="16px" color="#ccc" />
       </view>
-    </view>
+    </scroll-view>
 
-    <van-empty
+    <empty-state
       wx:else
-      description="暂无学生数据"
-      image="search"
+      type="students"
     />
   </view>
 
@@ -172,10 +181,9 @@
       </view>
     </view>
 
-    <van-empty
+    <empty-state
       wx:else
-      description="暂无考勤数据"
-      image="search"
+      type="attendance"
     />
   </view>
   </block>

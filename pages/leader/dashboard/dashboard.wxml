@@ -113,10 +113,10 @@
         </view>
       </van-cell-group>
 
-      <van-empty
+      <empty-state
         wx:else
+        type="attendance"
         description="暂无班级排名数据"
-        image="search"
       />
     </view>
 
@@ -159,10 +159,9 @@
       </van-cell>
     </van-cell-group>
 
-    <van-empty
+    <empty-state
       wx:else
-      description="暂无数据"
-      image="search"
+      type="default"
     />
   </view>
 

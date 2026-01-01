@@ -83,9 +83,10 @@
   </view>
 
   <!-- 空状态 -->
-  <van-empty
+  <empty-state
     wx:if="{{ !loading && notifications.length === 0 }}"
-    description="{{ activeTab === 'unread' ? '暂无未读通知' : activeTab === 'read' ? '暂无已读通知' : '暂无通知' }}"
+    type="notification"
+    description="{{ activeTab === 'unread' ? '暂无未读通知' : activeTab === 'read' ? '暂无已读通知' : '' }}"
   />
 
   <!-- 骨架屏加载 -->

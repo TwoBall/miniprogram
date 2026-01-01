@@ -5,10 +5,10 @@
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
+    "empty-state": "/components/empty-state/empty-state",
     "van-cell": "@vant/weapp/cell/index",
     "van-cell-group": "@vant/weapp/cell-group/index",
     "van-datetime-picker": "@vant/weapp/datetime-picker/index",
-    "van-empty": "@vant/weapp/empty/index",
     "van-grid": "@vant/weapp/grid/index",
     "van-grid-item": "@vant/weapp/grid-item/index",
     "van-icon": "@vant/weapp/icon/index",

@@ -51,7 +51,7 @@
       </view>
     </block>
 
-    <van-empty wx:else description="暂无数据" image="search" />
+    <empty-state wx:else type="default" />
   </view>
 </view>
 

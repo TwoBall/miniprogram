@@ -88,6 +88,11 @@ module.exports = Behavior({
       }
 
       this.setData({ filteredStudents: filtered })
+
+      // 如果混入了虚拟列表 Behavior，更新虚拟列表
+      if (typeof this.updateFullList === 'function') {
+        this.updateFullList(filtered)
+      }
     },
 
     // ========== 分布筛选 ==========

@@ -86,10 +86,10 @@
       </van-swipe-cell>
     </van-cell-group>
 
-    <van-empty
+    <empty-state
       wx:elif="{{ !loading }}"
+      type="default"
       description="暂无用户数据"
-      image="search"
     />
 
     <van-loading

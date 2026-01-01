@@ -121,9 +121,9 @@
     </view>
 
     <!-- 空状态 -->
-    <van-empty
+    <empty-state
       wx:if="{{ !loading && transfers.length === 0 }}"
-      description="暂无转社团申请"
+      type="transfer"
     />
 
     <!-- 骨架屏加载 -->

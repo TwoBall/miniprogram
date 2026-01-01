@@ -86,8 +86,9 @@
           </view>
 
           <!-- 空状态 -->
-          <van-empty
+          <empty-state
             wx:if="{{ !loading && attendanceHistory.length === 0 }}"
+            type="attendance"
             description="暂无考勤记录"
           />
 

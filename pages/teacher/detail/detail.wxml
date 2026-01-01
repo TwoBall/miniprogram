@@ -83,10 +83,9 @@
     </view>
   </view>
 
-  <van-empty
+  <empty-state
     wx:if="{{!loading && (!record || record.records.length === 0)}}"
-    description="暂无数据"
-    image="search"
+    type="attendance"
   />
 
   <van-toast id="van-toast" />

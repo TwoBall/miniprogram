@@ -3,18 +3,26 @@
 // pos: 页面层 > 教师模块 > 社团管理
 
 const studentListBehavior = require('../../../behaviors/studentListBehavior')
+const virtualListBehavior = require('../../../behaviors/virtualListBehavior')
 const { SafeToast } = require('../../../utils/error')
 
 Page({
-  behaviors: [studentListBehavior],
+  behaviors: [studentListBehavior, virtualListBehavior],
 
   data: {
     pageLoading: true,
     clubInfo: null,
 
-    // 班级分布
-    classDistribution: [],
-    distributionField: 'className',
+    // 学部班级筛选
+    departments: [],           // 学部列表
+    classes: [],               // 当前学部下的班级列表
+    allClasses: [],            // 所有班级（按学部分组）
+    selectedDepartment: '',    // 选中的学部
+    selectedClass: '',         // 选中的班级
+
+    // 弹出层状态
+    showDeptPicker: false,
+    showClassPicker: false,
 
     // 学生操作菜单
     showStudentActions: false,
@@ -69,17 +77,39 @@ Page({
       if (res.result.success) {
         const students = res.result.data || []
 
-        // 计算班级分布
-        const classDistribution = this.calculateDistribution(students, 'className')
+        // 构建学部-班级层级数据
+        const deptClassMap = {}
+        students.forEach(s => {
+          const dept = s.department || '未分配'
+          const cls = s.className || '未分配'
+          if (!deptClassMap[dept]) {
+            deptClassMap[dept] = new Set()
+          }
+          deptClassMap[dept].add(cls)
+        })
+
+        // 转换为数组格式
+        const departments = ['全部学部', ...Object.keys(deptClassMap).sort()]
+        const allClasses = { '全部学部': ['全部班级'] }
+        Object.keys(deptClassMap).forEach(dept => {
+          allClasses[dept] = ['全部班级', ...Array.from(deptClassMap[dept]).sort()]
+        })
 
         this.setData({
           students,
           filteredStudents: students,
           'stats.totalCount': students.length,
-          classDistribution,
+          departments,
+          allClasses,
+          classes: ['全部班级'],
+          selectedDepartment: '全部学部',
+          selectedClass: '全部班级',
           loading: false,
           pageLoading: false
         })
+
+        // 初始化虚拟列表（每项高度约 120px）
+        this.initVirtualList(students, { itemHeight: 120, bufferSize: 5 })
 
         // 加载缺勤预警
         this.loadAbsenceWarnings({ clubName: userInfo.clubName })
@@ -194,5 +224,114 @@ Page({
     wx.navigateTo({
       url: `/pages/common/transfer/create?${params}`
     })
+  },
+
+  /**
+   * 打开学部选择器
+   */
+  onShowDeptPicker() {
+    this.setData({ showDeptPicker: true })
+  },
+
+  /**
+   * 关闭学部选择器
+   */
+  onDeptPickerClose() {
+    this.setData({ showDeptPicker: false })
+  },
+
+  /**
+   * 学部选择确认
+   */
+  onDeptPickerConfirm(e) {
+    const { value } = e.detail
+    const { allClasses } = this.data
+    const selectedDepartment = value
+    const classes = allClasses[selectedDepartment] || ['全部班级']
+
+    this.setData({
+      showDeptPicker: false,
+      selectedDepartment,
+      classes,
+      selectedClass: '全部班级'
+    })
+
+    this.applyFilter()
+  },
+
+  /**
+   * 打开班级选择器
+   */
+  onShowClassPicker() {
+    if (this.data.selectedDepartment === '全部学部') {
+      return
+    }
+    this.setData({ showClassPicker: true })
+  },
+
+  /**
+   * 关闭班级选择器
+   */
+  onClassPickerClose() {
+    this.setData({ showClassPicker: false })
+  },
+
+  /**
+   * 班级选择确认
+   */
+  onClassPickerConfirm(e) {
+    const { value } = e.detail
+
+    this.setData({
+      showClassPicker: false,
+      selectedClass: value
+    })
+
+    this.applyFilter()
+  },
+
+  /**
+   * 应用筛选条件
+   */
+  applyFilter() {
+    const { students, selectedDepartment, selectedClass } = this.data
+
+    let filtered = students
+
+    // 学部筛选
+    if (selectedDepartment && selectedDepartment !== '全部学部') {
+      filtered = filtered.filter(s => s.department === selectedDepartment)
+    }
+
+    // 班级筛选
+    if (selectedClass && selectedClass !== '全部班级') {
+      filtered = filtered.filter(s => s.className === selectedClass)
+    }
+
+    this.setData({ filteredStudents: filtered })
+
+    // 更新虚拟列表
+    if (typeof this.updateFullList === 'function') {
+      this.updateFullList(filtered)
+    }
+  },
+
+  /**
+   * 重置筛选
+   */
+  onResetFilter() {
+    const { students } = this.data
+
+    this.setData({
+      selectedDepartment: '全部学部',
+      selectedClass: '全部班级',
+      classes: ['全部班级'],
+      filteredStudents: students
+    })
+
+    // 更新虚拟列表
+    if (typeof this.updateFullList === 'function') {
+      this.updateFullList(students)
+    }
   }
 })
