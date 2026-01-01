@@ -199,8 +199,8 @@
   margin-bottom: 0;
 }
 
-/* 滑动反馈指示器 */
-.swipe-indicator {
+/* 反馈图标 */
+.feedback-indicator {
   position: absolute;
   top: 40rpx;
   display: flex;
@@ -208,9 +208,10 @@
   align-items: center;
   z-index: 20;
   pointer-events: none;
+  transition: opacity 0.15s ease;
 }
 
-.swipe-indicator text {
+.feedback-indicator text {
   font-size: 32rpx;
   font-weight: bold;
   margin-top: 10rpx;
@@ -228,12 +229,12 @@
   transform: rotate(-15deg);
 }
 
-/* 滑动中的卡片边框效果 */
-.swiping-right {
+/* 卡片边框效果 */
+.border-present {
   border: 4rpx solid #52c41a;
 }
 
-.swiping-left {
+.border-absent {
   border: 4rpx solid #ff4d4f;
 }
 
@@ -393,27 +394,4 @@
 
 .toggle-icon {
   opacity: 0.6;
-}
-
-/* 滑出动画 */
-.swipe-out-right {
-  animation: swipeOutRight 0.3s ease forwards;
-}
-
-.swipe-out-left {
-  animation: swipeOutLeft 0.3s ease forwards;
-}
-
-@keyframes swipeOutRight {
-  to {
-    transform: translateX(200%) rotate(30deg);
-    opacity: 0;
-  }
-}
-
-@keyframes swipeOutLeft {
-  to {
-    transform: translateX(-200%) rotate(-30deg);
-    opacity: 0;
-  }
 }

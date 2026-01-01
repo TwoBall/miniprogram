@@ -25,23 +25,20 @@ Page({
     // 上课日相关
     isClassDay: true,
     noClassMessage: '',
-    // 滑动相关
-    startX: 0,
-    startY: 0,
-    moveX: 0,
+    // 卡片动画样式
     cardStyle: '',
-    swipeDirection: '',
+    // 反馈图标透明度
     presentOpacity: 0,
     absentOpacity: 0,
+    // 卡片边框状态
+    cardBorderClass: '',
     // 操作记录（用于撤销）
     actionHistory: [],
     // 已筛选的学部
     selectedDepts: [],
     // 已点名列表
     showMarkedList: false,
-    markedStudents: [],
-    // 节流时间戳
-    lastMoveTime: 0
+    markedStudents: []
   },
 
   onLoad() {
@@ -160,32 +157,26 @@ Page({
     }
   },
 
-  // ========== 触摸事件处理 (已迁移至 WXS) ==========
-  // 仅保留业务逻辑方法供 WXS 调用
+  // ========== 按钮点击处理 ==========
 
   /**
-   * 标记学生到课
+   * 标记学生到课（按钮点击）
    */
-  markPresent() {
-    this.processSwipe('present', 'swipe-out-right')
-  },
-
-  /**
-   * 标记学生缺课
-   */
-  markAbsent() {
-    this.processSwipe('absent', 'swipe-out-left')
-  },
-
   markPresentByBtn() {
-    this.processSwipe('present', 'swipe-out-right')
+    this.markStudent('present')
   },
 
+  /**
+   * 标记学生缺课（按钮点击）
+   */
   markAbsentByBtn() {
-    this.processSwipe('absent', 'swipe-out-left')
+    this.markStudent('absent')
   },
 
-  processSwipe(status, _animClass) {
+  /**
+   * 标记学生状态
+   */
+  markStudent(status) {
     const { students, currentIndex, actionHistory, presentCount, absentCount, markedStudents } = this.data
 
     if (currentIndex >= students.length) return
@@ -202,13 +193,20 @@ Page({
       status: status
     })
 
-    // 动画效果
-    const direction = status === 'present' ? 1 : -1
+    // 先显示反馈图标和边框
     this.setData({
-      cardStyle: `transform: translateX(${direction * 500}px) rotate(${direction * 30}deg); transition: all 0.3s ease;`,
       presentOpacity: status === 'present' ? 1 : 0,
-      absentOpacity: status === 'absent' ? 1 : 0
+      absentOpacity: status === 'absent' ? 1 : 0,
+      cardBorderClass: status === 'present' ? 'border-present' : 'border-absent'
     })
+
+    // 延迟后卡片飞出
+    setTimeout(() => {
+      const direction = status === 'present' ? 1 : -1
+      this.setData({
+        cardStyle: `transform: translateX(${direction * 500}px) rotate(${direction * 30}deg); transition: all 0.3s ease;`
+      })
+    }, 150)
 
     // 延迟更新下一张
     setTimeout(() => {
@@ -226,7 +224,7 @@ Page({
         cardStyle: '',
         presentOpacity: 0,
         absentOpacity: 0,
-        swipeDirection: ''
+        cardBorderClass: ''
       })
 
       // 点名完成时显示醒目提示
@@ -237,7 +235,7 @@ Page({
           confirmButtonText: '知道了'
         })
       }
-    }, 300)
+    }, 450)
   },
 
   /**
@@ -270,8 +268,7 @@ Page({
       absentCount: currentStatus === 'absent' ? absentCount - 1 : absentCount,
       actionHistory,
       markedStudents,
-      cardStyle: '',
-      swipeDirection: ''
+      cardStyle: ''
     })
 
     SafeToast.success('已撤销')

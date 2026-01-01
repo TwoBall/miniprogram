@@ -45,9 +45,6 @@
       </view>
     </view>
 
-    <!-- 引入 WXS 模块 -->
-    <wxs module="swipe" src="./swipe.wxs" />
-  
       <!-- 卡片堆叠区 -->
       <view class="card-stack" wx:if="{{!pageLoading && currentIndex < students.length}}">
         <!-- 背景卡片（第3张） -->
@@ -58,7 +55,7 @@
             </view>
           </view>
         </view>
-  
+
         <!-- 背景卡片（第2张） -->
         <view class="student-card card-bg-1" wx:if="{{currentIndex + 1 < students.length}}">
           <view class="card-content">
@@ -67,21 +64,15 @@
             </view>
           </view>
         </view>
-  
-        <!-- 当前卡片（可滑动） -->
-        <view
-          class="student-card card-current {{swipeDirection}}"
-          style="{{cardStyle}}"
-          bindtouchstart="{{swipe.touchStart}}"
-          bindtouchmove="{{swipe.touchMove}}"
-          bindtouchend="{{swipe.touchEnd}}"
-        >
-          <!-- 滑动反馈图标 -->
-          <view class="swipe-indicator present-indicator" style="opacity: {{presentOpacity}}">
+
+        <!-- 当前卡片 -->
+        <view class="student-card card-current {{cardBorderClass}}" style="{{cardStyle}}">
+          <!-- 反馈图标 -->
+          <view class="feedback-indicator present-indicator" style="opacity: {{presentOpacity}}">
             <van-icon name="success" size="120rpx" color="#52c41a" />
             <text>到课</text>
           </view>
-          <view class="swipe-indicator absent-indicator" style="opacity: {{absentOpacity}}">
+          <view class="feedback-indicator absent-indicator" style="opacity: {{absentOpacity}}">
             <van-icon name="cross" size="120rpx" color="#ff4d4f" />
             <text>缺课</text>
           </view>
