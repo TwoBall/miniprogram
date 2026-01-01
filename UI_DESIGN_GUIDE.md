@@ -373,11 +373,18 @@ Dialog.confirm({
 
 ## 六、实施检查清单
 
-### 第一阶段：统一空状态组件
-- [ ] 替换所有 `van-empty` 为 `empty-state`
-- [ ] 涉及页面：学生列表、考勤详情、搜索结果等
+### 第一阶段：统一空状态组件 ✅ 已完成
+- [x] 替换所有 `van-empty` 为 `empty-state`
+- [x] 涉及页面：16 个页面已全部替换
+  - teacher: attendance, history, detail, club
+  - classTeacher: overview, students, studentDetail
+  - leader: dashboard, detail
+  - admin: users
+  - common: transfer, notifications, switchRole
+- [x] 移除 app.json 中 van-empty 的 componentPlaceholder
 
 ### 第二阶段：统一选择器风格
+- [x] club 页面筛选改为 van-popup + van-picker（已完成：学部+班级级联筛选）
 - [ ] export 页面筛选改为 van-popup + van-picker
 - [ ] 确保触发器样式统一
 
@@ -405,6 +412,6 @@ Dialog.confirm({
 
 ---
 
-*文档版本：1.0*
+*文档版本：1.1*
 *更新时间：2026-01-01*
 *项目：智慧社团管理系统*

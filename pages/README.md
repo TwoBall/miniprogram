@@ -19,14 +19,14 @@
 - `teacher/attendance/` - 考勤管理页面
 - `teacher/history/` - 历史记录页面
 - `teacher/detail/` - 详情页面
-- `teacher/club/` - 社团管理页面
+- `teacher/club/` - 社团管理页面（支持学部+班级级联筛选、虚拟列表优化）
 - `teacher/profile/` - 教师个人中心
 
 ### 班主任模块
 - `classTeacher/overview/` - 班级概览页面
 - `classTeacher/feedback/` - 反馈管理页面
 - `classTeacher/profile/` - 班主任个人中心
-- `classTeacher/students/` - 学生列表页面
+- `classTeacher/students/` - 学生列表页面（支持虚拟列表优化）
 - `classTeacher/studentDetail/` - 学生详情页面
 
 ### 领导模块

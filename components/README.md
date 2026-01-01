@@ -61,6 +61,8 @@
 
 ## empty-state 空状态组件
 
+**重要**：统一使用此组件，禁止使用 `van-empty`。
+
 预设类型：
 - `default` - 默认空状态
 - `students` - 暂无学生
@@ -84,6 +86,24 @@
   bind:action="onRefresh"
 />
 ```
+
+### 使用该组件的页面
+
+| 页面 | type | 说明 |
+|------|------|------|
+| teacher/attendance | `default` | 非上课日提示 |
+| teacher/history | `history` | 暂无历史记录 |
+| teacher/detail | `attendance` | 暂无考勤记录 |
+| teacher/club | `students`, `attendance` | 学生列表/排行空状态 |
+| classTeacher/overview | `attendance` | 暂无考勤数据 |
+| classTeacher/students | `students`, `attendance` | 学生列表/排行空状态 |
+| classTeacher/studentDetail | `attendance` | 暂无考勤记录 |
+| leader/dashboard | `attendance`, `default` | 排名/详情空状态 |
+| leader/detail | `default` | 暂无数据 |
+| admin/users | `default` | 暂无用户数据 |
+| common/transfer | `transfer` | 暂无转社团申请 |
+| common/notifications | `notification` | 暂无通知 |
+| common/switchRole | `default` | 暂无其他身份 |
 
 ## 组件开发规范
 
