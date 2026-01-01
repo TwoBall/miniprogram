@@ -10,7 +10,6 @@
 
 - `custom-tabbar/` - 自定义底部标签栏组件，支持多角色动态切换
 - `skeleton/` - 骨架屏加载组件，提供页面加载时的占位效果
-- `lazy-image/` - 懒加载图片组件，使用 IntersectionObserver 实现视口内懒加载
 - `empty-state/` - 空状态组件，提供统一的空数据展示样式
 
 ## 组件结构
@@ -30,7 +29,6 @@
   "usingComponents": {
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
     "skeleton": "/components/skeleton/skeleton",
-    "lazy-image": "/components/lazy-image/lazy-image",
     "empty-state": "/components/empty-state/empty-state"
   }
 }
@@ -59,26 +57,6 @@
 <skeleton type="list" count="{{5}}" avatar="{{true}}" />
 <skeleton type="overview" />
 <skeleton type="form" row="{{4}}" />
-```
-
-## lazy-image 懒加载图片组件
-
-功能特性：
-- 视口懒加载：仅当图片进入视口时才开始加载
-- 占位图：加载前显示占位图
-- 加载动画：加载完成后淡入显示
-- 错误处理：加载失败显示默认图片
-- 支持圆形和方形
-
-使用示例：
-```xml
-<lazy-image
-  src="{{item.avatar}}"
-  placeholder="/images/avatar-placeholder.png"
-  width="160rpx"
-  height="160rpx"
-  round="{{true}}"
-/>
 ```
 
 ## empty-state 空状态组件

@@ -88,10 +88,8 @@
     description="{{ activeTab === 'unread' ? '暂无未读通知' : activeTab === 'read' ? '暂无已读通知' : '暂无通知' }}"
   />
 
-  <!-- 加载中 -->
-  <view wx:if="{{ loading }}" class="loading-wrapper">
-    <van-loading type="spinner" size="48rpx">加载中...</van-loading>
-  </view>
+  <!-- 骨架屏加载 -->
+  <skeleton wx:if="{{ loading }}" type="list" count="{{5}}" />
 
   <!-- 没有更多 -->
   <view wx:if="{{ !loading && notifications.length > 0 && !hasMore }}" class="no-more">

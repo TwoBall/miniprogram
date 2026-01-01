@@ -126,10 +126,8 @@
       description="暂无转社团申请"
     />
 
-    <!-- 加载中 -->
-    <view wx:if="{{ loading }}" class="loading-wrapper">
-      <van-loading type="spinner" size="24px">加载中...</van-loading>
-    </view>
+    <!-- 骨架屏加载 -->
+    <skeleton wx:if="{{ loading }}" type="list" count="{{5}}" />
 
     <!-- 没有更多 -->
     <view wx:if="{{ !loading && !hasMore && transfers.length > 0 }}" class="no-more">

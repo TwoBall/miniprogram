@@ -63,7 +63,7 @@
   "preloadRule": {
     "pages/login/login": {
       "network": "all",
-      "packages": ["common"]
+      "packages": ["common", "admin", "teacher", "classTeacher", "leader"]
     }
   },
   "window": {

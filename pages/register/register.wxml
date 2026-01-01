@@ -72,6 +72,7 @@
         block
         round
         loading="{{ loading }}"
+        disabled="{{ loading }}"
         loading-text="提交中..."
         bind:click="handleRegister"
       >

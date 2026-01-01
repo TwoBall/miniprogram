@@ -247,7 +247,7 @@ Page({
     const { students, actionHistory, presentCount, absentCount, markedStudents } = this.data
 
     if (actionHistory.length === 0) {
-      Toast('没有可撤销的操作')
+      SafeToast.fail('没有可撤销的操作')
       return
     }
 
@@ -274,7 +274,7 @@ Page({
       swipeDirection: ''
     })
 
-    Toast('已撤销')
+    SafeToast.success('已撤销')
   },
 
   /**
@@ -284,7 +284,7 @@ Page({
     const { students, currentIndex } = this.data
 
     if (currentIndex >= students.length) {
-      Toast('已全部点完')
+      SafeToast.fail('已全部点完')
       return
     }
 
@@ -336,6 +336,7 @@ Page({
 
   /**
    * 切换已点名学生的状态
+   * 使用数据路径局部更新，减少 setData 数据传输量
    */
   toggleMarkedStudentStatus(e) {
     const index = e.currentTarget.dataset.index
@@ -345,24 +346,22 @@ Page({
     const oldStatus = student.status
     const newStatus = oldStatus === 'present' ? 'absent' : 'present'
 
-    // 更新 markedStudents
-    markedStudents[index].status = newStatus
-
-    // 同步更新 students 数组中对应学生的状态
-    const studentInList = students.find(s => s.studentName === student.studentName && s.className === student.className)
-    if (studentInList) {
-      studentInList.status = newStatus
-    }
-
-    // 更新计数
-    this.setData({
-      markedStudents,
-      students,
+    // 使用数据路径局部更新，避免传输整个数组
+    const updates = {
+      [`markedStudents[${index}].status`]: newStatus,
       presentCount: oldStatus === 'present' ? presentCount - 1 : presentCount + 1,
       absentCount: oldStatus === 'absent' ? absentCount - 1 : absentCount + 1
-    })
+    }
 
-    Toast(`已改为${newStatus === 'present' ? '到课' : '缺课'}`)
+    // 同步更新 students 数组中对应学生的状态
+    const studentIndex = students.findIndex(s => s.studentName === student.studentName && s.className === student.className)
+    if (studentIndex !== -1) {
+      updates[`students[${studentIndex}].status`] = newStatus
+    }
+
+    this.setData(updates)
+
+    SafeToast.success(`已改为${newStatus === 'present' ? '到课' : '缺课'}`)
   },
 
   /**
