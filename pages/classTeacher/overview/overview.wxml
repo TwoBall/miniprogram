@@ -1,12 +1,12 @@
 <view class="overview-container">
-  <view class="header-section">
+  <view class="header-section fade-in-up">
     <view class="header-top">
       <view class="class-info">
         <van-icon name="home-o" size="40rpx" color="#ffffff" />
         <text class="class-name">{{className}}</text>
       </view>
     </view>
-    <view class="date-selector" bindtap="showDatePickerPopup">
+    <view class="date-selector icon-tap" bindtap="showDatePickerPopup">
       <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />
       <text>{{selectedDate}}</text>
       <van-icon name="arrow-down" size="24rpx" color="rgba(255,255,255,0.9)" />
@@ -54,7 +54,7 @@
     </view>
 
     <van-cell-group title="学生考勤详情" wx:elif="{{students.length > 0}}">
-      <van-cell wx:for="{{students}}" wx:key="_id" border="{{ false }}" custom-class="student-card">
+      <van-cell wx:for="{{students}}" wx:key="_id" border="{{ false }}" custom-class="student-card list-item-enter">
         <view slot="title" class="student-info">
           <view class="student-header">
             <view class="student-name">
@@ -87,6 +87,7 @@
             plain
             bind:click="sendFeedback"
             data-student="{{item}}"
+            custom-class="btn-active"
           >
             发送反馈
           </van-button>

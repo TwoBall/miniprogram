@@ -1,6 +1,6 @@
 <view class="page-container">
   <!-- 学生信息卡片 -->
-  <view class="card student-info-card">
+  <view class="card student-info-card card-pop-in">
     <view class="card-header">
       <van-icon name="user-circle-o" size="40rpx" color="#1890ff" />
       <text class="card-title">学生信息</text>
@@ -22,7 +22,7 @@
   </view>
 
   <!-- 转社团表单 -->
-  <view class="card form-card">
+  <view class="card form-card card-pop-in">
     <view class="card-header">
       <van-icon name="exchange" size="40rpx" color="#1890ff" />
       <text class="card-title">转入信息</text>
@@ -64,7 +64,7 @@
   <!-- 操作按钮 -->
   <view class="action-buttons">
     <view class="btn-wrapper">
-      <van-button type="default" size="large" block bind:click="cancel">
+      <van-button type="default" size="large" block bind:click="cancel" custom-class="btn-active">
         取消
       </van-button>
     </view>
@@ -76,6 +76,7 @@
         loading="{{ submitting }}"
         disabled="{{ submitting }}"
         bind:click="submitForm"
+        custom-class="btn-active"
       >
         提交申请
       </van-button>

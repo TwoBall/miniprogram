@@ -7,7 +7,7 @@
   <!-- 实际内容 -->
   <block wx:else>
   <!-- 班级信息卡片 -->
-  <view class="list-header class-teacher-header">
+  <view class="list-header class-teacher-header fade-in-up">
     <view class="header-info">
       <view class="header-title-wrapper">
         <van-icon name="friends-o" size="40rpx" color="#fff" />
@@ -107,7 +107,7 @@
           <view
             wx:for="{{ virtualList }}"
             wx:key="_id"
-            class="student-card"
+            class="student-card card-tap"
             bindtap="onStudentTap"
             data-id="{{ item._id }}"
           >

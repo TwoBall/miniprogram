@@ -1,6 +1,6 @@
 <view class="approval-container">
   <!-- 顶部信息栏 -->
-  <view class="header-section">
+  <view class="header-section fade-in-up">
     <view class="header-top">
       <view class="page-title">
         <van-icon name="friends-o" size="40rpx" color="#ffffff" />

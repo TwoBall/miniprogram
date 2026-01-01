@@ -10,7 +10,7 @@
     <view
       wx:for="{{ records }}"
       wx:key="_id"
-      class="record-item card"
+      class="record-item card card-list-enter"
     >
       <view class="record-header">
         <view class="record-type">
@@ -39,6 +39,7 @@
           data-id="{{ item._id }}"
           data-file-id="{{ item.fileID }}"
           bind:click="onDownload"
+          custom-class="btn-active"
         >
           下载
         </van-button>
@@ -49,6 +50,7 @@
           data-id="{{ item._id }}"
           data-file-id="{{ item.fileID }}"
           bind:click="onDelete"
+          custom-class="btn-active"
         >
           删除
         </van-button>

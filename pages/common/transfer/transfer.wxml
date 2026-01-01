@@ -13,7 +13,7 @@
     <view
       wx:for="{{ transfers }}"
       wx:key="_id"
-      class="card transfer-item"
+      class="card transfer-item card-list-enter card-tap"
       bindtap="onViewDetail"
       data-transfer="{{ item }}"
     >
@@ -72,6 +72,7 @@
           size="small"
           bindtap="onConfirm"
           data-id="{{ item._id }}"
+          custom-class="btn-active"
         >
           确认
         </van-button>
@@ -83,6 +84,7 @@
             size="small"
             bindtap="onApprove"
             data-id="{{ item._id }}"
+            custom-class="btn-active"
           >
             通过
           </van-button>
@@ -91,6 +93,7 @@
             size="small"
             bindtap="onReject"
             data-id="{{ item._id }}"
+            custom-class="btn-active"
           >
             拒绝
           </van-button>
@@ -103,6 +106,7 @@
           size="small"
           bindtap="onReject"
           data-id="{{ item._id }}"
+          custom-class="btn-active"
         >
           拒绝
         </van-button>

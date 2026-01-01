@@ -1,6 +1,6 @@
 <view class="history-container">
   <!-- 顶部信息栏 -->
-  <view class="header-section">
+  <view class="header-section fade-in-up">
     <view class="header-top">
       <view class="club-info">
         <van-icon name="notes-o" size="40rpx" color="#ffffff" />
@@ -16,7 +16,7 @@
 
   <!-- 记录列表 -->
   <view class="record-list" wx:elif="{{records.length > 0}}">
-    <view class="card record-card" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
+    <view class="card record-card card-list-enter card-tap" wx:for="{{records}}" wx:key="_id" bindtap="viewDetail" data-record="{{item}}">
       <view class="record-header">
         <view class="date">{{item.date}}</view>
         <view class="time">{{item.time}}</view>

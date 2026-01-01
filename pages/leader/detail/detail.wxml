@@ -1,6 +1,6 @@
 <view class="detail-container">
   <!-- 顶部信息栏 -->
-  <view class="header-section">
+  <view class="header-section fade-in-up">
     <view class="header-top">
       <view class="class-info">
         <van-icon name="home-o" size="40rpx" color="#ffffff" />
@@ -15,7 +15,7 @@
 
   <view class="student-list">
     <block wx:if="{{students.length > 0}}">
-      <view class="card student-card" wx:for="{{students}}" wx:key="_id">
+      <view class="card student-card card-list-enter" wx:for="{{students}}" wx:key="_id">
         <view class="student-header">
           <view class="student-name">
             <text>{{item.studentName}}</text>

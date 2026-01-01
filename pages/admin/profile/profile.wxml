@@ -1,6 +1,6 @@
 <view class="profile-container">
   <!-- 用户信息卡片 -->
-  <view class="user-info">
+  <view class="user-info card-pop-in">
     <view class="avatar">
       <van-icon name="user-circle-o" size="64px" color="#722ed1" />
     </view>

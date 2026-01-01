@@ -34,6 +34,7 @@
         wx:for="{{ users }}"
         wx:key="_id"
         right-width="{{ 130 }}"
+        custom-class="list-item-enter"
       >
         <van-cell
           border="{{ false }}"
@@ -109,7 +110,7 @@
     </view>
   </view>
 
-  <view class="fab-btn" bind:tap="goToAddUser">
+  <view class="fab-btn btn-active" bind:tap="goToAddUser">
     <van-icon name="plus" size="48rpx" color="#fff" />
   </view>
 

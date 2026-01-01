@@ -1,6 +1,6 @@
 <view class="student-detail-container">
   <!-- 学生基本信息 -->
-  <view class="student-card">
+  <view class="student-card card-pop-in">
     <view class="student-avatar">
       <van-icon name="user-circle-o" size="64px" color="#1890ff" />
     </view>
@@ -62,7 +62,7 @@
           <view
             wx:for="{{ attendanceHistory }}"
             wx:key="_id"
-            class="attendance-item"
+            class="attendance-item list-item-enter"
           >
             <view class="attendance-header">
               <view class="date">{{ item.date }}</view>
@@ -109,6 +109,7 @@
       size="large"
       block
       bind:click="goToTransfer"
+      custom-class="btn-active"
     >
       申请转社团
     </van-button>

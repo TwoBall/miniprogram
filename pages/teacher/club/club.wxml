@@ -7,7 +7,7 @@
   <!-- 实际内容 -->
   <block wx:else>
   <!-- 社团信息卡片 -->
-  <view class="list-header teacher-header">
+  <view class="list-header teacher-header fade-in-up">
     <view class="header-info">
       <view class="header-title-wrapper">
         <van-icon name="cluster-o" size="40rpx" color="#fff" />
@@ -38,7 +38,7 @@
   <view class="filter-section" wx:if="{{ departments.length > 1 }}">
     <view class="filter-row">
       <!-- 学部选择 -->
-      <view class="filter-picker" bindtap="onShowDeptPicker">
+      <view class="filter-picker icon-tap" bindtap="onShowDeptPicker">
         <view class="filter-picker-content">
           <text class="filter-label">学部</text>
           <view class="filter-value">
@@ -49,7 +49,7 @@
       </view>
 
       <!-- 班级选择 -->
-      <view class="filter-picker" bindtap="onShowClassPicker">
+      <view class="filter-picker icon-tap" bindtap="onShowClassPicker">
         <view class="filter-picker-content {{ selectedDepartment === '全部学部' ? 'disabled' : '' }}">
           <text class="filter-label">班级</text>
           <view class="filter-value">
@@ -61,7 +61,7 @@
 
       <!-- 重置按钮 -->
       <view
-        class="filter-reset {{ selectedDepartment === '全部学部' && selectedClass === '全部班级' ? 'disabled' : '' }}"
+        class="filter-reset icon-tap {{ selectedDepartment === '全部学部' && selectedClass === '全部班级' ? 'disabled' : '' }}"
         bindtap="onResetFilter"
       >
         <van-icon name="replay" size="14px" />
@@ -124,7 +124,7 @@
           <view
             wx:for="{{ virtualList }}"
             wx:key="_id"
-            class="student-card"
+            class="student-card card-tap"
             bindtap="onStudentTap"
             bindlongpress="onStudentLongPress"
             data-student="{{ item }}"

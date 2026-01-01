@@ -20,6 +20,7 @@
       loading-text="登录中..."
       bind:click="handleWxLogin"
       icon="wechat"
+      custom-class="btn-active"
     >
       微信一键登录
     </van-button>

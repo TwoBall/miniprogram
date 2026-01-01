@@ -4,14 +4,14 @@
     <skeleton type="dashboard" count="{{1}}" />
   </view>
 
-  <view class="header-section" wx:if="{{!pageLoading}}">
+  <view class="header-section fade-in-up" wx:if="{{!pageLoading}}">
     <view class="header-top">
       <view class="department-info">
         <van-icon name="cluster-o" size="40rpx" color="#ffffff" />
         <text class="department-name">{{department}}</text>
       </view>
     </view>
-    <view class="date-selector" bindtap="showDatePickerPopup">
+    <view class="date-selector icon-tap" bindtap="showDatePickerPopup">
       <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />
       <text>{{selectedDate}}</text>
       <van-icon name="arrow-down" size="24rpx" color="rgba(255,255,255,0.9)" />
@@ -82,7 +82,7 @@
 
   <view class="class-list" wx:if="{{!pageLoading}}">
     <!-- 班级排名按钮 -->
-    <view class="ranking-toggle" bindtap="onToggleRanking">
+    <view class="ranking-toggle icon-tap" bindtap="onToggleRanking">
       <van-icon name="{{ showRanking ? 'arrow-up' : 'bar-chart-o' }}" size="32rpx" color="#1890ff" />
       <text>{{ showRanking ? '收起班级排名' : '查看班级排名（本月）' }}</text>
     </view>
@@ -127,7 +127,7 @@
         wx:key="className"
         is-link
         border="{{ false }}"
-        custom-class="class-card"
+        custom-class="class-card list-item-enter"
         bind:click="viewClassDetail"
         data-class="{{item}}"
       >

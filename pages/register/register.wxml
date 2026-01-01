@@ -75,6 +75,7 @@
         disabled="{{ loading }}"
         loading-text="提交中..."
         bind:click="handleRegister"
+        custom-class="btn-active"
       >
         提交注册申请
       </van-button>

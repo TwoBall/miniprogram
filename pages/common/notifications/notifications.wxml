@@ -15,7 +15,7 @@
         data-tab="unread"
       >
         <text>未读</text>
-        <view wx:if="{{ unreadCount > 0 }}" class="badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</view>
+        <view wx:if="{{ unreadCount > 0 }}" class="badge heartbeat">{{ unreadCount > 99 ? '99+' : unreadCount }}</view>
       </view>
       <view
         class="tab-item {{ activeTab === 'read' ? 'active' : '' }}"
@@ -29,7 +29,7 @@
 
   <!-- 全部标记为已读按钮 -->
   <view wx:if="{{ notifications.length > 0 && unreadCount > 0 }}" class="mark-all-wrapper">
-    <view class="mark-all-btn" bindtap="markAllAsRead">
+    <view class="mark-all-btn btn-active" bindtap="markAllAsRead">
       <van-icon name="checked" size="32rpx" />
       <text>全部标记为已读</text>
     </view>
@@ -40,7 +40,7 @@
     <view
       wx:for="{{ notifications }}"
       wx:key="_id"
-      class="card notification-item {{ !item.read ? 'unread' : '' }}"
+      class="card notification-item card-list-enter card-tap {{ !item.read ? 'unread' : '' }}"
       bindtap="onNotificationTap"
       data-notification="{{ item }}"
       data-id="{{ item._id }}"

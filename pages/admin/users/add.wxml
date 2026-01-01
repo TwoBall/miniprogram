@@ -62,6 +62,7 @@
         size="large"
         block
         bind:click="cancel"
+        custom-class="btn-active"
       >
         取消
       </van-button>
@@ -74,6 +75,7 @@
         loading="{{ submitting }}"
         disabled="{{ submitting }}"
         bind:click="submitForm"
+        custom-class="btn-active"
       >
         {{ mode === 'add' ? '添加' : '保存' }}
       </van-button>

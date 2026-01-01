@@ -1,7 +1,7 @@
 
 <view class="attendance-container">
   <!-- 顶部信息栏 -->
-  <view class="header-section">
+  <view class="header-section fade-in-up">
     <view class="header-top">
       <view class="club-info">
         <van-icon name="friends-o" size="40rpx" color="#ffffff" />
@@ -108,13 +108,13 @@
 
     <!-- 底部操作按钮 -->
     <view class="action-section" wx:if="{{!pageLoading && currentIndex < students.length}}">
-      <view class="action-btn absent-btn" bindtap="markAbsentByBtn">
+      <view class="action-btn absent-btn btn-active" bindtap="markAbsentByBtn">
         <van-icon name="cross" size="56rpx" color="#ff4d4f" />
       </view>
-      <view class="action-btn undo-btn {{currentIndex === 0 ? 'disabled' : ''}}" bindtap="undoLast">
+      <view class="action-btn undo-btn btn-active {{currentIndex === 0 ? 'disabled' : ''}}" bindtap="undoLast">
         <van-icon name="revoke" size="40rpx" color="{{currentIndex === 0 ? '#ccc' : '#999'}}" />
       </view>
-      <view class="action-btn present-btn" bindtap="markPresentByBtn">
+      <view class="action-btn present-btn btn-active" bindtap="markPresentByBtn">
         <van-icon name="success" size="56rpx" color="#52c41a" />
       </view>
     </view>
@@ -138,25 +138,27 @@
           </view>
         </view>
         <view class="progress-actions">
-          <van-button 
-            size="small" 
+          <van-button
+            size="small"
             plain
             type="primary"
             bindtap="markAllPresent"
             disabled="{{currentIndex >= students.length}}"
+            custom-class="btn-active"
           >一键全到</van-button>
-          <van-button 
-            size="small" 
-            type="info" 
+          <van-button
+            size="small"
+            type="info"
             bindtap="submitAttendance"
             disabled="{{currentIndex < students.length}}"
             loading="{{loading}}"
+            custom-class="btn-active"
           >提交</van-button>
         </view>
       </view>
 
       <!-- 已点名学生列表 -->
-      <view class="marked-list" wx:if="{{currentIndex > 0}}" bindtap="toggleMarkedList">
+      <view class="marked-list icon-tap" wx:if="{{currentIndex > 0}}" bindtap="toggleMarkedList">
         <view class="marked-list-header">
           <text>已点名学生 ({{currentIndex}}人)</text>
           <van-icon name="{{showMarkedList ? 'arrow-up' : 'arrow-down'}}" />
