@@ -237,7 +237,7 @@ Page({
     }
 
     this.setData({ exporting: true })
-    wx.showLoading({ title: '导出中...' })
+    await SafeToast.loading({ message: '导出中...' })
 
     try {
       const res = await wx.cloud.callFunction({
@@ -252,7 +252,7 @@ Page({
         }
       })
 
-      wx.hideLoading()
+      SafeToast.clear()
 
       if (res.result.success) {
         const { tempFileURL, fileName, recordCount } = res.result.data
@@ -307,7 +307,7 @@ Page({
         SafeToast.fail(res.result.message || '导出失败')
       }
     } catch (error) {
-      wx.hideLoading()
+      SafeToast.clear()
       console.error('导出失败:', error)
       SafeToast.fail('导出失败')
     } finally {

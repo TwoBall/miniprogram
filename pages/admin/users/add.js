@@ -108,7 +108,7 @@ Page({
 
   async loadUserData(userId) {
     try {
-      wx.showLoading({ title: '加载中...' })
+      await SafeToast.loading({ message: '加载中...' })
 
       const res = await wx.cloud.callFunction({
         name: 'user',
@@ -119,7 +119,7 @@ Page({
         }
       })
 
-      wx.hideLoading()
+      SafeToast.clear()
 
       if (res.result.success) {
         const user = res.result.data.find(u => u._id === userId)
@@ -138,7 +138,7 @@ Page({
         }
       }
     } catch (error) {
-      wx.hideLoading()
+      SafeToast.clear()
       SafeToast.fail('加载失败')
     }
   },
@@ -258,7 +258,7 @@ Page({
     const { mode, userId, formData } = this.data
 
     try {
-      wx.showLoading({ title: mode === 'add' ? '添加中...' : '更新中...' })
+      await SafeToast.loading({ message: mode === 'add' ? '添加中...' : '更新中...' })
 
       const data = {
         action: mode === 'add' ? 'add' : 'update',
@@ -275,7 +275,7 @@ Page({
         data
       })
 
-      wx.hideLoading()
+      SafeToast.clear()
 
       if (res.result.success) {
         SafeToast.success(mode === 'add' ? '添加成功' : '更新成功')
@@ -287,7 +287,7 @@ Page({
         throw new Error(res.result.message)
       }
     } catch (error) {
-      wx.hideLoading()
+      SafeToast.clear()
       SafeToast.fail(error.message || '操作失败')
     } finally {
       this.setData({ submitting: false })

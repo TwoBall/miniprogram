@@ -144,7 +144,7 @@ Page({
       })
 
       try {
-        wx.showLoading({ title: '删除中...' })
+        await SafeToast.loading({ message: '删除中...' })
 
         const result = await wx.cloud.callFunction({
           name: 'user',
@@ -154,7 +154,7 @@ Page({
           }
         })
 
-        wx.hideLoading()
+        SafeToast.clear()
 
         if (result.result.success) {
           SafeToast.success('删除成功')
@@ -167,7 +167,7 @@ Page({
           throw new Error(result.result.message)
         }
       } catch (error) {
-        wx.hideLoading()
+        SafeToast.clear()
         SafeToast.fail(error.message || '删除失败')
       }
     } catch (e) {

@@ -152,7 +152,7 @@ Page({
     if (this.data.downloading[id]) return
 
     this.setData({ [`downloading.${id}`]: true })
-    wx.showLoading({ title: '获取下载链接...' })
+    await SafeToast.loading({ message: '获取下载链接...' })
 
     try {
       // 重新获取临时下载链接
@@ -164,19 +164,19 @@ Page({
         }
       })
 
-      wx.hideLoading()
+      SafeToast.clear()
 
       if (res.result.success) {
         const { tempFileURL } = res.result.data
         const record = this.data.records.find(r => r._id === id)
 
         // 下载文件
-        wx.showLoading({ title: '下载中...' })
+        await SafeToast.loading({ message: '下载中...' })
 
         wx.downloadFile({
           url: tempFileURL,
           success: (downloadRes) => {
-            wx.hideLoading()
+            SafeToast.clear()
             if (downloadRes.statusCode === 200) {
               const fs = wx.getFileSystemManager()
               const filePath = `${wx.env.USER_DATA_PATH}/${record.fileName}`
@@ -214,7 +214,7 @@ Page({
             }
           },
           fail: (err) => {
-            wx.hideLoading()
+            SafeToast.clear()
             console.error('下载文件失败:', err)
             SafeToast.fail('下载失败')
           }
@@ -223,7 +223,7 @@ Page({
         SafeToast.fail(res.result.message || '获取链接失败')
       }
     } catch (error) {
-      wx.hideLoading()
+      SafeToast.clear()
       console.error('获取下载链接失败:', error)
       SafeToast.fail('获取链接失败')
     } finally {
@@ -241,7 +241,7 @@ Page({
         message: '删除后将无法恢复，确定要删除吗？'
       })
 
-      wx.showLoading({ title: '删除中...' })
+      await SafeToast.loading({ message: '删除中...' })
 
       try {
         const result = await wx.cloud.callFunction({
@@ -253,7 +253,7 @@ Page({
           }
         })
 
-        wx.hideLoading()
+        SafeToast.clear()
 
         if (result.result.success) {
           // 从列表中移除
@@ -264,7 +264,7 @@ Page({
           SafeToast.fail(result.result.message || '删除失败')
         }
       } catch (error) {
-        wx.hideLoading()
+        SafeToast.clear()
         console.error('删除失败:', error)
         SafeToast.fail('删除失败')
       }

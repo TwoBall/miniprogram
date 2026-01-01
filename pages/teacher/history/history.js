@@ -89,7 +89,7 @@ Page({
 
     try {
       if (this.data.page === 1) {
-        wx.showLoading({ title: '加载中...' })
+        await SafeToast.loading({ message: '加载中...' })
       }
 
       const result = await request.callCloud('attendance', {
@@ -121,7 +121,7 @@ Page({
       SafeToast.fail('加载失败')
       this.setData({ loading: false })
     } finally {
-      wx.hideLoading()
+      SafeToast.clear()
       this.setData({ pageLoading: false })
     }
   },

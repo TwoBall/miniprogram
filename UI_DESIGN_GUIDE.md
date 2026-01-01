@@ -393,13 +393,22 @@ Dialog.confirm({
 - [x] register 页面按钮改为 `type="primary"`
 - [x] 检查所有列表操作按钮使用 `size="small"`（已确认符合规范）
 
-### 第四阶段：统一卡片类名
-- [ ] home 页面卡片添加 `.card` 基类
-- [ ] data 页面卡片添加 `.card` 基类
+### 第四阶段：统一卡片类名 ✅ 已完成
+- [x] home 页面卡片添加 `.card` 基类（stats-section）
+- [x] data 页面卡片添加 `.card` 基类（section）
 
-### 第五阶段：清理旧 API 调用
-- [ ] 搜索并替换 `wx.showToast` → `SafeToast`
-- [ ] 搜索并替换 `wx.showModal` → `van-dialog`
+### 第五阶段：清理旧 API 调用 ✅ 已完成
+- [x] 搜索并替换 `wx.showLoading` → `SafeToast.loading`
+- [x] 搜索并替换 `wx.hideLoading` → `SafeToast.clear`
+- [x] 涉及文件：
+  - teacher/history/history.js
+  - teacher/detail/detail.js
+  - admin/users/add.js
+  - admin/users/users.js
+  - leader/detail/detail.js
+  - common/export/export.js
+  - common/export/history.js
+- [x] `wx.showToast` 和 `wx.showModal` 已不存在于 pages 目录
 
 ---
 

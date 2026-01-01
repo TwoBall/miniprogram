@@ -29,10 +29,8 @@
 
 .stats-section {
   margin: -40rpx 30rpx 30rpx;
-  background: #fff;
-  border-radius: 12rpx;
-  border: 2rpx solid #e8e8e8;
   padding: 30rpx;
+  /* background, border-radius, border 由 .card 基类提供 */
 }
 
 .stats-grid {

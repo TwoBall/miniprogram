@@ -61,7 +61,7 @@ Page({
      */
   async loadRecordDetail(recordId) {
     try {
-      wx.showLoading({ title: '加载中...' })
+      await SafeToast.loading({ message: '加载中...' })
 
       const result = await request.callCloud('attendance', {
         action: 'getDetail',
@@ -90,7 +90,7 @@ Page({
       Toast('加载失败')
       this.setData({ loading: false })
     } finally {
-      wx.hideLoading()
+      SafeToast.clear()
     }
   },
 

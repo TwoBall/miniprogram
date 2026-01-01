@@ -5,7 +5,7 @@
 
   <view wx:else class="content">
     <!-- 用户统计 -->
-    <view class="section">
+    <view class="card section">
       <view class="section-header">
         <van-icon name="friends-o" size="36rpx" color="#1890ff" />
         <text class="section-title">用户统计</text>
@@ -62,7 +62,7 @@
     </view>
 
     <!-- 学生统计 -->
-    <view class="section">
+    <view class="card section">
       <view class="section-header">
         <van-icon name="user-o" size="36rpx" color="#52c41a" />
         <text class="section-title">学生统计</text>
@@ -88,7 +88,7 @@
     </view>
 
     <!-- 社团统计 -->
-    <view class="section">
+    <view class="card section">
       <view class="section-header">
         <van-icon name="cluster-o" size="36rpx" color="#ff9800" />
         <text class="section-title">社团统计</text>
@@ -103,7 +103,7 @@
     </view>
 
     <!-- 考勤统计 -->
-    <view class="section">
+    <view class="card section">
       <view class="section-header">
         <van-icon name="records" size="36rpx" color="#722ed1" />
         <text class="section-title">考勤统计</text>

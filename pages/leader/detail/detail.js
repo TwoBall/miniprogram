@@ -29,7 +29,7 @@ Page({
     const { className, date } = this.data
 
     try {
-      wx.showLoading({ title: '加载中...' })
+      await SafeToast.loading({ message: '加载中...' })
 
       const result = await request.callCloud('attendance', {
         action: 'getByClass',
@@ -54,7 +54,7 @@ Page({
       console.error('加载详情失败:', error)
       SafeToast.fail('加载失败')
     } finally {
-      wx.hideLoading()
+      SafeToast.clear()
     }
   }
 })
