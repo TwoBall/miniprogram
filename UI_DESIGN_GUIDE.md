@@ -388,10 +388,10 @@ Dialog.confirm({
 - [x] export 页面筛选改为 van-popup + van-picker（学部/社团/班级选择器）
 - [x] 确保触发器样式统一（使用 van-cell is-link）
 
-### 第三阶段：统一按钮样式
-- [ ] login 页面按钮改为 `type="primary"`
-- [ ] register 页面按钮改为 `type="primary"`
-- [ ] 检查所有列表操作按钮使用 `size="small"`
+### 第三阶段：统一按钮样式 ✅ 已完成
+- [x] login 页面按钮改为 `type="primary"`
+- [x] register 页面按钮改为 `type="primary"`
+- [x] 检查所有列表操作按钮使用 `size="small"`（已确认符合规范）
 
 ### 第四阶段：统一卡片类名
 - [ ] home 页面卡片添加 `.card` 基类
@@ -412,6 +412,6 @@ Dialog.confirm({
 
 ---
 
-*文档版本：1.2*
+*文档版本：1.3*
 *更新时间：2026-01-01*
 *项目：智慧社团管理系统*

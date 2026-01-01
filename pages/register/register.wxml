@@ -68,7 +68,7 @@
 
     <view class="button-group">
       <van-button
-        type="info"
+        type="primary"
         block
         round
         loading="{{ loading }}"

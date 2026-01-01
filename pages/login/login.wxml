@@ -12,7 +12,7 @@
 
   <view class="button-section">
     <van-button
-      type="info"
+      type="primary"
       block
       round
       size="large"
