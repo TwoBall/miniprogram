@@ -2,9 +2,9 @@
  * 云函数调用封装
  * 统一处理 loading、错误提示、超时、重试等
  */
-import Toast from '@vant/weapp/toast/toast'
 import Dialog from '@vant/weapp/dialog/dialog'
 const errorUtil = require('./error')
+const { SafeToast } = errorUtil
 const storage = require('./storage')
 
 /**
@@ -46,7 +46,7 @@ async function callCloud(name, data = {}, options = {}) {
   }
 
   if (showLoading) {
-    Toast.loading({
+    SafeToast.loading({
       message: loadingText,
       forbidClick: true,
       duration: 0
@@ -62,7 +62,7 @@ async function callCloud(name, data = {}, options = {}) {
       if (attempt > 0) {
         console.log(`云函数 ${name} 第 ${attempt} 次重试...`)
         if (showLoading) {
-          Toast.loading({
+          SafeToast.loading({
             message: '重试中...',
             forbidClick: true,
             duration: 0
@@ -85,7 +85,7 @@ async function callCloud(name, data = {}, options = {}) {
       const res = await Promise.race([cloudPromise, timeoutPromise])
 
       if (showLoading) {
-        Toast.clear()
+        SafeToast.clear()
       }
 
       return res.result
@@ -102,7 +102,7 @@ async function callCloud(name, data = {}, options = {}) {
 
   // 所有重试都失败
   if (showLoading) {
-    Toast.clear()
+    SafeToast.clear()
   }
 
   if (showError) {

@@ -35,13 +35,15 @@ Page({
   // 加载学生详情
   async loadStudentDetail() {
     try {
-      const db = wx.cloud.database()
-      const result = await db.collection('students')
-        .doc(this.data.studentId)
-        .get()
+      const result = await request.callCloud('students', {
+        action: 'getById',
+        studentId: this.data.studentId
+      }, { showLoading: false })
 
-      if (result.data) {
+      if (result.success && result.data) {
         this.setData({ student: result.data })
+      } else {
+        SafeToast.fail(result.message || '加载失败')
       }
     } catch (error) {
       console.error('加载学生详情失败:', error)

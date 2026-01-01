@@ -48,7 +48,8 @@ exports.main = async (event, context) => {
         getByDepartment: handleGetByDepartment,
         getFilterOptions: handleGetFilterOptions,
         getStatistics: handleGetStatistics,
-        getAll: handleGetAll
+        getAll: handleGetAll,
+        getById: handleGetById
     }
 
     const handler = handlers[action]
@@ -177,6 +178,25 @@ async function handleGetByDepartment(event) {
     } catch (error) {
         console.error('获取学部学生失败:', error)
         return { success: false, message: '获取学部学生失败', data: [] }
+    }
+}
+
+/**
+ * 根据ID获取单个学生详情
+ */
+async function handleGetById(event) {
+    const { studentId } = event
+
+    if (!studentId) {
+        return { success: false, message: '缺少学生ID' }
+    }
+
+    try {
+        const result = await db.collection('students').doc(studentId).get()
+        return { success: true, data: result.data }
+    } catch (error) {
+        console.error('获取学生详情失败:', error)
+        return { success: false, message: '获取学生详情失败' }
     }
 }
 
