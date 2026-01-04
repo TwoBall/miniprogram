@@ -8,11 +8,15 @@ const {
   paginate,
   sortStudentsByName,
   ROLES,
+  ATTENDANCE_STATUS,
   success,
   successWithPagination,
   fail,
   unauthorized,
-  badRequest
+  badRequest,
+  verifyUserRoles,
+  checkRateLimit,
+  RATE_LIMIT_CONFIGS
 } = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
@@ -28,7 +32,7 @@ const db = cloud.database()
 async function checkAbsenceAndNotify(records, clubName, date) {
     try {
         // 筛选出缺勤的学生
-        const absentRecords = records.filter(r => r.status === 'absent')
+        const absentRecords = records.filter(r => r.status === ATTENDANCE_STATUS.ABSENT)
 
         if (absentRecords.length === 0) return
 
@@ -124,20 +128,14 @@ exports.main = async (event, context) => {
 
     // 基本身份验证
     if (!openid) {
-        return { success: false, message: '未授权访问' }
+        return unauthorized('未授权访问')
     }
 
     // 敏感操作需要验证教师身份
     if (authRequiredActions.includes(action)) {
-        const userCheck = await db.collection('users')
-            .where({
-                _openid: openid,
-                role: db.command.in(['teacher', 'admin']),
-                status: 'approved'
-            })
-            .count()
-        if (userCheck.total === 0) {
-            return { success: false, message: '无权执行此操作' }
+        const user = await verifyUserRoles(db, openid, [ROLES.TEACHER, ROLES.ADMIN])
+        if (!user) {
+            return unauthorized('无权执行此操作')
         }
     }
 
@@ -202,21 +200,24 @@ async function handleSubmit(event, openid) {
     const { clubName, date, time, records, mode } = event
 
     try {
-        // 从云端获取教师信息，不信任前端传入的 teacherId/teacherName
-        const teacherRes = await db.collection('users')
-            .where({
-                _openid: openid,
-                role: db.command.in(['teacher', 'admin']),
-                status: 'approved'
-            })
-            .field({ _id: true, userName: true, clubName: true })
-            .get()
+        // 限频检查
+        const rateCheck = await checkRateLimit(db, openid, 'attendance', RATE_LIMIT_CONFIGS.attendance)
+        if (!rateCheck.allowed) {
+            return { success: false, message: rateCheck.message }
+        }
 
-        if (teacherRes.data.length === 0) {
+        // 从云端获取教师信息，不信任前端传入的 teacherId/teacherName
+        const teacher = await verifyUserRoles(
+            db,
+            openid,
+            [ROLES.TEACHER, ROLES.ADMIN],
+            { _id: true, userName: true, clubName: true }
+        )
+
+        if (!teacher) {
             return { success: false, message: '无权执行此操作' }
         }
 
-        const teacher = teacherRes.data[0]
         const teacherId = teacher._id
         const teacherName = teacher.userName
 
@@ -297,8 +298,8 @@ async function handleGetHistory(event) {
             clubName: record.clubName,
             teacherName: record.teacherName,
             totalCount: record.records.length,
-            presentCount: record.records.filter(r => r.status === 'present').length,
-            absentCount: record.records.filter(r => r.status === 'absent').length
+            presentCount: record.records.filter(r => r.status === ATTENDANCE_STATUS.PRESENT).length,
+            absentCount: record.records.filter(r => r.status === ATTENDANCE_STATUS.ABSENT).length
         }))
 
         return {
@@ -416,8 +417,8 @@ async function handleGetByClass(event) {
                 students: result,
                 totalStudents: students.length,
                 joinedClubs: result.filter(s => s.clubName).length,
-                presentToday: result.filter(s => s.todayStatus === 'present').length,
-                absentToday: result.filter(s => s.todayStatus === 'absent').length
+                presentToday: result.filter(s => s.todayStatus === ATTENDANCE_STATUS.PRESENT).length,
+                absentToday: result.filter(s => s.todayStatus === ATTENDANCE_STATUS.ABSENT).length
             }
         }
     } catch (error) {
@@ -478,8 +479,8 @@ async function handleGetByDepartment(event) {
 
         students.forEach(s => {
             const status = studentAttendance[s._id]
-            if (status === 'present') classMap[s.className].present++
-            else if (status === 'absent') classMap[s.className].absent++
+            if (status === ATTENDANCE_STATUS.PRESENT) classMap[s.className].present++
+            else if (status === ATTENDANCE_STATUS.ABSENT) classMap[s.className].absent++
         })
 
         const classes = Object.values(classMap).map(cls => ({
@@ -578,7 +579,7 @@ async function handleGetClubRank(event) {
             record.records.forEach(r => {
                 if (studentStats[r.studentId]) {
                     studentStats[r.studentId].total++
-                    if (r.status === 'present') {
+                    if (r.status === ATTENDANCE_STATUS.PRESENT) {
                         studentStats[r.studentId].present++
                     }
                 }
@@ -659,7 +660,7 @@ async function handleGetClassRank(event) {
             record.records.forEach(r => {
                 if (studentStats[r.studentId]) {
                     studentStats[r.studentId].total++
-                    if (r.status === 'present') {
+                    if (r.status === ATTENDANCE_STATUS.PRESENT) {
                         studentStats[r.studentId].present++
                     }
                 }
@@ -745,7 +746,7 @@ async function handleGetDepartmentClassRanking(event) {
                 const className = studentClassMap[r.studentId]
                 if (className && classStats[className]) {
                     classStats[className].total++
-                    if (r.status === 'present') {
+                    if (r.status === ATTENDANCE_STATUS.PRESENT) {
                         classStats[className].present++
                     }
                 }
@@ -873,7 +874,7 @@ async function handleGetAbsenceWarnings(event) {
         const absenceCount = {}
         records.forEach(record => {
             record.records.forEach(s => {
-                if (s.status === 'absent') {
+                if (s.status === ATTENDANCE_STATUS.ABSENT) {
                     const key = s.studentId
                     if (!absenceCount[key]) {
                         absenceCount[key] = {
@@ -935,7 +936,7 @@ async function handleGetStatistics(event) {
         records.forEach(record => {
             if (record.records && Array.isArray(record.records)) {
                 totalStudents += record.records.length
-                totalPresent += record.records.filter(s => s.status === 'present').length
+                totalPresent += record.records.filter(s => s.status === ATTENDANCE_STATUS.PRESENT).length
             }
         })
 

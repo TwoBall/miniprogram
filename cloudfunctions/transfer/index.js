@@ -5,11 +5,15 @@
 const cloud = require('wx-server-sdk')
 const {
   ROLES,
+  USER_STATUS,
   success,
   successWithPagination,
   fail,
   unauthorized,
-  badRequest
+  badRequest,
+  verifyUser,
+  checkRateLimit,
+  RATE_LIMIT_CONFIGS
 } = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
@@ -135,17 +139,15 @@ async function handleCreate(event, wxContext) {
     }
 
     try {
-        // 查询发起人信息
-        const initiatorRes = await db.collection('users')
-            .where({ _openid: openid, status: 'approved' })
-            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
-            .get()
-
-        if (initiatorRes.data.length === 0) {
-            return { success: false, message: '无权限发起申请' }
+        const rateCheck = await checkRateLimit(db, openid, 'transfer', RATE_LIMIT_CONFIGS.transfer)
+        if (!rateCheck.allowed) {
+            return fail(rateCheck.message || '操作过于频繁，请稍后再试')
         }
 
-        const initiator = initiatorRes.data[0]
+        const initiator = await verifyUser(db, openid, null, { clubName: true, className: true })
+        if (!initiator) {
+            return { success: false, message: '无权限发起申请' }
+        }
 
         // 检查是否有进行中的申请
         const existingRes = await db.collection('transfer_requests')
@@ -222,28 +224,21 @@ async function handleGetList(event, wxContext) {
     const openid = wxContext.OPENID
 
     try {
-        // 查询当前用户信息
-        const userRes = await db.collection('users')
-            .where({ _openid: openid, status: 'approved' })
-            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
-            .get()
-
-        if (userRes.data.length === 0) {
+        const user = await verifyUser(db, openid, null, { clubName: true, className: true })
+        if (!user) {
             return { success: false, message: '用户未找到' }
         }
 
-        const user = userRes.data[0]
-
         // 根据角色构建查询条件
         let condition = {}
-        if (role === 'teacher' || user.role === 'teacher') {
+        if (role === ROLES.TEACHER || user.role === ROLES.TEACHER) {
             // 社团老师查看：涉及自己社团的转入或转出申请
             const _ = db.command
             condition = _.or([
                 { fromClub: user.clubName },
                 { toClub: user.clubName }
             ])
-        } else if (role === 'classTeacher' || user.role === 'classTeacher') {
+        } else if (role === ROLES.CLASS_TEACHER || user.role === ROLES.CLASS_TEACHER) {
             // 班主任查看：涉及自己班级的申请
             condition = { className: user.className }
         }
@@ -297,19 +292,8 @@ async function handleConfirm(event, wxContext) {
     const openid = wxContext.OPENID
 
     try {
-        // 查询用户信息
-        const userRes = await db.collection('users')
-            .where({ _openid: openid, status: 'approved' })
-            .field({ _id: true, userName: true, role: true, clubName: true })
-            .get()
-
-        if (userRes.data.length === 0) {
-            return { success: false, message: '用户未找到' }
-        }
-
-        const user = userRes.data[0]
-
-        if (user.role !== 'teacher') {
+        const user = await verifyUser(db, openid, ROLES.TEACHER, { clubName: true })
+        if (!user) {
             return { success: false, message: '只有社团老师可以确认申请' }
         }
 
@@ -385,17 +369,10 @@ async function handleApprove(event, wxContext) {
     const openid = wxContext.OPENID
 
     try {
-        // 查询班主任信息
-        const userRes = await db.collection('users')
-            .where({ _openid: openid, role: 'classTeacher', status: 'approved' })
-            .field({ _id: true, userName: true, className: true })
-            .get()
-
-        if (userRes.data.length === 0) {
+        const classTeacher = await verifyUser(db, openid, ROLES.CLASS_TEACHER, { className: true })
+        if (!classTeacher) {
             return { success: false, message: '只有班主任可以审批申请' }
         }
-
-        const classTeacher = userRes.data[0]
 
         // 查询申请信息
         const requestRes = await db.collection('transfer_requests')
@@ -424,7 +401,7 @@ async function handleApprove(event, wxContext) {
         // 更新申请状态
         await db.collection('transfer_requests').doc(requestId).update({
             data: {
-                status: 'approved',
+                status: USER_STATUS.APPROVED,
                 approvedBy: classTeacher._id,
                 approvedByName: classTeacher.userName,
                 approvedTime: db.serverDate(),
@@ -480,17 +457,10 @@ async function handleReject(event, wxContext) {
     }
 
     try {
-        // 查询用户信息
-        const userRes = await db.collection('users')
-            .where({ _openid: openid, status: 'approved' })
-            .field({ _id: true, userName: true, role: true, clubName: true, className: true })
-            .get()
-
-        if (userRes.data.length === 0) {
+        const user = await verifyUser(db, openid, null, { clubName: true, className: true })
+        if (!user) {
             return { success: false, message: '用户未找到' }
         }
-
-        const user = userRes.data[0]
 
         // 查询申请信息
         const requestRes = await db.collection('transfer_requests')
@@ -513,9 +483,9 @@ async function handleReject(event, wxContext) {
 
         // 验证权限
         let canRejectPermission = false
-        if (user.role === 'teacher') {
+        if (user.role === ROLES.TEACHER) {
             canRejectPermission = request.fromClub === user.clubName || request.toClub === user.clubName
-        } else if (user.role === 'classTeacher') {
+        } else if (user.role === ROLES.CLASS_TEACHER) {
             canRejectPermission = request.className === user.className
         }
 
@@ -575,8 +545,8 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
         if (action === 'created') {
             // 通知转出和转入老师
             const teacherConditions = [
-                { role: 'teacher', clubName: fromClub, status: 'approved' },
-                { role: 'teacher', clubName: toClub, status: 'approved' }
+                { role: ROLES.TEACHER, clubName: fromClub, status: USER_STATUS.APPROVED },
+                { role: ROLES.TEACHER, clubName: toClub, status: USER_STATUS.APPROVED }
             ]
 
             for (const condition of teacherConditions) {
@@ -599,7 +569,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
         } else if (action === 'pending_classTeacher') {
             // 通知班主任
             const classTeachersRes = await db.collection('users')
-                .where({ role: 'classTeacher', className, status: 'approved' })
+                .where({ role: ROLES.CLASS_TEACHER, className, status: USER_STATUS.APPROVED })
                 .field({ _openid: true })
                 .get()
 
@@ -626,7 +596,7 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
 
             // 通知班主任
             const classTeachersRes = await db.collection('users')
-                .where({ role: 'classTeacher', className, status: 'approved' })
+                .where({ role: ROLES.CLASS_TEACHER, className, status: USER_STATUS.APPROVED })
                 .field({ _openid: true })
                 .get()
 
@@ -647,8 +617,8 @@ async function sendTransferNotification(studentId, studentName, fromClub, toClub
 
             // 通知相关老师
             const teacherConditions = [
-                { role: 'teacher', clubName: fromClub, status: 'approved' },
-                { role: 'teacher', clubName: toClub, status: 'approved' }
+                { role: ROLES.TEACHER, clubName: fromClub, status: USER_STATUS.APPROVED },
+                { role: ROLES.TEACHER, clubName: toClub, status: USER_STATUS.APPROVED }
             ]
 
             for (const condition of teacherConditions) {

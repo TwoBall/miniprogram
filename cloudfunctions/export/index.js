@@ -6,6 +6,7 @@ const cloud = require('wx-server-sdk')
 const xlsx = require('xlsx')
 const {
   getAllData,
+  verifyUserRoles,
   ROLES,
   success,
   successWithPagination,
@@ -36,15 +37,9 @@ exports.main = async (event, context) => {
   }
 
   // 验证用户是否有导出权限（教师、班主任、领导、管理员）
-  const userCheck = await db.collection('users')
-    .where({
-      _openid: openid,
-      role: _.in(['teacher', 'classTeacher', 'leader', 'admin']),
-      status: 'approved'
-    })
-    .count()
-  if (userCheck.total === 0) {
-    return { success: false, message: '无权执行导出操作' }
+  const user = await verifyUserRoles(db, openid, [ROLES.TEACHER, ROLES.CLASS_TEACHER, ROLES.LEADER, ROLES.ADMIN])
+  if (!user) {
+    return unauthorized('无权执行导出操作')
   }
 
   const handlers = {

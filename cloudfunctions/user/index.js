@@ -6,6 +6,8 @@ const cloud = require('wx-server-sdk')
 const {
   verifyAdmin,
   paginate,
+  checkRateLimit,
+  RATE_LIMIT_CONFIGS,
   ROLES,
   USER_STATUS,
   success,
@@ -78,8 +80,8 @@ async function handleLogin(event, wxContext) {
         }
 
         const users = userRes.data
-        const approvedUsers = users.filter(u => u.status === 'approved')
-        const pendingUsers = users.filter(u => u.status === 'pending')
+        const approvedUsers = users.filter(u => u.status === USER_STATUS.APPROVED)
+        const pendingUsers = users.filter(u => u.status === USER_STATUS.PENDING)
 
         // 逻辑调整：
         // 1. 如果有审核通过的账号，返回所有通过的账号供选择（或者直接进入，如果只有一个）
@@ -90,7 +92,7 @@ async function handleLogin(event, wxContext) {
             return {
                 success: true,
                 needRegister: false,
-                status: 'approved',
+                status: USER_STATUS.APPROVED,
                 userList: approvedUsers.map(u => ({
                     _id: u._id,
                     _openid: u._openid,
@@ -105,7 +107,7 @@ async function handleLogin(event, wxContext) {
         }
 
         if (pendingUsers.length > 0) {
-            return { success: true, needRegister: false, status: 'pending', message: '您的注册申请正在审核中' }
+            return { success: true, needRegister: false, status: USER_STATUS.PENDING, message: '您的注册申请正在审核中' }
         }
 
         // 只有被拒绝的记录
@@ -138,12 +140,16 @@ async function handleRegister(event, wxContext) {
     }
 
     try {
+        const rateLimit = await checkRateLimit(db, openid, 'register', RATE_LIMIT_CONFIGS.register)
+        if (!rateLimit.allowed) {
+            return { success: false, message: rateLimit.message }
+        }
         // 1. 检查该 openid 下是否已经有该角色的账号
         const sameRoleRes = await db.collection('users').where({ _openid: openid, role }).get()
         if (sameRoleRes.data.length > 0) {
             const user = sameRoleRes.data[0]
-            if (user.status === 'approved') return { success: false, message: '您已拥有该角色权限' }
-            if (user.status === 'pending') return { success: false, message: '该角色的注册申请正在审核中' }
+            if (user.status === USER_STATUS.APPROVED) return { success: false, message: '您已拥有该角色权限' }
+            if (user.status === USER_STATUS.PENDING) return { success: false, message: '该角色的注册申请正在审核中' }
             // 如果是被拒绝的，允许重新注册（这里逻辑可以根据需求调整，也可以更新原记录）
         }
 
@@ -189,7 +195,7 @@ async function handleRegister(event, wxContext) {
                 department: department || '',
                 className: className || '',
                 clubName: clubName || '',
-                status: 'pending',
+                status: USER_STATUS.PENDING,
                 createTime: db.serverDate(),
                 updateTime: db.serverDate()
             }
@@ -217,17 +223,15 @@ async function handleApprove(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true, userName: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
-        const admin = adminRes.data[0]
+        const rateLimit = await checkRateLimit(db, adminOpenid, 'approve', RATE_LIMIT_CONFIGS.approve)
+        if (!rateLimit.allowed) {
+            return { success: false, message: rateLimit.message }
+        }
 
         if (action === 'reject' && !rejectReason) {
             return { success: false, message: '拒绝时必须提供原因' }
@@ -241,7 +245,7 @@ async function handleApprove(event, wxContext) {
         const user = userRes.data
 
         const updateData = {
-            status: action === 'approve' ? 'approved' : 'rejected',
+            status: action === 'approve' ? USER_STATUS.APPROVED : USER_STATUS.REJECTED,
             approvedBy: admin._id,
             approvedByName: admin.userName,
             approvedTime: db.serverDate(),
@@ -315,13 +319,8 @@ async function handleGetPending(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -378,13 +377,8 @@ async function handleGetAllByStatus(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -394,26 +388,26 @@ async function handleGetAllByStatus(event, wxContext) {
         const [pendingRes, approvedRes, rejectedRes, pendingCount, approvedCount, rejectedCount] = await Promise.all([
             // 待审批列表
             db.collection('users')
-                .where({ ...baseCondition, status: 'pending' })
+                .where({ ...baseCondition, status: USER_STATUS.PENDING })
                 .orderBy('createTime', 'desc')
                 .limit(pendingPageSize)
                 .get(),
             // 已通过列表
             db.collection('users')
-                .where({ ...baseCondition, status: 'approved' })
+                .where({ ...baseCondition, status: USER_STATUS.APPROVED })
                 .orderBy('createTime', 'desc')
                 .limit(approvedPageSize)
                 .get(),
             // 已拒绝列表
             db.collection('users')
-                .where({ ...baseCondition, status: 'rejected' })
+                .where({ ...baseCondition, status: USER_STATUS.REJECTED })
                 .orderBy('createTime', 'desc')
                 .limit(rejectedPageSize)
                 .get(),
             // 各状态总数
-            db.collection('users').where({ ...baseCondition, status: 'pending' }).count(),
-            db.collection('users').where({ ...baseCondition, status: 'approved' }).count(),
-            db.collection('users').where({ ...baseCondition, status: 'rejected' }).count()
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.PENDING }).count(),
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.APPROVED }).count(),
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.REJECTED }).count()
         ])
 
         return {
@@ -460,13 +454,8 @@ async function handleGetAll(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -535,17 +524,10 @@ async function handleAdd(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true, userName: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
-
-        const admin = adminRes.data[0]
 
         // 创建预注册账号（无 openid，等待用户关联）
         const result = await db.collection('users').add({
@@ -555,7 +537,7 @@ async function handleAdd(event, wxContext) {
                 department: department || '',
                 className: className || '',
                 clubName: clubName || '',
-                status: 'approved',
+                status: USER_STATUS.APPROVED,
                 approvedBy: admin._id,
                 approvedByName: admin.userName,
                 approvedTime: db.serverDate(),
@@ -588,13 +570,8 @@ async function handleDelete(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -604,7 +581,7 @@ async function handleDelete(event, wxContext) {
             return { success: false, message: '用户不存在' }
         }
 
-        if (targetUser.data.role === 'admin') {
+        if (targetUser.data.role === ROLES.ADMIN) {
             return { success: false, message: '不能删除管理员账号' }
         }
 
@@ -641,13 +618,8 @@ async function handleUpdate(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -692,13 +664,8 @@ async function handleGetStats(event, wxContext) {
     const adminOpenid = wxContext.OPENID
 
     try {
-        // 验证管理员权限
-        const adminRes = await db.collection('users')
-            .where({ _openid: adminOpenid, role: 'admin', status: 'approved' })
-            .field({ _id: true })
-            .get()
-
-        if (adminRes.data.length === 0) {
+        const admin = await verifyAdmin(db, adminOpenid)
+        if (!admin) {
             return { success: false, message: '无权限执行此操作' }
         }
 
@@ -707,9 +674,9 @@ async function handleGetStats(event, wxContext) {
         // 并行执行 count 查询
         const [totalRes, pendingRes, approvedRes, rejectedRes] = await Promise.all([
             db.collection('users').where(baseCondition).count(),
-            db.collection('users').where({ ...baseCondition, status: 'pending' }).count(),
-            db.collection('users').where({ ...baseCondition, status: 'approved' }).count(),
-            db.collection('users').where({ ...baseCondition, status: 'rejected' }).count()
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.PENDING }).count(),
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.APPROVED }).count(),
+            db.collection('users').where({ ...baseCondition, status: USER_STATUS.REJECTED }).count()
         ])
 
         return {

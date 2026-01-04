@@ -10,7 +10,9 @@ const {
   successWithPagination,
   fail,
   unauthorized,
-  badRequest
+  badRequest,
+  verifyUser,
+  verifyUserRoles
 } = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
@@ -35,27 +37,16 @@ exports.main = async (event, context) => {
     }
 
     // 验证用户是否为已审批用户
-    const userCheck = await db.collection('users')
-        .where({
-            _openid: openid,
-            status: 'approved'
-        })
-        .count()
-    if (userCheck.total === 0) {
-        return { success: false, message: '无权访问通知' }
+    const isApproved = await verifyUser(db, openid)
+    if (!isApproved) {
+        return unauthorized('无权访问通知')
     }
 
     // 创建通知需要特定角色权限
     if (action === 'create') {
-        const roleCheck = await db.collection('users')
-            .where({
-                _openid: openid,
-                role: _.in(['teacher', 'classTeacher', 'leader', 'admin']),
-                status: 'approved'
-            })
-            .count()
-        if (roleCheck.total === 0) {
-            return { success: false, message: '无权创建通知' }
+        const hasRole = await verifyUserRoles(db, openid, [ROLES.TEACHER, ROLES.CLASS_TEACHER, ROLES.LEADER, ROLES.ADMIN])
+        if (!hasRole) {
+            return unauthorized('无权创建通知')
         }
     }
 

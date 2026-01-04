@@ -10,7 +10,8 @@ const {
   sortOptions,
   success,
   fail,
-  unauthorized
+  unauthorized,
+  verifyUser
 } = require('./common')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
@@ -28,20 +29,10 @@ exports.main = async (event, context) => {
     const wxContext = cloud.getWXContext()
     const openid = wxContext.OPENID
 
-    // 基本身份验证
-    if (!openid) {
-        return { success: false, message: '未授权访问' }
-    }
-
-    // 验证用户是否为已审批的角色
-    const userCheck = await db.collection('users')
-        .where({
-            _openid: openid,
-            status: 'approved'
-        })
-        .count()
-    if (userCheck.total === 0) {
-        return { success: false, message: '无权访问学生数据' }
+    // 验证用户是否为已审批用户
+    const user = await verifyUser(db, openid)
+    if (!user) {
+        return unauthorized()
     }
 
     const handlers = {
