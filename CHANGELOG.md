@@ -5,6 +5,52 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.8.0] - 2025-01-04
+
+### 修复
+- **登录页 Toast 未引入**：修复 `pages/login/login.js` 中使用未引入的 `Toast` 导致运行时错误
+- **注册接口安全漏洞**：修复 `cloudfunctions/user` 注册函数使用前端传入的 `openid`，改为使用 `wxContext.OPENID`
+- **软删除用户未过滤**：修复登录查询未排除已删除用户，添加 `deleted: _.neq(true)` 条件
+- **考勤提交安全漏洞**：修复 `cloudfunctions/attendance` 提交接口信任前端 `teacherId/teacherName`，改为从云端获取
+
+### 优化
+- **N+1 查询优化**：优化 `checkAbsenceAndNotify` 函数，使用 `_.in()` 一次查询所有班主任，替代逐班级查询
+- **setData 性能优化**：优化 `pages/teacher/attendance/attendance.js` 使用局部路径更新，减少数据传输量
+- **Storage 使用统一**：`pages/login/login.js` 改用 `storage` 模块统一管理缓存 key
+
+### 代码质量
+- **移除未使用变量**：删除 `cloudfunctions/attendance` 中未使用的 `teacherActions` 变量
+- **JSDoc 注释统一**：统一所有文件的注释风格为标准 JSDoc 格式
+  - `utils/` - 7 个工具文件添加 `@file`、`@module`、`@enum` 标注
+  - `cloudfunctions/` - 6 个云函数完善入口函数和处理函数注释
+  - `pages/` - 7 个页面文件统一生命周期和方法注释
+  - `components/` - 3 个组件文件添加模块标注
+
+---
+
+## [1.7.2] - 2025-01-03
+
+### 重构
+- **点名页面交互优化**：移除滑动点名功能，保留按钮操作方式
+  - 删除触摸滑动相关代码和样式
+  - 移除下拉刷新功能，简化页面交互
+- **UI 第四、五阶段优化**：完成整体 UI 风格统一
+  - 统一主要操作按钮为 `type=primary` 样式
+  - 统一选择器风格为 `van-popup` + `van-picker` 组合
+  - 统一空状态组件，替换 `van-empty` 为自定义 `empty-state`
+  - 统一性别标签颜色（男=蓝色，女=红色）
+
+### 样式
+- **动画样式库应用**：全面应用 `styles/animations.wxss` 提升交互体验
+  - 卡片入场动画
+  - 按钮点击反馈
+  - 列表项交错动画
+
+### 修复
+- **leader/detail 组件引用**：修复页面缺少 `van-tag` 组件引用的问题
+
+---
+
 ## [1.7.1] - 2025-12-30
 
 ### 修复
