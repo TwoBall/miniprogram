@@ -1,3 +1,7 @@
+/**
+ * @file 社团老师点名页面
+ * @module pages/teacher/attendance/attendance
+ */
 const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const request = require('../../../utils/request')
@@ -20,27 +24,20 @@ Page({
     absentCount: 0,
     remainingCount: 0,
     loading: false,
-    // 页面加载状态
     pageLoading: true,
-    // 上课日相关
     isClassDay: true,
     noClassMessage: '',
-    // 卡片动画样式
     cardStyle: '',
-    // 反馈图标透明度
     presentOpacity: 0,
     absentOpacity: 0,
-    // 卡片边框状态
     cardBorderClass: '',
-    // 操作记录（用于撤销）
     actionHistory: [],
-    // 已筛选的学部
     selectedDepts: [],
-    // 已点名列表
     showMarkedList: false,
     markedStudents: []
   },
 
+  /** 页面加载 */
   onLoad() {
     const userInfo = auth.checkRole('teacher')
     if (userInfo) {
@@ -49,16 +46,16 @@ Page({
     this.updateDateTime()
   },
 
+  /** 页面初次渲染完成 */
   onReady() {
     this.loadStudents()
   },
 
+  /** 页面显示 */
   onShow() {
-    // 检查登录状态，防止后台恢复时登录态丢失
     const userInfo = auth.checkRole('teacher')
     if (!userInfo) return
 
-    // 恢复页面数据（小程序被销毁后 clubName 会丢失）
     if (!this.data.clubName) {
       this.setData({ clubName: userInfo.clubName })
       this.loadStudents()
@@ -67,6 +64,9 @@ Page({
     this.updateDateTime()
   },
 
+  /**
+   * 更新日期时间
+   */
   updateDateTime() {
     this.setData({
       currentDate: dateUtil.getCurrentDate(),
@@ -76,7 +76,6 @@ Page({
 
   /**
    * 加载社团学生列表
-   * 根据当前星期自动筛选对应学部的学生
    */
   async loadStudents() {
     const userInfo = auth.getUserInfo()
@@ -93,13 +92,11 @@ Page({
       }, { showLoading: false, showError: false })
 
       if (result.success) {
-        // 数据已在云函数中按班级+姓名排序，无需前端再次排序
         const allStudents = result.data.map(student => ({
           ...student,
           status: null
         }))
 
-        // 根据星期过滤学部（按中文拼音排序）
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))]
           .sort((a, b) => a.localeCompare(b, 'zh-CN'))
         const day = dateUtil.getDayOfWeek()
@@ -121,7 +118,6 @@ Page({
           noClassMessage = '当前社团暂无对应学部的学生'
         }
 
-        // 筛选学生
         const filteredStudents = isClassDay
           ? allStudents.filter(s => defaultDepts.includes(s.department))
           : []
@@ -149,17 +145,15 @@ Page({
     }
   },
 
-  // ========== 按钮点击处理 ==========
-
   /**
-   * 标记学生到课（按钮点击）
+   * 标记学生到课
    */
   markPresentByBtn() {
     this.markStudent('present')
   },
 
   /**
-   * 标记学生缺课（按钮点击）
+   * 标记学生缺课
    */
   markAbsentByBtn() {
     this.markStudent('absent')
@@ -167,32 +161,29 @@ Page({
 
   /**
    * 标记学生状态
+   * @param {string} status - 状态（present/absent）
    */
   markStudent(status) {
     const { students, currentIndex, actionHistory, presentCount, absentCount, markedStudents } = this.data
 
     if (currentIndex >= students.length) return
 
-    // 记录操作
     const student = students[currentIndex]
-    student.status = status
     actionHistory.push({ index: currentIndex, status })
 
-    // 添加到已点名列表
-    markedStudents.push({
+    const newMarkedStudent = {
       studentName: student.studentName,
       className: student.className,
       status: status
-    })
+    }
 
-    // 先显示反馈图标和边框
     this.setData({
+      [`students[${currentIndex}].status`]: status,
       presentOpacity: status === 'present' ? 1 : 0,
       absentOpacity: status === 'absent' ? 1 : 0,
       cardBorderClass: status === 'present' ? 'border-present' : 'border-absent'
     })
 
-    // 延迟后卡片飞出
     setTimeout(() => {
       const direction = status === 'present' ? 1 : -1
       this.setData({
@@ -200,26 +191,25 @@ Page({
       })
     }, 150)
 
-    // 延迟更新下一张
     setTimeout(() => {
       const nextIndex = currentIndex + 1
       const isComplete = nextIndex >= students.length
 
-      this.setData({
+      const updates = {
         currentIndex: nextIndex,
         currentStudent: students[nextIndex] || null,
         remainingCount: students.length - nextIndex,
         presentCount: status === 'present' ? presentCount + 1 : presentCount,
         absentCount: status === 'absent' ? absentCount + 1 : absentCount,
-        actionHistory,
-        markedStudents,
+        [`markedStudents[${markedStudents.length}]`]: newMarkedStudent,
         cardStyle: '',
         presentOpacity: 0,
         absentOpacity: 0,
         cardBorderClass: ''
-      })
+      }
 
-      // 点名完成时显示醒目提示
+      this.setData(updates)
+
       if (isComplete) {
         Dialog.alert({
           title: '点名完成',
@@ -243,25 +233,23 @@ Page({
 
     const lastAction = actionHistory.pop()
     const student = students[lastAction.index]
-
-    // 使用学生当前的实际状态来调整计数器（而非actionHistory中的原始状态）
-    // 因为用户可能在已点名列表中修改过状态
     const currentStatus = student.status
-    student.status = null
 
-    // 从已点名列表中移除
-    markedStudents.pop()
-
-    this.setData({
+    const updates = {
       currentIndex: lastAction.index,
       currentStudent: student,
       remainingCount: students.length - lastAction.index,
       presentCount: currentStatus === 'present' ? presentCount - 1 : presentCount,
       absentCount: currentStatus === 'absent' ? absentCount - 1 : absentCount,
-      actionHistory,
-      markedStudents,
+      [`students[${lastAction.index}].status`]: null,
+      [`markedStudents.length`]: markedStudents.length - 1,
       cardStyle: ''
-    })
+    }
+
+    markedStudents.pop()
+    updates.markedStudents = markedStudents
+
+    this.setData(updates)
 
     SafeToast.success('已撤销')
   },
@@ -281,7 +269,6 @@ Page({
       title: '一键全到',
       message: `确定将剩余 ${students.length - currentIndex} 名学生全部标记为到课？`
     }).then(() => {
-      // 标记剩余所有学生为到课
       const markedStudents = [...this.data.markedStudents]
       const actionHistory = [...this.data.actionHistory]
       let presentCount = this.data.presentCount
@@ -307,7 +294,6 @@ Page({
         cardStyle: ''
       })
 
-      // 显示醒目提交提示
       Dialog.alert({
         title: '点名完成',
         message: '所有学生已标记为到课，请点击提交按钮保存记录',
@@ -316,7 +302,9 @@ Page({
     }).catch(() => { })
   },
 
-  // ========== 切换已点名列表显示 ==========
+  /**
+   * 切换已点名列表显示
+   */
   toggleMarkedList() {
     this.setData({
       showMarkedList: !this.data.showMarkedList
@@ -325,7 +313,7 @@ Page({
 
   /**
    * 切换已点名学生的状态
-   * 使用数据路径局部更新，减少 setData 数据传输量
+   * @param {Object} e - 事件对象
    */
   toggleMarkedStudentStatus(e) {
     const index = e.currentTarget.dataset.index
@@ -335,14 +323,12 @@ Page({
     const oldStatus = student.status
     const newStatus = oldStatus === 'present' ? 'absent' : 'present'
 
-    // 使用数据路径局部更新，避免传输整个数组
     const updates = {
       [`markedStudents[${index}].status`]: newStatus,
       presentCount: oldStatus === 'present' ? presentCount - 1 : presentCount + 1,
       absentCount: oldStatus === 'absent' ? absentCount - 1 : absentCount + 1
     }
 
-    // 同步更新 students 数组中对应学生的状态
     const studentIndex = students.findIndex(s => s.studentName === student.studentName && s.className === student.className)
     if (studentIndex !== -1) {
       updates[`students[${studentIndex}].status`] = newStatus
@@ -355,13 +341,11 @@ Page({
 
   /**
    * 提交点名记录到云端
-   * 检查是否有重复记录并提供覆盖或新增选项
    */
   async submitAttendance() {
     const { students, clubName, currentDate, currentTime } = this.data
     const userInfo = auth.getUserInfo()
 
-    // 检查是否全部点名
     const unmarked = students.filter(s => s.status === null)
     if (unmarked.length > 0) {
       SafeToast.fail(`还有 ${unmarked.length} 人未点名`)
@@ -371,7 +355,6 @@ Page({
     this.setData({ loading: true })
 
     try {
-      // 检查今日记录
       const checkResult = await request.callCloud('attendance', {
         action: 'checkTodaySubmissions',
         clubName,
@@ -393,7 +376,6 @@ Page({
         }
       }
 
-      // 提交
       const submitResult = await request.callCloud('attendance', {
         action: 'submit',
         clubName,

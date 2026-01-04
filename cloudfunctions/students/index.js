@@ -1,6 +1,6 @@
 /**
- * 云函数 - 学生数据管理
- * 提供按社团、班级、学部查询学生的接口
+ * @file 学生数据管理云函数 - 提供按社团、班级、学部查询学生的接口
+ * @module cloudfunctions/students
  */
 const cloud = require('wx-server-sdk')
 const {
@@ -19,7 +19,9 @@ const db = cloud.database()
 /**
  * 云函数入口
  * @param {Object} event - 请求参数
- * @param {string} event.action - 操作类型
+ * @param {string} event.action - 操作类型: getByClub/getByClass/getByDepartment/getFilterOptions/getStatistics/getAll/getById
+ * @param {Object} context - 云函数上下文
+ * @returns {Promise<Object>} 返回结果
  */
 exports.main = async (event, context) => {
     const { action } = event
@@ -62,8 +64,9 @@ exports.main = async (event, context) => {
 
 /**
  * 获取筛选选项
- * 使用聚合查询获取唯一值，避免加载全部学生数据
- * 返回所有学部、班级、社团列表及班级与学部的映射关系
+ * @description 使用聚合查询获取唯一值，避免加载全部学生数据。返回所有学部、班级、社团列表及班级与学部的映射关系
+ * @param {Object} event - 请求参数
+ * @returns {Promise<Object>} 包含 departments/classes/clubs/classDeptMap 的结果
  */
 async function handleGetFilterOptions(event) {
     try {
@@ -121,6 +124,9 @@ async function handleGetFilterOptions(event) {
 
 /**
  * 按社团获取学生列表
+ * @param {Object} event - 请求参数
+ * @param {string} event.clubName - 社团名称
+ * @returns {Promise<Object>} 学生列表
  */
 async function handleGetByClub(event) {
     const { clubName } = event
@@ -142,6 +148,9 @@ async function handleGetByClub(event) {
 
 /**
  * 按班级获取学生列表
+ * @param {Object} event - 请求参数
+ * @param {string} event.className - 班级名称
+ * @returns {Promise<Object>} 学生列表
  */
 async function handleGetByClass(event) {
     const { className } = event
@@ -163,6 +172,9 @@ async function handleGetByClass(event) {
 
 /**
  * 按学部获取学生列表
+ * @param {Object} event - 请求参数
+ * @param {string} event.department - 学部名称
+ * @returns {Promise<Object>} 学生列表
  */
 async function handleGetByDepartment(event) {
     const { department } = event
@@ -183,6 +195,9 @@ async function handleGetByDepartment(event) {
 
 /**
  * 根据ID获取单个学生详情
+ * @param {Object} event - 请求参数
+ * @param {string} event.studentId - 学生ID
+ * @returns {Promise<Object>} 学生详情
  */
 async function handleGetById(event) {
     const { studentId } = event
@@ -202,7 +217,9 @@ async function handleGetById(event) {
 
 /**
  * 获取所有学生列表
- * 用于管理员数据统计
+ * @description 用于管理员数据统计
+ * @param {Object} event - 请求参数
+ * @returns {Promise<Object>} 所有学生列表
  */
 async function handleGetAll(event) {
     try {
@@ -221,8 +238,9 @@ async function handleGetAll(event) {
 
 /**
  * 获取学生统计数据
- * 使用聚合查询在云端完成统计，避免传输大量原始数据
- * 用于数据中心页面
+ * @description 使用聚合查询在云端完成统计，避免传输大量原始数据。用于数据中心页面
+ * @param {Object} event - 请求参数
+ * @returns {Promise<Object>} 统计结果，包含 total/genderStats/deptStats/clubStats
  */
 async function handleGetStatistics(event) {
     try {

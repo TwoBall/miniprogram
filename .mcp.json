@@ -1,8 +1,10 @@
 {
   "mcpServers": {
     "cloudbase": {
-      "command": "npx",
+      "command": "cmd",
       "args": [
+        "/c",
+        "npx",
         "npm-global-exec@latest",
         "@cloudbase/cloudbase-mcp@latest"
       ],

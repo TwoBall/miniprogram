@@ -1,6 +1,6 @@
 /**
- * 云函数 - 转社团申请管理
- * 处理学生转社团的申请、审批和确认流程
+ * @file 转社团申请管理云函数 - 处理学生转社团的申请、审批和确认流程
+ * @module cloudfunctions/transfer
  */
 const cloud = require('wx-server-sdk')
 const {
@@ -75,6 +75,10 @@ function isTerminalState(status) {
 
 /**
  * 云函数入口
+ * @param {Object} event - 请求参数
+ * @param {string} event.action - 操作类型: create/getList/approve/reject/confirm
+ * @param {Object} context - 云函数上下文
+ * @returns {Promise<Object>} 返回结果
  */
 exports.main = async (event, context) => {
     const { action } = event
@@ -98,6 +102,16 @@ exports.main = async (event, context) => {
 
 /**
  * 创建转社团申请
+ * @param {Object} event - 请求参数
+ * @param {string} event.studentId - 学生ID
+ * @param {string} event.studentName - 学生姓名
+ * @param {string} event.className - 班级名称
+ * @param {string} event.fromClub - 原社团
+ * @param {string} event.toClub - 目标社团
+ * @param {string} event.initiatorType - 发起人类型
+ * @param {string} [event.reason] - 转社团原因
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 创建结果
  */
 async function handleCreate(event, wxContext) {
     const {
@@ -195,6 +209,13 @@ async function handleCreate(event, wxContext) {
 
 /**
  * 获取转社团申请列表
+ * @param {Object} event - 请求参数
+ * @param {string} [event.role] - 角色筛选
+ * @param {number} [event.page=1] - 页码
+ * @param {number} [event.pageSize=20] - 每页数量
+ * @param {string} [event.status] - 状态筛选
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 分页的申请列表
  */
 async function handleGetList(event, wxContext) {
     const { role, page = 1, pageSize = 20, status } = event
@@ -444,6 +465,11 @@ async function handleApprove(event, wxContext) {
 
 /**
  * 拒绝申请
+ * @param {Object} event - 请求参数
+ * @param {string} event.requestId - 申请ID
+ * @param {string} event.reason - 拒绝原因
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 拒绝结果
  */
 async function handleReject(event, wxContext) {
     const { requestId, reason } = event
@@ -533,6 +559,15 @@ async function handleReject(event, wxContext) {
 
 /**
  * 发送转社团通知
+ * @param {string} studentId - 学生ID
+ * @param {string} studentName - 学生姓名
+ * @param {string} fromClub - 原社团
+ * @param {string} toClub - 目标社团
+ * @param {string} action - 动作类型
+ * @param {string|null} initiatorType - 发起人类型
+ * @param {string} [className] - 班级名称
+ * @param {string} [reason] - 原因
+ * @returns {Promise<void>}
  */
 async function sendTransferNotification(studentId, studentName, fromClub, toClub, action, initiatorType, className, reason) {
     try {

@@ -1,9 +1,19 @@
+/**
+ * @file 自定义底部导航栏组件
+ * @module components/custom-tabbar/custom-tabbar
+ */
 Component({
   properties: {
+    /**
+     * 用户角色
+     */
     role: {
       type: String,
       value: 'teacher'
     },
+    /**
+     * 当前激活的标签索引
+     */
     active: {
       type: Number,
       value: 0
@@ -32,6 +42,10 @@ Component({
   },
 
   methods: {
+    /**
+     * 标签切换处理
+     * @param {Object} e - 事件对象
+     */
     onChange(e) {
       const index = e.detail
       const role = this.properties.role

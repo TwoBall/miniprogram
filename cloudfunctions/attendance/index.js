@@ -1,6 +1,6 @@
 /**
- * 云函数 - 考勤管理
- * 处理点名记录的提交、查询和统计
+ * @file 考勤管理云函数 - 处理点名记录的提交、查询和统计
+ * @module cloudfunctions/attendance
  */
 const cloud = require('wx-server-sdk')
 const {
@@ -20,6 +20,10 @@ const db = cloud.database()
 
 /**
  * 检查缺勤情况并发送通知
+ * @param {Array<Object>} records - 考勤记录数组
+ * @param {string} clubName - 社团名称
+ * @param {string} date - 考勤日期
+ * @returns {Promise<void>}
  */
 async function checkAbsenceAndNotify(records, clubName, date) {
     try {
@@ -47,25 +51,37 @@ async function checkAbsenceAndNotify(records, clubName, date) {
             classCounts[className].push(student)
         })
 
+        // 获取所有涉及班级的班主任（优化：一次查询替代 N 次查询）
+        const classNames = Object.keys(classCounts)
+        if (classNames.length === 0) return
+
+        const allTeachersRes = await db.collection('users')
+            .where({
+                role: 'classTeacher',
+                className: _.in(classNames),
+                status: 'approved'
+            })
+            .get()
+
+        // 按班级分组班主任
+        const teachersByClass = {}
+        allTeachersRes.data.forEach(teacher => {
+            if (!teacher._openid) return
+            if (!teachersByClass[teacher.className]) {
+                teachersByClass[teacher.className] = []
+            }
+            teachersByClass[teacher.className].push(teacher)
+        })
+
         // 为每个班级的班主任创建通知
         for (const [className, students] of Object.entries(classCounts)) {
-            // 查询班主任
-            const teachersRes = await db.collection('users')
-                .where({
-                    role: 'classTeacher',
-                    className: className,
-                    status: 'approved'
-                })
-                .get()
-
-            if (teachersRes.data.length === 0) continue
+            const teachers = teachersByClass[className] || []
+            if (teachers.length === 0) continue
 
             const studentNames = students.map(s => s.studentName).join('、')
 
             // 遍历所有班主任发送通知
-            for (const classTeacher of teachersRes.data) {
-                if (!classTeacher._openid) continue
-
+            for (const classTeacher of teachers) {
                 // 创建缺勤提醒通知
                 await db.collection('notifications').add({
                     data: {
@@ -88,14 +104,15 @@ async function checkAbsenceAndNotify(records, clubName, date) {
         }
     } catch (error) {
         console.error('创建缺勤通知失败:', error)
-        // 不影响主流程，只记录错误
     }
 }
 
 /**
  * 云函数入口
  * @param {Object} event - 请求参数
- * @param {string} event.action - 操作类型
+ * @param {string} event.action - 操作类型: submit/getHistory/getDetail/getByClass/getByDepartment/checkTodaySubmissions/updateRecords/getClubRank/getClassRank/getDepartmentClassRanking/getByStudent/getAbsenceWarnings/getStatistics
+ * @param {Object} context - 云函数上下文
+ * @returns {Promise<Object>} 返回结果
  */
 exports.main = async (event, context) => {
     const { action } = event
@@ -104,8 +121,6 @@ exports.main = async (event, context) => {
 
     // 需要验证身份的操作
     const authRequiredActions = ['submit', 'updateRecords']
-    // 需要验证教师/管理员身份的操作
-    const teacherActions = ['submit', 'updateRecords', 'getHistory', 'getDetail']
 
     // 基本身份验证
     if (!openid) {
@@ -152,6 +167,10 @@ exports.main = async (event, context) => {
 
 /**
  * 检查今日是否已有点名记录
+ * @param {Object} event - 请求参数
+ * @param {string} event.clubName - 社团名称
+ * @param {string} event.date - 日期
+ * @returns {Promise<Object>} 包含记录数量的结果
  */
 async function handleCheckTodaySubmissions(event) {
     const { clubName, date } = event
@@ -169,17 +188,43 @@ async function handleCheckTodaySubmissions(event) {
 
 /**
  * 提交点名记录
- * 支持覆盖模式和新增模式
+ * @description 支持覆盖模式和新增模式
+ * @param {Object} event - 请求参数
+ * @param {string} event.clubName - 社团名称
+ * @param {string} event.date - 点名日期
+ * @param {string} event.time - 点名时间
+ * @param {Array<Object>} event.records - 学生考勤记录数组
+ * @param {string} [event.mode] - 模式，cover表示覆盖
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 提交结果
  */
-async function handleSubmit(event) {
-    const { clubName, teacherId, teacherName, date, time, records, mode } = event
+async function handleSubmit(event, openid) {
+    const { clubName, date, time, records, mode } = event
 
     try {
+        // 从云端获取教师信息，不信任前端传入的 teacherId/teacherName
+        const teacherRes = await db.collection('users')
+            .where({
+                _openid: openid,
+                role: db.command.in(['teacher', 'admin']),
+                status: 'approved'
+            })
+            .field({ _id: true, userName: true, clubName: true })
+            .get()
+
+        if (teacherRes.data.length === 0) {
+            return { success: false, message: '无权执行此操作' }
+        }
+
+        const teacher = teacherRes.data[0]
+        const teacherId = teacher._id
+        const teacherName = teacher.userName
+
         // 从学生记录中提取所有不重复的学部
         const departments = [...new Set(
             records
                 .map(r => r.department)
-                .filter(d => d) // 过滤掉空值
+                .filter(d => d)
         )]
 
         // 如果是覆盖模式，先删除当天的旧记录
@@ -205,10 +250,12 @@ async function handleSubmit(event) {
 
 /**
  * 获取教师的历史点名记录（支持分页）
- * @param {string} teacherId - 教师ID（用于获取社团信息）
- * @param {string} clubName - 社团名称（可选，优先使用）
- * @param {number} page - 页码，从1开始，默认1
- * @param {number} pageSize - 每页数量，默认20
+ * @param {Object} event - 请求参数
+ * @param {string} [event.teacherId] - 教师ID（用于获取社团信息）
+ * @param {string} [event.clubName] - 社团名称（可选，优先使用）
+ * @param {number} [event.page=1] - 页码，从1开始
+ * @param {number} [event.pageSize=20] - 每页数量
+ * @returns {Promise<Object>} 分页的历史记录
  */
 async function handleGetHistory(event) {
     const { teacherId, clubName, page = 1, pageSize = 20 } = event
@@ -643,7 +690,12 @@ async function handleGetClassRank(event) {
 
 /**
  * 获取学部班级出勤率排名
- * 返回学部所有班级的出勤统计，按出勤率排序
+ * @description 返回学部所有班级的出勤统计，按出勤率排序
+ * @param {Object} event - 请求参数
+ * @param {string} event.department - 学部名称
+ * @param {string} [event.startDate] - 开始日期
+ * @param {string} [event.endDate] - 结束日期
+ * @returns {Promise<Object>} 班级排名数据
  */
 async function handleGetDepartmentClassRanking(event) {
     const { department } = event
@@ -724,7 +776,12 @@ async function handleGetDepartmentClassRanking(event) {
 
 /**
  * 按学生ID获取考勤记录
- * 支持分页，优化性能避免加载全部记录
+ * @description 支持分页，优化性能避免加载全部记录
+ * @param {Object} event - 请求参数
+ * @param {string} event.studentId - 学生ID
+ * @param {number} [event.page=1] - 页码
+ * @param {number} [event.pageSize=20] - 每页数量
+ * @returns {Promise<Object>} 分页的考勤记录
  */
 async function handleGetByStudent(event) {
     const { studentId, page = 1, pageSize = 20 } = event
@@ -770,7 +827,13 @@ async function handleGetByStudent(event) {
 
 /**
  * 获取缺勤预警列表
- * 统计指定月份缺勤>=3次的学生
+ * @description 统计指定月份缺勤>=3次的学生
+ * @param {Object} event - 请求参数
+ * @param {string} event.month - 月份，格式 YYYY-MM
+ * @param {string} [event.department] - 学部筛选
+ * @param {string} [event.className] - 班级筛选
+ * @param {string} [event.clubName] - 社团筛选
+ * @returns {Promise<Object>} 缺勤预警学生列表
  */
 async function handleGetAbsenceWarnings(event) {
     const { month, department, className, clubName } = event
@@ -847,7 +910,11 @@ async function handleGetAbsenceWarnings(event) {
 
 /**
  * 获取考勤统计数据
- * 统计指定日期范围内的考勤记录总数和出勤率
+ * @description 统计指定日期范围内的考勤记录总数和出勤率
+ * @param {Object} event - 请求参数
+ * @param {string} event.startDate - 开始日期
+ * @param {string} event.endDate - 结束日期
+ * @returns {Promise<Object>} 统计结果，包含 total 和 rate
  */
 async function handleGetStatistics(event) {
     const { startDate, endDate } = event

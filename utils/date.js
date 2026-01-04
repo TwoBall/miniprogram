@@ -1,11 +1,12 @@
 /**
- * 日期格式化工具
- * 抽取各页面重复的日期处理逻辑
+ * @file 日期格式化工具
+ * @module utils/date
+ * @description 抽取各页面重复的日期处理逻辑
  */
 
 /**
  * 格式化日期为 YYYY-MM-DD
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
+ * @param {Date|string|number} [date] - 日期对象、时间戳或日期字符串
  * @returns {string} 格式化后的日期字符串
  */
 function formatDate(date) {
@@ -18,7 +19,7 @@ function formatDate(date) {
 
 /**
  * 格式化时间为 HH:mm
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
+ * @param {Date|string|number} [date] - 日期对象、时间戳或日期字符串
  * @returns {string} 格式化后的时间字符串
  */
 function formatTime(date) {
@@ -29,16 +30,16 @@ function formatTime(date) {
 }
 
 /**
- * 获取当前日期字符串 YYYY-MM-DD
- * @returns {string} 当前日期
+ * 获取当前日期字符串
+ * @returns {string} 当前日期（YYYY-MM-DD）
  */
 function getCurrentDate() {
   return formatDate(new Date())
 }
 
 /**
- * 获取当前时间字符串 HH:mm
- * @returns {string} 当前时间
+ * 获取当前时间字符串
+ * @returns {string} 当前时间（HH:mm）
  */
 function getCurrentTime() {
   return formatTime(new Date())
@@ -46,7 +47,7 @@ function getCurrentTime() {
 
 /**
  * 获取星期几
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
+ * @param {Date|string|number} [date] - 日期对象、时间戳或日期字符串
  * @returns {number} 星期几（0-6，0表示周日）
  */
 function getDayOfWeek(date) {
@@ -56,8 +57,8 @@ function getDayOfWeek(date) {
 
 /**
  * 获取星期几的中文名
- * @param {Date|string|number} date - 日期对象、时间戳或日期字符串
- * @returns {string} 星期几的中文名
+ * @param {Date|string|number} [date] - 日期对象、时间戳或日期字符串
+ * @returns {string} 星期几的中文名（如"周一"）
  */
 function getDayOfWeekName(date) {
   const dayNames = ['日', '一', '二', '三', '四', '五', '六']
@@ -65,9 +66,9 @@ function getDayOfWeekName(date) {
 }
 
 /**
- * 格式化相对时间（如"刚刚"、"5分钟前"、"昨天 14:30"）
+ * 格式化相对时间
  * @param {Date|string|number} time - 日期对象、时间戳或日期字符串
- * @returns {string} 相对时间字符串
+ * @returns {string} 相对时间字符串（如"刚刚"、"5分钟前"、"昨天 14:30"）
  */
 function formatRelativeTime(time) {
   if (!time) return ''
@@ -76,17 +77,14 @@ function formatRelativeTime(time) {
   const now = new Date()
   const diff = now - date
 
-  // 1分钟内
   if (diff < 60000) {
     return '刚刚'
   }
 
-  // 1小时内
   if (diff < 3600000) {
     return `${Math.floor(diff / 60000)}分钟前`
   }
 
-  // 今天
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   if (date >= today) {
     const hours = date.getHours().toString().padStart(2, '0')
@@ -94,7 +92,6 @@ function formatRelativeTime(time) {
     return `今天 ${hours}:${minutes}`
   }
 
-  // 昨天
   const yesterday = new Date(today - 86400000)
   if (date >= yesterday) {
     const hours = date.getHours().toString().padStart(2, '0')
@@ -102,7 +99,6 @@ function formatRelativeTime(time) {
     return `昨天 ${hours}:${minutes}`
   }
 
-  // 今年
   if (date.getFullYear() === now.getFullYear()) {
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const day = date.getDate().toString().padStart(2, '0')
@@ -111,7 +107,6 @@ function formatRelativeTime(time) {
     return `${month}-${day} ${hours}:${minutes}`
   }
 
-  // 其他年份
   const year = date.getFullYear()
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   const day = date.getDate().toString().padStart(2, '0')

@@ -1,5 +1,10 @@
+/**
+ * @file 登录页面
+ * @module pages/login/login
+ */
 const app = getApp()
 const request = require('../../utils/request')
+const storage = require('../../utils/storage')
 const { SafeToast } = require('../../utils/error')
 
 Page({
@@ -7,26 +12,21 @@ Page({
     loading: false
   },
 
-  /**
-   * 页面加载时检查是否已登录
-   * 如果有有效的登录信息，自动跳转到对应角色页面
-   */
+  /** 页面加载 */
   onLoad() {
     this.checkAutoLogin()
   },
 
   /**
    * 检查自动登录
-   * 验证本地存储的用户信息和云端登录态是否有效
    */
   async checkAutoLogin() {
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = storage.getUserInfo()
     if (!userInfo || !userInfo.role || userInfo.status !== 'approved') {
       return
     }
 
     try {
-      // 检查微信登录态是否过期
       let sessionExpired = false
       try {
         await wx.checkSession()
@@ -35,42 +35,35 @@ Page({
       }
 
       if (sessionExpired) {
-        // 登录态过期，清除缓存，需要重新登录
-        wx.removeStorageSync('userInfo')
-        wx.removeStorageSync('allUserRoles')
+        storage.remove(storage.STORAGE_KEYS.USER_INFO)
+        storage.remove(storage.STORAGE_KEYS.ALL_USER_ROLES)
         return
       }
 
-      // 验证云端用户状态
       const result = await request.callCloud('user', { action: 'login' }, {
         showLoading: false,
         showError: false
       })
 
       if (result.success && result.status === 'approved' && result.userList?.length > 0) {
-        // 云端验证通过，更新本地缓存并跳转
-        wx.setStorageSync('allUserRoles', result.userList)
-        // 尝试匹配当前角色，否则使用第一个
+        storage.set(storage.STORAGE_KEYS.ALL_USER_ROLES, result.userList)
         const currentRole = result.userList.find(u => u.role === userInfo.role) || result.userList[0]
-        wx.setStorageSync('userInfo', currentRole)
+        storage.setUserInfo(currentRole)
         app.globalData.userInfo = currentRole
         this.redirectByRole(currentRole.role)
       } else {
-        // 云端验证失败，清除缓存
-        wx.removeStorageSync('userInfo')
-        wx.removeStorageSync('allUserRoles')
+        storage.remove(storage.STORAGE_KEYS.USER_INFO)
+        storage.remove(storage.STORAGE_KEYS.ALL_USER_ROLES)
       }
     } catch (error) {
       console.error('自动登录验证失败:', error)
-      // 验证失败，清除缓存，让用户手动登录
-      wx.removeStorageSync('userInfo')
-      wx.removeStorageSync('allUserRoles')
+      storage.remove(storage.STORAGE_KEYS.USER_INFO)
+      storage.remove(storage.STORAGE_KEYS.ALL_USER_ROLES)
     }
   },
 
   /**
    * 处理微信登录
-   * 调用云函数验证用户身份并跳转到对应页面
    */
   async handleWxLogin() {
     if (this.data.loading) return
@@ -97,14 +90,10 @@ Page({
       }
 
       if (result.needRegister) {
-        // 使用 Toast 的 onClose 回调，缩短等待时间
-        Toast({
-          message: '未找到账号，即将跳转注册',
-          duration: 1500,
-          onClose: () => {
-            wx.redirectTo({ url: `/pages/register/register?openid=${result.openid}` })
-          }
-        })
+        SafeToast.fail('未找到账号，即将跳转注册')
+        setTimeout(() => {
+          wx.redirectTo({ url: `/pages/register/register?openid=${result.openid}` })
+        }, 1500)
         return
       }
 
@@ -122,10 +111,7 @@ Page({
           return
         }
 
-        // 保存所有角色到 storage（供角色切换页面使用）
-        wx.setStorageSync('allUserRoles', userList)
-
-        // 使用第一个角色登录（可在角色切换页面切换）
+        storage.set(storage.STORAGE_KEYS.ALL_USER_ROLES, userList)
         this.loginSuccess(userList[0])
       }
     } catch (error) {
@@ -140,13 +126,12 @@ Page({
    * @param {Object} userInfo - 用户信息对象
    */
   loginSuccess(userInfo) {
-    wx.setStorageSync('userInfo', userInfo)
+    storage.setUserInfo(userInfo)
     app.globalData.userInfo = userInfo
     app.globalData.userRole = userInfo.role
 
     SafeToast.success('登录成功')
 
-    // 根据角色跳转到不同页面
     setTimeout(() => {
       this.redirectByRole(userInfo.role)
     }, 1500)

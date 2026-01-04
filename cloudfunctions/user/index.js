@@ -1,6 +1,6 @@
 /**
- * 云函数 - 用户管理
- * 处理用户登录、注册、审批等操作
+ * @file 用户管理云函数 - 处理用户登录、注册、审批等操作
+ * @module cloudfunctions/user
  */
 const cloud = require('wx-server-sdk')
 const {
@@ -23,7 +23,9 @@ const _ = db.command
 /**
  * 云函数入口
  * @param {Object} event - 请求参数
- * @param {string} event.action - 操作类型: login/register/approve/reject/getPending
+ * @param {string} event.action - 操作类型: login/register/approve/reject/getPending/getAllByStatus/getAll/getStats/add/delete/update
+ * @param {Object} context - 云函数上下文
+ * @returns {Promise<Object>} 返回结果
  */
 exports.main = async (event, context) => {
     const { action } = event
@@ -53,7 +55,10 @@ exports.main = async (event, context) => {
 
 /**
  * 处理用户登录
- * 根据openid查询用户记录并返回审核状态
+ * @description 根据openid查询用户记录并返回审核状态
+ * @param {Object} event - 请求参数
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 登录结果，包含用户状态和用户列表
  */
 async function handleLogin(event, wxContext) {
     try {
@@ -62,9 +67,9 @@ async function handleLogin(event, wxContext) {
             return { success: false, message: '获取用户信息失败' }
         }
 
-        // 获取该 openid 下的所有账号记录
+        // 获取该 openid 下的所有账号记录（排除已删除的）
         const userRes = await db.collection('users')
-            .where({ _openid: openid })
+            .where({ _openid: openid, deleted: _.neq(true) })
             .field({ _id: true, _openid: true, userName: true, role: true, department: true, className: true, clubName: true, status: true })
             .get()
 
@@ -114,10 +119,23 @@ async function handleLogin(event, wxContext) {
 
 /**
  * 处理用户注册
- * 检查预注册账号或创建新的注册申请
+ * @description 检查预注册账号或创建新的注册申请
+ * @param {Object} event - 请求参数
+ * @param {string} event.name - 用户姓名
+ * @param {string} event.role - 角色类型
+ * @param {string} [event.department] - 学部
+ * @param {string} [event.className] - 班级
+ * @param {string} [event.clubName] - 社团名称
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 注册结果
  */
 async function handleRegister(event, wxContext) {
-    const { openid, name, role, department, className, clubName } = event
+    const { name, role, department, className, clubName } = event
+    const openid = wxContext.OPENID
+
+    if (!openid) {
+        return { success: false, message: '获取用户信息失败' }
+    }
 
     try {
         // 1. 检查该 openid 下是否已经有该角色的账号
@@ -186,7 +204,13 @@ async function handleRegister(event, wxContext) {
 
 /**
  * 处理审批或拒绝操作
- * 验证管理员权限并更新用户状态
+ * @description 验证管理员权限并更新用户状态
+ * @param {Object} event - 请求参数
+ * @param {string} event.userId - 用户ID
+ * @param {string} event.action - 操作类型 approve/reject
+ * @param {string} [event.rejectReason] - 拒绝原因
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 审批结果
  */
 async function handleApprove(event, wxContext) {
     const { userId, action, rejectReason } = event
@@ -496,7 +520,15 @@ async function handleGetAll(event, wxContext) {
 
 /**
  * 添加用户（管理员专用）
- * 管理员可直接创建已审批的用户账号
+ * @description 管理员可直接创建已审批的用户账号
+ * @param {Object} event - 请求参数
+ * @param {string} event.name - 用户姓名
+ * @param {string} event.role - 角色类型
+ * @param {string} [event.department] - 学部
+ * @param {string} [event.className] - 班级
+ * @param {string} [event.clubName] - 社团名称
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 添加结果
  */
 async function handleAdd(event, wxContext) {
     const { name, role, department, className, clubName } = event
@@ -545,7 +577,11 @@ async function handleAdd(event, wxContext) {
 
 /**
  * 删除用户（管理员专用）
- * 使用软删除，标记 deleted 字段
+ * @description 使用软删除，标记 deleted 字段
+ * @param {Object} event - 请求参数
+ * @param {string} event.userId - 要删除的用户ID
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 删除结果
  */
 async function handleDelete(event, wxContext) {
     const { userId } = event
@@ -594,6 +630,11 @@ async function handleDelete(event, wxContext) {
 
 /**
  * 更新用户信息（管理员专用）
+ * @param {Object} event - 请求参数
+ * @param {string} event.userId - 用户ID
+ * @param {Object} event.updates - 更新字段
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 更新结果
  */
 async function handleUpdate(event, wxContext) {
     const { userId, updates } = event
@@ -642,8 +683,10 @@ async function handleUpdate(event, wxContext) {
 
 /**
  * 获取用户统计数据
- * 使用 count 查询避免加载全部用户数据
- * 返回总用户数和各状态用户数
+ * @description 使用 count 查询避免加载全部用户数据，返回总用户数和各状态用户数
+ * @param {Object} event - 请求参数
+ * @param {Object} wxContext - 微信上下文
+ * @returns {Promise<Object>} 统计结果，包含 total/pending/approved/rejected 数量
  */
 async function handleGetStats(event, wxContext) {
     const adminOpenid = wxContext.OPENID

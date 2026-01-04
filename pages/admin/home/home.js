@@ -1,3 +1,7 @@
+/**
+ * @file 管理员首页
+ * @module pages/admin/home/home
+ */
 const { formatDate } = require('../../../utils/date')
 const auth = require('../../../utils/auth')
 const request = require('../../../utils/request')
@@ -15,6 +19,7 @@ Page({
     }
   },
 
+  /** 页面加载 */
   onLoad() {
     const userInfo = auth.checkRole('admin')
     if (userInfo) {
@@ -23,20 +28,19 @@ Page({
     this.loadStats()
   },
 
+  /** 页面显示 */
   onShow() {
-    // 检查登录状态，防止后台恢复时登录态丢失
     const userInfo = auth.checkRole('admin')
     if (!userInfo) return
 
-    // 恢复页面数据（小程序被销毁后 userInfo 会丢失）
     if (!this.data.userInfo) {
       this.setData({ userInfo })
     }
 
-    // 刷新统计数据
     this.loadStats()
   },
 
+  /** 页面下拉刷新 */
   onPullDownRefresh() {
     this.loadStats().then(() => {
       wx.stopPullDownRefresh()
@@ -45,20 +49,19 @@ Page({
     })
   },
 
+  /**
+   * 加载统计数据
+   */
   async loadStats() {
     try {
       const today = formatDate(new Date())
 
-      // 并行调用所有接口获取统计数据
       const [userRes, filterOptions, attendanceRes] = await Promise.all([
-        // 获取用户统计（使用 count 查询，不加载全部用户）
         wx.cloud.callFunction({
           name: 'user',
           data: { action: 'getStats' }
         }),
-        // 获取社团统计（使用缓存）
         request.getFilterOptions(),
-        // 获取今日考勤统计
         wx.cloud.callFunction({
           name: 'attendance',
           data: {
@@ -69,7 +72,6 @@ Page({
         })
       ])
 
-      // 处理用户统计
       let totalUsers = 0
       let pendingUsers = 0
       if (userRes.result.success && userRes.result.data) {
@@ -77,13 +79,11 @@ Page({
         pendingUsers = userRes.result.data.pending
       }
 
-      // 处理社团统计（从缓存数据获取）
       let totalClubs = 0
       if (filterOptions && filterOptions.clubs) {
         totalClubs = filterOptions.clubs.length
       }
 
-      // 处理今日考勤统计
       let todayAttendance = 0
       if (attendanceRes.result.success && attendanceRes.result.data) {
         todayAttendance = attendanceRes.result.data.total
@@ -105,6 +105,10 @@ Page({
     }
   },
 
+  /**
+   * 导航到指定页面
+   * @param {Object} e - 事件对象
+   */
   navigateTo(e) {
     const { url } = e.currentTarget.dataset
     wx.navigateTo({

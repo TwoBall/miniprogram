@@ -1,6 +1,6 @@
 /**
- * 云函数 - 数据导出
- * 支持导出考勤明细、汇总统计、学生名单
+ * @file 数据导出云函数 - 支持导出考勤明细、汇总统计、学生名单
+ * @module cloudfunctions/export
  */
 const cloud = require('wx-server-sdk')
 const xlsx = require('xlsx')
@@ -20,6 +20,10 @@ const _ = db.command
 
 /**
  * 云函数入口
+ * @param {Object} event - 请求参数
+ * @param {string} event.action - 操作类型: attendance/summary/students/getHistory/getDownloadUrl/deleteRecord
+ * @param {Object} context - 云函数上下文
+ * @returns {Promise<Object>} 返回结果
  */
 exports.main = async (event, context) => {
   const { action } = event
@@ -62,6 +66,13 @@ exports.main = async (event, context) => {
 
 /**
  * 保存导出记录到数据库
+ * @param {string} openid - 用户openid
+ * @param {string} exportType - 导出类型
+ * @param {string} fileName - 文件名
+ * @param {string} fileID - 云存储文件ID
+ * @param {number} recordCount - 记录数量
+ * @param {Object} filters - 筛选条件
+ * @returns {Promise<void>}
  */
 async function saveExportRecord(openid, exportType, fileName, fileID, recordCount, filters) {
   try {
@@ -83,6 +94,11 @@ async function saveExportRecord(openid, exportType, fileName, fileID, recordCoun
 
 /**
  * 获取导出历史记录
+ * @param {Object} event - 请求参数
+ * @param {number} [event.page=1] - 页码
+ * @param {number} [event.pageSize=20] - 每页数量
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 分页的导出历史
  */
 async function getExportHistory(event, openid) {
   const { page = 1, pageSize = 20 } = event
@@ -121,6 +137,10 @@ async function getExportHistory(event, openid) {
 
 /**
  * 重新获取下载链接
+ * @param {Object} event - 请求参数
+ * @param {string} event.fileID - 云存储文件ID
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 临时下载链接
  */
 async function getDownloadUrl(event, openid) {
   const { fileID } = event
@@ -162,6 +182,11 @@ async function getDownloadUrl(event, openid) {
 
 /**
  * 删除导出记录（同时删除云存储文件）
+ * @param {Object} event - 请求参数
+ * @param {string} event.recordId - 记录ID
+ * @param {string} [event.fileID] - 云存储文件ID
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 删除结果
  */
 async function deleteExportRecord(event, openid) {
   const { recordId, fileID } = event
@@ -198,6 +223,14 @@ async function deleteExportRecord(event, openid) {
 
 /**
  * 导出考勤明细
+ * @param {Object} event - 请求参数
+ * @param {string} [event.startDate] - 开始日期
+ * @param {string} [event.endDate] - 结束日期
+ * @param {string} [event.department] - 学部筛选
+ * @param {string} [event.clubName] - 社团筛选
+ * @param {string} [event.className] - 班级筛选
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 导出结果，包含文件下载链接
  */
 async function exportAttendance(event, openid) {
   const { startDate, endDate, department, clubName, className } = event
@@ -298,6 +331,14 @@ async function exportAttendance(event, openid) {
 
 /**
  * 导出汇总统计
+ * @param {Object} event - 请求参数
+ * @param {string} [event.startDate] - 开始日期
+ * @param {string} [event.endDate] - 结束日期
+ * @param {string} [event.department] - 学部筛选
+ * @param {string} [event.clubName] - 社团筛选
+ * @param {string} [event.className] - 班级筛选
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 导出结果，包含文件下载链接
  */
 async function exportSummary(event, openid) {
   const { startDate, endDate, department, clubName, className } = event
@@ -423,6 +464,12 @@ async function exportSummary(event, openid) {
 
 /**
  * 导出学生名单
+ * @param {Object} event - 请求参数
+ * @param {string} [event.department] - 学部筛选
+ * @param {string} [event.clubName] - 社团筛选
+ * @param {string} [event.className] - 班级筛选
+ * @param {string} openid - 用户openid
+ * @returns {Promise<Object>} 导出结果，包含文件下载链接
  */
 async function exportStudents(event, openid) {
   const { department, clubName, className } = event
@@ -506,6 +553,8 @@ async function exportStudents(event, openid) {
 
 /**
  * 格式化日期时间
+ * @param {Date|number} timestamp - 时间戳
+ * @returns {string} 格式化后的日期时间字符串 (YYYY-MM-DD HH:mm)
  */
 function formatDateTime(timestamp) {
   if (!timestamp) return ''

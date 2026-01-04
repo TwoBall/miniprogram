@@ -1,27 +1,30 @@
-// input: 离线考勤数据、同步操作
-// output: 离线队列管理、同步结果
-// pos: 工具层 > 离线存储
-
 /**
- * 离线存储工具
- * 提供离线数据暂存和在线同步功能
- *
- * 使用场景：
- * - 网络不稳定时暂存考勤数据
- * - 恢复网络后自动同步
+ * @file 离线存储工具
+ * @module utils/offlineStorage
+ * @description 提供离线数据暂存和在线同步功能
  */
 
+/**
+ * 离线队列存储键
+ * @constant {string}
+ */
 const OFFLINE_QUEUE_KEY = 'offline_attendance_queue'
+
+/**
+ * 离线同步状态存储键
+ * @constant {string}
+ */
 const OFFLINE_SYNC_STATUS_KEY = 'offline_sync_status'
 
 /**
- * 离线考勤数据暂存
+ * 离线考勤数据暂存管理器
+ * @namespace
  */
 const offlineStorage = {
   /**
    * 添加离线记录
    * @param {Object} record - 考勤记录数据
-   * @returns {string} - 离线记录 ID
+   * @returns {string} 离线记录 ID
    */
   addOfflineRecord(record) {
     const queue = this.getQueue()
@@ -42,7 +45,7 @@ const offlineStorage = {
 
   /**
    * 获取离线队列
-   * @returns {Array}
+   * @returns {Array<Object>} 离线记录数组
    */
   getQueue() {
     try {
@@ -55,7 +58,7 @@ const offlineStorage = {
 
   /**
    * 获取待同步记录数量
-   * @returns {number}
+   * @returns {number} 待同步数量
    */
   getPendingCount() {
     const queue = this.getQueue()
@@ -64,7 +67,7 @@ const offlineStorage = {
 
   /**
    * 检查是否有待同步数据
-   * @returns {boolean}
+   * @returns {boolean} 是否有待同步数据
    */
   hasPendingData() {
     return this.getPendingCount() > 0
@@ -73,8 +76,7 @@ const offlineStorage = {
   /**
    * 同步离线数据
    * @param {Function} syncFn - 同步函数，接收单条记录，返回 Promise
-   * @returns {Promise<{synced: number, failed: number, remaining: number}>}
-   *
+   * @returns {Promise<{synced: number, failed: number, remaining: number}>} 同步结果
    * @example
    * const result = await offlineStorage.syncOfflineData(async (record) => {
    *   return await wx.cloud.callFunction({
@@ -96,14 +98,12 @@ const offlineStorage = {
     const results = []
     for (const record of pendingRecords) {
       try {
-        // 移除离线标记字段
         const { _offlineId, _createdAt, _synced, ...data } = record
 
         const response = await syncFn(data)
 
         if (response && response.result && response.result.success) {
           results.push({ success: true, id: _offlineId })
-          // 标记为已同步
           this._markAsSynced(_offlineId)
         } else {
           results.push({ success: false, id: _offlineId, error: response })
@@ -114,7 +114,6 @@ const offlineStorage = {
       }
     }
 
-    // 清理已同步的记录
     this._cleanupSyncedRecords()
 
     const synced = results.filter(r => r.success).length
@@ -129,6 +128,8 @@ const offlineStorage = {
   /**
    * 标记记录为已同步
    * @private
+   * @param {string} offlineId - 离线记录 ID
+   * @returns {void}
    */
   _markAsSynced(offlineId) {
     const queue = this.getQueue()
@@ -144,6 +145,7 @@ const offlineStorage = {
   /**
    * 清理已同步的记录
    * @private
+   * @returns {void}
    */
   _cleanupSyncedRecords() {
     const queue = this.getQueue()
@@ -154,7 +156,7 @@ const offlineStorage = {
   /**
    * 删除指定离线记录
    * @param {string} offlineId - 离线记录 ID
-   * @returns {boolean}
+   * @returns {boolean} 是否删除成功
    */
   removeRecord(offlineId) {
     const queue = this.getQueue()
@@ -169,6 +171,7 @@ const offlineStorage = {
 
   /**
    * 清空所有离线队列
+   * @returns {void}
    */
   clearQueue() {
     wx.removeStorageSync(OFFLINE_QUEUE_KEY)
@@ -177,7 +180,7 @@ const offlineStorage = {
 
   /**
    * 获取同步状态
-   * @returns {Object}
+   * @returns {Object} 同步状态对象
    */
   getSyncStatus() {
     try {
@@ -193,6 +196,7 @@ const offlineStorage = {
   /**
    * 更新同步状态
    * @param {Object} result - 同步结果
+   * @returns {void}
    */
   updateSyncStatus(result) {
     const status = {
@@ -205,13 +209,15 @@ const offlineStorage = {
 
 /**
  * 通用数据缓存工具
+ * @namespace
  */
 const dataCache = {
   /**
    * 设置缓存数据
    * @param {string} key - 缓存键
-   * @param {any} data - 缓存数据
-   * @param {number} expireMs - 过期时间（毫秒），默认 10 分钟
+   * @param {*} data - 缓存数据
+   * @param {number} [expireMs=600000] - 过期时间（毫秒），默认 10 分钟
+   * @returns {void}
    */
   set(key, data, expireMs = 10 * 60 * 1000) {
     const cacheData = {
@@ -225,7 +231,7 @@ const dataCache = {
   /**
    * 获取缓存数据
    * @param {string} key - 缓存键
-   * @returns {any|null} - 缓存数据或 null（已过期或不存在）
+   * @returns {*} 缓存数据，已过期或不存在返回 null
    */
   get(key) {
     try {
@@ -233,7 +239,6 @@ const dataCache = {
       if (!cacheData) return null
 
       if (Date.now() > cacheData.expireAt) {
-        // 已过期，清除缓存
         this.remove(key)
         return null
       }
@@ -247,6 +252,7 @@ const dataCache = {
   /**
    * 移除缓存
    * @param {string} key - 缓存键
+   * @returns {void}
    */
   remove(key) {
     wx.removeStorageSync(`cache_${key}`)
@@ -255,7 +261,7 @@ const dataCache = {
   /**
    * 检查缓存是否有效
    * @param {string} key - 缓存键
-   * @returns {boolean}
+   * @returns {boolean} 缓存是否有效
    */
   isValid(key) {
     return this.get(key) !== null

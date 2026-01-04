@@ -1,3 +1,7 @@
+/**
+ * @file 注册页面
+ * @module pages/register/register
+ */
 const { SafeToast } = require('../../utils/error')
 const storage = require('../../utils/storage')
 const request = require('../../utils/request')
@@ -9,25 +13,20 @@ Page({
     roleIndex: 0,
     roleArray: ['社团老师', '班主任', '学部领导'],
     roleValues: ['teacher', 'classTeacher', 'leader'],
-    // 已有的角色类型（用于过滤角色选择器）
     existingRoles: [],
-    // 可选列表
     departments: [],
-    allDepartments: [], // 未过滤的学部列表
+    allDepartments: [],
     classes: [],
     allClasses: [],
     classDeptMap: {},
     clubs: [],
-    // 选中值
     department: '',
     className: '',
     club: '',
-    // 弹窗状态
     showRolePicker: false,
     showDepartmentPicker: false,
     showClassPicker: false,
     showClubPicker: false,
-    // 提交状态
     submitting: false
   },
 
@@ -38,11 +37,9 @@ Page({
   onLoad(options) {
     const existingRoles = options.existingRoles ? options.existingRoles.split(',') : []
 
-    // 全部角色选项
     const allRoleArray = ['社团老师', '班主任', '学部领导']
     const allRoleValues = ['teacher', 'classTeacher', 'leader']
 
-    // 过滤掉已有的角色类型
     const filteredRoleArray = []
     const filteredRoleValues = []
     allRoleValues.forEach((role, index) => {
@@ -63,13 +60,10 @@ Page({
     this.fetchOptions()
   },
 
-
   /**
    * 获取可选的学部、班级、社团列表
-   * 优先使用缓存（24小时有效），减少云函数调用
    */
   async fetchOptions() {
-    // 尝试从缓存读取
     const cached = storage.getWithCache(
       storage.STORAGE_KEYS.FILTER_OPTIONS,
       storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
@@ -81,14 +75,12 @@ Page({
       return
     }
 
-    // 缓存不存在或过期，从云端获取
     try {
       const result = await request.callCloud('students', { action: 'getFilterOptions' }, {
         showLoading: false,
         showError: false
       })
       if (result.success) {
-        // 存入缓存
         storage.setWithCache(
           storage.STORAGE_KEYS.FILTER_OPTIONS,
           storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
@@ -103,6 +95,7 @@ Page({
 
   /**
    * 应用筛选选项到页面数据
+   * @param {Object} data - 筛选选项数据
    */
   applyFilterOptions(data) {
     const departments = data.departments || []
@@ -110,7 +103,6 @@ Page({
     const clubs = data.clubs || []
     const classDeptMap = data.classDeptMap || {}
 
-    // 班级按自然排序（1班 < 2班 < 10班）
     classes.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
 
     this.setData({
@@ -127,7 +119,6 @@ Page({
     this.setData({ name: e.detail })
   },
 
-  // 弹窗控制
   showRolePickerPopup() { this.setData({ showRolePicker: true }) },
   onRolePickerClose() { this.setData({ showRolePicker: false }) },
   onRolePickerConfirm(e) {
@@ -143,7 +134,6 @@ Page({
     this.setData({ department: e.detail.value, showDeptPicker: false })
   },
 
-  // 班主任选择学部（级联选择）
   showClassTeacherDeptPickerPopup() {
     this.setData({ showClassTeacherDeptPicker: true })
   },
@@ -154,16 +144,13 @@ Page({
     const dept = e.detail.value
     const { allClasses, classDeptMap } = this.data
 
-    // 根据班级与学部的映射关系过滤（从数据库获取的真实数据）
     const filtered = allClasses.filter(cls => classDeptMap[cls] === dept)
-
-    // 自然排序
     filtered.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
 
     this.setData({
       classTeacherDept: dept,
       filteredClasses: filtered,
-      className: '', // 清空已选班级
+      className: '',
       showClassTeacherDeptPicker: false
     })
   },
@@ -182,12 +169,10 @@ Page({
 
   /**
    * 处理注册提交
-   * 验证输入并调用云函数创建注册申请
    */
   async handleRegister() {
     const { openid, name, roleIndex, roleValues, department, className, clubName } = this.data
 
-    // 验证输入
     if (!name) {
       SafeToast.fail('请输入姓名')
       return
@@ -195,7 +180,6 @@ Page({
 
     const role = roleValues[roleIndex]
 
-    // 根据角色验证必填字段
     if (role === 'teacher' && !clubName) {
       SafeToast.fail('请选择社团名称')
       return
@@ -214,7 +198,6 @@ Page({
     this.setData({ loading: true })
 
     try {
-      // 调用云函数进行注册
       const result = await request.callCloud('user', {
         action: 'register',
         openid,

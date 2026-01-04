@@ -1,59 +1,54 @@
 /**
- * 空状态组件
- * 提供统一的空数据展示样式，支持多种预设场景和自定义配置
- *
- * 预设场景：
- * - default: 默认空状态
- * - students: 暂无学生
- * - attendance: 暂无点名记录
- * - approval: 暂无待审批
- * - notification: 暂无通知
- * - search: 搜索无结果
- * - network: 网络异常
- *
- * 使用示例：
- * <empty-state type="students" />
- * <empty-state
- *   image="/images/empty-custom.png"
- *   title="暂无数据"
- *   description="请稍后再试"
- *   buttonText="刷新"
- *   bind:action="onRefresh"
- * />
+ * @file 空状态组件
+ * @module components/empty-state/empty-state
  */
 Component({
   properties: {
-    // 预设类型
+    /**
+     * 预设类型
+     */
     type: {
       type: String,
       value: 'default'
     },
-    // 自定义图片
+    /**
+     * 自定义图片
+     */
     image: {
       type: String,
       value: ''
     },
-    // 图片大小
+    /**
+     * 图片大小
+     */
     imageSize: {
       type: String,
       value: '240rpx'
     },
-    // 标题
+    /**
+     * 标题
+     */
     title: {
       type: String,
       value: ''
     },
-    // 描述文字
+    /**
+     * 描述文字
+     */
     description: {
       type: String,
       value: ''
     },
-    // 按钮文字（不传则不显示按钮）
+    /**
+     * 按钮文字
+     */
     buttonText: {
       type: String,
       value: ''
     },
-    // 按钮类型
+    /**
+     * 按钮类型
+     */
     buttonType: {
       type: String,
       value: 'primary'
@@ -61,7 +56,6 @@ Component({
   },
 
   data: {
-    // 预设配置
     presets: {
       default: {
         icon: 'info-o',
@@ -114,7 +108,6 @@ Component({
         description: '所有学生出勤情况良好'
       }
     },
-    // 当前配置
     currentConfig: {
       icon: 'info-o',
       title: '暂无数据',
@@ -123,6 +116,7 @@ Component({
   },
 
   lifetimes: {
+    /** 组件挂载 */
     attached() {
       this.updateConfig()
     }

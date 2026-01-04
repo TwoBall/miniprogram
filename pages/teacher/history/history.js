@@ -1,3 +1,7 @@
+/**
+ * @file 社团老师历史记录页面
+ * @module pages/teacher/history/history
+ */
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
@@ -12,34 +16,27 @@ Page({
     pageLoading: true
   },
 
-  // 上次加载时间（用于防抖）
   lastLoadTime: 0,
 
-  /**
-   * 页面加载
-   */
+  /** 页面加载 */
   onLoad() {
     auth.checkRole('teacher')
     this.loadList()
   },
 
+  /** 页面显示 */
   onShow() {
-    // 检查登录状态，防止后台恢复时登录态丢失
     if (!auth.checkRole('teacher')) return
 
-    // 5秒内不重复加载（防抖）
     const now = Date.now()
     if (now - this.lastLoadTime < 5000) return
     this.loadList()
   },
 
-  /**
-   * 页面下拉刷新（强制刷新，忽略缓存）
-   */
+  /** 页面下拉刷新 */
   async onPullDownRefresh() {
     this.setData({ records: [] })
     await this.handlePullDownRefresh()
-    // 清除缓存
     const userInfo = auth.getUserInfo()
     if (userInfo) {
       const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
@@ -49,9 +46,7 @@ Page({
     }
   },
 
-  /**
-   * 上拉触底加载更多
-   */
+  /** 上拉触底加载更多 */
   onReachBottom() {
     this.handleReachBottom()
   },
@@ -66,7 +61,6 @@ Page({
 
     this.lastLoadTime = Date.now()
 
-    // 尝试从缓存读取（5分钟有效）- 仅首页使用缓存
     if (!refresh && this.data.page === 1) {
       const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
       const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
@@ -103,7 +97,6 @@ Page({
       if (result.success) {
         const { data, pagination } = result
 
-        // 首页存入缓存
         if (this.data.page === 1) {
           const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
           const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
@@ -128,10 +121,10 @@ Page({
 
   /**
    * 查看点名记录详情
+   * @param {Object} e - 事件对象
    */
   viewDetail(e) {
     const record = e.currentTarget.dataset.record
-    // 预传递数据，减少详情页云函数调用
     wx.setStorageSync('temp_record_detail', record)
     wx.navigateTo({
       url: `/pages/teacher/detail/detail?recordId=${record._id}`

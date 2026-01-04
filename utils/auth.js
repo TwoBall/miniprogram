@@ -1,6 +1,7 @@
 /**
- * 权限检查工具
- * 抽取各页面重复的 checkAuth() 方法
+ * @file 权限检查工具
+ * @module utils/auth
+ * @description 抽取各页面重复的权限检查逻辑
  */
 const storage = require('./storage')
 
@@ -14,11 +15,10 @@ function getUserInfo() {
 
 /**
  * 检查用户角色权限
- * 如果不符合要求，自动跳转到登录页
- * @param {string} requiredRole - 需要的角色，如 'teacher', 'classTeacher', 'leader', 'admin'
- * @param {Object} options - 选项配置
- * @param {boolean} options.redirect - 权限不足时是否跳转，默认 true
- * @param {string} options.redirectUrl - 跳转地址，默认 '/pages/login/login'
+ * @param {string} requiredRole - 需要的角色（teacher/classTeacher/leader/admin）
+ * @param {Object} [options={}] - 选项配置
+ * @param {boolean} [options.redirect=true] - 权限不足时是否跳转
+ * @param {string} [options.redirectUrl='/pages/login/login'] - 跳转地址
  * @returns {Object|null} 符合权限返回用户信息，否则返回 null
  */
 function checkRole(requiredRole, options = {}) {
@@ -41,7 +41,7 @@ function checkRole(requiredRole, options = {}) {
 
 /**
  * 获取用户所有已注册的角色
- * @returns {Array} 角色数组
+ * @returns {Array<string>} 角色数组
  */
 function getAllUserRoles() {
   return storage.get(storage.STORAGE_KEYS.ALL_USER_ROLES) || []
