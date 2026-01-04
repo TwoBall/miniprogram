@@ -5,6 +5,23 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.8.1] - 2026-01-04
+
+### 修复
+- **用户注册逻辑**：修复软删除用户重新注册同角色时被误判为"已拥有该角色权限"的问题，添加 `deleted: _.neq(true)` 过滤条件
+
+### 文档
+- **归档已完成计划**：将 5 个已完成的优化计划文档归档到 `plans/archived/`
+  - `implementation-plan.md`
+  - `phase4-optimization-plan.md`
+  - `phase4-ux-optimization-detail.md`
+  - `cloudfunctions-common-module-design.md`
+  - `code-review-report.md`
+- **删除冗余文档**：删除 `OPTIMIZATION_GUIDE.md`（内容与审计报告重复）
+- **新增待办记录**：创建 `plans/TODO.md` 记录待处理问题
+
+---
+
 ## [1.8.0] - 2025-01-04
 
 ### 修复

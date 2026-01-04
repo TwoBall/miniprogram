@@ -144,8 +144,8 @@ async function handleRegister(event, wxContext) {
         if (!rateLimit.allowed) {
             return { success: false, message: rateLimit.message }
         }
-        // 1. 检查该 openid 下是否已经有该角色的账号
-        const sameRoleRes = await db.collection('users').where({ _openid: openid, role }).get()
+        // 1. 检查该 openid 下是否已经有该角色的账号（排除已删除的）
+        const sameRoleRes = await db.collection('users').where({ _openid: openid, role, deleted: _.neq(true) }).get()
         if (sameRoleRes.data.length > 0) {
             const user = sameRoleRes.data[0]
             if (user.status === USER_STATUS.APPROVED) return { success: false, message: '您已拥有该角色权限' }
