@@ -51,11 +51,24 @@ Component({
       const role = this.properties.role
       const tabs = this.data.tabs[role]
 
+      // 如果点击的是当前已经是激活状态的 tab，则不进行跳转
+      if (index === this.properties.active) {
+        return
+      }
+
       if (tabs && tabs[index]) {
         wx.redirectTo({
           url: tabs[index].url,
           fail: (err) => {
-            console.error('TabBar navigation failed:', err)
+            // 如果是因为跳转到 tabBar 页面失败（例如页面在 app.json tabBar 中定义了）
+            // 尝试 fallback 到 switchTab
+            if (err.errMsg && err.errMsg.indexOf('tabBar') !== -1) {
+              wx.switchTab({
+                url: tabs[index].url
+              })
+            } else {
+              console.error('TabBar navigation failed:', err)
+            }
           }
         })
       }

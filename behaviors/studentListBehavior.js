@@ -11,9 +11,12 @@
  * - pages/classTeacher/students/students.js
  */
 module.exports = Behavior({
+  options: {
+    pureDataPattern: /^_/
+  },
   data: {
-    // 学生数据
-    students: [],
+    // 学生数据 (纯数据字段)
+    _students: [],
     filteredStudents: [],
     loading: false,
 
@@ -67,9 +70,9 @@ module.exports = Behavior({
      * 综合搜索关键词和分布筛选条件
      */
     filterStudents() {
-      const { students, searchValue, selectedDistribution, distributionField } = this.data
+      const { _students, searchValue, selectedDistribution, distributionField } = this.data
 
-      let filtered = students
+      let filtered = _students
 
       // 分布筛选
       if (selectedDistribution && selectedDistribution !== '全部') {

@@ -10,14 +10,15 @@ import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   options: {
-    styleIsolation: 'shared'
+    styleIsolation: 'shared',
+    pureDataPattern: /^_/
   },
   data: {
     clubName: '',
     currentDate: '',
     currentTime: '',
-    students: [],
-    allStudents: [],
+    students: [], // 当前展示的卡片列表，渲染层需要
+    _allStudents: [], // 完整数据，逻辑层使用
     currentIndex: 0,
     currentStudent: null,
     presentCount: 0,
@@ -31,7 +32,7 @@ Page({
     presentOpacity: 0,
     absentOpacity: 0,
     cardBorderClass: '',
-    actionHistory: [],
+    _actionHistory: [],
     selectedDepts: [],
     showMarkedList: false,
     markedStudents: []
@@ -84,6 +85,7 @@ Page({
     try {
       SafeToast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
 
+      // 先展示骨架屏，避免闪烁
       this.setData({ pageLoading: true })
 
       const result = await request.callCloud('students', {
@@ -123,7 +125,7 @@ Page({
           : []
 
         this.setData({
-          allStudents,
+          _allStudents: allStudents,
           students: filteredStudents,
           selectedDepts: defaultDepts,
           isClassDay,
@@ -133,7 +135,7 @@ Page({
           remainingCount: filteredStudents.length,
           presentCount: 0,
           absentCount: 0,
-          actionHistory: []
+          _actionHistory: []
         })
       }
     } catch (error) {
@@ -141,7 +143,11 @@ Page({
       SafeToast.fail('加载失败')
     } finally {
       SafeToast.clear()
-      this.setData({ pageLoading: false })
+      
+      // 延迟关闭 loading 以避免闪烁，并确保骨架屏平滑过渡到真实内容
+      setTimeout(() => {
+        this.setData({ pageLoading: false })
+      }, 300)
     }
   },
 
@@ -164,12 +170,12 @@ Page({
    * @param {string} status - 状态（present/absent）
    */
   markStudent(status) {
-    const { students, currentIndex, actionHistory, presentCount, absentCount, markedStudents } = this.data
+    const { students, currentIndex, _actionHistory, presentCount, absentCount, markedStudents } = this.data
 
     if (currentIndex >= students.length) return
 
     const student = students[currentIndex]
-    actionHistory.push({ index: currentIndex, status })
+    _actionHistory.push({ index: currentIndex, status })
 
     const newMarkedStudent = {
       studentName: student.studentName,
@@ -205,7 +211,8 @@ Page({
         cardStyle: '',
         presentOpacity: 0,
         absentOpacity: 0,
-        cardBorderClass: ''
+        cardBorderClass: '',
+        _actionHistory
       }
 
       this.setData(updates)
@@ -224,14 +231,14 @@ Page({
    * 撤销上一次标记操作
    */
   undoLast() {
-    const { students, actionHistory, presentCount, absentCount, markedStudents } = this.data
+    const { students, _actionHistory, presentCount, absentCount, markedStudents } = this.data
 
-    if (actionHistory.length === 0) {
+    if (_actionHistory.length === 0) {
       SafeToast.fail('没有可撤销的操作')
       return
     }
 
-    const lastAction = actionHistory.pop()
+    const lastAction = _actionHistory.pop()
     const student = students[lastAction.index]
     const currentStatus = student.status
 
@@ -243,7 +250,8 @@ Page({
       absentCount: currentStatus === 'absent' ? absentCount - 1 : absentCount,
       [`students[${lastAction.index}].status`]: null,
       [`markedStudents.length`]: markedStudents.length - 1,
-      cardStyle: ''
+      cardStyle: '',
+      _actionHistory
     }
 
     markedStudents.pop()
@@ -270,7 +278,7 @@ Page({
       message: `确定将剩余 ${students.length - currentIndex} 名学生全部标记为到课？`
     }).then(() => {
       const markedStudents = [...this.data.markedStudents]
-      const actionHistory = [...this.data.actionHistory]
+      const actionHistory = [...this.data._actionHistory]
       let presentCount = this.data.presentCount
 
       for (let i = currentIndex; i < students.length; i++) {
@@ -289,7 +297,7 @@ Page({
         currentStudent: null,
         remainingCount: 0,
         presentCount,
-        actionHistory,
+        _actionHistory: actionHistory,
         markedStudents,
         cardStyle: ''
       })

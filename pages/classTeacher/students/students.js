@@ -62,7 +62,7 @@ Page({
         const clubDistribution = this.calculateDistribution(students, 'clubName')
 
         this.setData({
-          students,
+          _students: students,
           filteredStudents: students,
           'stats.totalCount': students.length,
           clubDistribution,

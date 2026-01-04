@@ -16,7 +16,7 @@ Page({
     // 学部班级筛选
     departments: [],           // 学部列表
     classes: [],               // 当前学部下的班级列表
-    allClasses: [],            // 所有班级（按学部分组）
+    _allClasses: [],            // 所有班级（按学部分组），纯数据字段优化
     selectedDepartment: '',    // 选中的学部
     selectedClass: '',         // 选中的班级
 
@@ -96,11 +96,11 @@ Page({
         })
 
         this.setData({
-          students,
+          _students: students, // 使用 studentListBehavior 的 _students
           filteredStudents: students,
           'stats.totalCount': students.length,
           departments,
-          allClasses,
+          _allClasses: allClasses, // 纯数据字段
           classes: ['全部班级'],
           selectedDepartment: '全部学部',
           selectedClass: '全部班级',
@@ -245,9 +245,9 @@ Page({
    */
   onDeptPickerConfirm(e) {
     const { value } = e.detail
-    const { allClasses } = this.data
+    const { _allClasses } = this.data
     const selectedDepartment = value
-    const classes = allClasses[selectedDepartment] || ['全部班级']
+    const classes = _allClasses[selectedDepartment] || ['全部班级']
 
     this.setData({
       showDeptPicker: false,
@@ -294,9 +294,9 @@ Page({
    * 应用筛选条件
    */
   applyFilter() {
-    const { students, selectedDepartment, selectedClass } = this.data
+    const { _students, selectedDepartment, selectedClass } = this.data
 
-    let filtered = students
+    let filtered = _students
 
     // 学部筛选
     if (selectedDepartment && selectedDepartment !== '全部学部') {
@@ -320,18 +320,18 @@ Page({
    * 重置筛选
    */
   onResetFilter() {
-    const { students } = this.data
+    const { _students } = this.data
 
     this.setData({
       selectedDepartment: '全部学部',
       selectedClass: '全部班级',
       classes: ['全部班级'],
-      filteredStudents: students
+      filteredStudents: _students
     })
 
     // 更新虚拟列表
     if (typeof this.updateFullList === 'function') {
-      this.updateFullList(students)
+      this.updateFullList(_students)
     }
   }
 })
