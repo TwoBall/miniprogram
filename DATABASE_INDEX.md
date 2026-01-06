@@ -13,6 +13,8 @@
 | transfer_requests | 4 | 转社团申请处理 |
 | notifications | 2 | 用户通知列表 |
 | export_records | 2 | 导出历史查询 |
+| system_config | 1 | 配置读取（主键查询） |
+| rate_limits | 2 | 限频检查、过期清理 |
 
 ## 详细索引配置
 
@@ -186,6 +188,47 @@ db.collection('export_records')
 
 ---
 
+### system_config（系统配置表）
+
+| 索引名 | 字段配置 | 用途说明 |
+|--------|----------|----------|
+| `_id` | 主键索引（自动） | 按配置ID读取配置 |
+
+**典型查询**：
+```javascript
+// 读取排课配置
+db.collection('system_config')
+  .doc('schedule_config')
+  .get()
+```
+
+---
+
+### rate_limits（限频记录表）
+
+| 索引名 | 字段配置 | 用途说明 |
+|--------|----------|----------|
+| `key_1_timestamp_-1` | `key: 1, timestamp: -1` | 限频检查（最常用） |
+| `timestamp_1` | `timestamp: 1` | 清理过期记录 |
+
+**典型查询**：
+```javascript
+// 检查用户操作限频
+db.collection('rate_limits')
+  .where({
+    key: 'oXXXX_attendance',
+    timestamp: _.gte(Date.now() - 60000)
+  })
+  .count()
+
+// 清理 1 小时前的记录
+db.collection('rate_limits')
+  .where({ timestamp: _.lt(Date.now() - 3600000) })
+  .remove()
+```
+
+---
+
 ## 配置步骤
 
 ### 方式一：云开发控制台配置
@@ -290,6 +333,11 @@ db.collection('students')
 ---
 
 ## 版本历史
+
+- **v1.3** (2026-01-06)
+  - 新增 `system_config` 集合索引配置
+  - 新增 `rate_limits` 集合索引配置
+  - 总索引数量更新为 31 个
 
 - **v1.2** (2025-12-27)
   - `attendance_records` 新增 `records.studentId_1` 索引（嵌套数组字段，优化学生考勤历史查询）

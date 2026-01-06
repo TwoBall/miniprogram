@@ -201,6 +201,55 @@
 - `summary`：考勤汇总
 - `students`：学生名单
 
+### system_config（系统配置表）
+
+系统级配置存储表，支持动态配置
+
+| 字段名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| `_id` | String | 是 | 配置唯一标识（如 `schedule_config`） |
+| `data` | Object | 是 | 配置数据（结构取决于配置类型） |
+| `updateTime` | Date | 是 | 更新时间 |
+| `updatedBy` | String | 否 | 更新人 openid |
+
+**配置类型**：
+
+#### schedule_config（排课配置）
+```json
+{
+  "_id": "schedule_config",
+  "data": {
+    "rules": [
+      { "dayOfWeek": 2, "departments": ["职教一部", "职教二部"], "name": "周二" },
+      { "dayOfWeek": 4, "departments": ["医药护理部"], "name": "周四" }
+    ],
+    "noClassMessage": "今天是{dayName}，无上课任务"
+  },
+  "updateTime": "2026-01-06T10:00:00Z"
+}
+```
+
+**字段说明**：
+- `rules[].dayOfWeek`：星期几（0-6，0为周日）
+- `rules[].departments`：当天需要点名的学部列表
+- `rules[].name`：星期名称
+- `noClassMessage`：非上课日提示信息，`{dayName}` 会被替换为实际星期名
+
+### rate_limits（限频记录表）
+
+API 调用限频记录表，用于防止接口滥用
+
+| 字段名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| `_id` | String | 是 | 记录唯一标识（系统生成） |
+| `key` | String | 是 | 限频键（格式：`{openid}_{action}`） |
+| `timestamp` | Number | 是 | 调用时间戳（毫秒） |
+| `createTime` | Date | 是 | 创建时间 |
+
+**注意事项**：
+- 该表由定时云函数 `cleanupRateLimits` 每小时清理过期记录
+- `timestamp` 字段需要建立索引以支持高效清理
+
 ## 查询示例
 
 ### 查询某个社团的学生
@@ -235,6 +284,10 @@ db.collection('attendance_records')
 4. **版本控制**：数据库结构变更应创建迁移脚本并记录版本
 
 ## 版本历史
+
+- **v2.3** (2026-01-06)
+  - 新增 `system_config` 集合，用于存储系统配置（如排课规则）
+  - 新增 `rate_limits` 集合，用于存储 API 限频记录
 
 - **v2.2** (2025-12-27)
   - 新增 `export_records` 集合，用于保存导出历史记录

@@ -16,12 +16,14 @@ const path = require('path')
 // 需要同步的云函数目录
 const CLOUD_FUNCTIONS = [
   'attendance',
-  'students',
-  'user',
+  'cleanupRateLimits',
   'export',
   'notification',
+  'students',
+  'submitFeedback',
+  'system',
   'transfer',
-  'submitFeedback'
+  'user'
 ]
 
 // 公共模块源目录（相对于脚本位置）
