@@ -6,6 +6,7 @@ const auth = require('../../../utils/auth')
 const dateUtil = require('../../../utils/date')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
+const { getTodaySchedule } = require('../../../utils/config')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -99,26 +100,15 @@ Page({
           status: null
         }))
 
+        // 获取可用学部列表
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))]
           .sort((a, b) => a.localeCompare(b, 'zh-CN'))
+        
+        // 使用配置化的排课规则
         const day = dateUtil.getDayOfWeek()
-        let defaultDepts = []
-        let isClassDay = true
-        let noClassMessage = ''
-
-        if (day === 2) {
-          defaultDepts = depts.filter(d => d === '职教一部' || d === '职教二部')
-        } else if (day === 4) {
-          defaultDepts = depts.filter(d => d === '医药护理部')
-        } else {
-          isClassDay = false
-          noClassMessage = `今天是${dateUtil.getDayOfWeekName()}，无上课任务`
-        }
-
-        if (isClassDay && defaultDepts.length === 0) {
-          isClassDay = false
-          noClassMessage = '当前社团暂无对应学部的学生'
-        }
+        const schedule = await getTodaySchedule(day, depts)
+        
+        const { isClassDay, departments: defaultDepts, noClassMessage } = schedule
 
         const filteredStudents = isClassDay
           ? allStudents.filter(s => defaultDepts.includes(s.department))
