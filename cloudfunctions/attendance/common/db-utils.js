@@ -126,9 +126,53 @@ async function paginate(collection, condition, options = {}) {
   }
 }
 
+/**
+ * 获取系统配置
+ * @param {Object} db - 数据库实例
+ * @param {string} configId - 配置ID
+ * @returns {Promise<Object|null>} 配置数据
+ */
+async function getSystemConfig(db, configId) {
+  try {
+    const result = await db.collection('system_config').doc(configId).get()
+    return result.data?.data || null
+  } catch (error) {
+    // 配置不存在时返回 null
+    if (error.errCode === -1) {
+      return null
+    }
+    throw error
+  }
+}
+
+/**
+ * 设置系统配置
+ * @param {Object} db - 数据库实例
+ * @param {string} configId - 配置ID
+ * @param {Object} data - 配置数据
+ * @returns {Promise<boolean>} 是否成功
+ */
+async function setSystemConfig(db, configId, data) {
+  try {
+    await db.collection('system_config').doc(configId).set({
+      data: {
+        _id: configId,
+        data,
+        updateTime: db.serverDate()
+      }
+    })
+    return true
+  } catch (error) {
+    console.error('设置系统配置失败:', error)
+    return false
+  }
+}
+
 module.exports = {
   getAllData,
   getAllDataSorted,
   paginate,
+  getSystemConfig,
+  setSystemConfig,
   MAX_LIMIT
 }

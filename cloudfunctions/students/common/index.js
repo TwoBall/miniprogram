@@ -9,6 +9,7 @@ const responseUtils = require('./response-utils')
 const sortUtils = require('./sort-utils')
 const constants = require('./constants')
 const rateLimitUtils = require('./rate-limit')
+const validatorUtils = require('./validator')
 
 module.exports = {
   // 数据库工具
@@ -22,5 +23,7 @@ module.exports = {
   // 常量
   ...constants,
   // 限频工具
-  ...rateLimitUtils
+  ...rateLimitUtils,
+  // 校验工具
+  ...validatorUtils
 }
