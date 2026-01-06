@@ -68,6 +68,10 @@
   font-weight: bold;
   border: none;
   line-height: 88rpx;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-submit[disabled] {
