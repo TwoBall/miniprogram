@@ -6,7 +6,7 @@
 const {
     ROLES,
     ATTENDANCE_STATUS,
-    verifyUserRoles,
+    verifyUser,
     checkRateLimit,
     RATE_LIMIT_CONFIGS
 } = require('../common')
@@ -44,7 +44,7 @@ async function handleCheckTodaySubmissions(event, ctx) {
  * @returns {Promise<Object>} 提交结果
  */
 async function handleSubmit(event, ctx) {
-    const { clubName, date, time, records, mode } = event
+    const { clubName, date, time, records, mode, preferredRole } = event
     const { db, openid } = ctx
 
     try {
@@ -54,13 +54,17 @@ async function handleSubmit(event, ctx) {
             return { success: false, message: rateCheck.message }
         }
 
-        // 从云端获取教师信息
-        const teacher = await verifyUserRoles(
-            db,
-            openid,
-            [ROLES.TEACHER, ROLES.ADMIN],
-            { _id: true, userName: true, clubName: true }
-        )
+        // 从云端获取教师信息，支持指定优先角色
+        const allowedRoles = [ROLES.TEACHER, ROLES.ADMIN]
+        const rolePriority = preferredRole && allowedRoles.includes(preferredRole)
+            ? [preferredRole, ...allowedRoles.filter(r => r !== preferredRole)]
+            : allowedRoles
+
+        let teacher = null
+        for (const role of rolePriority) {
+            teacher = await verifyUser(db, openid, role, { _id: true, userName: true, clubName: true })
+            if (teacher) break
+        }
 
         if (!teacher) {
             return { success: false, message: '无权执行此操作' }
