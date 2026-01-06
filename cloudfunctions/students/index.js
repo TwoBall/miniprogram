@@ -29,7 +29,12 @@ exports.main = async (event, context) => {
     const wxContext = cloud.getWXContext()
     const openid = wxContext.OPENID
 
-    // 验证用户是否为已审批用户
+    // getFilterOptions 不需要用户验证（注册页面需要使用）
+    if (action === 'getFilterOptions') {
+        return handleGetFilterOptions(event)
+    }
+
+    // 其他操作需要验证用户是否为已审批用户
     const user = await verifyUser(db, openid)
     if (!user) {
         return unauthorized()

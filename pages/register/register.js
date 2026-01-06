@@ -24,7 +24,7 @@ Page({
     className: '',
     club: '',
     showRolePicker: false,
-    showDepartmentPicker: false,
+    showDeptPicker: false,
     showClassPicker: false,
     showClubPicker: false,
     submitting: false
@@ -70,7 +70,7 @@ Page({
       storage.CACHE_DURATION.ONE_DAY
     )
 
-    if (cached) {
+    if (cached && cached.departments && cached.departments.length > 0) {
       this.applyFilterOptions(cached)
       return
     }
@@ -80,7 +80,7 @@ Page({
         showLoading: false,
         showError: false
       })
-      if (result.success) {
+      if (result.success && result.data) {
         storage.setWithCache(
           storage.STORAGE_KEYS.FILTER_OPTIONS,
           storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
