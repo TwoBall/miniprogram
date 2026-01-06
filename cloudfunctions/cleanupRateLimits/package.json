@@ -1,0 +1,16 @@
+{
+  "name": "cleanupRateLimits",
+  "version": "1.0.0",
+  "description": "定时清理过期限频记录",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "triggers": [
+    {
+      "name": "cleanupTimer",
+      "type": "timer",
+      "config": "0 0 * * * * *"
+    }
+  ]
+}
