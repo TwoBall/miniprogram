@@ -2,9 +2,12 @@ const app = getApp()
 const { formatDate } = require('../../../utils/date')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
+const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
+  behaviors: [datePickerBehavior],
+
   data: {
     userInfo: null,
     exportType: 'attendance', // attendance | summary | students
@@ -13,10 +16,6 @@ Page({
     dateRange: 'today', // today | week | month | custom
     startDate: '',
     endDate: '',
-    showStartDatePicker: false,
-    showEndDatePicker: false,
-    minDate: new Date(2020, 0, 1).getTime(),
-    maxDate: new Date().getTime(),
 
     // 筛选条件
     department: '',
@@ -41,6 +40,7 @@ Page({
   },
 
   onLoad() {
+    this.initDatePicker()
     const userInfo = wx.getStorageSync('userInfo')
     this.setData({ userInfo })
 
@@ -134,37 +134,20 @@ Page({
 
   // 显示日期选择器
   onShowStartDatePicker() {
-    this.setData({ showStartDatePicker: true })
+    this.showDatePickerPopup('start', this.data.startDate)
   },
 
   onShowEndDatePicker() {
-    this.setData({ showEndDatePicker: true })
+    this.showDatePickerPopup('end', this.data.endDate)
   },
 
-  // 确认开始日期
-  onConfirmStartDate(e) {
-    const date = new Date(e.detail)
-    this.setData({
-      startDate: formatDate(date),
-      showStartDatePicker: false
-    })
-  },
-
-  // 确认结束日期
-  onConfirmEndDate(e) {
-    const date = new Date(e.detail)
-    this.setData({
-      endDate: formatDate(date),
-      showEndDatePicker: false
-    })
-  },
-
-  // 取消日期选择
-  onCancelDatePicker() {
-    this.setData({
-      showStartDatePicker: false,
-      showEndDatePicker: false
-    })
+  // 日期选择回调
+  onDateChange(dateStr, dateType) {
+    if (dateType === 'start') {
+      this.setData({ startDate: dateStr })
+    } else if (dateType === 'end') {
+      this.setData({ endDate: dateStr })
+    }
   },
 
   // 显示筛选选择器

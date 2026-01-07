@@ -122,26 +122,28 @@
   </view>
 
   <!-- 日期选择器 -->
-  <van-popup show="{{ showStartDatePicker }}" position="bottom">
-    <van-datetime-picker
-      type="date"
-      value="{{ minDate }}"
-      min-date="{{ minDate }}"
-      max-date="{{ maxDate }}"
-      bind:confirm="onConfirmStartDate"
-      bind:cancel="onCancelDatePicker"
-    />
-  </van-popup>
-
-  <van-popup show="{{ showEndDatePicker }}" position="bottom">
-    <van-datetime-picker
-      type="date"
-      value="{{ maxDate }}"
-      min-date="{{ minDate }}"
-      max-date="{{ maxDate }}"
-      bind:confirm="onConfirmEndDate"
-      bind:cancel="onCancelDatePicker"
-    />
+  <van-popup show="{{ showDatePicker }}" position="bottom" bind:close="onDatePickerClose">
+    <view class="date-picker-header">
+      <text class="date-picker-cancel" bindtap="onDatePickerClose">取消</text>
+      <text class="date-picker-title">选择日期</text>
+      <text class="date-picker-confirm" bindtap="onNativeDateConfirm">确认</text>
+    </view>
+    <picker-view 
+      value="{{datePickerValue}}" 
+      indicator-style="height: 50px;" 
+      style="width: 100%; height: 250px;"
+      bindchange="onDatePickerChange"
+    >
+      <picker-view-column>
+        <view wx:for="{{years}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}年</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{months}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}月</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{days}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}日</view>
+      </picker-view-column>
+    </picker-view>
   </van-popup>
 
   <!-- 学部选择器 -->

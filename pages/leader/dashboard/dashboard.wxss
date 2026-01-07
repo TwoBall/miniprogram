@@ -178,3 +178,29 @@
 .rate-value {
   font-size: 32rpx;
 }
+
+/* 日期选择器样式 */
+.date-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.date-picker-cancel {
+  color: #999;
+  font-size: 28rpx;
+}
+
+.date-picker-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.date-picker-confirm {
+  color: #1890ff;
+  font-size: 28rpx;
+}
