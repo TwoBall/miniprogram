@@ -78,7 +78,6 @@ Page({
 - `showDatePickerPopup(dateType, currentDate)` - 显示日历选择器
 - `onCalendarClose()` - 关闭日历选择器
 - `onCalendarConfirm(e)` - 日历选择确认
-- `formatCalendarDay(day)` - 格式化日历底部文字
 
 ### 使用示例
 

@@ -148,26 +148,6 @@ module.exports = Behavior({
           this.onRangeConfirm(startDate, endDate)
         }
       }
-    },
-
-    /**
-     * 格式化日历底部文字
-     * @param {Object} day - 日期对象
-     * @returns {Object} 处理后的日期对象
-     */
-    formatCalendarDay(day) {
-      const today = new Date()
-      const dayDate = new Date(day.date)
-
-      if (
-        dayDate.getFullYear() === today.getFullYear() &&
-        dayDate.getMonth() === today.getMonth() &&
-        dayDate.getDate() === today.getDate()
-      ) {
-        day.bottomInfo = '今天'
-      }
-
-      return day
     }
   }
 })

@@ -128,7 +128,6 @@
     min-date="{{ calendarMinDate }}"
     max-date="{{ calendarMaxDate }}"
     default-date="{{ calendarDefaultDate }}"
-    formatter="{{ formatCalendarDay }}"
     bind:close="onCalendarClose"
     bind:confirm="onCalendarConfirm"
     color="#1F6FAD"
