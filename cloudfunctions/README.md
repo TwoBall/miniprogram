@@ -265,16 +265,19 @@ notFound(message)      // 404 资源不存在
 
 ## 调用方式
 
-小程序端通过 `wx.cloud.callFunction()` 调用云函数：
+小程序端推荐通过 `request.callApi()` 调用统一 API 云函数：
 
 ```javascript
-wx.cloud.callFunction({
-  name: '云函数名',
-  data: {
-    // 调用参数
-  }
-})
+const request = require('../../../utils/request')
+
+// 推荐：使用 callApi 调用统一 API（减少冷启动）
+const result = await request.callApi('module', 'action', { ...params })
+
+// 静默调用（不显示 loading 和错误提示）
+const result = await request.callApiSilent('module', 'action', { ...params })
 ```
+
+> **注意**：`callCloud` 和 `wx.cloud.callFunction` 已废弃，请使用 `callApi` 系列方法。
 
 ## 权限控制
 

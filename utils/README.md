@@ -121,6 +121,7 @@ const freshOptions = await request.getFilterOptions(true)
 
 ```javascript
 const { SafeToast } = require('../../../utils/error')
+const request = require('../../../utils/request')
 
 Page({
   async loadData() {
@@ -128,7 +129,7 @@ Page({
       // 安全的 loading，自动等待 van-toast 组件就绪
       await SafeToast.loading({ message: '加载中...' })
 
-      const result = await request.callCloud('xxx', data)
+      const result = await request.callApi('module', 'action', data)
 
       if (result.success) {
         SafeToast.success('加载成功')
@@ -200,7 +201,7 @@ offlineStorage.addOfflineRecord('attendance', { studentId, status })
 
 // 网络恢复后同步
 await offlineStorage.syncOfflineData(async (record) => {
-  await wx.cloud.callFunction({ name: 'attendance', data: record.data })
+  await request.callApi('attendance', record.action, record.data)
 })
 
 // 缓存数据（10分钟过期）
