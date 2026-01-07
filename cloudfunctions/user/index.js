@@ -511,7 +511,7 @@ async function handleGetAll(event, wxContext) {
  * 添加用户（管理员专用）
  * @description 管理员可直接创建已审批的用户账号
  * @param {Object} event - 请求参数
- * @param {string} event.name - 用户姓名
+ * @param {string} event.userName - 用户姓名
  * @param {string} event.role - 角色类型
  * @param {string} [event.department] - 学部
  * @param {string} [event.className] - 班级
@@ -520,7 +520,7 @@ async function handleGetAll(event, wxContext) {
  * @returns {Promise<Object>} 添加结果
  */
 async function handleAdd(event, wxContext) {
-    const { name, role, department, className, clubName } = event
+    const { userName, role, department, className, clubName } = event
     const adminOpenid = wxContext.OPENID
 
     try {
@@ -529,10 +529,14 @@ async function handleAdd(event, wxContext) {
             return { success: false, message: '无权限执行此操作' }
         }
 
+        if (!userName || !userName.trim()) {
+            return { success: false, message: '请输入用户姓名' }
+        }
+
         // 创建预注册账号（无 openid，等待用户关联）
         const result = await db.collection('users').add({
             data: {
-                userName: name,
+                userName: userName.trim(),
                 role,
                 department: department || '',
                 className: className || '',

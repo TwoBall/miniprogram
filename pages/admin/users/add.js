@@ -223,7 +223,7 @@ Page({
   validateForm() {
     const { userName, role, department, className, clubName } = this.data.formData
 
-    if (!userName.trim()) {
+    if (!userName || !userName.trim()) {
       SafeToast.fail('请输入姓名')
       return false
     }
