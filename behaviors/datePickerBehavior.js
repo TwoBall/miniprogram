@@ -5,7 +5,7 @@
 const dateUtil = require('../utils/date')
 
 /**
- * 日期选择器 Behavior（使用原生 picker-view）
+ * 日期选择器 Behavior（使用 van-calendar）
  * 提供日期选择器的通用状态和方法
  *
  * 使用方式：
@@ -13,61 +13,40 @@ const dateUtil = require('../utils/date')
  * 2. 混入: behaviors: [datePickerBehavior]
  * 3. 调用: this.initDate() 初始化日期
  * 4. 重写: onDateChange(dateStr, dateType) 处理日期变化
- * 
+ *
+ * 单日期选择：
+ * - 调用 this.showCalendar() 显示日历
+ * - 选择后自动更新 selectedDate
+ *
  * 多日期选择器支持：
- * - 调用 this.showDatePickerPopup('start') 或 this.showDatePickerPopup('end')
+ * - 调用 this.showCalendar('start') 或 this.showCalendar('end')
  * - onDateChange 回调中通过 dateType 区分
+ *
+ * 日期范围选择：
+ * - 设置 calendarType: 'range' 后调用 this.showCalendar()
+ * - 选择后通过 onRangeConfirm 回调返回 [startDate, endDate]
  */
 
-// 生成年份数组（2020年到今年）
-function generateYears() {
-  const currentYear = new Date().getFullYear()
-  const years = []
-  for (let i = 2020; i <= currentYear; i++) {
-    years.push(i)
-  }
-  return years
-}
-
-// 生成月份数组（1-12）
-function generateMonths() {
-  const months = []
-  for (let i = 1; i <= 12; i++) {
-    months.push(i)
-  }
-  return months
-}
-
-// 生成日期数组（根据年月动态生成）
-function generateDays(year, month) {
-  const daysInMonth = new Date(year, month, 0).getDate()
-  const days = []
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push(i)
-  }
-  return days
-}
-
-// 根据日期字符串计算 picker 索引
-function getDatePickerValue(dateStr, years) {
-  if (!dateStr) {
-    const now = new Date()
-    return [years.indexOf(now.getFullYear()), now.getMonth(), now.getDate() - 1]
-  }
-  const [year, month, day] = dateStr.split('-').map(Number)
-  const yearIndex = years.indexOf(year)
-  return [yearIndex >= 0 ? yearIndex : 0, month - 1, day - 1]
+/**
+ * 格式化日期为 YYYY-MM-DD 字符串
+ * @param {Date} date - 日期对象
+ * @returns {string} 格式化的日期字符串
+ */
+function formatDateStr(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 module.exports = Behavior({
   data: {
     selectedDate: '',
-    showDatePicker: false,
-    years: generateYears(),
-    months: generateMonths(),
-    days: generateDays(new Date().getFullYear(), new Date().getMonth() + 1),
-    datePickerValue: [0, 0, 0],
-    _tempDateValue: [0, 0, 0],
+    showCalendar: false,
+    calendarType: 'single', // 'single' | 'range'
+    calendarMinDate: new Date(2020, 0, 1).getTime(),
+    calendarMaxDate: new Date().getTime(),
+    calendarDefaultDate: null,
     _currentDateType: '' // 用于多日期选择器场景
   },
 
@@ -76,23 +55,11 @@ module.exports = Behavior({
      * 初始化日期为今天
      */
     initDate() {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = now.getMonth() + 1
-      const day = now.getDate()
-
-      const years = generateYears()
-      const yearIndex = years.indexOf(year)
-      const monthIndex = month - 1
-      const dayIndex = day - 1
-
+      const today = dateUtil.getCurrentDate()
       this.setData({
-        selectedDate: dateUtil.getCurrentDate(),
-        years,
-        months: generateMonths(),
-        days: generateDays(year, month),
-        datePickerValue: [yearIndex, monthIndex, dayIndex],
-        _tempDateValue: [yearIndex, monthIndex, dayIndex]
+        selectedDate: today,
+        calendarDefaultDate: new Date().getTime(),
+        calendarMaxDate: new Date().getTime()
       })
     },
 
@@ -100,90 +67,107 @@ module.exports = Behavior({
      * 初始化日期选择器数据（不设置 selectedDate）
      */
     initDatePicker() {
-      const years = generateYears()
-      const now = new Date()
       this.setData({
-        years,
-        months: generateMonths(),
-        days: generateDays(now.getFullYear(), now.getMonth() + 1)
+        calendarMaxDate: new Date().getTime()
       })
     },
 
     /**
-     * 显示日期选择器
+     * 显示日历选择器
      * @param {string} dateType - 可选，日期类型标识（如 'start', 'end'）
-     * @param {string} currentDate - 可选，当前已选日期
+     * @param {string} currentDate - 可选，当前已选日期（YYYY-MM-DD 格式）
      */
     showDatePickerPopup(dateType, currentDate) {
-      const { years } = this.data
-      const pickerValue = getDatePickerValue(currentDate, years)
-      const year = years[pickerValue[0]]
-      const month = pickerValue[1] + 1
+      let defaultDate = null
+      if (currentDate) {
+        const [year, month, day] = currentDate.split('-').map(Number)
+        defaultDate = new Date(year, month - 1, day).getTime()
+      } else if (this.data.selectedDate) {
+        const [year, month, day] = this.data.selectedDate.split('-').map(Number)
+        defaultDate = new Date(year, month - 1, day).getTime()
+      } else {
+        defaultDate = new Date().getTime()
+      }
 
       this.setData({
-        showDatePicker: true,
+        showCalendar: true,
         _currentDateType: dateType || '',
-        datePickerValue: pickerValue,
-        _tempDateValue: pickerValue,
-        days: generateDays(year, month)
+        calendarDefaultDate: defaultDate
       })
     },
 
     /**
-     * 关闭日期选择器
+     * 关闭日历选择器
+     */
+    onCalendarClose() {
+      this.setData({ showCalendar: false })
+    },
+
+    /**
+     * 日期选择器关闭（兼容旧方法名）
      */
     onDatePickerClose() {
-      this.setData({ showDatePicker: false })
+      this.onCalendarClose()
     },
 
     /**
-     * picker-view 滚动变化
+     * 日历选择确认（单日期模式）
+     * @param {Object} e - 事件对象
      */
-    onDatePickerChange(e) {
-      const val = e.detail.value
-      const { years, months } = this.data
-      const year = years[val[0]]
-      const month = months[val[1]]
-      const days = generateDays(year, month)
+    onCalendarConfirm(e) {
+      const date = e.detail
+      const { _currentDateType } = this.data
 
-      // 调整日期索引，防止越界
-      let dayIndex = val[2]
-      if (dayIndex >= days.length) {
-        dayIndex = days.length - 1
-      }
+      // 处理单日期模式
+      if (!Array.isArray(date)) {
+        const dateStr = formatDateStr(date)
 
-      this.setData({
-        days,
-        _tempDateValue: [val[0], val[1], dayIndex]
-      })
-    },
+        // 单日期选择器场景更新 selectedDate
+        if (!_currentDateType) {
+          this.setData({
+            selectedDate: dateStr,
+            showCalendar: false
+          })
+        } else {
+          this.setData({ showCalendar: false })
+        }
 
-    /**
-     * 原生日期选择确认
-     */
-    onNativeDateConfirm() {
-      const { years, months, days, _tempDateValue, _currentDateType } = this.data
-      const year = years[_tempDateValue[0]]
-      const month = months[_tempDateValue[1]]
-      const day = days[_tempDateValue[2]] || 1
-
-      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-
-      // 单日期选择器场景更新 selectedDate
-      if (!_currentDateType) {
-        this.setData({
-          selectedDate: dateStr,
-          datePickerValue: _tempDateValue,
-          showDatePicker: false
-        })
+        // 调用子类的日期变化处理方法
+        if (typeof this.onDateChange === 'function') {
+          this.onDateChange(dateStr, _currentDateType)
+        }
       } else {
-        this.setData({ showDatePicker: false })
+        // 处理日期范围模式
+        const startDate = formatDateStr(date[0])
+        const endDate = formatDateStr(date[1])
+
+        this.setData({ showCalendar: false })
+
+        // 调用子类的范围日期确认方法
+        if (typeof this.onRangeConfirm === 'function') {
+          this.onRangeConfirm(startDate, endDate)
+        }
+      }
+    },
+
+    /**
+     * 格式化日历底部文字
+     * @param {Object} day - 日期对象
+     * @returns {Object} 处理后的日期对象
+     */
+    formatCalendarDay(day) {
+      const today = new Date()
+      const dayDate = new Date(day.date)
+
+      if (
+        dayDate.getFullYear() === today.getFullYear() &&
+        dayDate.getMonth() === today.getMonth() &&
+        dayDate.getDate() === today.getDate()
+      ) {
+        day.bottomInfo = '今天'
       }
 
-      // 调用子类的日期变化处理方法
-      if (typeof this.onDateChange === 'function') {
-        this.onDateChange(dateStr, _currentDateType)
-      }
+      return day
     }
   }
 })
