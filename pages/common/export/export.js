@@ -1,9 +1,8 @@
 const app = getApp()
 const { formatDate } = require('../../../utils/date')
 const request = require('../../../utils/request')
-const { SafeToast } = require('../../../utils/error')
+const { SafeToast, SafeDialog } = require('../../../utils/error')
 const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
-import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
   behaviors: [datePickerBehavior],
@@ -250,7 +249,7 @@ Page({
                 filePath,
                 success: async () => {
                   try {
-                    await Dialog.confirm({
+                    await SafeDialog.confirm({
                       title: '导出成功',
                       message: `已导出 ${recordCount} 条记录\n文件：${fileName}`,
                       confirmButtonText: '打开文件'

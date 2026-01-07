@@ -122,29 +122,17 @@
   </view>
 
   <!-- 日期选择器 -->
-  <van-popup show="{{ showDatePicker }}" position="bottom" bind:close="onDatePickerClose">
-    <view class="date-picker-header">
-      <text class="date-picker-cancel" bindtap="onDatePickerClose">取消</text>
-      <text class="date-picker-title">选择日期</text>
-      <text class="date-picker-confirm" bindtap="onNativeDateConfirm">确认</text>
-    </view>
-    <picker-view 
-      value="{{datePickerValue}}" 
-      indicator-style="height: 50px;" 
-      style="width: 100%; height: 250px;"
-      bindchange="onDatePickerChange"
-    >
-      <picker-view-column>
-        <view wx:for="{{years}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}年</view>
-      </picker-view-column>
-      <picker-view-column>
-        <view wx:for="{{months}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}月</view>
-      </picker-view-column>
-      <picker-view-column>
-        <view wx:for="{{days}}" wx:key="*this" style="line-height: 50px; text-align: center;">{{item}}日</view>
-      </picker-view-column>
-    </picker-view>
-  </van-popup>
+  <van-calendar
+    show="{{ showCalendar }}"
+    type="single"
+    min-date="{{ calendarMinDate }}"
+    max-date="{{ calendarMaxDate }}"
+    default-date="{{ calendarDefaultDate }}"
+    formatter="{{ formatCalendarDay }}"
+    bind:close="onCalendarClose"
+    bind:confirm="onCalendarConfirm"
+    color="#1F6FAD"
+  />
 
   <!-- 学部选择器 -->
   <van-popup show="{{ showDepartmentPicker }}" position="bottom" bind:close="onCloseDepartmentPicker">
@@ -179,6 +167,3 @@
     />
   </van-popup>
 </view>
-
-<van-toast id="van-toast" />
-<van-dialog id="van-dialog" />
