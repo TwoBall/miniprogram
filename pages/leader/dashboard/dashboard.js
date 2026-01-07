@@ -108,8 +108,7 @@ Page({
         duration: 0
       })
 
-      const result = await request.callCloud('attendance', {
-        action: 'getByDepartment',
+      const result = await request.callApi('attendance', 'getByDepartment', {
         department: userInfo.department,
         date: selectedDate
       }, { showLoading: false, showError: false })
@@ -160,8 +159,7 @@ Page({
         duration: 0
       })
 
-      const result = await request.callCloud('attendance', {
-        action: 'getDepartmentClassRanking',
+      const result = await request.callApi('attendance', 'getDepartmentClassRanking', {
         department: userInfo.department
       }, { showLoading: false, showError: false })
 
@@ -199,8 +197,7 @@ Page({
       const month = String(now.getMonth() + 1).padStart(2, '0')
       const currentMonth = `${year}-${month}`
 
-      const result = await request.callCloud('attendance', {
-        action: 'getAbsenceWarnings',
+      const result = await request.callApi('attendance', 'getAbsenceWarnings', {
         month: currentMonth,
         department: userInfo.department
       }, { showLoading: false, showError: false })

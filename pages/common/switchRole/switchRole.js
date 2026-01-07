@@ -76,7 +76,7 @@ Page({
      */
   async fetchRolesFromCloud() {
     try {
-      const result = await request.callCloud('user', { action: 'login' }, {
+      const result = await request.callApi('user', 'login', {}, {
         showLoading: false,
         showError: false
       })

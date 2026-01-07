@@ -120,8 +120,7 @@ Page({
     this.setData({ submitting: true })
 
     try {
-      const result = await request.callCloud('transfer', {
-        action: 'create',
+      const result = await request.callApi('transfer', 'create', {
         studentId,
         studentName,
         className,

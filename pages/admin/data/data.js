@@ -3,6 +3,7 @@
 // pos: 页面层 > 管理员模块 > 数据中心
 
 const app = getApp()
+const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 
 Page({
@@ -108,17 +109,13 @@ Page({
 
   async loadUserStats() {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          action: 'getAll',
-          page: 1,
-          pageSize: 1000
-        }
+      const result = await request.callApi('user', 'getAll', {
+        page: 1,
+        pageSize: 1000
       })
 
-      if (res.result.success) {
-        const users = res.result.data
+      if (result.success) {
+        const users = result.data
         const userStats = {
           total: users.length,
           byRole: {
@@ -156,15 +153,10 @@ Page({
   async loadStudentStats() {
     try {
       // 使用云端聚合统计，避免加载全部1300+学生数据
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: {
-          action: 'getStatistics'
-        }
-      })
+      const result = await request.callApi('students', 'getStatistics', {})
 
-      if (res.result.success) {
-        const stats = res.result.data
+      if (result.success) {
+        const stats = result.data
         const studentStats = {
           total: stats.total,
           byDepartment: {},
@@ -189,15 +181,10 @@ Page({
   async loadClubStats() {
     try {
       // 使用云端聚合统计获取社团数据
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: {
-          action: 'getStatistics'
-        }
-      })
+      const result = await request.callApi('students', 'getStatistics', {})
 
-      if (res.result.success) {
-        const stats = res.result.data
+      if (result.success) {
+        const stats = result.data
         const clubStats = {
           total: stats.clubStats ? stats.clubStats.length : 0,
           list: stats.clubStats || [],
@@ -243,19 +230,15 @@ Page({
 
   async getAttendanceCount(startDate, endDate) {
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getStatistics',
-          startDate,
-          endDate
-        }
+      const result = await request.callApi('attendance', 'getStatistics', {
+        startDate,
+        endDate
       })
 
-      if (res.result.success) {
-        return res.result.data
+      if (result.success) {
+        return result.data
       } else {
-        console.error('获取考勤统计失败:', res.result.message)
+        console.error('获取考勤统计失败:', result.message)
         return { total: 0, rate: 0 }
       }
     } catch (error) {

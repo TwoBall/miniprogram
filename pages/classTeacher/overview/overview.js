@@ -97,8 +97,7 @@ Page({
         duration: 0
       })
 
-      const result = await request.callCloud('attendance', {
-        action: 'getByClass',
+      const result = await request.callApi('attendance', 'getByClass', {
         className: userInfo.className,
         date: selectedDate
       }, { showLoading: false, showError: false })

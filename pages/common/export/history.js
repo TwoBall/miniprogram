@@ -3,6 +3,7 @@
 // pos: 页面层 > 公共模块 > 导出历史
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -45,24 +46,20 @@ Page({
     this.setData({ loading: true, page: 1 })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'export',
-        data: {
-          action: 'getHistory',
-          page: 1,
-          pageSize: 20
-        }
+      const result = await request.callApi('export', 'getHistory', {
+        page: 1,
+        pageSize: 20
       })
 
-      if (res.result.success) {
-        const records = this.formatRecords(res.result.data)
+      if (result.success) {
+        const records = this.formatRecords(result.data)
         this.setData({
           records,
-          hasMore: res.result.pagination.hasMore,
-          total: res.result.pagination.total
+          hasMore: result.pagination.hasMore,
+          total: result.pagination.total
         })
       } else {
-        SafeToast.fail(res.result.message || '加载失败')
+        SafeToast.fail(result.message || '加载失败')
       }
     } catch (error) {
       console.error('加载导出历史失败:', error)
@@ -80,21 +77,17 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'export',
-        data: {
-          action: 'getHistory',
-          page: nextPage,
-          pageSize: 20
-        }
+      const result = await request.callApi('export', 'getHistory', {
+        page: nextPage,
+        pageSize: 20
       })
 
-      if (res.result.success) {
-        const newRecords = this.formatRecords(res.result.data)
+      if (result.success) {
+        const newRecords = this.formatRecords(result.data)
         this.setData({
           records: [...this.data.records, ...newRecords],
           page: nextPage,
-          hasMore: res.result.pagination.hasMore
+          hasMore: result.pagination.hasMore
         })
       }
     } catch (error) {
@@ -156,18 +149,14 @@ Page({
 
     try {
       // 重新获取临时下载链接
-      const res = await wx.cloud.callFunction({
-        name: 'export',
-        data: {
-          action: 'getDownloadUrl',
-          fileID: fileId
-        }
+      const result = await request.callApi('export', 'getDownloadUrl', {
+        fileID: fileId
       })
 
       SafeToast.clear()
 
-      if (res.result.success) {
-        const { tempFileURL } = res.result.data
+      if (result.success) {
+        const { tempFileURL } = result.data
         const record = this.data.records.find(r => r._id === id)
 
         // 下载文件
@@ -220,7 +209,7 @@ Page({
           }
         })
       } else {
-        SafeToast.fail(res.result.message || '获取链接失败')
+        SafeToast.fail(result.message || '获取链接失败')
       }
     } catch (error) {
       SafeToast.clear()
@@ -244,24 +233,20 @@ Page({
       await SafeToast.loading({ message: '删除中...' })
 
       try {
-        const result = await wx.cloud.callFunction({
-          name: 'export',
-          data: {
-            action: 'deleteRecord',
-            recordId: id,
-            fileID: fileId
-          }
+        const result = await request.callApi('export', 'deleteRecord', {
+          recordId: id,
+          fileID: fileId
         })
 
         SafeToast.clear()
 
-        if (result.result.success) {
+        if (result.success) {
           // 从列表中移除
           const records = this.data.records.filter(r => r._id !== id)
           this.setData({ records })
           SafeToast.success('删除成功')
         } else {
-          SafeToast.fail(result.result.message || '删除失败')
+          SafeToast.fail(result.message || '删除失败')
         }
       } catch (error) {
         SafeToast.clear()

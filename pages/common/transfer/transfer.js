@@ -63,8 +63,7 @@ Page({
     try {
       const { activeTab, role, page, pageSize } = this.data
 
-      const result = await request.callCloud('transfer', {
-        action: 'getList',
+      const result = await request.callApi('transfer', 'getList', {
         role,
         page,
         pageSize,
@@ -109,8 +108,7 @@ Page({
       })
 
       await this.safeAsyncAction(`confirm_${id}`, async () => {
-        const result = await request.callCloud('transfer', {
-          action: 'confirm',
+        const result = await request.callApi('transfer', 'confirm', {
           requestId: id
         })
 
@@ -138,8 +136,7 @@ Page({
       })
 
       await this.safeAsyncAction(`approve_${id}`, async () => {
-        const result = await request.callCloud('transfer', {
-          action: 'approve',
+        const result = await request.callApi('transfer', 'approve', {
           requestId: id
         })
 
@@ -178,8 +175,7 @@ Page({
     this.selectComponent('#rejectDialog').setData({ show: false })
 
     await this.safeAsyncAction(`reject_${currentRequestId}`, async () => {
-      const result = await request.callCloud('transfer', {
-        action: 'reject',
+      const result = await request.callApi('transfer', 'reject', {
         requestId: currentRequestId,
         reason: rejectReason
       })

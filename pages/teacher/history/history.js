@@ -86,8 +86,7 @@ Page({
         await SafeToast.loading({ message: '加载中...' })
       }
 
-      const result = await request.callCloud('attendance', {
-        action: 'getHistory',
+      const result = await request.callApi('attendance', 'getHistory', {
         teacherId: userInfo._id,
         clubName: userInfo.clubName,
         page: this.data.page,

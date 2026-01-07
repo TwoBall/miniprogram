@@ -31,8 +31,7 @@ Page({
     try {
       await SafeToast.loading({ message: '加载中...' })
 
-      const result = await request.callCloud('attendance', {
-        action: 'getByClass',
+      const result = await request.callApi('attendance', 'getByClass', {
         className,
         date
       }, { showLoading: false, showError: false })

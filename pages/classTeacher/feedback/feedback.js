@@ -47,7 +47,7 @@ Page({
 
     try {
       // 调用云函数提交反馈
-      const result = await request.callCloud('submitFeedback', {
+      const result = await request.callApi('feedback', 'submit', {
         studentId,
         studentName,
         clubName,

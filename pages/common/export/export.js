@@ -223,22 +223,18 @@ Page({
     await SafeToast.loading({ message: '导出中...' })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'export',
-        data: {
-          action: exportType,
-          startDate,
-          endDate,
-          department,
-          clubName,
-          className
-        }
+      const result = await request.callApi('export', exportType, {
+        startDate,
+        endDate,
+        department,
+        clubName,
+        className
       })
 
       SafeToast.clear()
 
-      if (res.result.success) {
-        const { tempFileURL, fileName, recordCount } = res.result.data
+      if (result.success) {
+        const { tempFileURL, fileName, recordCount } = result.data
 
         // 下载文件
         wx.downloadFile({
@@ -287,7 +283,7 @@ Page({
           }
         })
       } else {
-        SafeToast.fail(res.result.message || '导出失败')
+        SafeToast.fail(result.message || '导出失败')
       }
     } catch (error) {
       SafeToast.clear()

@@ -1,5 +1,6 @@
 const app = getApp()
 const storage = require('../../../utils/storage')
+const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 
 Page({
@@ -65,19 +66,16 @@ Page({
 
     // 从云端获取
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: { action: 'getFilterOptions' }
-      })
+      const result = await request.callApi('students', 'getFilterOptions', {})
 
-      if (res.result.success && res.result.data) {
+      if (result.success && result.data) {
         // 存入缓存
         storage.setWithCache(
           storage.STORAGE_KEYS.FILTER_OPTIONS,
           storage.STORAGE_KEYS.FILTER_OPTIONS_TIME,
-          res.result.data
+          result.data
         )
-        this.applyFilterOptions(res.result.data)
+        this.applyFilterOptions(result.data)
       }
     } catch (error) {
       console.error('获取筛选选项失败:', error)
@@ -110,19 +108,15 @@ Page({
     try {
       await SafeToast.loading({ message: '加载中...' })
 
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: {
-          action: 'getAll',
-          page: 1,
-          pageSize: 100
-        }
+      const result = await request.callApi('user', 'getAll', {
+        page: 1,
+        pageSize: 100
       })
 
       SafeToast.clear()
 
-      if (res.result.success) {
-        const user = res.result.data.find(u => u._id === userId)
+      if (result.success) {
+        const user = result.data.find(u => u._id === userId)
         if (user) {
           const role = user.role || 'teacher'
           this.setData({
@@ -260,31 +254,26 @@ Page({
     try {
       await SafeToast.loading({ message: mode === 'add' ? '添加中...' : '更新中...' })
 
-      const data = {
-        action: mode === 'add' ? 'add' : 'update',
-        ...formData
+      let result
+      if (mode === 'add') {
+        result = await request.callApi('user', 'add', formData)
+      } else {
+        result = await request.callApi('user', 'update', {
+          userId,
+          updates: formData
+        })
       }
-
-      if (mode === 'edit') {
-        data.userId = userId
-        data.updates = formData
-      }
-
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data
-      })
 
       SafeToast.clear()
 
-      if (res.result.success) {
+      if (result.success) {
         SafeToast.success(mode === 'add' ? '添加成功' : '更新成功')
 
         setTimeout(() => {
           wx.navigateBack()
         }, 1500)
       } else {
-        throw new Error(res.result.message)
+        throw new Error(result.message)
       }
     } catch (error) {
       SafeToast.clear()

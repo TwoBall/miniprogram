@@ -76,7 +76,7 @@ Page({
     }
 
     try {
-      const result = await request.callCloud('students', { action: 'getFilterOptions' }, {
+      const result = await request.callApi('students', 'getFilterOptions', {}, {
         showLoading: false,
         showError: false
       })
@@ -198,8 +198,7 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const result = await request.callCloud('user', {
-        action: 'register',
+      const result = await request.callApi('user', 'register', {
         openid,
         name,
         role,

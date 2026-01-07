@@ -57,26 +57,19 @@ Page({
       const today = formatDate(new Date())
 
       const [userRes, filterOptions, attendanceRes] = await Promise.all([
-        wx.cloud.callFunction({
-          name: 'user',
-          data: { action: 'getStats' }
-        }),
+        request.callApi('user', 'getStats', {}, { showLoading: false, showError: false }),
         request.getFilterOptions(),
-        wx.cloud.callFunction({
-          name: 'attendance',
-          data: {
-            action: 'getStatistics',
-            startDate: today,
-            endDate: today
-          }
-        })
+        request.callApi('attendance', 'getStatistics', {
+          startDate: today,
+          endDate: today
+        }, { showLoading: false, showError: false })
       ])
 
       let totalUsers = 0
       let pendingUsers = 0
-      if (userRes.result.success && userRes.result.data) {
-        totalUsers = userRes.result.data.total
-        pendingUsers = userRes.result.data.pending
+      if (userRes.success && userRes.data) {
+        totalUsers = userRes.data.total
+        pendingUsers = userRes.data.pending
       }
 
       let totalClubs = 0
@@ -85,8 +78,8 @@ Page({
       }
 
       let todayAttendance = 0
-      if (attendanceRes.result.success && attendanceRes.result.data) {
-        todayAttendance = attendanceRes.result.data.total
+      if (attendanceRes.success && attendanceRes.data) {
+        todayAttendance = attendanceRes.data.total
       }
 
       this.setData({

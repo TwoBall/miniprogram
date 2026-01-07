@@ -96,8 +96,7 @@ Page({
       // 先展示骨架屏，避免闪烁
       this.setData({ pageLoading: true })
 
-      const result = await request.callCloud('students', {
-        action: 'getByClub',
+      const result = await request.callApi('students', 'getByClub', {
         clubName: userInfo.clubName
       }, { showLoading: false, showError: false })
 
@@ -360,8 +359,7 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const checkResult = await request.callCloud('attendance', {
-        action: 'checkTodaySubmissions',
+      const checkResult = await request.callApi('attendance', 'checkTodaySubmissions', {
         clubName,
         date: currentDate
       }, { showLoading: false, showError: false })
@@ -381,8 +379,7 @@ Page({
         }
       }
 
-      const submitResult = await request.callCloud('attendance', {
-        action: 'submit',
+      const submitResult = await request.callApi('attendance', 'submit', {
         clubName,
         teacherId: userInfo._id,
         teacherName: userInfo.userName,

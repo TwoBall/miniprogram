@@ -63,8 +63,7 @@ Page({
     try {
       await SafeToast.loading({ message: '加载中...' })
 
-      const result = await request.callCloud('attendance', {
-        action: 'getDetail',
+      const result = await request.callApi('attendance', 'getDetail', {
         recordId: recordId
       }, { showLoading: false, showError: false })
 
@@ -126,8 +125,7 @@ Page({
     this.setData({ saving: true })
 
     try {
-      const result = await request.callCloud('attendance', {
-        action: 'updateRecords',
+      const result = await request.callApi('attendance', 'updateRecords', {
         recordId,
         records: record.records
       }, { showLoading: false, showError: false })

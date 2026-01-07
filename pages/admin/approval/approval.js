@@ -185,14 +185,12 @@ Page({
 
         // 并行加载已通过和已拒绝
         const [approvedResult, rejectedResult] = await Promise.all([
-          request.callCloud('user', {
-            action: 'getPending',
+          request.callApi('user', 'getPending', {
             status: 'approved',
             page: 1,
             pageSize: this.data.pageSize
           }, { showLoading: false, showError: false }),
-          request.callCloud('user', {
-            action: 'getPending',
+          request.callApi('user', 'getPending', {
             status: 'rejected',
             page: 1,
             pageSize: this.data.pageSize
@@ -212,8 +210,7 @@ Page({
         }
       } else {
         // 使用合并查询：一次获取全部三种状态
-        const result = await request.callCloud('user', {
-          action: 'getAllByStatus',
+        const result = await request.callApi('user', 'getAllByStatus', {
           pendingPageSize: 100,
           approvedPageSize: this.data.pageSize,
           rejectedPageSize: this.data.pageSize
@@ -257,8 +254,7 @@ Page({
 
     try {
       const nextPage = this.data.approvedPage + 1
-      const result = await request.callCloud('user', {
-        action: 'getPending',
+      const result = await request.callApi('user', 'getPending', {
         status: 'approved',
         page: nextPage,
         pageSize: this.data.pageSize
@@ -289,8 +285,7 @@ Page({
 
     try {
       const nextPage = this.data.rejectedPage + 1
-      const result = await request.callCloud('user', {
-        action: 'getPending',
+      const result = await request.callApi('user', 'getPending', {
         status: 'rejected',
         page: nextPage,
         pageSize: this.data.pageSize
@@ -384,8 +379,7 @@ Page({
     this.setBtnLoading(btnKey, true)
 
     try {
-      const result = await request.callCloud('user', {
-        action: 'approve',
+      const result = await request.callApi('user', 'approve', {
         userId
       }, { showLoading: true, showError: false })
 
@@ -414,8 +408,7 @@ Page({
     this.setBtnLoading(btnKey, true)
 
     try {
-      const result = await request.callCloud('user', {
-        action: 'reject',
+      const result = await request.callApi('user', 'reject', {
         userId,
         rejectReason
       }, { showLoading: true, showError: false })

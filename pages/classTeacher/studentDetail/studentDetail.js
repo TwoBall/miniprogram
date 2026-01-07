@@ -35,8 +35,7 @@ Page({
   // 加载学生详情
   async loadStudentDetail() {
     try {
-      const result = await request.callCloud('students', {
-        action: 'getById',
+      const result = await request.callApi('students', 'getById', {
         studentId: this.data.studentId
       }, { showLoading: false })
 
@@ -56,8 +55,7 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const result = await request.callCloud('attendance', {
-        action: 'getByStudent',
+      const result = await request.callApi('attendance', 'getByStudent', {
         studentId: this.data.studentId
       })
 

@@ -4,6 +4,7 @@
 
 const studentListBehavior = require('../../../behaviors/studentListBehavior')
 const virtualListBehavior = require('../../../behaviors/virtualListBehavior')
+const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 
 Page({
@@ -66,16 +67,12 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'students',
-        data: {
-          action: 'getByClub',
-          clubName: userInfo.clubName
-        }
+      const result = await request.callApi('students', 'getByClub', {
+        clubName: userInfo.clubName
       })
 
-      if (res.result.success) {
-        const students = res.result.data || []
+      if (result.success) {
+        const students = result.data || []
 
         // 构建学部-班级层级数据
         const deptClassMap = {}
@@ -114,7 +111,7 @@ Page({
         // 加载缺勤预警
         this.loadAbsenceWarnings({ clubName: userInfo.clubName })
       } else {
-        throw new Error(res.result.message)
+        throw new Error(result.message)
       }
     } catch (error) {
       console.error('加载学生列表失败:', error)
@@ -133,16 +130,12 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'attendance',
-        data: {
-          action: 'getClubRank',
-          clubName: userInfo.clubName
-        }
+      const result = await request.callApi('attendance', 'getClubRank', {
+        clubName: userInfo.clubName
       })
 
-      if (res.result.success) {
-        const rank = res.result.data || []
+      if (result.success) {
+        const rank = result.data || []
 
         // 计算平均出勤率
         let totalRate = 0
@@ -157,7 +150,7 @@ Page({
           loading: false
         })
       } else {
-        throw new Error(res.result.message)
+        throw new Error(result.message)
       }
     } catch (error) {
       console.error('加载出勤率排行失败:', error)

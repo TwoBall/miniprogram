@@ -3,6 +3,7 @@
 // pos: 页面层 > 管理员模块 > 用户管理
 
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
+const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 import Dialog from '@vant/weapp/dialog/dialog'
 
@@ -74,7 +75,6 @@ Page({
 
     try {
       const params = {
-        action: 'getAll',
         page: this.data.page,
         pageSize: this.data.pageSize
       }
@@ -88,17 +88,14 @@ Page({
         params.keyword = this.data.searchKeyword
       }
 
-      const res = await wx.cloud.callFunction({
-        name: 'user',
-        data: params
-      })
+      const result = await request.callApi('user', 'getAll', params)
 
-      if (res.result.success) {
-        const users = res.result.data
-        this.handleLoadSuccess(users, res.result.pagination, refresh, 'users')
-        this.setData({ total: res.result.pagination.total, pageLoading: false })
+      if (result.success) {
+        const users = result.data
+        this.handleLoadSuccess(users, result.pagination, refresh, 'users')
+        this.setData({ total: result.pagination.total, pageLoading: false })
       } else {
-        throw new Error(res.result.message)
+        throw new Error(result.message)
       }
     } catch (error) {
       console.error('加载用户列表失败:', error)
@@ -146,17 +143,13 @@ Page({
       try {
         await SafeToast.loading({ message: '删除中...' })
 
-        const result = await wx.cloud.callFunction({
-          name: 'user',
-          data: {
-            action: 'delete',
-            userId: user._id
-          }
+        const result = await request.callApi('user', 'delete', {
+          userId: user._id
         })
 
         SafeToast.clear()
 
-        if (result.result.success) {
+        if (result.success) {
           SafeToast.success('删除成功')
 
           // 刷新列表
@@ -164,7 +157,7 @@ Page({
           this.resetPagination()
           this.loadList()
         } else {
-          throw new Error(result.result.message)
+          throw new Error(result.message)
         }
       } catch (error) {
         SafeToast.clear()

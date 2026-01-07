@@ -39,7 +39,6 @@ Page({
     try {
       const { activeTab, page, pageSize } = this.data
       const params = {
-        action: 'getList',
         page,
         pageSize
       }
@@ -51,7 +50,7 @@ Page({
         params.read = true
       }
 
-      const result = await request.callCloud('notification', params, {
+      const result = await request.callApi('notification', 'getList', params, {
         showLoading: false,
         showError: false
       })
@@ -77,9 +76,7 @@ Page({
    */
   async loadUnreadCount() {
     try {
-      const result = await request.callCloud('notification', {
-        action: 'getUnreadCount'
-      }, {
+      const result = await request.callApi('notification', 'getUnreadCount', {}, {
         showLoading: false,
         showError: false
       })
@@ -109,8 +106,7 @@ Page({
     const { id } = e.currentTarget.dataset
 
     try {
-      const result = await request.callCloud('notification', {
-        action: 'markRead',
+      const result = await request.callApi('notification', 'markRead', {
         notificationId: id
       })
 
@@ -142,8 +138,7 @@ Page({
     }
 
     try {
-      const result = await request.callCloud('notification', {
-        action: 'markRead',
+      const result = await request.callApi('notification', 'markRead', {
         notificationIds: unreadIds
       })
 

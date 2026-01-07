@@ -50,8 +50,7 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const result = await request.callCloud('students', {
-        action: 'getByClass',
+      const result = await request.callApi('students', 'getByClass', {
         className: this.data.className
       })
 
@@ -98,8 +97,7 @@ Page({
     this.setData({ loading: true })
 
     try {
-      const result = await request.callCloud('attendance', {
-        action: 'getClassRank',
+      const result = await request.callApi('attendance', 'getClassRank', {
         className: this.data.className
       })
 
