@@ -72,7 +72,10 @@
     "navigationBarTitleText": "智慧社团管理系统",
     "navigationBarTextStyle": "white"
   },
-  "usingComponents": {},
+  "usingComponents": {
+    "van-toast": "@vant/weapp/toast/index",
+    "van-dialog": "@vant/weapp/dialog/index"
+  },
   "lazyCodeLoading": "requiredComponents",
   "componentPlaceholder": {
     "skeleton": "view",
@@ -88,7 +91,6 @@
     "van-popup": "view",
     "van-tag": "view"
   },
-  "style": "v2",
   "sitemapLocation": "sitemap.json",
   "cloud": true,
   "plugins": {}
