@@ -40,8 +40,7 @@ async function getScheduleConfig(forceRefresh = false) {
 
     try {
         // 从云函数获取配置
-        const result = await request.callCloudSilent('system', {
-            action: 'getConfig',
+        const result = await request.callApiSilent('system', 'getConfig', {
             configId: 'schedule_config'
         })
 

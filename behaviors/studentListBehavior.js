@@ -2,6 +2,8 @@
 // output: 过滤后的学生列表、预警数据、分布统计
 // pos: 行为层 > 学生列表公共行为
 
+const request = require('../utils/request')
+
 /**
  * 学生列表页面公共行为
  * 提供搜索、筛选、缺勤预警、分布统计等通用功能
@@ -141,17 +143,13 @@ module.exports = Behavior({
         const month = String(now.getMonth() + 1).padStart(2, '0')
         const currentMonth = `${year}-${month}`
 
-        const res = await wx.cloud.callFunction({
-          name: 'attendance',
-          data: {
-            action: 'getAbsenceWarnings',
-            month: currentMonth,
-            ...params
-          }
+        const result = await request.callApi('attendance', 'getAbsenceWarnings', {
+          month: currentMonth,
+          ...params
         })
 
-        if (res.result.success) {
-          const warnings = res.result.data || []
+        if (result.success) {
+          const warnings = result.data || []
           const warningIds = warnings.map(w => w.studentId)
 
           this.setData({

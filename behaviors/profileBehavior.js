@@ -93,9 +93,10 @@ const profileBehavior = Behavior({
      */
     async loadUnreadCount() {
       try {
-        const result = await request.callCloud('notification', {
-          action: 'getUnreadCount'
-        }, { showLoading: false, showError: false })
+        const result = await request.callApi('notification', 'getUnreadCount', {}, {
+          showLoading: false,
+          showError: false
+        })
 
         if (result.success) {
           this.setData({ unreadCount: result.data.count })
