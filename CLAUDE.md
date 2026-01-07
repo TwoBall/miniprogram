@@ -76,3 +76,76 @@
 ## 样式规范
 
 - [CARD_STYLE_GUIDE.md](./CARD_STYLE_GUIDE.md) - 卡片样式指南
+
+## MCP 工具使用规范
+
+### Context7 文档查询
+
+当需要以下内容时，**必须**使用 Context7 MCP 查询最新文档：
+
+- 库/框架的 API 文档和用法
+- 代码生成和示例
+- 安装、配置步骤
+- 第三方库的最佳实践
+
+**使用方式**：
+1. 先调用 `mcp__context7__resolve-library-id` 获取库 ID
+2. 再调用 `mcp__context7__query-docs` 查询具体文档
+
+### TDesign 组件查询
+
+当需要 TDesign 组件信息时，使用以下工具：
+
+#### TDesign 小程序文档（Context7）- 推荐
+
+本项目使用微信小程序，**优先使用 Context7 查询 TDesign 小程序文档**：
+
+```javascript
+// 库 ID: /tencent/tdesign-miniprogram
+mcp__context7__query-docs({
+  libraryId: '/tencent/tdesign-miniprogram',
+  query: 'Button component usage and API'
+})
+```
+
+**适用场景**：
+- 查询组件用法和 API
+- 获取代码示例
+- 了解事件处理方式
+- 组件注册配置
+
+#### TDesign MCP 工具（仅 Web 版）
+
+> **注意**：TDesign MCP 不支持小程序（`miniprogram`），仅支持 Web 框架。可用 `vue-next` 获取组件列表作为参考，但查询小程序具体用法请使用 Context7。
+
+| 工具 | 用途 | 适用场景 |
+|------|------|----------|
+| `mcp__tdesign__get-component-list` | 获取所有可用组件列表 | 选择合适组件进行组合实现不存在的功能 |
+| `mcp__tdesign__get-component-docs` | 获取组件文档 | 代码生成和代码转换 |
+| `mcp__tdesign__get-component-dom` | 获取组件 DOM 结构 | 转换自定义的 CSS 样式 |
+| `mcp__tdesign__get-component-changelog` | 获取组件变更日志 | 组件库版本升级 |
+
+**framework 参数**（仅支持以下三种）：
+- `react` - React 版本
+- `vue` - Vue 2 版本
+- `vue-next` - Vue 3 版本
+
+**使用方式**：
+
+```javascript
+// 1. 获取组件列表（用 vue-next 作为参考）
+mcp__tdesign__get-component-list({ framework: 'vue-next' })
+
+// 2. 获取组件文档（支持批量查询）
+mcp__tdesign__get-component-docs({ framework: 'vue-next', names: ['Button', 'Dialog'] })
+
+// 3. 获取组件 DOM 结构（可指定版本）
+mcp__tdesign__get-component-dom({ framework: 'vue-next', names: ['Button'], version: '1.0.0' })
+
+// 4. 获取组件变更日志
+mcp__tdesign__get-component-changelog({ framework: 'vue-next', names: ['Button'] })
+```
+
+### CloudBase 云开发
+
+当需要云开发相关操作时，使用 CloudBase MCP 工具。

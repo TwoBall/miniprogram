@@ -11,6 +11,22 @@
       "env": {
         "INTEGRATION_IDE": "Claude"
       }
+    },
+    "tdesign": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "tdesign-mcp-server"
+      ]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-905d7b5f-ec32-4f6b-88ee-cb5b6ada35f9"
+      }
     }
   }
 }

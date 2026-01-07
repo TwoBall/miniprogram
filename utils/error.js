@@ -3,7 +3,8 @@
  * @module utils/error
  * @description 统一管理错误捕获、日志记录和用户提示
  */
-import Toast from '@vant/weapp/toast/toast'
+const Toast = require('@vant/weapp/toast/toast').default
+const Dialog = require('@vant/weapp/dialog/dialog').default
 
 /**
  * 错误类型枚举
@@ -175,6 +176,65 @@ const SafeToast = {
 }
 
 /**
+ * 安全的 Dialog 对象
+ * 提供统一的对话框调用接口，支持 async/await
+ * @type {Object}
+ */
+const SafeDialog = {
+  /**
+   * 确认对话框（Promise 风格）
+   * @param {Object} options - Dialog 选项
+   * @param {string} options.title - 标题
+   * @param {string} options.message - 内容
+   * @returns {Promise} 确认返回 resolve，取消返回 reject
+   */
+  confirm(options) {
+    return Dialog.confirm({
+      confirmButtonColor: '#1F6FAD',
+      ...options
+    })
+  },
+
+  /**
+   * 确认对话框（async/await 风格）
+   * @param {Object} options - Dialog 选项
+   * @param {string} options.title - 标题
+   * @param {string} options.message - 内容
+   * @returns {Promise<boolean>} true=确认, false=取消
+   */
+  async confirmAsync(options) {
+    try {
+      await Dialog.confirm({
+        confirmButtonColor: '#1F6FAD',
+        ...options
+      })
+      return true
+    } catch {
+      return false
+    }
+  },
+
+  /**
+   * 提示对话框（仅确认按钮）
+   * @param {Object} options - Dialog 选项
+   * @returns {Promise} 确认后 resolve
+   */
+  alert(options) {
+    return Dialog.alert({
+      confirmButtonColor: '#1F6FAD',
+      ...options
+    })
+  },
+
+  /**
+   * 关闭对话框
+   */
+  close() {
+    Dialog.close()
+  }
+}
+
+/**
  * 解析错误类型
  * @param {Error} error - 错误对象
  * @returns {string} 错误类型
@@ -270,5 +330,6 @@ module.exports = {
   handleError,
   checkNetwork,
   showNetworkError,
-  SafeToast
+  SafeToast,
+  SafeDialog
 }
