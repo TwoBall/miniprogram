@@ -6,7 +6,7 @@
         value="{{ formData.userName }}"
         placeholder="请输入姓名"
         required
-        bind:change="onNameInput"
+        bind:input="onNameInput"
       />
 
       <van-cell
