@@ -4,20 +4,70 @@
 
 ## 架构说明
 
-云函数层处理后端业务逻辑，运行在腾讯云环境中。每个云函数都是独立的服务单元，负责特定的业务功能。
+云函数层处理后端业务逻辑，运行在腾讯云环境中。
+
+**推荐使用统一 API 云函数 `api`**，将所有业务模块合并到一个云函数中，减少冷启动延迟。
 
 ## 文件索引
 
-- `attendance/` - 考勤管理云函数，处理签到、签退、考勤记录查询等功能
-- `students/` - 学生管理云函数，处理学生信息的增删改查
-- `user/` - 用户管理云函数，处理用户认证、权限验证、用户信息管理
-- `export/` - 数据导出云函数，生成并导出各类数据报表
-- `notification/` - 通知推送云函数，发送系统通知和消息提醒
-- `transfer/` - 转班处理云函数，处理学生转班申请和审批
-- `submitFeedback/` - 反馈提交云函数，处理用户反馈信息的提交
-- `system/` - 系统配置云函数，处理系统配置的读取和更新
-- `cleanupRateLimits/` - 定时清理云函数，清理过期的限频记录（每小时执行）
-- `common/` - 公共模块模板（不需要上传，仅作为参考）
+### 统一 API 云函数（推荐）
+
+- `api/` - **统一 API 入口云函数**，整合所有业务模块，减少冷启动
+  - `index.js` - 统一入口，模块路由分发
+  - `modules/` - 业务模块目录
+    - `user.js` - 用户管理模块
+    - `students.js` - 学生管理模块
+    - `attendance.js` - 考勤管理模块入口
+    - `attendance/` - 考勤处理器和服务
+    - `notification.js` - 通知管理模块
+    - `transfer.js` - 转社团管理模块
+    - `export.js` - 数据导出模块
+    - `system.js` - 系统配置模块
+    - `feedback.js` - 反馈提交模块
+  - `common/` - 公共工具模块
+
+### 独立云函数（兼容旧版）
+
+- `attendance/` - 考勤管理云函数
+- `students/` - 学生管理云函数
+- `user/` - 用户管理云函数
+- `export/` - 数据导出云函数
+- `notification/` - 通知推送云函数
+- `transfer/` - 转社团处理云函数
+- `submitFeedback/` - 反馈提交云函数
+- `system/` - 系统配置云函数
+- `cleanupRateLimits/` - 定时清理云函数（每小时执行）
+- `common/` - 公共模块模板
+
+## 统一 API 调用方式
+
+### 前端调用示例
+
+```javascript
+const request = require('../../../utils/request')
+
+// 使用 callApi 调用统一 API（推荐）
+const result = await request.callApi('user', 'login', { code: 'xxx' })
+
+// 等同于：
+// wx.cloud.callFunction({
+//   name: 'api',
+//   data: { module: 'user', action: 'login', code: 'xxx' }
+// })
+```
+
+### 支持的模块和操作
+
+| 模块 | 操作列表 |
+|------|----------|
+| `user` | login, register, approve, reject, getPending, getAllByStatus, getAll, getStats, add, delete, update |
+| `students` | getFilterOptions, getByClub, getByClass, getByDepartment, getById, getAll, getStatistics |
+| `attendance` | submit, getHistory, getDetail, getByClass, getByDepartment, checkTodaySubmissions, updateRecords, getClubRank, getClassRank, getDepartmentClassRanking, getByStudent, getAbsenceWarnings, getStatistics |
+| `notification` | create, getList, markRead, getUnreadCount |
+| `transfer` | create, getList, confirm, approve, reject |
+| `export` | attendance, summary, students, getHistory, getDownloadUrl, deleteRecord |
+| `system` | getConfig, setConfig |
+| `feedback` | submit |
 
 ## attendance 云函数 Action 列表
 

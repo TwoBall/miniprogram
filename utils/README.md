@@ -36,7 +36,34 @@ const storage = require('../../../utils/storage')
 |--------|------|------|
 | `callCloud(name, data, options)` | 调用云函数 | 支持 loading、错误提示、超时、重试 |
 | `callCloudSilent(name, data)` | 静默调用云函数 | 不显示 loading 和错误提示 |
+| `callApi(module, action, data, options)` | 调用统一 API 云函数 | **推荐使用**，减少冷启动 |
+| `callApiSilent(module, action, data)` | 静默调用统一 API | 不显示 loading 和错误提示 |
 | `getFilterOptions(forceRefresh)` | 获取筛选选项 | 带 10 分钟缓存，返回学部/班级/社团列表 |
+
+### callApi 使用示例（推荐）
+
+```javascript
+const request = require('../../../utils/request')
+
+// 调用统一 API 云函数
+// 格式：callApi(模块名, 操作名, 数据, 选项)
+const result = await request.callApi('user', 'login', { code: 'xxx' })
+
+// 支持的模块：user, students, attendance, notification, transfer, export, system, feedback
+
+// 示例：获取学生列表
+const students = await request.callApi('students', 'getByClub', { clubName: '篮球社' })
+
+// 示例：提交考勤
+const attendance = await request.callApi('attendance', 'submit', {
+  clubName: '篮球社',
+  date: '2025-01-07',
+  records: [...]
+})
+
+// 静默调用（不显示 loading 和错误提示）
+const config = await request.callApiSilent('system', 'getConfig')
+```
 
 ### getFilterOptions 使用示例
 

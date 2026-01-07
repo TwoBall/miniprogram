@@ -143,6 +143,36 @@ async function callCloudSilent(name, data = {}) {
 }
 
 /**
+ * 调用统一 API 云函数
+ * @param {string} module - 模块名称 (user/students/attendance/notification/transfer/export/system/feedback)
+ * @param {string} action - 操作名称
+ * @param {Object} [data={}] - 传递给云函数的数据
+ * @param {Object} [options={}] - 选项配置（同 callCloud）
+ * @returns {Promise<Object>} 云函数返回结果
+ */
+async function callApi(module, action, data = {}, options = {}) {
+  return callCloud('api', {
+    module,
+    action,
+    ...data
+  }, options)
+}
+
+/**
+ * 调用统一 API 云函数（静默模式）
+ * @param {string} module - 模块名称
+ * @param {string} action - 操作名称
+ * @param {Object} [data={}] - 传递给云函数的数据
+ * @returns {Promise<Object>} 云函数返回结果
+ */
+async function callApiSilent(module, action, data = {}) {
+  return callApi(module, action, data, {
+    showLoading: false,
+    showError: false
+  })
+}
+
+/**
  * 获取筛选选项（带缓存）
  * @param {boolean} [forceRefresh=false] - 是否强制刷新缓存
  * @returns {Promise<Object>} 筛选选项 { departments, classes, clubs, classDeptMap }
@@ -158,7 +188,8 @@ async function getFilterOptions(forceRefresh = false) {
     }
   }
 
-  const result = await callCloudSilent('students', { action: 'getFilterOptions' })
+  // 使用新的统一 API
+  const result = await callApiSilent('students', 'getFilterOptions')
 
   if (result && result.success) {
     storage.setWithCache(cacheKey, cacheTimeKey, result.data)
@@ -171,5 +202,7 @@ async function getFilterOptions(forceRefresh = false) {
 module.exports = {
   callCloud,
   callCloudSilent,
+  callApi,
+  callApiSilent,
   getFilterOptions
 }
