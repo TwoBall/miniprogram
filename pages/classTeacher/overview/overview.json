@@ -7,14 +7,13 @@
     "custom-tabbar": "/components/custom-tabbar/custom-tabbar",
     "empty-state": "/components/empty-state/empty-state",
     "van-button": "@vant/weapp/button/index",
+    "van-calendar": "@vant/weapp/calendar/index",
     "van-cell": "@vant/weapp/cell/index",
     "van-cell-group": "@vant/weapp/cell-group/index",
-    "van-datetime-picker": "@vant/weapp/datetime-picker/index",
     "van-grid": "@vant/weapp/grid/index",
     "van-grid-item": "@vant/weapp/grid-item/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-popup": "@vant/weapp/popup/index",
-    "van-tag": "@vant/weapp/tag/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-tag": "@vant/weapp/tag/index"
   }
 }

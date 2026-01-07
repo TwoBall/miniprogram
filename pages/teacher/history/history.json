@@ -6,7 +6,6 @@
     "skeleton": "/components/skeleton/skeleton",
     "empty-state": "/components/empty-state/empty-state",
     "van-icon": "@vant/weapp/icon/index",
-    "van-loading": "@vant/weapp/loading/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-loading": "@vant/weapp/loading/index"
   }
 }

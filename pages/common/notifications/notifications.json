@@ -4,8 +4,6 @@
   "usingComponents": {
     "skeleton": "/components/skeleton/skeleton",
     "empty-state": "/components/empty-state/empty-state",
-    "van-icon": "@vant/weapp/icon/index",
-    "van-toast": "@vant/weapp/toast/index",
-    "van-dialog": "@vant/weapp/dialog/index"
+    "van-icon": "@vant/weapp/icon/index"
   }
 }

@@ -6,7 +6,6 @@
     "van-cell-group": "@vant/weapp/cell-group/index",
     "van-field": "@vant/weapp/field/index",
     "van-icon": "@vant/weapp/icon/index",
-    "van-action-sheet": "@vant/weapp/action-sheet/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
   }
 }

@@ -12,7 +12,6 @@
     "van-picker": "@vant/weapp/picker/index",
     "van-popup": "@vant/weapp/popup/index",
     "van-search": "@vant/weapp/search/index",
-    "van-tag": "@vant/weapp/tag/index",
-    "van-toast": "@vant/weapp/toast/index"
+    "van-tag": "@vant/weapp/tag/index"
   }
 }

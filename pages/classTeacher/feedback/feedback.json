@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "发送反馈",
   "usingComponents": {
-    "van-toast": "@vant/weapp/toast/index"
   }
 }
