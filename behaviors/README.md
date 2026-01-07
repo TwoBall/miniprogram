@@ -11,7 +11,7 @@
 ## 文件索引
 
 - `profileBehavior.js` - Profile 页面通用行为，提供菜单配置、用户信息加载和未读通知数获取
-- `datePickerBehavior.js` - 日期选择器通用行为，提供日期选择器状态管理和事件处理
+- `datePickerBehavior.js` - 日期选择器通用行为，使用 van-calendar 组件提供日历式日期选择
 - `paginationBehavior.js` - 分页加载通用行为，提供列表分页状态管理和事件处理
 - `studentListBehavior.js` - 学生列表通用行为，提供搜索、筛选、缺勤预警、分布统计等功能
 - `throttleBehavior.js` - 节流防抖通用行为，提供按钮节流、防抖和异步操作状态管理
@@ -60,6 +60,63 @@ Page({
 ### datePickerBehavior
 - `pages/leader/dashboard/dashboard.js`
 - `pages/classTeacher/overview/overview.js`
+- `pages/common/export/export.js`
+
+## datePickerBehavior 功能
+
+### 数据字段
+- `selectedDate` - 选中的日期（YYYY-MM-DD 格式）
+- `showCalendar` - 日历是否显示
+- `calendarType` - 日历类型（'single' | 'range'）
+- `calendarMinDate` - 最小可选日期（时间戳）
+- `calendarMaxDate` - 最大可选日期（时间戳）
+- `calendarDefaultDate` - 默认选中日期（时间戳）
+
+### 方法
+- `initDate()` - 初始化日期为今天
+- `initDatePicker()` - 初始化日期选择器（不设置 selectedDate）
+- `showDatePickerPopup(dateType, currentDate)` - 显示日历选择器
+- `onCalendarClose()` - 关闭日历选择器
+- `onCalendarConfirm(e)` - 日历选择确认
+- `formatCalendarDay(day)` - 格式化日历底部文字
+
+### 使用示例
+
+```javascript
+const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
+
+Page({
+  behaviors: [datePickerBehavior],
+
+  onLoad() {
+    this.initDate() // 初始化为今天
+  },
+
+  // 实现日期变化回调
+  onDateChange(dateStr, dateType) {
+    console.log('选中日期:', dateStr)
+    this.loadData()
+  }
+})
+```
+
+```xml
+<!-- WXML 中使用日历 -->
+<view bindtap="showDatePickerPopup">
+  <text>{{selectedDate}}</text>
+</view>
+
+<van-calendar
+  show="{{ showCalendar }}"
+  type="single"
+  min-date="{{ calendarMinDate }}"
+  max-date="{{ calendarMaxDate }}"
+  default-date="{{ calendarDefaultDate }}"
+  bind:close="onCalendarClose"
+  bind:confirm="onCalendarConfirm"
+  color="#1F6FAD"
+/>
+```
 
 ### paginationBehavior
 - `pages/admin/users/users.js`

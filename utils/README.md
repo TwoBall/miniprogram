@@ -12,7 +12,7 @@
 
 - `auth.js` - 身份认证工具，处理用户登录状态、权限验证
 - `date.js` - 日期处理工具，提供日期格式化、计算等功能
-- `error.js` - 错误处理工具，统一处理异常和错误提示，提供安全的 Toast 包装器
+- `error.js` - 错误处理工具，统一处理异常和错误提示，提供安全的 Toast 和 Dialog 包装器
 - `request.js` - 网络请求工具，封装云函数调用和 HTTP 请求
 - `storage.js` - 本地存储工具，封装 wx.getStorageSync 和 wx.setStorageSync
 - `performance.js` - 性能监控工具，提供 setData 性能追踪和云函数调用监控
@@ -150,6 +150,47 @@ Page({
 | `handleError(error, options)` | 统一错误处理，自动显示友好提示 |
 | `checkNetwork()` | 检查网络状态 |
 | `showNetworkError()` | 显示网络异常提示 |
+
+### SafeDialog 安全 Dialog 工具
+
+提供统一的对话框调用接口，支持 async/await 语法。
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `SafeDialog.confirm(options)` | 确认对话框 | Promise 风格，确认 resolve，取消 reject |
+| `SafeDialog.confirmAsync(options)` | 确认对话框 | async/await 风格，返回 boolean |
+| `SafeDialog.alert(options)` | 提示对话框 | 仅确认按钮 |
+| `SafeDialog.close()` | 关闭对话框 | 关闭当前对话框 |
+
+### SafeDialog 使用示例
+
+```javascript
+const { SafeDialog } = require('../../../utils/error')
+
+// 方式1：async/await 风格（推荐）
+async onApprove(user) {
+  const confirmed = await SafeDialog.confirmAsync({
+    title: '确认通过',
+    message: `确定通过 ${user.userName} 的注册申请吗？`
+  })
+
+  if (confirmed) {
+    await this.doApprove(user)
+  }
+}
+
+// 方式2：Promise 风格
+onDelete(item) {
+  SafeDialog.confirm({
+    title: '确认删除',
+    message: '删除后无法恢复，是否继续？'
+  }).then(() => {
+    this.doDelete(item)
+  }).catch(() => {
+    // 用户取消
+  })
+}
+```
 
 ## performance.js 性能监控工具
 
