@@ -27,6 +27,8 @@
 - notification/ - 通知推送
 - transfer/ - 转班处理
 - submitFeedback/ - 反馈提交
+- system/ - 系统配置
+- cleanupRateLimits/ - 定时清理（限频记录）
 
 ### 组件模块
 @components/README.md
@@ -34,6 +36,7 @@
 自定义组件层，包含可复用的 UI 组件：
 - custom-tabbar/ - 自定义底部标签栏
 - skeleton/ - 骨架屏加载组件
+- empty-state/ - 空状态组件
 
 ### 工具模块
 @utils/README.md
@@ -44,6 +47,10 @@
 - error.js - 错误处理
 - request.js - 网络请求
 - storage.js - 本地存储
+- performance.js - 性能监控
+- offlineStorage.js - 离线存储
+- config.js - 系统配置
+- validator.js - 输入校验
 
 ## 其他重要目录
 
@@ -53,6 +60,8 @@
 全局样式层提供统一的 UI 规范和可复用的公共样式类：
 - `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
 - `profile-base.wxss` - Profile 页面公共样式基类
+- `student-list-base.wxss` - 学生列表页面公共样式基类
+- `animations.wxss` - 动画样式库（入场动画、交互反馈、加载状态）
 
 **样式复用模式**：采用组合类名（`class="card xxx-card"`），页面 WXSS 仅定义特有样式。
 
@@ -65,9 +74,13 @@
 @behaviors/README.md
 
 **主包 Behavior**（放在主包供所有分包引用）：
-- `behaviors/profileBehavior.js` - Profile 页面通用行为
-- `behaviors/datePickerBehavior.js` - 日期选择器行为
-- `behaviors/paginationBehavior.js` - 分页加载行为
+- `profileBehavior.js` - Profile 页面通用行为
+- `datePickerBehavior.js` - 日期选择器行为
+- `paginationBehavior.js` - 分页加载行为
+- `studentListBehavior.js` - 学生列表行为
+- `throttleBehavior.js` - 节流防抖行为
+- `formFeedbackBehavior.js` - 表单反馈行为
+- `virtualListBehavior.js` - 虚拟列表行为
 
 **注意**：微信小程序分包之间不能互相引用，但所有分包都可以引用主包。因此被多个分包使用的 Behavior 必须放在主包 `behaviors/` 目录。
 

@@ -17,6 +17,8 @@
 - `storage.js` - 本地存储工具，封装 wx.getStorageSync 和 wx.setStorageSync
 - `performance.js` - 性能监控工具，提供 setData 性能追踪和云函数调用监控
 - `offlineStorage.js` - 离线存储工具，提供离线队列和数据缓存管理
+- `config.js` - 系统配置工具，从云数据库读取系统配置，支持本地缓存
+- `validator.js` - 输入校验工具，提供通用的输入校验函数（前端版）
 
 ## 使用方式
 
@@ -177,4 +179,77 @@ await offlineStorage.syncOfflineData(async (record) => {
 // 缓存数据（10分钟过期）
 dataCache.set('students', studentList, 10 * 60 * 1000)
 const cached = dataCache.get('students')
+```
+
+## config.js 系统配置工具
+
+从云数据库读取系统配置（如排课规则），支持本地缓存（30分钟）。
+
+| 函数名 | 用途 |
+|--------|------|
+| `getScheduleConfig(forceRefresh)` | 获取排课配置 |
+| `getTodaySchedule(dayOfWeek, availableDepts)` | 获取当天应点名的学部 |
+| `clearConfigCache()` | 清除配置缓存 |
+| `DEFAULT_SCHEDULE_CONFIG` | 默认排课规则（数据库无配置时使用）|
+
+### 使用示例
+
+```javascript
+const { getTodaySchedule, getScheduleConfig } = require('../../../utils/config')
+
+// 获取今天的排课信息
+const today = new Date().getDay()
+const schedule = await getTodaySchedule(today, ['职教一部', '职教二部'])
+
+if (schedule.isClassDay) {
+  console.log('今天需要点名的学部:', schedule.departments)
+} else {
+  console.log(schedule.noClassMessage)
+}
+```
+
+## validator.js 输入校验工具
+
+提供通用的输入校验函数，用于前端表单验证。云函数端有对应的 `common/validator.js`。
+
+### 校验规则
+
+| 规则名 | 长度限制 | 说明 |
+|--------|----------|------|
+| `userName` | 2-20 | 仅支持中文、英文 |
+| `className` | 2-50 | 班级名称 |
+| `clubName` | 2-50 | 社团名称 |
+| `department` | 2-50 | 学部名称 |
+| `feedback` | 最大500 | 反馈内容 |
+| `date` | - | YYYY-MM-DD 格式 |
+| `time` | - | HH:MM 格式 |
+
+### 函数列表
+
+| 函数名 | 用途 |
+|--------|------|
+| `validateField(value, fieldName)` | 校验单个字段 |
+| `validateRequired(value, fieldLabel)` | 校验必填字段 |
+| `validate(data, rules)` | 批量校验 |
+| `sanitize(value)` | 清理用户输入（去除危险字符）|
+| `sanitizeObject(data, fields)` | 批量清理对象中的字符串字段 |
+
+### 使用示例
+
+```javascript
+const { validate, sanitizeObject } = require('../../../utils/validator')
+
+// 批量校验
+const result = validate(formData, [
+  { field: 'userName', label: '姓名', required: true },
+  { field: 'className', label: '班级', required: true }
+])
+
+if (!result.valid) {
+  console.log('校验失败:', result.errors)
+  return
+}
+
+// 清理输入
+const cleanData = sanitizeObject(formData, ['userName', 'feedback'])
 ```

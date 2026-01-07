@@ -18,8 +18,8 @@ Page({
     clubName: '',
     currentDate: '',
     currentTime: '',
-    students: [], // 当前展示的卡片列表，渲染层需要
-    _allStudents: [], // 完整数据，逻辑层使用
+    students: null,
+    _allStudents: null,
     currentIndex: 0,
     currentStudent: null,
     presentCount: 0,
@@ -33,14 +33,21 @@ Page({
     presentOpacity: 0,
     absentOpacity: 0,
     cardBorderClass: '',
-    _actionHistory: [],
-    selectedDepts: [],
+    _actionHistory: null,
+    selectedDepts: null,
     showMarkedList: false,
-    markedStudents: []
+    markedStudents: null
   },
 
   /** 页面加载 */
   onLoad() {
+    this.setData({
+      students: [],
+      _allStudents: [],
+      _actionHistory: [],
+      selectedDepts: [],
+      markedStudents: []
+    })
     const userInfo = auth.checkRole('teacher')
     if (userInfo) {
       this.setData({ clubName: userInfo.clubName })

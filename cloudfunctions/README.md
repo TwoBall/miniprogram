@@ -15,6 +15,8 @@
 - `notification/` - 通知推送云函数，发送系统通知和消息提醒
 - `transfer/` - 转班处理云函数，处理学生转班申请和审批
 - `submitFeedback/` - 反馈提交云函数，处理用户反馈信息的提交
+- `system/` - 系统配置云函数，处理系统配置的读取和更新
+- `cleanupRateLimits/` - 定时清理云函数，清理过期的限频记录（每小时执行）
 - `common/` - 公共模块模板（不需要上传，仅作为参考）
 
 ## attendance 云函数 Action 列表
@@ -72,6 +74,21 @@
 | `getHistory` | 获取导出历史记录（分页）| 导出历史页 |
 | `getDownloadUrl` | 重新获取文件下载链接 | 导出历史页 |
 | `deleteRecord` | 删除导出记录和云文件 | 导出历史页 |
+
+## system 云函数 Action 列表
+
+| Action | 用途 | 调用页面 |
+|--------|------|---------|
+| `getConfig` | 获取系统配置 | 各页面（通过 utils/config.js）|
+| `setConfig` | 设置系统配置（仅管理员）| 管理后台 |
+
+## cleanupRateLimits 云函数
+
+定时触发器云函数，无需前端调用。
+
+| 触发方式 | 执行周期 | 用途 |
+|----------|----------|------|
+| 定时触发器 | 每小时执行 | 清理过期的 rate_limits 记录，防止集合无限增长 |
 
 ## 云函数结构
 
@@ -146,6 +163,7 @@ node cloudfunctions/scripts/sync-common.js --force
 | 排序工具 | `sort-utils.js` | `zhCompare`, `zhNumericCompare`, `sortStudentsByName`, `sortStudentsByClassAndName`, `sortOptions` |
 | 常量定义 | `constants.js` | `MAX_LIMIT`, `ROLES`, `USER_STATUS`, `ATTENDANCE_STATUS` |
 | 限频工具 | `rate-limit.js` | `checkRateLimit`, `cleanupExpiredRecords`, `RATE_LIMIT_CONFIGS` |
+| 输入校验 | `validator.js` | `RULES`, `validateField`, `validateRequired`, `validate`, `sanitize`, `sanitizeObject` |
 
 ### 响应格式工具
 
