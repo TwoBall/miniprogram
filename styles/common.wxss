@@ -401,3 +401,240 @@
   background: #fff1f0;
   color: #ff4d4f;
 }
+
+/* ========== 2.9 操作按钮组 ========== */
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+}
+
+.action-buttons.center {
+  justify-content: center;
+}
+
+.action-buttons.space-between {
+  justify-content: space-between;
+}
+
+/* ========== 2.10 搜索栏 ========== */
+.search-bar {
+  background-color: #fff;
+  padding-bottom: 20rpx;
+}
+
+/* ========== 2.11 浮动操作按钮 ========== */
+.fab-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: 180rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.fab-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+.fab-btn.admin {
+  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
+  box-shadow: 0 8rpx 24rpx rgba(114, 46, 209, 0.4);
+}
+
+.fab-btn.teacher {
+  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.4);
+}
+
+/* ========== 2.12 对话框样式 ========== */
+.dialog-content {
+  padding: 20rpx;
+}
+
+.dialog-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 20rpx;
+  justify-content: flex-end;
+}
+
+/* ========== 2.13 筛选器样式 ========== */
+.filter-section {
+  background-color: #fff;
+  padding: 24rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.filter-picker {
+  flex: 1;
+}
+
+.filter-picker-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 16rpx 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  border: 2rpx solid #e8e8e8;
+  transition: all 0.2s;
+}
+
+.filter-picker-content:active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.filter-picker-content.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.filter-label {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.filter-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.filter-reset {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 20rpx 24rpx;
+  font-size: 26rpx;
+  color: #1890ff;
+  background-color: #e6f7ff;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.filter-reset:active {
+  background-color: #bae7ff;
+}
+
+.filter-reset.disabled {
+  color: #999;
+  background-color: #f5f5f5;
+  pointer-events: none;
+}
+
+.filter-result {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #666;
+  padding: 12rpx 16rpx;
+  background-color: #f0f9ff;
+  border-radius: 6rpx;
+  border-left: 4rpx solid #1890ff;
+}
+
+/* ========== 2.14 用户/学生信息样式 ========== */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.user-name {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-meta {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.meta-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* ========== 2.15 滑动操作样式 ========== */
+.swipe-actions {
+  display: flex;
+  height: 100%;
+}
+
+.swipe-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 130rpx;
+  color: #fff;
+  font-size: 28rpx;
+}
+
+.swipe-action-btn.edit {
+  background-color: #1890ff;
+}
+
+.swipe-action-btn.delete {
+  background-color: #ff4d4f;
+}
+
+.swipe-action-btn.warning {
+  background-color: #ff9800;
+}
+
+/* ========== 2.16 徽章样式 ========== */
+.badge {
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  background-color: #ff4d4f;
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.badge.success {
+  background-color: #52c41a;
+}
+
+.badge.warning {
+  background-color: #ff9800;
+}
+
+.badge.info {
+  background-color: #1890ff;
+}

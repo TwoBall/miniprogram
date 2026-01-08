@@ -22,7 +22,7 @@ function delay(ms) {
  * @param {string} name - 云函数名称
  * @param {Object} [data={}] - 传递给云函数的数据
  * @param {Object} [options={}] - 选项配置
- * @param {boolean} [options.showLoading=true] - 是否显示加载提示
+ * @param {boolean} [options.showLoading=false] - 是否显示加载提示
  * @param {string} [options.loadingText='加载中...'] - 加载提示文字
  * @param {boolean} [options.showError=true] - 是否显示错误提示
  * @param {number} [options.timeout=15000] - 超时时间（毫秒）
@@ -32,7 +32,7 @@ function delay(ms) {
  */
 async function callCloud(name, data = {}, options = {}) {
   const {
-    showLoading = true,
+    showLoading = false,
     loadingText = '加载中...',
     showError = true,
     timeout = 15000,

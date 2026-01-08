@@ -1,18 +1,19 @@
+/* 用户管理页面样式 */
+/* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 使用公共类: .page-container, .search-bar, .user-header, .user-name, .user-meta, .meta-text */
+/* 使用公共类: .swipe-actions, .swipe-action-btn, .fab-btn, .loading-wrapper, .load-more */
+
 .users-container {
   min-height: 100vh;
   background-color: #f5f5f5;
   padding-bottom: 140rpx;
 }
 
-.search-bar {
-  background-color: #fff;
-  padding-bottom: 20rpx;
-}
-
 .users-list {
   margin-top: 20rpx;
 }
 
+/* 用户卡片 - 仅覆盖特有样式 */
 .user-card {
   margin-bottom: 20rpx;
   background-color: #fff;
@@ -24,23 +25,10 @@
   width: 100%;
 }
 
-.user-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
 .user-name-wrapper {
   display: flex;
   align-items: center;
   gap: 16rpx;
-}
-
-.user-name {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
 }
 
 .user-extra {
@@ -55,22 +43,7 @@
   color: #666;
 }
 
-.user-meta {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.meta-text {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.swipe-actions {
-  display: flex;
-  height: 100%;
-}
-
+/* 滑动操作按钮 - 扩展公共类 */
 .action-btn {
   display: flex;
   align-items: center;
@@ -88,39 +61,10 @@
   background-color: #ff4d4f;
 }
 
+/* 加载状态 - 使用公共 .loading-wrapper */
 .loading-center {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 80rpx 0;
-}
-
-.load-more {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16rpx;
-  padding: 40rpx 0;
-  color: #999;
-  font-size: 28rpx;
-}
-
-.fab-btn {
-  position: fixed;
-  right: 32rpx;
-  bottom: 180rpx;
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(114, 46, 209, 0.4);
-  z-index: 100;
-}
-
-.fab-btn:active {
-  transform: scale(0.95);
-  opacity: 0.9;
 }
