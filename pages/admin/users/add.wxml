@@ -23,7 +23,7 @@
         wx:if="{{ formData.role === 'leader' || formData.role === 'classTeacher' }}"
         title="学部"
         is-link
-        required="{{ formData.role === 'leader' }}"
+        required
         value="{{ formData.department || '请选择学部' }}"
         bind:click="showDepartmentPicker"
       />

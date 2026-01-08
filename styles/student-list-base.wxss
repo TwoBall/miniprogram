@@ -167,9 +167,10 @@
 }
 
 /* ========== 搜索框 ========== */
+/* 复用 common.wxss 中的 .search-bar 样式 */
 .student-list-search {
   background-color: #fff;
-  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
 }
 
 /* ========== 学生列表容器 ========== */

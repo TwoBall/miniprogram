@@ -198,11 +198,19 @@ Page({
     this.setData({ loading: true })
 
     try {
+      // 班主任的学部从 classTeacherDept 或 classDeptMap 中获取
+      let userDepartment = ''
+      if (role === 'leader') {
+        userDepartment = department
+      } else if (role === 'classTeacher' && className) {
+        userDepartment = this.data.classTeacherDept || this.data.classDeptMap[className] || ''
+      }
+
       const result = await request.callApi('user', 'register', {
         openid,
         name,
         role,
-        department: role === 'leader' ? department : '',
+        department: userDepartment,
         className: role === 'classTeacher' ? className : '',
         clubName: role === 'teacher' ? clubName : ''
       }, { showLoading: false, showError: false })

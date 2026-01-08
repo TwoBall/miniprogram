@@ -10,13 +10,10 @@
     <van-search
       value="{{ searchKeyword }}"
       placeholder="搜索姓名、学部、班级或社团"
-      use-action-slot
       bind:change="onSearchChange"
       bind:search="onSearch"
       bind:clear="onSearchClear"
-    >
-      <view slot="action" bind:tap="onSearch">搜索</view>
-    </van-search>
+    />
   </view>
 
   <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>

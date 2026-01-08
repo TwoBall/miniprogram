@@ -154,7 +154,7 @@
   font-size: 26rpx;
 }
 
-.load-more text {
+.load-more .load-more-text {
   margin-left: 10rpx;
 }
 
@@ -168,7 +168,7 @@
   color: #999;
 }
 
-.empty-state text {
+.empty-state .empty-text {
   margin-top: 20rpx;
   font-size: 28rpx;
 }

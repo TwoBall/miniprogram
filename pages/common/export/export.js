@@ -25,6 +25,8 @@ Page({
     departments: [],
     clubs: [],
     classes: [],
+    allClasses: [], // 所有班级原始列表
+    classDeptMap: {}, // 班级到学部的映射
 
     // 选择器状态
     showDepartmentPicker: false,
@@ -67,7 +69,7 @@ Page({
   async loadFilterOptions() {
     try {
       const data = await request.getFilterOptions()
-      const { departments, clubs, classes } = data
+      const { departments, clubs, classes, classDeptMap } = data
 
       // 转换为 picker columns 格式
       const departmentColumns = ['全部', ...(departments || [])]
@@ -78,6 +80,8 @@ Page({
         departments,
         clubs,
         classes,
+        allClasses: classes || [],
+        classDeptMap: classDeptMap || {},
         departmentColumns,
         clubColumns,
         classColumns
@@ -171,8 +175,22 @@ Page({
   // 选择筛选项 (picker confirm)
   onConfirmDepartment(e) {
     const value = e.detail.value
+    const department = value === '全部' ? '' : value
+    const { allClasses, classDeptMap } = this.data
+
+    // 根据学部筛选班级列表
+    let filteredClasses
+    if (department) {
+      filteredClasses = allClasses.filter(cls => classDeptMap[cls] === department)
+      filteredClasses.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
+    } else {
+      filteredClasses = allClasses
+    }
+
     this.setData({
-      department: value === '全部' ? '' : value,
+      department,
+      className: '', // 重置班级选择
+      classColumns: ['全部', ...filteredClasses],
       showDepartmentPicker: false
     })
   },

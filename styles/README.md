@@ -42,7 +42,7 @@
 | `.no-more` | 无更多数据 | 直接使用 |
 | `.empty-state` | 空状态 | 直接使用 |
 | `.action-buttons` | 操作按钮组 | 带变体：`.center`, `.space-between` |
-| `.search-bar` | 搜索栏 | 直接使用 |
+| `.search-bar` | 搜索栏 | 配合 `van-search` 使用 |
 | `.fab-btn` | 浮动操作按钮 | 带变体：`.admin`, `.teacher` |
 | `.dialog-content` | 对话框内容 | 配合 `.dialog-title`, `.dialog-actions` |
 | `.filter-section` | 筛选器区域 | 配合 `.filter-row`, `.filter-picker` 等 |

@@ -26,6 +26,8 @@ Page({
 
     departmentOptions: [], // 从数据库获取
     classOptions: [], // 从数据库获取
+    allClasses: [], // 所有班级原始数据
+    classDeptMap: {}, // 班级到学部的映射
     clubOptions: [], // 从数据库获取
 
     showRolePicker: false,
@@ -99,6 +101,8 @@ Page({
 
     this.setData({
       departmentOptions: toOptions(data.departments),
+      allClasses: data.classes || [],
+      classDeptMap: data.classDeptMap || {},
       classOptions: toOptions(data.classes),
       clubOptions: toOptions(data.clubs)
     })
@@ -167,10 +171,26 @@ Page({
 
   onDepartmentConfirm(e) {
     const department = e.detail.value
-    this.setData({
-      'formData.department': department,
-      showDepartmentPicker: false
-    })
+    const { formData, allClasses, classDeptMap } = this.data
+
+    // 班主任选择学部后，筛选对应班级
+    if (formData.role === 'classTeacher') {
+      const filtered = allClasses.filter(cls => classDeptMap[cls] === department)
+      filtered.sort((a, b) => a.localeCompare(b, 'zh-CN', { numeric: true }))
+      const toOptions = (list) => list.map(item => ({ name: item, value: item }))
+
+      this.setData({
+        'formData.department': department,
+        'formData.className': '', // 重置班级选择
+        classOptions: toOptions(filtered),
+        showDepartmentPicker: false
+      })
+    } else {
+      this.setData({
+        'formData.department': department,
+        showDepartmentPicker: false
+      })
+    }
   },
 
   onDepartmentCancel() {
@@ -224,6 +244,11 @@ Page({
 
     if (role === 'leader' && !department) {
       SafeToast.fail('学部领导必须选择学部')
+      return false
+    }
+
+    if (role === 'classTeacher' && !department) {
+      SafeToast.fail('班主任必须先选择学部')
       return false
     }
 
