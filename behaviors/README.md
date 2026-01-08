@@ -17,6 +17,7 @@
 - `throttleBehavior.js` - 节流防抖通用行为，提供按钮节流、防抖和异步操作状态管理
 - `formFeedbackBehavior.js` - 表单反馈通用行为，提供表单提交状态管理、震动反馈和错误处理
 - `virtualListBehavior.js` - 虚拟列表通用行为，只渲染可视区域的列表项提升长列表性能
+- `filterPickerBehavior.js` - 筛选选择器通用行为，提供学部、班级、社团的级联筛选功能
 
 ## profileBehavior 功能
 
@@ -291,3 +292,84 @@ Page({
 ### virtualListBehavior
 - `pages/teacher/club/club.js`
 - `pages/classTeacher/students/students.js`
+
+> **注意**：`pages/teacher/detail/detail.js` 使用自定义的动态高度虚拟列表实现，未使用此 Behavior。
+
+## filterPickerBehavior 功能
+
+### 数据字段
+- `departments` - 学部列表
+- `classes` - 班级列表
+- `clubs` - 社团列表
+- `filteredClasses` - 根据学部筛选后的班级列表
+- `selectedDepartment` - 选中的学部
+- `selectedClass` - 选中的班级
+- `selectedClub` - 选中的社团
+- `filterLoading` - 加载状态
+- `hasFilter` - 是否有筛选条件
+
+### 方法
+- `loadFilterOptions(forceRefresh)` - 加载筛选选项
+- `onDepartmentChange(e)` - 学部选择变化
+- `onClassChange(e)` - 班级选择变化
+- `onClubChange(e)` - 社团选择变化
+- `resetFilter()` - 重置所有筛选条件
+- `getFilterParams()` - 获取当前筛选条件对象
+- `getFilterDescription()` - 获取筛选结果描述文本
+
+### 使用示例
+
+```javascript
+const filterPickerBehavior = require('../../../behaviors/filterPickerBehavior')
+
+Page({
+  behaviors: [filterPickerBehavior],
+
+  async onLoad() {
+    await this.loadFilterOptions()
+  },
+
+  // 实现筛选变化回调
+  onFilterChange() {
+    const params = this.getFilterParams()
+    console.log('筛选条件:', params)
+    this.loadData()
+  }
+})
+```
+
+```xml
+<!-- WXML 中使用筛选器 -->
+<view class="filter-section">
+  <view class="filter-row">
+    <picker
+      class="filter-picker"
+      range="{{departments}}"
+      value="{{selectedDepartmentIndex}}"
+      bindchange="onDepartmentChange"
+    >
+      <view class="filter-picker-content">
+        <text class="filter-label">学部</text>
+        <view class="filter-value">
+          <text>{{selectedDepartment || '全部学部'}}</text>
+          <van-icon name="arrow-down" size="24rpx" />
+        </view>
+      </view>
+    </picker>
+
+    <view
+      class="filter-reset {{hasFilter ? '' : 'disabled'}}"
+      bindtap="resetFilter"
+    >
+      <van-icon name="replay" size="28rpx" />
+      <text>重置</text>
+    </view>
+  </view>
+</view>
+```
+
+### 使用该 Behavior 的页面
+
+### filterPickerBehavior
+- `pages/teacher/club/club.js`（可选迁移）
+- `pages/common/export/export.js`（可选迁移）

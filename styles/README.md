@@ -12,6 +12,7 @@
 - `animations.wxss` - 动画样式库（入场动画、交互反馈、加载状态）
 - `profile-base.wxss` - Profile 页面公共样式基类
 - `student-list-base.wxss` - 学生列表页面公共样式基类
+- `card-list-base.wxss` - 卡片列表页面公共样式基类
 
 ## common.wxss 公共样式类
 
@@ -40,6 +41,14 @@
 | `.loading-wrapper` | 加载容器 | 直接使用 |
 | `.no-more` | 无更多数据 | 直接使用 |
 | `.empty-state` | 空状态 | 直接使用 |
+| `.action-buttons` | 操作按钮组 | 带变体：`.center`, `.space-between` |
+| `.search-bar` | 搜索栏 | 直接使用 |
+| `.fab-btn` | 浮动操作按钮 | 带变体：`.admin`, `.teacher` |
+| `.dialog-content` | 对话框内容 | 配合 `.dialog-title`, `.dialog-actions` |
+| `.filter-section` | 筛选器区域 | 配合 `.filter-row`, `.filter-picker` 等 |
+| `.user-header` | 用户信息头部 | 配合 `.user-name`, `.user-meta` |
+| `.swipe-actions` | 滑动操作 | 配合 `.swipe-action-btn` |
+| `.badge` | 徽章 | 带变体：`.success`, `.warning`, `.info` |
 
 ### 组合类名模式
 
@@ -173,3 +182,44 @@
 
 - `pages/teacher/club/club.wxss`
 - `pages/classTeacher/students/students.wxss`
+
+## card-list-base.wxss 卡片列表样式
+
+### 使用方式
+
+在页面 WXSS 中引入：
+
+```css
+@import '../../../styles/card-list-base.wxss';
+
+/* 页面特有样式 */
+.approval-item.approved {
+  border-left: 6rpx solid #52c41a;
+}
+```
+
+### 可复用样式类
+
+| 类名 | 用途 |
+|-----|------|
+| `.card-list-container` | 页面容器 |
+| `.card-list-tabs` | Tab 切换容器 |
+| `.card-list` | 列表容器 |
+| `.card-list-item` | 卡片项（支持 .approved/.rejected/.pending/.warning/.unread）|
+| `.card-list-header` | 卡片头部 |
+| `.card-list-title` | 卡片标题 |
+| `.card-list-body` | 卡片内容 |
+| `.card-list-info` | 信息区域 |
+| `.card-list-info-row` | 信息行 |
+| `.card-list-stats` | 统计区域 |
+| `.card-list-actions` | 操作按钮区域 |
+| `.card-list-result` | 结果信息（支持 .success/.error）|
+| `.card-list-time` | 时间标签 |
+| `.card-list-loading` | 加载状态 |
+
+### 使用该样式的页面
+
+- `pages/admin/approval/approval.wxss`
+- `pages/common/transfer/transfer.wxss`
+- `pages/common/notifications/notifications.wxss`
+- `pages/teacher/history/history.wxss`

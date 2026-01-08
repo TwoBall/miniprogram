@@ -86,7 +86,7 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 | `getByClass` | 按班级获取考勤情况 | 班主任概览页 |
 | `getByDepartment` | 按学部获取考勤统计 | 领导看板页 |
 | `checkTodaySubmissions` | 检查今日是否已点名 | 教师点名页 |
-| `updateRecords` | 更新点名记录 | 教师详情页 |
+| `updateRecords` | 更新点名记录（含变更通知） | 教师详情页 |
 | `getClubRank` | 获取社团学生出勤率排行 | 教师社团页 |
 | `getClassRank` | 获取班级学生出勤率排行 | 班主任学生页 |
 | `getDepartmentClassRanking` | 获取学部班级出勤率排名（本月） | 领导看板页 |
