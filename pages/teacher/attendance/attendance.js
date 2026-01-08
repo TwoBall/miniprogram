@@ -91,7 +91,7 @@ Page({
     if (!userInfo) return
 
     try {
-      SafeToast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
+      await SafeToast.loading({ message: '加载中...', forbidClick: true, duration: 0 })
 
       // 先展示骨架屏，避免闪烁
       this.setData({ pageLoading: true })
