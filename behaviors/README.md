@@ -275,7 +275,7 @@ Page({
   onReady() {
     this.initVirtualList({
       itemHeight: 100,
-      containerHeight: wx.getSystemInfoSync().windowHeight,
+      containerHeight: wx.getWindowInfo().windowHeight,
       bufferSize: 5
     })
   },
