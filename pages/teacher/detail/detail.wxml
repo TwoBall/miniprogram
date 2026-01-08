@@ -38,55 +38,65 @@
   </view>
 
   <view class="student-list" wx:if="{{record && record.records.length > 0}}">
-    <van-cell-group title="点名详情 (点击可修改)">
-      <van-cell
-        wx:for="{{record.records}}"
-        wx:key="studentId"
-        border="{{ false }}"
-        custom-class="student-cell list-item-enter"
-        data-index="{{index}}"
-        bindtap="toggleStudentStatus"
-      >
-        <view slot="title" class="student-info">
-          <view class="student-name">
-            <van-icon name="user-o" size="32rpx" color="#1890ff" />
-            <text>{{item.studentName}}</text>
-            <van-tag wx:if="{{item.gender}}" plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
-          </view>
-          <view class="student-class">{{item.department}} · {{item.className}}</view>
-          <view class="teacher-contact" wx:if="{{item.classTeacher}}">
-            <text>班主任: {{item.classTeacher}}</text>
-            <text wx:if="{{item.classTeacherPhone}}" class="phone">{{item.classTeacherPhone}}</text>
-          </view>
-          <view class="feedback-info" wx:if="{{item.feedback}}">
-            <van-icon name="comment-o" size="24rpx" color="#faad14" />
-            <text>班主任反馈: {{item.feedback}}</text>
-          </view>
-        </view>
-        <view slot="right-icon" class="status-toggle">
-          <van-tag
-            type="{{ item.status === 'present' ? 'success' : 'danger' }}"
-            size="large"
+    <view class="list-title">点名详情 (点击可修改)</view>
+    <scroll-view
+      scroll-y
+      style="height: {{listHeight}}px;"
+      bindscroll="onVirtualScroll"
+      enhanced
+      show-scrollbar="{{false}}"
+    >
+      <view style="height: {{totalHeight}}px; position: relative;">
+        <view class="student-list-wrapper" style="transform: translateY({{offsetY}}px);">
+          <view
+            wx:for="{{virtualList}}"
+            wx:key="studentId"
+            class="student-cell list-item-enter"
+            data-student-id="{{item.studentId}}"
+            bindtap="toggleStudentStatus"
           >
-            {{item.status === 'present' ? '到课' : '缺课'}}
-          </van-tag>
-          <van-icon name="exchange" size="32rpx" color="#999" />
+            <view class="student-info">
+              <view class="student-name">
+                <van-icon name="user-o" size="32rpx" color="#1890ff" />
+                <text>{{item.studentName}}</text>
+                <van-tag wx:if="{{item.gender}}" plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
+              </view>
+              <view class="student-class">{{item.department}} · {{item.className}}</view>
+              <view class="teacher-contact" wx:if="{{item.classTeacher}}">
+                <text>班主任: {{item.classTeacher}}</text>
+                <text wx:if="{{item.classTeacherPhone}}" class="phone">{{item.classTeacherPhone}}</text>
+              </view>
+              <view class="feedback-info" wx:if="{{item.feedback}}">
+                <van-icon name="comment-o" size="24rpx" color="#faad14" />
+                <text>班主任反馈: {{item.feedback}}</text>
+              </view>
+            </view>
+            <view class="status-toggle">
+              <van-tag
+                type="{{ item.status === 'present' ? 'success' : 'danger' }}"
+                size="large"
+              >
+                {{item.status === 'present' ? '到课' : '缺课'}}
+              </van-tag>
+              <van-icon name="exchange" size="32rpx" color="#999" />
+            </view>
+          </view>
         </view>
-      </van-cell>
-    </van-cell-group>
-
-    <!-- 保存修改按钮 -->
-    <view class="save-section" wx:if="{{hasChanges}}">
-      <van-button type="primary" block loading="{{saving}}" bindtap="saveChanges" custom-class="btn-active">
-        保存修改
-      </van-button>
-    </view>
+      </view>
+    </scroll-view>
   </view>
 
   <empty-state
     wx:if="{{!loading && (!record || record.records.length === 0)}}"
     type="attendance"
   />
+
+  <!-- 固定在底部的保存按钮 -->
+  <view class="save-section-fixed" wx:if="{{hasChanges}}">
+    <van-button type="primary" block loading="{{saving}}" bindtap="saveChanges" custom-class="btn-active">
+      保存修改
+    </van-button>
+  </view>
 
   <van-toast id="van-toast" />
 </view>

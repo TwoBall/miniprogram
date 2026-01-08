@@ -32,14 +32,29 @@
 
 /* 学生列表 */
 .student-list {
-  margin: 20rpx;
+  margin-top: 20rpx;
+}
+
+.list-title {
+  font-size: 28rpx;
+  color: #969799;
+  padding: 16rpx 32rpx;
+}
+
+.student-list-wrapper {
+  padding: 0 24rpx;
 }
 
 .student-cell {
-  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
   background: #ffffff;
   border-radius: 12rpx;
-  overflow: hidden;
+  border: 2rpx solid #e8e8e8;
+  box-sizing: border-box;
 }
 
 .student-info {
@@ -99,10 +114,18 @@
   display: flex;
   align-items: center;
   gap: 16rpx;
+  flex-shrink: 0;
 }
 
-.save-section {
-  padding: 30rpx;
+/* 固定底部保存按钮 */
+.save-section-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
   background: #ffffff;
-  margin-top: 20rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
 }
