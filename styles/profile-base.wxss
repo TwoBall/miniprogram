@@ -40,7 +40,7 @@
   margin-bottom: 12rpx;
 }
 
-.role-tag text {
+.role-tag .role-text {
   margin-left: 8rpx;
 }
 
@@ -52,7 +52,7 @@
   opacity: 0.9;
 }
 
-.info-item text {
+.info-item .info-text {
   margin-left: 8rpx;
 }
 

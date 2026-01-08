@@ -8,11 +8,11 @@
       <view class="name">{{ userInfo.userName || '未登录' }}</view>
       <view class="role-tag">
         <van-icon name="medal-o" size="14px" />
-        <text>学部领导</text>
+        <text class="role-text">学部领导</text>
       </view>
       <view class="info-item" wx:if="{{ userInfo.department }}">
         <van-icon name="location-o" size="14px" />
-        <text>{{ userInfo.department }}</text>
+        <text class="info-text">{{ userInfo.department }}</text>
       </view>
     </view>
   </view>

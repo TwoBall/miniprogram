@@ -63,8 +63,8 @@ module.exports = Behavior({
       // 获取容器高度
         let height = containerHeight
         if (!height) {
-          const systemInfo = wx.getSystemInfoSync()
-          height = systemInfo.windowHeight
+          const windowInfo = wx.getWindowInfo()
+          height = windowInfo.windowHeight
         }
   
         // 计算可见项数

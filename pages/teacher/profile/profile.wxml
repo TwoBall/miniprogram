@@ -8,15 +8,15 @@
       <view class="name">{{ userInfo.userName || '未登录' }}</view>
       <view class="role-tag">
         <van-icon name="manager-o" size="14px" />
-        <text>社团老师</text>
+        <text class="role-text">社团老师</text>
       </view>
       <view class="info-item" wx:if="{{ userInfo.clubName }}">
         <van-icon name="cluster-o" size="14px" />
-        <text>{{ userInfo.clubName }}</text>
+        <text class="info-text">{{ userInfo.clubName }}</text>
       </view>
       <view class="info-item" wx:if="{{ userInfo.department }}">
         <van-icon name="location-o" size="14px" />
-        <text>{{ userInfo.department }}</text>
+        <text class="info-text">{{ userInfo.department }}</text>
       </view>
     </view>
   </view>
