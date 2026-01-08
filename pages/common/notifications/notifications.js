@@ -193,6 +193,14 @@ Page({
           })
         }
         break
+      case 'attendance_update':
+        // 考勤修改通知，显示变更详情
+        Dialog.alert({
+          title: title,
+          message: content,
+          confirmButtonText: '知道了'
+        })
+        break
       case 'transfer_request':
         // 跳转到转社团申请页面
         wx.navigateTo({
@@ -232,6 +240,7 @@ Page({
   formatNotificationType(type) {
     const typeMap = {
       absence_warning: '缺勤提醒',
+      attendance_update: '考勤修改',
       transfer_request: '转社团申请',
       transfer_result: '转社团结果',
       register_result: '注册审批'
