@@ -91,7 +91,7 @@ Page({
     this.setData({ pageLoading: true })
 
     try {
-      SafeToast.loading({
+      await SafeToast.loading({
         message: '加载中...',
         forbidClick: true,
         duration: 0
