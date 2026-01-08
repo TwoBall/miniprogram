@@ -1,6 +1,8 @@
 {
   "enabledMcpjsonServers": [
-    "cloudbase"
+    "cloudbase",
+    "tdesign", 
+    "context7"
   ],
   "enableAllProjectMcpServers": true
 }

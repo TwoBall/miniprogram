@@ -51,7 +51,7 @@
           <view
             wx:for="{{virtualList}}"
             wx:key="studentId"
-            class="student-cell list-item-enter"
+            class="student-cell"
             data-student-id="{{item.studentId}}"
             bindtap="toggleStudentStatus"
           >
