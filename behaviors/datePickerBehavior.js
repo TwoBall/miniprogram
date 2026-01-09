@@ -74,10 +74,13 @@ module.exports = Behavior({
 
     /**
      * 显示日历选择器
-     * @param {string} dateType - 可选，日期类型标识（如 'start', 'end'）
+     * @param {string|Object} dateTypeOrEvent - 可选，日期类型标识（如 'start', 'end'）或事件对象
      * @param {string} currentDate - 可选，当前已选日期（YYYY-MM-DD 格式）
      */
-    showDatePickerPopup(dateType, currentDate) {
+    showDatePickerPopup(dateTypeOrEvent, currentDate) {
+      // 处理 bindtap 直接调用的情况，第一个参数是事件对象
+      const dateType = (typeof dateTypeOrEvent === 'string') ? dateTypeOrEvent : ''
+
       let defaultDate = null
       if (currentDate) {
         const [year, month, day] = currentDate.split('-').map(Number)
@@ -91,7 +94,7 @@ module.exports = Behavior({
 
       this.setData({
         showCalendar: true,
-        _currentDateType: dateType || '',
+        _currentDateType: dateType,
         calendarDefaultDate: defaultDate
       })
     },
@@ -127,14 +130,18 @@ module.exports = Behavior({
           this.setData({
             selectedDate: dateStr,
             showCalendar: false
+          }, () => {
+            // 在 setData 回调中调用，确保 selectedDate 已更新
+            if (typeof this.onDateChange === 'function') {
+              this.onDateChange(dateStr, _currentDateType)
+            }
           })
         } else {
           this.setData({ showCalendar: false })
-        }
-
-        // 调用子类的日期变化处理方法
-        if (typeof this.onDateChange === 'function') {
-          this.onDateChange(dateStr, _currentDateType)
+          // 多日期选择器场景，直接调用
+          if (typeof this.onDateChange === 'function') {
+            this.onDateChange(dateStr, _currentDateType)
+          }
         }
       } else {
         // 处理日期范围模式
