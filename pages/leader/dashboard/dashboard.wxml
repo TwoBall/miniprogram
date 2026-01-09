@@ -178,4 +178,6 @@
 
   <!-- 底部 TabBar -->
   <custom-tabbar role="leader" active="0" />
+
+  <van-toast id="van-toast" />
 </view>

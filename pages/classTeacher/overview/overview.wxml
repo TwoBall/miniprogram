@@ -115,4 +115,6 @@
 
   <!-- 底部 TabBar -->
   <custom-tabbar role="classTeacher" active="0" />
+
+  <van-toast id="van-toast" />
 </view>
