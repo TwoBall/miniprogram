@@ -11,6 +11,9 @@
 | `phase4-ux-optimization-detail.md` | 第四阶段用户体验优化详细方案 | 2026-01-04 |
 | `cloudfunctions-common-module-design.md` | 云函数公共模块设计方案 | 2026-01-04 |
 | `code-review-report.md` | 代码深度审查报告 | 2026-01-04 |
+| `VANT_TO_TDESIGN_MIGRATION.md` | TDesign 迁移方案（未执行，项目继续使用 Vant） | 2026-01-12 |
+| `VANT_BEST_PRACTICES.md` | Vant 最佳实践优化（5阶段全部完成） | 2026-01-12 |
+| `UI_DESIGN_GUIDE.md` | UI 设计规范（教育杂志风全部实施完成） | 2026-01-12 |
 
 ## 主要完成事项
 
@@ -24,3 +27,7 @@
 - ✅ 表单反馈 Behavior
 - ✅ 虚拟列表 Behavior
 - ✅ 动画样式库
+- ✅ Vant 全局组件注册
+- ✅ SafeDialog 统一封装
+- ✅ CSS Variables 主题管理
+- ✅ 教育杂志风（Editorial）UI 全面迁移

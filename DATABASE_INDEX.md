@@ -8,9 +8,9 @@
 |--------|----------|--------------|
 | students | 5 | 按社团/班级/学部查询学生 |
 | users | 7 | 用户登录、角色筛选、审批列表、通知发送 |
-| attendance_records | 5 | 考勤记录查询、统计分析、学生历史 |
-| feedbacks | 3 | 反馈记录查询 |
-| transfer_requests | 4 | 转社团申请处理 |
+| attendance_records | 4 | 考勤记录查询、统计分析、学生历史 |
+| feedbacks | 2 | 反馈记录查询 |
+| transfer_requests | 5 | 转社团申请处理 |
 | notifications | 2 | 用户通知列表 |
 | export_records | 2 | 导出历史查询 |
 | system_config | 1 | 配置读取（主键查询） |
@@ -25,8 +25,9 @@
 | `clubName_1` | `clubName: 1` | 按社团查询学生列表 |
 | `className_1` | `className: 1` | 按班级查询学生列表 |
 | `department_1` | `department: 1` | 按学部查询学生列表 |
-| `clubName_1_className_1` | `clubName: 1, className: 1` | 社团+班级组合查询 |
 | `clubName_1_studentName_1` | `clubName: 1, studentName: 1` | 社团内按姓名搜索学生 |
+
+> **已删除**：`clubName_1_className_1`（未使用，被其他索引覆盖）
 
 **典型查询**：
 ```javascript
@@ -45,11 +46,12 @@ db.collection('students').where({ clubName: '篮球社', className: '24级护理
 |--------|----------|----------|
 | `_openid_1` | `_openid: 1` | 按微信用户ID查询（登录验证） |
 | `_openid_1_status_1` | `_openid: 1, status: 1` | 查询用户的有效账号 |
-| `role_1_status_1` | `role: 1, status: 1` | 按角色筛选已审批用户 |
 | `status_1_createTime_-1` | `status: 1, createTime: -1` | 待审批用户列表（按时间倒序） |
-| `clubName_1_status_1` | `clubName: 1, status: 1` | 按社团查询教师账号 |
+| `deleted_1_createTime_-1` | `deleted: 1, createTime: -1` | 获取未删除用户列表 |
 | `role_1_clubName_1_status_1` | `role: 1, clubName: 1, status: 1` | 按角色+社团查询教师（通知发送） |
 | `role_1_className_1_status_1` | `role: 1, className: 1, status: 1` | 按角色+班级查询班主任（通知发送） |
+
+> **已删除**：`role_1_status_1`、`clubName_1_status_1`（未使用，被其他索引覆盖）
 
 **典型查询**：
 ```javascript
@@ -68,9 +70,9 @@ db.collection('users').where({ status: 'pending' }).orderBy('createTime', 'desc'
 |--------|----------|----------|
 | `clubName_1_date_-1` | `clubName: 1, date: -1` | 查询社团考勤记录（最常用） |
 | `date_-1` | `date: -1` | 按日期查询所有考勤记录 |
-| `departments_1_date_-1` | `departments: 1, date: -1` | 学部考勤统计（数组字段） |
-| `teacherId_1_date_-1` | `teacherId: 1, date: -1` | 查询教师的点名记录 |
 | `records.studentId_1` | `records.studentId: 1` | 按学生ID查询考勤历史（嵌套数组字段） |
+
+> **已删除**：`departments_1_date_-1`、`teacherId_1_date_-1`（未使用）
 
 **典型查询**：
 ```javascript
@@ -95,7 +97,8 @@ db.collection('attendance_records')
 |--------|----------|----------|
 | `studentId_1_date_-1` | `studentId: 1, date: -1` | 查询学生的反馈记录 |
 | `className_1_date_-1` | `className: 1, date: -1` | 查询班级的反馈列表 |
-| `teacherName_1_createTime_-1` | `teacherName: 1, createTime: -1` | 查询班主任提交的反馈 |
+
+> **已删除**：`teacherName_1_createTime_-1`（未使用）
 
 **典型查询**：
 ```javascript
@@ -122,6 +125,7 @@ db.collection('feedbacks')
 | `studentId_1` | `studentId: 1` | 查询学生的转社团历史 |
 | `fromClub_1_status_1` | `fromClub: 1, status: 1` | 转出社团查看申请 |
 | `toClub_1_status_1` | `toClub: 1, status: 1` | 转入社团查看申请 |
+| `className_1_createTime_-1` | `className: 1, createTime: -1` | 班主任查看班级申请 |
 
 **典型查询**：
 ```javascript
@@ -333,6 +337,21 @@ db.collection('students')
 ---
 
 ## 版本历史
+
+- **v1.4** (2026-01-12)
+  - 基于索引使用统计进行优化
+  - **删除未使用索引**（共 6 个）：
+    - `students.clubName_1_className_1`（0 次使用）
+    - `users.role_1_status_1`（0 次使用）
+    - `users.clubName_1_status_1`（0 次使用）
+    - `attendance_records.departments_1_date_-1`（0 次使用）
+    - `attendance_records.teacherId_1_date_-1`（0 次使用）
+    - `feedbacks.teacherName_1_createTime_-1`（0 次使用）
+  - **新增索引**（共 3 个）：
+    - `students.clubName_1`（优化单独按社团查询）
+    - `users.deleted_1_createTime_-1`（优化获取未删除用户）
+    - `transfer_requests.className_1_createTime_-1`（优化班主任查询）
+  - 总索引数量更新为 28 个
 
 - **v1.3** (2026-01-06)
   - 新增 `system_config` 集合索引配置
