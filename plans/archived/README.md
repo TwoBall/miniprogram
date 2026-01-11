@@ -14,6 +14,7 @@
 | `VANT_TO_TDESIGN_MIGRATION.md` | TDesign 迁移方案（未执行，项目继续使用 Vant） | 2026-01-12 |
 | `VANT_BEST_PRACTICES.md` | Vant 最佳实践优化（5阶段全部完成） | 2026-01-12 |
 | `UI_DESIGN_GUIDE.md` | UI 设计规范（教育杂志风全部实施完成） | 2026-01-12 |
+| `DESIGN_MIGRATION_PLAN.md` | 教育杂志风 UI 改造计划（5阶段全部完成） | 2026-01-12 |
 
 ## 主要完成事项
 
