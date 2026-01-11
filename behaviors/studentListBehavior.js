@@ -169,7 +169,7 @@ module.exports = Behavior({
      * Tab 切换
      */
     onTabChange(e) {
-      const tab = e.currentTarget.dataset.tab
+      const tab = e.detail.name
       this.setData({ activeTab: tab })
 
       // 切换到排行榜时加载数据

@@ -68,70 +68,33 @@
   letter-spacing: 1rpx;
 }
 
-/* ========== 选项卡片 ========== */
-.ed-option-card {
+/* ========== 选项卡片 (van-radio-group) ========== */
+.ed-radio-group {
+  background: #fff !important;
+  border-radius: 16rpx !important;
+  border: 2rpx solid var(--gray-200, #edf2f7) !important;
+  overflow: hidden;
+  margin: 0 !important;
+}
+
+.ed-radio-cell {
+  padding: 24rpx !important;
+}
+
+/* 日期范围 radio 组 */
+.ed-date-radio-group {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 16rpx;
   background: #fff;
   border-radius: 16rpx;
   border: 2rpx solid var(--gray-200, #edf2f7);
-  overflow: hidden;
+  padding: 24rpx;
 }
 
-.ed-option-item {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
-  transition: all 0.2s ease;
-}
-
-.ed-option-item:last-child {
-  border-bottom: none;
-}
-
-.ed-option-item:active {
-  background: var(--gray-50, #f7fafc);
-}
-
-.ed-option-item.active {
-  background: rgba(26, 54, 93, 0.04);
-}
-
-/* 自定义单选按钮 */
-.ed-option-radio {
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: 50%;
-  border: 3rpx solid var(--gray-300, #e2e8f0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.ed-option-radio.checked {
-  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
-  border-color: var(--color-primary, #1a365d);
-}
-
-/* 选项信息 */
-.ed-option-info {
+.ed-date-radio {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
-
-.ed-option-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: var(--gray-800, #2d3748);
-}
-
-.ed-option-desc {
-  font-size: 24rpx;
-  color: var(--gray-500, #a0aec0);
+  min-width: calc(50% - 12rpx);
 }
 
 /* ========== 自定义日期范围 ========== */
@@ -140,33 +103,40 @@
   background: #fff;
   border-radius: 16rpx;
   border: 2rpx solid var(--gray-200, #edf2f7);
-  overflow: hidden;
-}
-
-.ed-date-item {
+  padding: 24rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24rpx;
-  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
 }
 
-.ed-date-item:last-child {
-  border-bottom: none;
+.ed-date-range-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.ed-date-range-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.ed-date-range-separator {
+  flex-shrink: 0;
+  padding: 0 8rpx;
+}
+
+.ed-date-value-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--gray-800, #2d3748);
 }
 
 .ed-date-label {
-  font-size: 28rpx;
-  color: var(--gray-600, #718096);
-}
-
-.ed-date-value {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  font-size: 28rpx;
-  font-weight: 500;
-  color: var(--gray-800, #2d3748);
+  font-size: 24rpx;
+  color: var(--gray-500, #a0aec0);
 }
 
 /* ========== 筛选卡片 ========== */

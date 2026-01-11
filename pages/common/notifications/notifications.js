@@ -93,7 +93,7 @@ Page({
    * Tab 切换
    */
   onTabChange(e) {
-    const tab = e.currentTarget.dataset.tab
+    const tab = e.detail.name
     this.setData({ activeTab: tab, notifications: [] })
     this.resetPagination()
     this.loadList(true)

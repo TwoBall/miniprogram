@@ -30,26 +30,16 @@
   </view>
 
   <!-- Tab 切换 -->
-  <view class="ed-tabs-wrapper">
-    <view class="ed-tabs">
-      <view
-        class="ed-tab-item {{ activeTab === 'info' ? 'active' : '' }}"
-        data-tab="info"
-        bindtap="onTabChange"
-      >
-        <van-icon name="user-o" size="32rpx" />
-        <text>基本信息</text>
-      </view>
-      <view
-        class="ed-tab-item {{ activeTab === 'attendance' ? 'active' : '' }}"
-        data-tab="attendance"
-        bindtap="onTabChange"
-      >
-        <van-icon name="todo-list-o" size="32rpx" />
-        <text>考勤记录</text>
-      </view>
-    </view>
-  </view>
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    color="#276749"
+    title-active-color="#276749"
+    custom-class="ed-van-tabs"
+  >
+    <van-tab title="基本信息" name="info" />
+    <van-tab title="考勤记录" name="attendance" />
+  </van-tabs>
 
   <!-- 基本信息 Tab -->
   <view wx:if="{{ activeTab === 'info' }}" class="ed-tab-content">

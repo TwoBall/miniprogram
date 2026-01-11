@@ -31,47 +31,46 @@
       </view>
     </view>
 
-    <view class="ed-option-card">
-      <view
-        class="ed-option-item {{ exportType === 'attendance' ? 'active' : '' }}"
-        bindtap="onExportTypeChange"
-        data-type="attendance"
-      >
-        <view class="ed-option-radio {{ exportType === 'attendance' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ exportType === 'attendance' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <view class="ed-option-info">
-          <text class="ed-option-title">考勤明细</text>
-          <text class="ed-option-desc">导出每日点名详细记录</text>
-        </view>
-      </view>
-      <view
-        class="ed-option-item {{ exportType === 'summary' ? 'active' : '' }}"
-        bindtap="onExportTypeChange"
-        data-type="summary"
-      >
-        <view class="ed-option-radio {{ exportType === 'summary' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ exportType === 'summary' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <view class="ed-option-info">
-          <text class="ed-option-title">考勤汇总</text>
-          <text class="ed-option-desc">导出出勤率统计数据</text>
-        </view>
-      </view>
-      <view
-        class="ed-option-item {{ exportType === 'students' ? 'active' : '' }}"
-        bindtap="onExportTypeChange"
-        data-type="students"
-      >
-        <view class="ed-option-radio {{ exportType === 'students' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ exportType === 'students' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <view class="ed-option-info">
-          <text class="ed-option-title">学生名单</text>
-          <text class="ed-option-desc">导出学生基础信息</text>
-        </view>
-      </view>
-    </view>
+    <van-radio-group value="{{ exportType }}" bind:change="onExportTypeChange">
+      <van-cell-group inset custom-class="ed-radio-group">
+        <van-cell
+          title="考勤明细"
+          label="导出每日点名详细记录"
+          clickable
+          center
+          data-name="attendance"
+          data-group="exportType"
+          bind:click="onRadioClick"
+          custom-class="ed-radio-cell"
+        >
+          <van-radio slot="right-icon" name="attendance" checked-color="#1a365d" />
+        </van-cell>
+        <van-cell
+          title="考勤汇总"
+          label="导出出勤率统计数据"
+          clickable
+          center
+          data-name="summary"
+          data-group="exportType"
+          bind:click="onRadioClick"
+          custom-class="ed-radio-cell"
+        >
+          <van-radio slot="right-icon" name="summary" checked-color="#1a365d" />
+        </van-cell>
+        <van-cell
+          title="学生名单"
+          label="导出学生基础信息"
+          clickable
+          center
+          data-name="students"
+          data-group="exportType"
+          bind:click="onRadioClick"
+          custom-class="ed-radio-cell"
+        >
+          <van-radio slot="right-icon" name="students" checked-color="#1a365d" />
+        </van-cell>
+      </van-cell-group>
+    </van-radio-group>
   </view>
 
   <!-- 日期范围选择 -->
@@ -83,65 +82,29 @@
       </view>
     </view>
 
-    <view class="ed-option-card">
-      <view
-        class="ed-option-item {{ dateRange === 'today' ? 'active' : '' }}"
-        bindtap="onDateRangeChange"
-        data-range="today"
-      >
-        <view class="ed-option-radio {{ dateRange === 'today' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ dateRange === 'today' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <text class="ed-option-title">今日</text>
-      </view>
-      <view
-        class="ed-option-item {{ dateRange === 'week' ? 'active' : '' }}"
-        bindtap="onDateRangeChange"
-        data-range="week"
-      >
-        <view class="ed-option-radio {{ dateRange === 'week' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ dateRange === 'week' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <text class="ed-option-title">本周</text>
-      </view>
-      <view
-        class="ed-option-item {{ dateRange === 'month' ? 'active' : '' }}"
-        bindtap="onDateRangeChange"
-        data-range="month"
-      >
-        <view class="ed-option-radio {{ dateRange === 'month' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ dateRange === 'month' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <text class="ed-option-title">本月</text>
-      </view>
-      <view
-        class="ed-option-item {{ dateRange === 'custom' ? 'active' : '' }}"
-        bindtap="onDateRangeChange"
-        data-range="custom"
-      >
-        <view class="ed-option-radio {{ dateRange === 'custom' ? 'checked' : '' }}">
-          <van-icon wx:if="{{ dateRange === 'custom' }}" name="success" size="24rpx" color="#fff" />
-        </view>
-        <text class="ed-option-title">自定义</text>
-      </view>
-    </view>
+    <van-radio-group value="{{ dateRange }}" bind:change="onDateRangeChange" direction="horizontal" custom-class="ed-date-radio-group">
+      <van-radio name="today" checked-color="#1a365d" custom-class="ed-date-radio">今日</van-radio>
+      <van-radio name="week" checked-color="#1a365d" custom-class="ed-date-radio">本周</van-radio>
+      <van-radio name="month" checked-color="#1a365d" custom-class="ed-date-radio">本月</van-radio>
+      <van-radio name="custom" checked-color="#1a365d" custom-class="ed-date-radio">自定义</van-radio>
+    </van-radio-group>
 
     <!-- 自定义日期范围 -->
-    <view wx:if="{{ dateRange === 'custom' }}" class="ed-custom-date">
-      <view class="ed-date-item" bindtap="onShowStartDatePicker">
-        <text class="ed-date-label">开始日期</text>
-        <view class="ed-date-value">
-          <text>{{ startDate || '请选择' }}</text>
-          <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+    <view wx:if="{{ dateRange === 'custom' }}" class="ed-custom-date" bindtap="onShowRangePicker">
+      <view class="ed-date-range-display">
+        <view class="ed-date-range-item">
+          <text class="ed-date-label">开始</text>
+          <text class="ed-date-value-text">{{ startDate || '请选择' }}</text>
+        </view>
+        <view class="ed-date-range-separator">
+          <van-icon name="arrow" size="28rpx" color="#a0aec0" />
+        </view>
+        <view class="ed-date-range-item">
+          <text class="ed-date-label">结束</text>
+          <text class="ed-date-value-text">{{ endDate || '请选择' }}</text>
         </view>
       </view>
-      <view class="ed-date-item" bindtap="onShowEndDatePicker">
-        <text class="ed-date-label">结束日期</text>
-        <view class="ed-date-value">
-          <text>{{ endDate || '请选择' }}</text>
-          <van-icon name="arrow" size="24rpx" color="#a0aec0" />
-        </view>
-      </view>
+      <van-icon name="calendar-o" size="36rpx" color="#1a365d" />
     </view>
   </view>
 
@@ -233,13 +196,15 @@
   <!-- 日期选择器 -->
   <van-calendar
     show="{{ showCalendar }}"
-    type="single"
+    type="{{ calendarType }}"
     min-date="{{ calendarMinDate }}"
     max-date="{{ calendarMaxDate }}"
     default-date="{{ calendarDefaultDate }}"
     bind:close="onCalendarClose"
     bind:confirm="onCalendarConfirm"
     color="#1a365d"
+    confirm-text="确定"
+    confirm-disabled-text="请选择日期范围"
   />
 
   <!-- 学部选择器 -->

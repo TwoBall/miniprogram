@@ -39,20 +39,21 @@
       />
     </view>
 
-    <!-- Tab 切换 - 悬浮样式 -->
-    <view class="ed-tabs-wrapper">
-      <view class="ed-tabs">
-        <view
-          wx:for="{{ roleOptions }}"
-          wx:key="value"
-          class="ed-tab-item {{activeTab === item.value ? 'active' : ''}}"
-          bindtap="onTabChange"
-          data-name="{{ item.value }}"
-        >
-          <text>{{ item.label }}</text>
-        </view>
-      </view>
-    </view>
+    <!-- Tab 切换 -->
+    <van-tabs
+      active="{{ activeTab }}"
+      bind:change="onTabChange"
+      color="#1a365d"
+      title-active-color="#1a365d"
+      custom-class="ed-van-tabs"
+    >
+      <van-tab
+        wx:for="{{ roleOptions }}"
+        wx:key="value"
+        title="{{ item.label }}"
+        name="{{ item.value }}"
+      />
+    </van-tabs>
 
     <!-- 用户列表 -->
     <view class="ed-tab-content">

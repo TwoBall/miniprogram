@@ -121,16 +121,16 @@ Page({
     this.setData({ dateRange: range, startDate, endDate })
   },
 
-  // 导出类型切换
+  // 导出类型切换 (van-radio-group change)
   onExportTypeChange(e) {
-    const type = e.currentTarget.dataset.type
+    const type = e.detail
     if (type === this.data.exportType) return
     this.setData({ exportType: type })
   },
 
-  // 日期范围切换
+  // 日期范围切换 (van-radio-group change)
   onDateRangeChange(e) {
-    const range = e.currentTarget.dataset.range
+    const range = e.detail
     if (range === this.data.dateRange) return
     this.setData({ dateRange: range })
     if (range !== 'custom') {
@@ -138,22 +138,44 @@ Page({
     }
   },
 
-  // 显示日期选择器
-  onShowStartDatePicker() {
-    this.showDatePickerPopup('start', this.data.startDate)
-  },
-
-  onShowEndDatePicker() {
-    this.showDatePickerPopup('end', this.data.endDate)
-  },
-
-  // 日期选择回调
-  onDateChange(dateStr, dateType) {
-    if (dateType === 'start') {
-      this.setData({ startDate: dateStr })
-    } else if (dateType === 'end') {
-      this.setData({ endDate: dateStr })
+  // 点击 cell 时选中对应 radio
+  onRadioClick(e) {
+    const { name, group } = e.currentTarget.dataset
+    if (group === 'exportType') {
+      this.setData({ exportType: name })
+    } else if (group === 'dateRange') {
+      this.setData({ dateRange: name })
+      if (name !== 'custom') {
+        this.setDateRange(name)
+      }
     }
+  },
+
+  // 显示日期范围选择器
+  onShowRangePicker() {
+    const { startDate, endDate } = this.data
+    let defaultDate = null
+
+    // 如果已有开始和结束日期，设置为默认值
+    if (startDate && endDate) {
+      const [sy, sm, sd] = startDate.split('-').map(Number)
+      const [ey, em, ed] = endDate.split('-').map(Number)
+      defaultDate = [
+        new Date(sy, sm - 1, sd).getTime(),
+        new Date(ey, em - 1, ed).getTime()
+      ]
+    }
+
+    this.setData({
+      showCalendar: true,
+      calendarType: 'range',
+      calendarDefaultDate: defaultDate
+    })
+  },
+
+  // 日期范围选择回调
+  onRangeConfirm(startDate, endDate) {
+    this.setData({ startDate, endDate })
   },
 
   // 显示筛选选择器

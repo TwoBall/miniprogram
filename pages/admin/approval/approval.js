@@ -52,34 +52,20 @@ Page({
   data: {
     activeTab: 0,
     pendingUsers: [],
-    approvedUsers: [], // 列表展示，需渲染
-    _rejectedUsers: [], // 已拒绝列表，可能不需要全量渲染？不，通常都需要渲染。
-    // 审批页面的数据通常都需要展示，且不涉及复杂的局部更新逻辑，
-    // 这里的 pendingUsers, approvedUsers, rejectedUsers 都是直接渲染的列表。
-    // 但如果有不用于渲染的中间数据，可以优化。
-    // 在这里，rejectedUsers 也是用于列表展示的，所以不建议设为纯数据字段。
-    // 重新审视：
-    // pendingUsers: 用于 pending-list 渲染
-    // approvedUsers: 用于 approved-list 渲染
-    // rejectedUsers: 用于 rejected-list 渲染
-    // currentUser: 用于弹窗，需要渲染
-    // rejectReason: 用于输入框绑定，需要渲染
-    // 结论：approval.js 中主要数据都参与渲染，无明显纯数据字段优化空间。
+    approvedUsers: [],
     rejectedUsers: [],
     loading: false,
     pageLoading: true,
     showRejectDialog: false,
     currentUser: null,
     rejectReason: '',
-    // 分页相关 - 已通过列表
+    // 分页
     approvedPage: 1,
     approvedHasMore: true,
     approvedLoading: false,
-    // 分页相关 - 已拒绝列表
     rejectedPage: 1,
     rejectedHasMore: true,
     rejectedLoading: false,
-    // 通用分页配置
     pageSize: 20
   },
 

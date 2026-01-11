@@ -14,53 +14,20 @@
   </view>
 
   <!-- Tab 切换 -->
-  <view class="ed-tabs-wrapper">
-    <scroll-view class="ed-tabs-scroll" scroll-x enable-flex>
-      <view class="ed-tabs ed-tabs-scrollable">
-        <view
-          class="ed-tab-item {{ activeTab === 'pending_teacher' ? 'active' : '' }}"
-          bindtap="onTabChange"
-          data-tab="pending_teacher"
-        >
-          <van-icon name="clock-o" size="28rpx" />
-          <text>待处理</text>
-        </view>
-        <view
-          wx:if="{{ role === 'classTeacher' }}"
-          class="ed-tab-item {{ activeTab === 'pending_classTeacher' ? 'active' : '' }}"
-          bindtap="onTabChange"
-          data-tab="pending_classTeacher"
-        >
-          <van-icon name="todo-list-o" size="28rpx" />
-          <text>待审批</text>
-        </view>
-        <view
-          class="ed-tab-item {{ activeTab === 'approved' ? 'active' : '' }}"
-          bindtap="onTabChange"
-          data-tab="approved"
-        >
-          <van-icon name="passed" size="28rpx" />
-          <text>已通过</text>
-        </view>
-        <view
-          class="ed-tab-item {{ activeTab === 'rejected' ? 'active' : '' }}"
-          bindtap="onTabChange"
-          data-tab="rejected"
-        >
-          <van-icon name="close" size="28rpx" />
-          <text>已拒绝</text>
-        </view>
-        <view
-          class="ed-tab-item {{ activeTab === 'all' ? 'active' : '' }}"
-          bindtap="onTabChange"
-          data-tab="all"
-        >
-          <van-icon name="bars" size="28rpx" />
-          <text>全部</text>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    color="#667eea"
+    title-active-color="#667eea"
+    swipeable
+    custom-class="ed-van-tabs"
+  >
+    <van-tab title="待处理" name="pending_teacher" />
+    <van-tab wx:if="{{ role === 'classTeacher' }}" title="待审批" name="pending_classTeacher" />
+    <van-tab title="已通过" name="approved" />
+    <van-tab title="已拒绝" name="rejected" />
+    <van-tab title="全部" name="all" />
+  </van-tabs>
 
   <!-- 骨架屏加载 -->
   <view wx:if="{{ loading }}" class="ed-skeleton-wrapper">

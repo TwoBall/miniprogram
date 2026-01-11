@@ -14,37 +14,17 @@
   </view>
 
   <!-- Tab 切换 -->
-  <view class="ed-tabs-wrapper">
-    <view class="ed-tabs">
-      <view
-        class="ed-tab-item {{ activeTab === 'all' ? 'active' : '' }}"
-        bindtap="onTabChange"
-        data-tab="all"
-      >
-        <van-icon name="bars" size="28rpx" />
-        <text>全部</text>
-      </view>
-      <view
-        class="ed-tab-item {{ activeTab === 'unread' ? 'active' : '' }}"
-        bindtap="onTabChange"
-        data-tab="unread"
-      >
-        <van-icon name="envelop-o" size="28rpx" />
-        <text>未读</text>
-        <view wx:if="{{ unreadCount > 0 }}" class="ed-tab-badge">
-          {{ unreadCount > 99 ? '99+' : unreadCount }}
-        </view>
-      </view>
-      <view
-        class="ed-tab-item {{ activeTab === 'read' ? 'active' : '' }}"
-        bindtap="onTabChange"
-        data-tab="read"
-      >
-        <van-icon name="passed" size="28rpx" />
-        <text>已读</text>
-      </view>
-    </view>
-  </view>
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    color="#667eea"
+    title-active-color="#667eea"
+    custom-class="ed-van-tabs"
+  >
+    <van-tab title="全部" name="all" />
+    <van-tab title="未读" name="unread" info="{{ unreadCount > 0 ? (unreadCount > 99 ? '99+' : unreadCount) : '' }}" />
+    <van-tab title="已读" name="read" />
+  </van-tabs>
 
   <!-- 全部标记为已读按钮 -->
   <view wx:if="{{ notifications.length > 0 && unreadCount > 0 }}" class="ed-action-wrapper">

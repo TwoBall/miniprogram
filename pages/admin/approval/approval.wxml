@@ -25,23 +25,18 @@
     </view>
   </view>
 
-  <!-- Tab 切换 - 悬浮样式 -->
-  <view class="ed-tabs-wrapper">
-    <view class="ed-tabs">
-      <view class="ed-tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{0}}">
-        <text>待审批</text>
-        <view class="ed-tab-badge warning" wx:if="{{pendingUsers.length > 0}}">{{pendingUsers.length}}</view>
-      </view>
-      <view class="ed-tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{1}}">
-        <text>已通过</text>
-        <view class="ed-tab-badge success" wx:if="{{approvedUsers.length > 0}}">{{approvedUsers.length}}</view>
-      </view>
-      <view class="ed-tab-item {{activeTab === 2 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{2}}">
-        <text>已拒绝</text>
-        <view class="ed-tab-badge error" wx:if="{{rejectedUsers.length > 0}}">{{rejectedUsers.length}}</view>
-      </view>
-    </view>
-  </view>
+  <!-- Tab 切换 -->
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    color="#1a365d"
+    title-active-color="#1a365d"
+    custom-class="ed-van-tabs"
+  >
+    <van-tab title="待审批" info="{{ pendingUsers.length > 0 ? pendingUsers.length : '' }}" />
+    <van-tab title="已通过" info="{{ approvedUsers.length > 0 ? approvedUsers.length : '' }}" />
+    <van-tab title="已拒绝" info="{{ rejectedUsers.length > 0 ? rejectedUsers.length : '' }}" />
+  </van-tabs>
 
   <!-- 待审批列表 -->
   <view class="ed-tab-content" wx:if="{{activeTab === 0}}">

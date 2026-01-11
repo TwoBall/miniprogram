@@ -48,7 +48,7 @@ Page({
 
   // 切换标签
   onTabChange(e) {
-    const tab = e.currentTarget.dataset.tab
+    const tab = e.detail.name
     if (tab === this.data.activeTab) return
     this.setData({ activeTab: tab, transfers: [] })
     this.resetPagination()

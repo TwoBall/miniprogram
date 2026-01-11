@@ -108,26 +108,16 @@
     </view>
 
     <!-- Tab 切换 -->
-    <view class="ed-tabs-wrapper">
-      <view class="ed-tabs">
-        <view
-          class="ed-tab-item {{ activeTab === 'students' ? 'active' : '' }}"
-          data-tab="students"
-          bindtap="onTabChange"
-        >
-          <van-icon name="friends-o" size="32rpx" />
-          <text>学生名单</text>
-        </view>
-        <view
-          class="ed-tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
-          data-tab="rank"
-          bindtap="onTabChange"
-        >
-          <van-icon name="bar-chart-o" size="32rpx" />
-          <text>出勤排行</text>
-        </view>
-      </view>
-    </view>
+    <van-tabs
+      active="{{ activeTab }}"
+      bind:change="onTabChange"
+      color="#667eea"
+      title-active-color="#667eea"
+      custom-class="ed-van-tabs"
+    >
+      <van-tab title="学生名单" name="students" />
+      <van-tab title="出勤排行" name="rank" />
+    </van-tabs>
 
     <!-- 搜索框 -->
     <view class="ed-search-wrapper" wx:if="{{ activeTab === 'students' }}">
