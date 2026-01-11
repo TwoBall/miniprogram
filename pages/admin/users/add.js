@@ -143,7 +143,7 @@ Page({
 
   onNameInput(e) {
     this.setData({
-      'formData.userName': e.detail || ''
+      'formData.userName': e.detail.value || ''
     })
   },
 
