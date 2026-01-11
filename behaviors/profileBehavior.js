@@ -66,10 +66,10 @@ const profileBehavior = Behavior({
 
       // 通用菜单（所有角色共享）
       // 注：添加新身份入口统一使用 switchRole 页面，避免重复入口导致行为不一致
+      // 注：退出登录按钮已提取到各页面 WXML 中的 ed-logout-section 区块
       const commonMenus = [
         { id: 'switchRole', icon: 'exchange', text: '切换身份', url: '/pages/common/switchRole/switchRole' },
-        { id: 'help', icon: 'question-o', text: '使用帮助', url: '/pages/common/help/help' },
-        { id: 'logout', icon: 'revoke', text: '退出登录', action: 'logout' }
+        { id: 'help', icon: 'question-o', text: '使用帮助', url: '/pages/common/help/help' }
       ]
 
       // 合并菜单
@@ -125,7 +125,7 @@ const profileBehavior = Behavior({
       }
     },
 
-    async handleLogout() {
+    async onLogout() {
       try {
         await Dialog.confirm({
           title: '确认退出',
