@@ -191,6 +191,7 @@
 
   <!-- 日历选择器 -->
   <van-calendar
+    wx:if="{{ showCalendar }}"
     show="{{ showCalendar }}"
     type="single"
     min-date="{{ calendarMinDate }}"
