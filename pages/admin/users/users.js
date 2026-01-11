@@ -43,7 +43,7 @@ Page({
   },
 
   onTabChange(e) {
-    const role = e.detail.name
+    const role = e.currentTarget.dataset.name
     this.setData({ activeTab: role, users: [] })
     this.resetPagination()
     this.loadList()
