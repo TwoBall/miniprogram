@@ -1,119 +1,234 @@
-<view class="student-detail-container">
-  <!-- 学生基本信息 -->
-  <view class="student-card card-pop-in">
-    <view class="student-avatar">
-      <van-icon name="user-circle-o" size="64px" color="#1890ff" />
-    </view>
-    <view class="student-basic">
-      <view class="student-name">{{ student.studentName || '加载中...' }}</view>
-      <view class="student-meta">
-        <van-tag wx:if="{{ student.gender }}" plain type="{{ student.gender === '男' ? 'primary' : 'danger' }}" size="medium">
-          {{ student.gender }}
-        </van-tag>
-        <text class="meta-text">{{ student.className }}</text>
+<!-- 学生详情页 - 教育杂志风 -->
+<view class="ed-page ed-student-detail-page">
+  <!-- Hero 头部 - 学生信息卡 -->
+  <view class="ed-hero ed-hero-class-teacher fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="user-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>学生档案</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">{{ student.studentName || '加载中...' }}</text>
+      </view>
+      <view class="ed-hero-divider"></view>
+      <view class="ed-hero-meta">
+        <view wx:if="{{ student.gender }}" class="ed-meta-item">
+          <view class="ed-gender-badge {{ student.gender === '男' ? 'male' : 'female' }}">
+            {{ student.gender }}
+          </view>
+        </view>
+        <view class="ed-meta-item">
+          <van-icon name="location-o" size="26rpx" />
+          <text>{{ student.className || '未分配班级' }}</text>
+        </view>
+        <view class="ed-meta-item">
+          <van-icon name="apps-o" size="26rpx" />
+          <text>{{ student.clubName || '未分配社团' }}</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 标签页 -->
-  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>
-    <van-tab title="基本信息" name="info">
-      <view class="tab-content">
-        <van-cell-group>
-          <van-cell title="姓名" value="{{ student.studentName }}" />
-          <van-cell title="性别" value="{{ student.gender }}" />
-          <van-cell title="班级" value="{{ student.className }}" />
-          <van-cell title="学部" value="{{ student.department }}" />
-          <van-cell title="社团" value="{{ student.clubName || '未分配' }}" />
-          <van-cell wx:if="{{ student.classTeacher }}" title="班主任" value="{{ student.classTeacher }}" />
-          <van-cell wx:if="{{ student.classTeacherPhone }}" title="班主任电话" value="{{ student.classTeacherPhone }}" />
-        </van-cell-group>
+  <!-- Tab 切换 -->
+  <view class="ed-tabs-wrapper">
+    <view class="ed-tabs">
+      <view
+        class="ed-tab-item {{ activeTab === 'info' ? 'active' : '' }}"
+        data-tab="info"
+        bindtap="onTabChange"
+      >
+        <van-icon name="user-o" size="32rpx" />
+        <text>基本信息</text>
       </view>
-    </van-tab>
+      <view
+        class="ed-tab-item {{ activeTab === 'attendance' ? 'active' : '' }}"
+        data-tab="attendance"
+        bindtap="onTabChange"
+      >
+        <van-icon name="todo-list-o" size="32rpx" />
+        <text>考勤记录</text>
+      </view>
+    </view>
+  </view>
 
-    <van-tab title="考勤记录" name="attendance">
-      <view class="tab-content">
-        <!-- 考勤统计 -->
-        <view class="attendance-stats">
-          <view class="stat-item">
-            <view class="stat-value">{{ totalRecords }}</view>
-            <view class="stat-label">总次数</view>
-          </view>
-          <view class="stat-item success">
-            <view class="stat-value">{{ presentCount }}</view>
-            <view class="stat-label">正常</view>
-          </view>
-          <view class="stat-item warning">
-            <view class="stat-value">{{ lateCount }}</view>
-            <view class="stat-label">迟到</view>
-          </view>
-          <view class="stat-item danger">
-            <view class="stat-value">{{ absentCount }}</view>
-            <view class="stat-label">缺勤</view>
-          </view>
-          <view class="stat-item primary">
-            <view class="stat-value">{{ attendanceRate }}%</view>
-            <view class="stat-label">出勤率</view>
-          </view>
+  <!-- 基本信息 Tab -->
+  <view wx:if="{{ activeTab === 'info' }}" class="ed-tab-content">
+    <view class="ed-section">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">01</text>
+          <text class="ed-section-text">学生信息</text>
         </view>
+      </view>
 
-        <!-- 考勤历史列表 -->
-        <view class="attendance-list">
-          <view
-            wx:for="{{ attendanceHistory }}"
-            wx:key="_id"
-            class="attendance-item list-item-enter"
-          >
-            <view class="attendance-header">
-              <view class="date">{{ item.date }}</view>
-              <van-tag
-                type="{{ item.studentStatus === 'present' ? 'success' : item.studentStatus === 'late' ? 'warning' : 'danger' }}"
-                size="medium"
-              >
+      <view class="ed-info-card">
+        <view class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="user-o" size="28rpx" color="#718096" />
+            <text>姓名</text>
+          </view>
+          <view class="ed-info-value">{{ student.studentName || '--' }}</view>
+        </view>
+        <view class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="friends-o" size="28rpx" color="#718096" />
+            <text>性别</text>
+          </view>
+          <view class="ed-info-value">{{ student.gender || '--' }}</view>
+        </view>
+        <view class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="location-o" size="28rpx" color="#718096" />
+            <text>班级</text>
+          </view>
+          <view class="ed-info-value">{{ student.className || '--' }}</view>
+        </view>
+        <view class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="shop-o" size="28rpx" color="#718096" />
+            <text>学部</text>
+          </view>
+          <view class="ed-info-value">{{ student.department || '--' }}</view>
+        </view>
+        <view class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="apps-o" size="28rpx" color="#718096" />
+            <text>社团</text>
+          </view>
+          <view class="ed-info-value">{{ student.clubName || '未分配' }}</view>
+        </view>
+        <view wx:if="{{ student.classTeacher }}" class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="manager-o" size="28rpx" color="#718096" />
+            <text>班主任</text>
+          </view>
+          <view class="ed-info-value">{{ student.classTeacher }}</view>
+        </view>
+        <view wx:if="{{ student.classTeacherPhone }}" class="ed-info-row">
+          <view class="ed-info-label">
+            <van-icon name="phone-o" size="28rpx" color="#718096" />
+            <text>班主任电话</text>
+          </view>
+          <view class="ed-info-value ed-value-phone">{{ student.classTeacherPhone }}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 考勤记录 Tab -->
+  <view wx:if="{{ activeTab === 'attendance' }}" class="ed-tab-content">
+    <!-- 考勤统计 -->
+    <view class="ed-stats-grid">
+      <view class="ed-stat-card">
+        <view class="ed-stat-icon">
+          <van-icon name="todo-list-o" size="40rpx" color="#718096" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ totalRecords }}</view>
+          <view class="ed-stat-label">总次数</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-success">
+        <view class="ed-stat-icon">
+          <van-icon name="passed" size="40rpx" color="#38a169" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ presentCount }}</view>
+          <view class="ed-stat-label">正常</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-warning">
+        <view class="ed-stat-icon">
+          <van-icon name="clock-o" size="40rpx" color="#dd6b20" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ lateCount }}</view>
+          <view class="ed-stat-label">迟到</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-error">
+        <view class="ed-stat-icon">
+          <van-icon name="cross" size="40rpx" color="#c53030" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ absentCount }}</view>
+          <view class="ed-stat-label">缺勤</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 出勤率展示 -->
+    <view class="ed-rate-display">
+      <view class="ed-rate-label">出勤率</view>
+      <view class="ed-rate-value {{ attendanceRate >= 90 ? 'excellent' : attendanceRate >= 80 ? 'good' : attendanceRate >= 60 ? 'normal' : 'poor' }}">
+        {{ attendanceRate }}%
+      </view>
+    </view>
+
+    <!-- 考勤历史列表 -->
+    <view class="ed-section">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">01</text>
+          <text class="ed-section-text">考勤历史</text>
+        </view>
+      </view>
+
+      <view wx:if="{{ loading }}" class="ed-loading-center">
+        <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+      </view>
+
+      <view wx:elif="{{ attendanceHistory.length > 0 }}" class="ed-attendance-list">
+        <view
+          wx:for="{{ attendanceHistory }}"
+          wx:key="_id"
+          class="ed-attendance-card card-tap"
+        >
+          <!-- 左侧状态指示条 -->
+          <view class="ed-card-indicator {{ item.studentStatus === 'present' ? 'success' : item.studentStatus === 'late' ? 'warning' : 'error' }}"></view>
+
+          <view class="ed-card-body">
+            <view class="ed-attendance-header">
+              <view class="ed-attendance-date">{{ item.date }}</view>
+              <view class="ed-status-tag {{ item.studentStatus === 'present' ? 'success' : item.studentStatus === 'late' ? 'warning' : 'error' }}">
                 {{ item.studentStatus === 'present' ? '正常' : item.studentStatus === 'late' ? '迟到' : '缺勤' }}
-              </van-tag>
+              </view>
             </view>
-            <view class="attendance-info">
-              <view class="info-row">
-                <van-icon name="apps-o" size="14px" color="#999" />
+            <view class="ed-attendance-info">
+              <view class="ed-info-row-small">
+                <van-icon name="apps-o" size="24rpx" color="#718096" />
                 <text>{{ item.clubName }}</text>
               </view>
-              <view wx:if="{{ item.studentNote }}" class="info-row">
-                <van-icon name="comment-o" size="14px" color="#999" />
+              <view wx:if="{{ item.studentNote }}" class="ed-info-row-small ed-note">
+                <van-icon name="comment-o" size="24rpx" color="#dd6b20" />
                 <text>{{ item.studentNote }}</text>
               </view>
             </view>
           </view>
-
-          <!-- 空状态 -->
-          <empty-state
-            wx:if="{{ !loading && attendanceHistory.length === 0 }}"
-            type="attendance"
-            description="暂无考勤记录"
-          />
-
-          <!-- 加载中 -->
-          <view wx:if="{{ loading }}" class="loading-wrapper">
-            <van-loading type="spinner" size="24px">加载中...</van-loading>
-          </view>
         </view>
       </view>
-    </van-tab>
-  </van-tabs>
+
+      <empty-state
+        wx:else
+        type="attendance"
+        description="暂无考勤记录"
+      />
+    </view>
+  </view>
 
   <!-- 底部操作按钮 -->
-  <view class="bottom-actions" wx:if="{{ student && student.clubName }}">
+  <view class="ed-bottom-actions" wx:if="{{ student && student.clubName }}">
     <van-button
       type="primary"
       icon="exchange"
       size="large"
       block
       bind:click="goToTransfer"
-      custom-class="btn-active"
+      custom-class="ed-btn-primary btn-active"
     >
       申请转社团
     </van-button>
   </view>
-</view>
 
-<van-toast id="van-toast" />
+  <van-toast id="van-toast" />
+</view>

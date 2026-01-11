@@ -1,34 +1,67 @@
-<view class="login-container">
-  <view class="logo-section">
-    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-    <text class="title">智慧社团管理系统</text>
-    <text class="subtitle">Smart Club Management System</text>
+<!-- 登录页 - 教育杂志风 -->
+<view class="ed-login-page">
+  <!-- 背景装饰 -->
+  <view class="ed-login-bg">
+    <view class="ed-login-circle ed-circle-1"></view>
+    <view class="ed-login-circle ed-circle-2"></view>
+    <view class="ed-login-circle ed-circle-3"></view>
   </view>
 
-  <view class="welcome-section">
-    <text class="welcome-text">欢迎使用智慧社团管理系统</text>
-    <text class="welcome-desc">请使用微信授权登录</text>
+  <!-- 品牌区域 -->
+  <view class="ed-login-brand">
+    <view class="ed-login-logo-wrap">
+      <image class="ed-login-logo" src="/images/logo.png" mode="aspectFit"></image>
+    </view>
+    <view class="ed-login-title">
+      <text class="ed-title-line">智慧</text>
+      <text class="ed-title-line ed-title-accent">社团</text>
+    </view>
+    <view class="ed-login-divider"></view>
+    <text class="ed-login-subtitle">Smart Club Management System</text>
   </view>
 
-  <view class="button-section">
-    <van-button
-      type="primary"
-      block
-      round
-      size="large"
-      loading="{{ loading }}"
-      loading-text="登录中..."
-      bind:click="handleWxLogin"
-      icon="wechat"
-      custom-class="btn-active"
-    >
-      微信一键登录
-    </van-button>
+  <!-- 欢迎区域 -->
+  <view class="ed-login-welcome">
+    <view class="ed-welcome-badge">
+      <van-icon name="smile-o" size="32rpx" color="#ed8936" />
+      <text>欢迎使用</text>
+    </view>
+    <text class="ed-welcome-text">开启高效社团管理之旅</text>
   </view>
 
-  <view class="tips-section">
-    <van-icon name="info-o" size="32rpx" color="#999" />
-    <text class="tips-text">首次使用需要完成注册信息</text>
+  <!-- 登录按钮区域 -->
+  <view class="ed-login-action">
+    <view class="ed-login-card">
+      <view class="ed-login-card-inner">
+        <van-button
+          type="primary"
+          block
+          size="large"
+          loading="{{ loading }}"
+          loading-text="登录中..."
+          bind:click="handleWxLogin"
+          custom-class="ed-login-btn btn-active"
+        >
+          <view class="ed-btn-content">
+            <van-icon name="wechat" size="40rpx" />
+            <text>微信一键登录</text>
+          </view>
+        </van-button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提示区域 -->
+  <view class="ed-login-tips">
+    <view class="ed-tips-item">
+      <van-icon name="info-o" size="28rpx" color="#a0aec0" />
+      <text>首次使用需要完成注册信息</text>
+    </view>
+  </view>
+
+  <!-- 底部信息 -->
+  <view class="ed-login-footer">
+    <text class="ed-footer-text">安全 · 高效 · 智能</text>
   </view>
 
   <van-toast id="van-toast" />

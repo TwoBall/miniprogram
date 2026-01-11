@@ -1,40 +1,15 @@
+/* 教师点名页样式 - 教育杂志风 */
+
 /* 页面容器 */
-.attendance-container {
+.ed-attendance-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
-}
-
-/* 社团信息 */
-.club-info {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
-}
-
-.club-name {
-  font-size: 40rpx;
-  font-weight: bold;
-}
-
-.date-time {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  font-size: 26rpx;
-  opacity: 0.9;
-  margin-bottom: 12rpx;
-}
-
-.remaining-info {
-  font-size: 28rpx;
-  opacity: 0.85;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
 
 /* 非上课日提示 */
-.no-class-section {
+.ed-no-class-section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -43,22 +18,30 @@
   padding: 60rpx 30rpx;
 }
 
-.no-class-tips {
+.ed-no-class-tips {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   margin-top: 30rpx;
-  padding: 20rpx 40rpx;
-  background-color: #fff;
+  padding: 24rpx 32rpx;
+  background-color: #ffffff;
   border-radius: 12rpx;
-  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.04);
 }
 
-.no-class-tips text {
-  font-size: 26rpx;
-  color: #999;
+.ed-no-class-tips text {
+  font-size: 24rpx;
+  color: #718096;
   line-height: 1.6;
 }
 
-/* 点名完成提示 */
-.complete-section {
+/* 骨架屏包装 */
+.ed-skeleton-wrapper {
+  padding: 30rpx;
+}
+
+/* 完成提示 */
+.ed-complete-section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -67,142 +50,208 @@
   padding: 60rpx;
 }
 
-.complete-icon {
-  font-size: 120rpx;
-  margin-bottom: 30rpx;
-}
-
-.complete-text {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30rpx;
-}
-
-.complete-stats {
+.ed-complete-icon {
+  width: 180rpx;
+  height: 180rpx;
+  background: #c6f6d5;
+  border-radius: 50%;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40rpx;
+  animation: successPop 0.5s ease-out;
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ed-complete-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 40rpx;
+}
+
+.ed-complete-stats {
+  display: flex;
+  align-items: center;
   gap: 40rpx;
 }
 
-.present-stat {
-  font-size: 32rpx;
-  color: #52c41a;
-  font-weight: 500;
+.ed-complete-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.absent-stat {
-  font-size: 32rpx;
-  color: #ff4d4f;
-  font-weight: 500;
+.ed-complete-stat .ed-stat-num {
+  font-size: 48rpx;
+  font-weight: 800;
+}
+
+.ed-complete-stat .ed-stat-label {
+  font-size: 24rpx;
+  color: #718096;
+  margin-top: 8rpx;
+}
+
+.ed-complete-stat.ed-stat-success .ed-stat-num {
+  color: #38a169;
+}
+
+.ed-complete-stat.ed-stat-error .ed-stat-num {
+  color: #c53030;
+}
+
+.ed-complete-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background: #e2e8f0;
 }
 
 /* 卡片堆叠区 */
-.card-stack {
+.ed-card-stack {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   padding: 20rpx;
-  min-height: 600rpx;
+  min-height: 580rpx;
 }
 
 /* 学生卡片基础样式 */
-.student-card {
+.ed-student-card {
   position: absolute;
-  width: 600rpx;
+  width: 580rpx;
   background: #ffffff;
-  border-radius: 32rpx;
-  box-shadow: 0 10rpx 60rpx rgba(0, 0, 0, 0.15);
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 40rpx rgba(26, 54, 93, 0.12);
   overflow: hidden;
 }
 
+/* 背景卡片占位 */
+.ed-card-placeholder {
+  padding: 120rpx 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* 背景卡片（第3张） */
-.card-bg-2 {
-  transform: scale(0.9) translateY(40rpx);
-  opacity: 0.5;
+.ed-card-bg-2 {
+  transform: scale(0.88) translateY(36rpx);
+  opacity: 0.4;
   z-index: 1;
 }
 
 /* 背景卡片（第2张） */
-.card-bg-1 {
-  transform: scale(0.95) translateY(20rpx);
-  opacity: 0.75;
+.ed-card-bg-1 {
+  transform: scale(0.94) translateY(18rpx);
+  opacity: 0.7;
   z-index: 2;
 }
 
 /* 当前卡片 */
-.card-current {
+.ed-card-current {
   z-index: 10;
   transition: transform 0.1s ease-out;
 }
 
 /* 卡片内容 */
-.card-content {
-  padding: 50rpx 40rpx;
+.ed-card-body {
+  padding: 48rpx 40rpx;
   text-align: center;
 }
 
 /* 头像区域 */
-.student-avatar {
-  margin-bottom: 30rpx;
-}
-
-.avatar-circle {
-  width: 160rpx;
-  height: 160rpx;
+.ed-student-avatar {
+  width: 140rpx;
+  height: 140rpx;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 24rpx;
 }
 
-.avatar-circle.male {
-  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
+.ed-student-avatar.male {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
 }
 
-.avatar-circle.female {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.ed-student-avatar.female {
+  background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
 }
 
 /* 学生姓名 */
-.student-name {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #333;
+.ed-student-name {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #1a202c;
   margin-bottom: 16rpx;
 }
 
 /* 性别标签 */
-.student-gender {
-  margin-bottom: 30rpx;
+.ed-student-gender {
+  margin-bottom: 28rpx;
+}
+
+.ed-gender-tag {
+  display: inline-block;
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.ed-gender-tag.male {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  border: 1rpx solid #90cdf4;
+}
+
+.ed-gender-tag.female {
+  background: #fff5f7;
+  color: #d53f8c;
+  border: 1rpx solid #fbb6ce;
 }
 
 /* 学生信息 */
-.student-info {
+.ed-student-info {
   text-align: left;
-  padding: 30rpx;
-  background: #f8f9fa;
-  border-radius: 16rpx;
+  padding: 24rpx;
+  background: #f7fafc;
+  border-radius: 12rpx;
 }
 
-.info-item {
+.ed-info-row {
   display: flex;
   align-items: center;
   gap: 12rpx;
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  color: #4a5568;
+  margin-bottom: 14rpx;
 }
 
-.info-item:last-child {
+.ed-info-row:last-child {
   margin-bottom: 0;
 }
 
 /* 反馈图标 */
-.feedback-indicator {
+.ed-feedback-indicator {
   position: absolute;
-  top: 40rpx;
+  top: 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -211,187 +260,210 @@
   transition: opacity 0.15s ease;
 }
 
-.feedback-indicator text {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-top: 10rpx;
+.ed-feedback-indicator text {
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-top: 8rpx;
 }
 
-.present-indicator {
-  right: 40rpx;
-  color: #52c41a;
-  transform: rotate(15deg);
+.ed-present-indicator {
+  right: 32rpx;
+  color: #38a169;
+  transform: rotate(12deg);
 }
 
-.absent-indicator {
-  left: 40rpx;
-  color: #ff4d4f;
-  transform: rotate(-15deg);
+.ed-absent-indicator {
+  left: 32rpx;
+  color: #c53030;
+  transform: rotate(-12deg);
 }
 
 /* 卡片边框效果 */
 .border-present {
-  border: 4rpx solid #52c41a;
+  border: 4rpx solid #38a169 !important;
 }
 
 .border-absent {
-  border: 4rpx solid #ff4d4f;
+  border: 4rpx solid #c53030 !important;
 }
 
 /* 底部操作按钮 */
-.action-section {
+.ed-action-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 50rpx;
-  padding: 30rpx;
+  gap: 48rpx;
+  padding: 24rpx 30rpx;
 }
 
-.action-btn {
-  width: 120rpx;
-  height: 120rpx;
+.ed-action-btn {
+  width: 110rpx;
+  height: 110rpx;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #ffffff;
-  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4rpx 20rpx rgba(26, 54, 93, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.action-btn:active {
+.ed-action-btn:active {
   transform: scale(0.95);
-  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2rpx 10rpx rgba(26, 54, 93, 0.1);
 }
 
-.present-btn {
-  border: 4rpx solid #52c41a;
+.ed-present-btn {
+  border: 3rpx solid #38a169;
 }
 
-.absent-btn {
-  border: 4rpx solid #ff4d4f;
+.ed-absent-btn {
+  border: 3rpx solid #c53030;
 }
 
-.undo-btn {
-  width: 80rpx;
-  height: 80rpx;
-  border: 2rpx solid #ddd;
+.ed-undo-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border: 2rpx solid #e2e8f0;
 }
 
-.undo-btn.disabled {
+.ed-undo-btn.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
 
 /* 底部进度栏 */
-.progress-section {
+.ed-progress-section {
   background: #ffffff;
-  border-top: 1rpx solid #eee;
-  padding: 20rpx 30rpx 40rpx;
+  border-top: 1rpx solid #e2e8f0;
+  padding: 20rpx 30rpx 32rpx;
 }
 
-.progress-header {
+.ed-progress-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.progress-stats {
+.ed-progress-stats {
   display: flex;
-  gap: 30rpx;
+  gap: 28rpx;
 }
 
-.stat-item-inline {
+.ed-stat-inline {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.stat-num {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #333;
+.ed-stat-inline .ed-stat-num {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1a202c;
 }
 
-.stat-num.present {
-  color: #52c41a;
+.ed-stat-inline.ed-stat-success .ed-stat-num {
+  color: #38a169;
 }
 
-.stat-num.absent {
-  color: #ff4d4f;
+.ed-stat-inline.ed-stat-error .ed-stat-num {
+  color: #c53030;
 }
 
-.stat-text {
+.ed-stat-inline .ed-stat-text {
   font-size: 22rpx;
-  color: #999;
+  color: #a0aec0;
   margin-top: 4rpx;
 }
 
-.progress-actions {
+.ed-progress-actions {
   display: flex;
   gap: 16rpx;
 }
 
+.ed-btn-outline {
+  border-color: #1a365d !important;
+  color: #1a365d !important;
+}
+
+.ed-btn-primary {
+  background: #1a365d !important;
+  border-color: #1a365d !important;
+}
 
 /* 已点名学生列表 */
-.marked-list {
+.ed-marked-list {
   margin-top: 20rpx;
   padding: 20rpx;
-  background: #f8f9fa;
+  background: #f7fafc;
   border-radius: 12rpx;
 }
 
-.marked-list-header {
+.ed-marked-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 28rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #4a5568;
+  font-weight: 500;
 }
 
-.marked-students-scroll {
-  max-height: 300rpx;
+.ed-marked-scroll {
+  max-height: 280rpx;
   margin-top: 16rpx;
-  background: #f8f9fa;
+  background: #f7fafc;
   border-radius: 12rpx;
   padding: 0 20rpx;
 }
 
-.marked-student-item {
+.ed-marked-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16rpx 0;
-  border-bottom: 1rpx solid #eee;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #e2e8f0;
 }
 
-.marked-student-item:last-child {
+.ed-marked-item:last-child {
   border-bottom: none;
 }
 
-.marked-student-info {
+.ed-marked-info {
   display: flex;
   gap: 16rpx;
   align-items: center;
 }
 
-.marked-name {
-  font-size: 28rpx;
-  color: #333;
+.ed-marked-name {
+  font-size: 26rpx;
+  color: #1a202c;
   font-weight: 500;
 }
 
-.marked-class {
-  font-size: 24rpx;
-  color: #999;
+.ed-marked-class {
+  font-size: 22rpx;
+  color: #a0aec0;
 }
 
-.status-toggle {
+.ed-marked-status {
   display: flex;
   align-items: center;
   gap: 12rpx;
 }
 
-.toggle-icon {
-  opacity: 0.6;
+.ed-status-tag {
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.ed-status-tag.success {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+.ed-status-tag.error {
+  background: #fed7d7;
+  color: #c53030;
 }

@@ -11,7 +11,7 @@
       wx:else
       name="{{currentConfig.icon}}"
       size="{{imageSize}}"
-      color="#dcdee0"
+      color="#cbd5e0"
     />
   </view>
 

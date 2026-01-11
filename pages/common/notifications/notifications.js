@@ -133,7 +133,7 @@ Page({
       .map(n => n._id)
 
     if (unreadIds.length === 0) {
-      Toast('没有未读通知')
+      SafeToast.fail('没有未读通知')
       return
     }
 

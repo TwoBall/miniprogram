@@ -43,7 +43,7 @@ Page({
         this.loadRecordDetail(options.recordId)
       }
     } else {
-      Toast('记录不存在')
+      SafeToast.fail('记录不存在')
       setTimeout(() => {
         wx.navigateBack()
       }, 1500)
@@ -206,14 +206,14 @@ Page({
       if (result.success && result.data) {
         this.applyRecordData(result.data)
       } else {
-        Toast(result.message || '记录不存在')
+        SafeToast.fail(result.message || '记录不存在')
         setTimeout(() => {
           wx.navigateBack()
         }, 1500)
       }
     } catch (error) {
       console.error('加载记录详情失败:', error)
-      Toast('加载失败')
+      SafeToast.fail('加载失败')
       this.setData({ loading: false })
     } finally {
       SafeToast.clear()

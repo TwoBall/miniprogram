@@ -1,126 +1,155 @@
-/* 领导班级详情页面 - 页面特有样式 */
-/* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 领导班级详情页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
 
-.detail-container {
+/* ========== 页面容器 ========== */
+.ed-detail-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page, #fefcf6);
   padding-bottom: 40rpx;
 }
 
-/* 班级信息 */
-.class-info {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
+/* ========== Hero 头部 - 领导金色 ========== */
+.ed-hero-leader {
+  background: linear-gradient(165deg, #744210 0%, #d69e2e 100%);
 }
 
-.class-name {
-  font-size: 40rpx;
-  font-weight: bold;
-}
-
-.date-info {
+.ed-hero-meta {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 8rpx;
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.9);
-  margin-top: 12rpx;
+  margin-top: 16rpx;
 }
 
-/* 学生列表 */
-.student-list {
-  padding: 20rpx;
-}
-
-/* 学生卡片 - 继承公共 .card，仅覆盖特有样式 */
-.student-card {
+/* ========== 学生列表 ========== */
+.ed-student-list {
   padding: 24rpx;
 }
 
-.student-info {
-  flex: 1;
+/* ========== 学生卡片 ========== */
+.ed-student-card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  margin-bottom: 16rpx;
+  overflow: hidden;
 }
 
-.student-header {
+/* 左侧状态指示条 */
+.ed-card-indicator {
+  width: 8rpx;
+  flex-shrink: 0;
+}
+
+.ed-card-indicator.success {
+  background: linear-gradient(180deg, #38a169 0%, #276749 100%);
+}
+
+.ed-card-indicator.error {
+  background: linear-gradient(180deg, #c53030 0%, #9b2c2c 100%);
+}
+
+.ed-card-indicator.pending {
+  background: linear-gradient(180deg, #a0aec0 0%, #718096 100%);
+}
+
+.ed-card-body {
+  flex: 1;
+  padding: 24rpx;
+}
+
+/* 学生头部 */
+.ed-student-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12rpx;
+  margin-bottom: 16rpx;
 }
 
-.student-name {
+.ed-student-name {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   font-size: 32rpx;
   font-weight: 600;
-  color: #333;
-  display: flex;
-  align-items: center;
+  color: var(--gray-800, #2d3748);
 }
 
-.gender-tag {
+.ed-gender-tag {
   font-size: 20rpx;
-  padding: 2rpx 10rpx;
+  padding: 4rpx 12rpx;
   border-radius: 6rpx;
-  background: #f5f5f5;
-  color: #999;
-  margin-left: 10rpx;
+  font-weight: 500;
 }
 
-.student-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
+.ed-gender-tag.male {
+  background: rgba(26, 54, 93, 0.1);
+  color: var(--color-primary, #1a365d);
 }
 
-.detail-item {
-  display: flex;
-  align-items: center;
-  font-size: 24rpx;
-  color: #666;
-}
-
-.label {
-  color: #999;
-  margin-right: 8rpx;
-}
-
-.value {
-  color: #333;
+.ed-gender-tag.female {
+  background: rgba(197, 48, 48, 0.1);
+  color: #c53030;
 }
 
 /* 状态标签 */
-.status-badge {
+.ed-status-badge {
   padding: 8rpx 20rpx;
-  border-radius: 30rpx;
+  border-radius: 24rpx;
   font-size: 24rpx;
   font-weight: 500;
-  white-space: nowrap;
 }
 
-.status-badge.present {
-  background: #f6ffed;
-  color: #52c41a;
+.ed-status-badge.success {
+  background: rgba(56, 161, 105, 0.1);
+  color: #38a169;
 }
 
-.status-badge.absent {
-  background: #fff1f0;
-  color: #ff4d4f;
+.ed-status-badge.error {
+  background: rgba(197, 48, 48, 0.1);
+  color: #c53030;
 }
 
-.status-badge.null {
-  background: #f5f5f5;
-  color: #999;
+.ed-status-badge.pending {
+  background: var(--gray-100, #f7fafc);
+  color: var(--gray-500, #a0aec0);
 }
 
-.feedback-info {
+/* 详情信息 */
+.ed-student-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.ed-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+}
+
+.ed-info-label {
+  color: var(--gray-500, #a0aec0);
+  min-width: 80rpx;
+}
+
+.ed-info-value {
+  color: var(--gray-700, #4a5568);
+}
+
+/* 反馈信息 */
+.ed-feedback-info {
   display: flex;
   align-items: center;
   gap: 8rpx;
   margin-top: 16rpx;
+  padding: 12rpx 16rpx;
+  background: rgba(214, 158, 46, 0.1);
+  border-radius: 12rpx;
+  border-left: 4rpx solid #d69e2e;
   font-size: 24rpx;
-  color: #faad14;
-  background: #fffbe6;
-  padding: 8rpx 16rpx;
-  border-radius: 8rpx;
-  width: fit-content;
+  color: #744210;
 }

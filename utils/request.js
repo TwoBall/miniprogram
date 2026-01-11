@@ -103,7 +103,7 @@ async function callCloud(name, data = {}, options = {}) {
     const isNetworkError = lastError?.message?.includes('网络') ||
                           lastError?.message?.includes('timeout') ||
                           lastError?.errMsg?.includes('request:fail')
-    
+
     if (isNetworkError) {
       try {
         await Dialog.confirm({

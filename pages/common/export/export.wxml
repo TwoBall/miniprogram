@@ -1,105 +1,212 @@
-<view class="export-container">
+<!-- 数据导出页 - 教育杂志风 -->
+<view class="ed-page ed-export-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-compact fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="down" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>数据管理</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">数据导出</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 历史记录入口 -->
-  <view class="history-entry icon-tap" bind:tap="goToHistory">
-    <van-icon name="orders-o" size="20px" />
-    <text>查看导出历史</text>
-    <van-icon name="arrow" size="16px" color="#999" />
+  <view class="ed-history-entry card-tap" bind:tap="goToHistory">
+    <view class="ed-entry-left">
+      <van-icon name="orders-o" size="40rpx" color="#1a365d" />
+      <text>查看导出历史</text>
+    </view>
+    <van-icon name="arrow" size="28rpx" color="#a0aec0" />
   </view>
 
   <!-- 导出类型选择 -->
-  <view class="section">
-    <view class="section-title">导出类型</view>
-    <van-cell-group>
-      <van-radio-group value="{{ exportType }}" bind:change="onExportTypeChange">
-        <van-cell-group>
-          <van-cell title="考勤明细" clickable>
-            <van-radio slot="right-icon" name="attendance" />
-          </van-cell>
-          <van-cell title="考勤汇总" clickable>
-            <van-radio slot="right-icon" name="summary" />
-          </van-cell>
-          <van-cell title="学生名单" clickable>
-            <van-radio slot="right-icon" name="students" />
-          </van-cell>
-        </van-cell-group>
-      </van-radio-group>
-    </van-cell-group>
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">01</text>
+        <text class="ed-section-text">导出类型</text>
+      </view>
+    </view>
+
+    <view class="ed-option-card">
+      <view
+        class="ed-option-item {{ exportType === 'attendance' ? 'active' : '' }}"
+        bindtap="onExportTypeChange"
+        data-type="attendance"
+      >
+        <view class="ed-option-radio {{ exportType === 'attendance' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ exportType === 'attendance' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <view class="ed-option-info">
+          <text class="ed-option-title">考勤明细</text>
+          <text class="ed-option-desc">导出每日点名详细记录</text>
+        </view>
+      </view>
+      <view
+        class="ed-option-item {{ exportType === 'summary' ? 'active' : '' }}"
+        bindtap="onExportTypeChange"
+        data-type="summary"
+      >
+        <view class="ed-option-radio {{ exportType === 'summary' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ exportType === 'summary' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <view class="ed-option-info">
+          <text class="ed-option-title">考勤汇总</text>
+          <text class="ed-option-desc">导出出勤率统计数据</text>
+        </view>
+      </view>
+      <view
+        class="ed-option-item {{ exportType === 'students' ? 'active' : '' }}"
+        bindtap="onExportTypeChange"
+        data-type="students"
+      >
+        <view class="ed-option-radio {{ exportType === 'students' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ exportType === 'students' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <view class="ed-option-info">
+          <text class="ed-option-title">学生名单</text>
+          <text class="ed-option-desc">导出学生基础信息</text>
+        </view>
+      </view>
+    </view>
   </view>
 
-  <!-- 日期范围选择(仅考勤相关导出) -->
-  <view class="section" wx:if="{{ exportType === 'attendance' || exportType === 'summary' }}">
-    <view class="section-title">日期范围</view>
-    <van-cell-group>
-      <van-radio-group value="{{ dateRange }}" bind:change="onDateRangeChange">
-        <van-cell-group>
-          <van-cell title="今日" clickable>
-            <van-radio slot="right-icon" name="today" />
-          </van-cell>
-          <van-cell title="本周" clickable>
-            <van-radio slot="right-icon" name="week" />
-          </van-cell>
-          <van-cell title="本月" clickable>
-            <van-radio slot="right-icon" name="month" />
-          </van-cell>
-          <van-cell title="自定义" clickable>
-            <van-radio slot="right-icon" name="custom" />
-          </van-cell>
-        </van-cell-group>
-      </van-radio-group>
-
-      <!-- 自定义日期范围 -->
-      <view wx:if="{{ dateRange === 'custom' }}" class="custom-date">
-        <van-cell
-          title="开始日期"
-          value="{{ startDate || '请选择' }}"
-          is-link
-          bind:click="onShowStartDatePicker"
-        />
-        <van-cell
-          title="结束日期"
-          value="{{ endDate || '请选择' }}"
-          is-link
-          bind:click="onShowEndDatePicker"
-        />
+  <!-- 日期范围选择 -->
+  <view class="ed-section" wx:if="{{ exportType === 'attendance' || exportType === 'summary' }}">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">02</text>
+        <text class="ed-section-text">日期范围</text>
       </view>
-    </van-cell-group>
+    </view>
+
+    <view class="ed-option-card">
+      <view
+        class="ed-option-item {{ dateRange === 'today' ? 'active' : '' }}"
+        bindtap="onDateRangeChange"
+        data-range="today"
+      >
+        <view class="ed-option-radio {{ dateRange === 'today' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ dateRange === 'today' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <text class="ed-option-title">今日</text>
+      </view>
+      <view
+        class="ed-option-item {{ dateRange === 'week' ? 'active' : '' }}"
+        bindtap="onDateRangeChange"
+        data-range="week"
+      >
+        <view class="ed-option-radio {{ dateRange === 'week' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ dateRange === 'week' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <text class="ed-option-title">本周</text>
+      </view>
+      <view
+        class="ed-option-item {{ dateRange === 'month' ? 'active' : '' }}"
+        bindtap="onDateRangeChange"
+        data-range="month"
+      >
+        <view class="ed-option-radio {{ dateRange === 'month' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ dateRange === 'month' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <text class="ed-option-title">本月</text>
+      </view>
+      <view
+        class="ed-option-item {{ dateRange === 'custom' ? 'active' : '' }}"
+        bindtap="onDateRangeChange"
+        data-range="custom"
+      >
+        <view class="ed-option-radio {{ dateRange === 'custom' ? 'checked' : '' }}">
+          <van-icon wx:if="{{ dateRange === 'custom' }}" name="success" size="24rpx" color="#fff" />
+        </view>
+        <text class="ed-option-title">自定义</text>
+      </view>
+    </view>
+
+    <!-- 自定义日期范围 -->
+    <view wx:if="{{ dateRange === 'custom' }}" class="ed-custom-date">
+      <view class="ed-date-item" bindtap="onShowStartDatePicker">
+        <text class="ed-date-label">开始日期</text>
+        <view class="ed-date-value">
+          <text>{{ startDate || '请选择' }}</text>
+          <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+        </view>
+      </view>
+      <view class="ed-date-item" bindtap="onShowEndDatePicker">
+        <text class="ed-date-label">结束日期</text>
+        <view class="ed-date-value">
+          <text>{{ endDate || '请选择' }}</text>
+          <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- 筛选条件 -->
-  <view class="section">
-    <view class="section-title">筛选条件</view>
-    <van-cell-group>
-      <!-- 管理员和学部领导可选择学部 -->
-      <van-cell
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">{{ exportType === 'students' ? '02' : '03' }}</text>
+        <text class="ed-section-text">筛选条件</text>
+      </view>
+    </view>
+
+    <view class="ed-filter-card">
+      <!-- 学部选择 -->
+      <view
         wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'leader' }}"
-        title="学部"
-        value="{{ department || '全部' }}"
-        is-link
-        bind:click="showDepartmentPicker"
-      />
+        class="ed-filter-item"
+        bindtap="showDepartmentPicker"
+      >
+        <view class="ed-filter-label">
+          <van-icon name="shop-o" size="28rpx" color="#718096" />
+          <text>学部</text>
+        </view>
+        <view class="ed-filter-value">
+          <text>{{ department || '全部' }}</text>
+          <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+        </view>
+      </view>
 
-      <!-- 管理员、学部领导、社团老师可选择社团 -->
-      <van-cell
+      <!-- 社团选择 -->
+      <view
         wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'leader' || userInfo.role === 'teacher' }}"
-        title="社团"
-        value="{{ clubName || (userInfo.role === 'teacher' ? userInfo.clubName : '全部') }}"
-        is-link="{{ userInfo.role !== 'teacher' }}"
-        bind:click="showClubPicker"
-      />
+        class="ed-filter-item {{ userInfo.role === 'teacher' ? 'disabled' : '' }}"
+        bindtap="showClubPicker"
+      >
+        <view class="ed-filter-label">
+          <van-icon name="apps-o" size="28rpx" color="#718096" />
+          <text>社团</text>
+        </view>
+        <view class="ed-filter-value">
+          <text>{{ clubName || (userInfo.role === 'teacher' ? userInfo.clubName : '全部') }}</text>
+          <van-icon wx:if="{{ userInfo.role !== 'teacher' }}" name="arrow" size="24rpx" color="#a0aec0" />
+        </view>
+      </view>
 
-      <!-- 管理员和班主任可选择班级 -->
-      <van-cell
+      <!-- 班级选择 -->
+      <view
         wx:if="{{ userInfo.role === 'admin' || userInfo.role === 'classTeacher' }}"
-        title="班级"
-        value="{{ className || (userInfo.role === 'classTeacher' ? userInfo.className : '全部') }}"
-        is-link="{{ userInfo.role !== 'classTeacher' }}"
-        bind:click="showClassPicker"
-      />
-    </van-cell-group>
+        class="ed-filter-item {{ userInfo.role === 'classTeacher' ? 'disabled' : '' }}"
+        bindtap="showClassPicker"
+      >
+        <view class="ed-filter-label">
+          <van-icon name="location-o" size="28rpx" color="#718096" />
+          <text>班级</text>
+        </view>
+        <view class="ed-filter-value">
+          <text>{{ className || (userInfo.role === 'classTeacher' ? userInfo.className : '全部') }}</text>
+          <van-icon wx:if="{{ userInfo.role !== 'classTeacher' }}" name="arrow" size="24rpx" color="#a0aec0" />
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- 导出按钮 -->
-  <view class="export-btn">
+  <view class="ed-export-btn">
     <van-button
       type="primary"
       size="large"
@@ -107,16 +214,18 @@
       bind:click="onExport"
       loading="{{ exporting }}"
       disabled="{{ exporting }}"
-      custom-class="btn-active"
+      custom-class="ed-btn-primary btn-active"
     >
       {{ exporting ? '导出中...' : '开始导出' }}
     </van-button>
   </view>
 
-  <!-- 说明 -->
-  <view class="tips">
-    <van-icon name="info-o" size="16px" />
-    <text class="tips-text">
+  <!-- 说明提示 -->
+  <view class="ed-tips-card">
+    <view class="ed-tips-icon">
+      <van-icon name="info-o" size="32rpx" color="#1a365d" />
+    </view>
+    <text class="ed-tips-text">
       导出的 Excel 文件将保存在小程序缓存中，可以通过微信分享给他人
     </text>
   </view>
@@ -130,7 +239,7 @@
     default-date="{{ calendarDefaultDate }}"
     bind:close="onCalendarClose"
     bind:confirm="onCalendarConfirm"
-    color="#1F6FAD"
+    color="#1a365d"
   />
 
   <!-- 学部选择器 -->

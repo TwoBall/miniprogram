@@ -1,7 +1,16 @@
 /**
- * @file 自定义底部导航栏组件
+ * @file 自定义底部导航栏组件 - Editorial 风格
  * @module components/custom-tabbar/custom-tabbar
  */
+
+// 角色主题色映射
+const ROLE_COLORS = {
+  admin: '#805ad5',      // 紫色
+  teacher: '#2c5282',    // 深蓝色
+  classTeacher: '#38a169', // 绿色
+  leader: '#d69e2e'      // 金色
+}
+
 Component({
   properties: {
     /**
@@ -21,6 +30,7 @@ Component({
   },
 
   data: {
+    activeColor: ROLE_COLORS.teacher,
     tabs: {
       teacher: [
         { icon: 'records', text: '点名', url: '/pages/teacher/attendance/attendance' },
@@ -41,7 +51,28 @@ Component({
     }
   },
 
+  lifetimes: {
+    attached() {
+      this.updateActiveColor()
+    }
+  },
+
+  observers: {
+    'role': function() {
+      this.updateActiveColor()
+    }
+  },
+
   methods: {
+    /**
+     * 更新激活态颜色
+     */
+    updateActiveColor() {
+      const role = this.properties.role
+      const activeColor = ROLE_COLORS[role] || ROLE_COLORS.teacher
+      this.setData({ activeColor })
+    },
+
     /**
      * 标签切换处理
      * @param {Object} e - 事件对象

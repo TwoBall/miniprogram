@@ -8,7 +8,7 @@
 
 ## 文件索引
 
-- `custom-tabbar/` - 自定义底部标签栏组件，支持多角色动态切换
+- `custom-tabbar/` - 自定义底部标签栏组件，支持多角色动态切换和主题色
 - `skeleton/` - 骨架屏加载组件，提供页面加载时的占位效果
 - `empty-state/` - 空状态组件，提供统一的空数据展示样式
 
@@ -19,6 +19,32 @@
 - `{name}.wxml` - 组件结构
 - `{name}.wxss` - 组件样式
 - `{name}.json` - 组件配置
+
+## custom-tabbar 自定义底部导航栏
+
+Editorial 风格的底部导航栏，支持角色主题色动态切换。
+
+### Properties
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| role | String | 'teacher' | 用户角色：admin/teacher/classTeacher/leader |
+| active | Number | 0 | 当前激活的标签索引 |
+
+### 角色主题色
+
+| 角色 | 激活色 | 说明 |
+|------|--------|------|
+| admin | #805ad5 | 紫色 |
+| teacher | #2c5282 | 深蓝色 |
+| classTeacher | #38a169 | 绿色 |
+| leader | #d69e2e | 金色 |
+
+### 使用示例
+
+```xml
+<custom-tabbar role="admin" active="{{0}}" />
+```
 
 ## 使用方式
 

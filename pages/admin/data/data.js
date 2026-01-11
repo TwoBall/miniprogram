@@ -2,7 +2,7 @@
 // output: 用户统计、学生统计、考勤统计数据展示
 // pos: 页面层 > 管理员模块 > 数据中心
 
-const app = getApp()
+const _app = getApp()
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
 

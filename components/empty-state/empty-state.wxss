@@ -1,4 +1,4 @@
-/* 空状态组件样式 */
+/* 空状态组件样式 - 教育杂志风 */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -12,6 +12,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 160rpx;
+  height: 160rpx;
+  background: #f7fafc;
+  border-radius: 50%;
   margin-bottom: 32rpx;
 }
 
@@ -22,21 +26,21 @@
 
 .empty-state-title {
   font-size: 32rpx;
-  font-weight: 500;
-  color: #323233;
+  font-weight: 600;
+  color: #4a5568;
   line-height: 1.4;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
 }
 
 .empty-state-description {
-  font-size: 28rpx;
-  color: #969799;
+  font-size: 26rpx;
+  color: #a0aec0;
   line-height: 1.5;
   max-width: 80%;
 }
 
 .empty-state-action {
-  margin-top: 40rpx;
+  margin-top: 32rpx;
 }
 
 /* 动画效果 */

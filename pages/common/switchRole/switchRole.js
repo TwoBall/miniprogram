@@ -102,7 +102,7 @@ Page({
     const role = e.currentTarget.dataset.role
 
     if (role._id === this.data.currentRole?._id) {
-      Toast('当前已是该身份')
+      SafeToast.fail('当前已是该身份')
       return
     }
 

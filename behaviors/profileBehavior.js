@@ -115,7 +115,7 @@ const profileBehavior = Behavior({
         // 检查页面是否存在，如果不存在则提示
         wx.navigateTo({
           url,
-          fail: (err) => {
+          fail: (_err) => {
             wx.showToast({
               title: '功能开发中',
               icon: 'none'

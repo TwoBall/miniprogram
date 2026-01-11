@@ -1,0 +1,158 @@
+/**
+ * 教育杂志风（Editorial）设计系统 - CSS 变量
+ *
+ * 使用方式：在需要的地方直接使用类名或复制变量值
+ * 注意：微信小程序不完全支持 CSS 变量，此文件作为设计规范参考
+ */
+
+/* ========================================
+   色彩系统 - Color System
+   ======================================== */
+
+/* 主色调 */
+/* --color-primary: #1a365d;        深蓝 - 主品牌色 */
+/* --color-primary-light: #2c5282;  浅深蓝 */
+/* --color-accent: #ed8936;         暖橙 - 强调色 */
+/* --color-accent-dark: #dd6b20;    深橙 */
+
+/* 背景色 */
+/* --bg-page: #fefcf6;              奶白页面背景 */
+/* --bg-card: #ffffff;              卡片背景 */
+/* --bg-section: #f7fafc;           区块背景 */
+
+/* 状态色 */
+/* --color-success: #38a169;        成功/到课 */
+/* --color-success-bg: #c6f6d5; */
+/* --color-warning: #dd6b20;        警告 */
+/* --color-warning-bg: #feebc8; */
+/* --color-error: #c53030;          错误/缺课 */
+/* --color-error-bg: #fed7d7; */
+/* --color-info: #2b6cb0;           信息 */
+/* --color-info-bg: #bee3f8; */
+
+/* 灰度系统 */
+/* --gray-900: #1a202c; */
+/* --gray-800: #2d3748; */
+/* --gray-700: #4a5568; */
+/* --gray-600: #718096; */
+/* --gray-500: #a0aec0; */
+/* --gray-400: #cbd5e0; */
+/* --gray-300: #e2e8f0; */
+/* --gray-200: #edf2f7; */
+/* --gray-100: #f7fafc; */
+
+/* 角色主题色（渐变头部专用） */
+/* --role-admin: linear-gradient(165deg, #1a365d 0%, #2c5282 100%); */
+/* --role-teacher: linear-gradient(165deg, #1a365d 0%, #2c5282 100%); */
+/* --role-classTeacher: linear-gradient(165deg, #276749 0%, #38a169 100%); */
+/* --role-leader: linear-gradient(165deg, #744210 0%, #dd6b20 100%); */
+
+/* ========================================
+   排版系统 - Typography
+   ======================================== */
+
+/* 标题字号 */
+/* --font-hero: 72rpx;              超大标题 */
+/* --font-h1: 40rpx;                一级标题 */
+/* --font-h2: 36rpx;                二级标题 */
+/* --font-h3: 32rpx;                三级标题 */
+/* --font-h4: 30rpx;                四级标题 */
+
+/* 正文字号 */
+/* --font-body: 28rpx;              正文 */
+/* --font-small: 26rpx;             小字 */
+/* --font-caption: 24rpx;           标注 */
+/* --font-mini: 22rpx;              迷你 */
+
+/* 字重 */
+/* --font-weight-bold: 800; */
+/* --font-weight-semibold: 600; */
+/* --font-weight-medium: 500; */
+/* --font-weight-normal: 400; */
+
+/* ========================================
+   间距系统 - Spacing
+   ======================================== */
+
+/* --spacing-xs: 8rpx; */
+/* --spacing-sm: 12rpx; */
+/* --spacing-md: 16rpx; */
+/* --spacing-lg: 24rpx; */
+/* --spacing-xl: 32rpx; */
+/* --spacing-2xl: 40rpx; */
+/* --spacing-3xl: 60rpx; */
+
+/* 页面边距 */
+/* --page-padding: 30rpx; */
+
+/* 卡片间距 */
+/* --card-gap: 20rpx; */
+/* --card-padding: 24rpx; */
+
+/* ========================================
+   圆角系统 - Border Radius
+   ======================================== */
+
+/* --radius-sm: 6rpx; */
+/* --radius-md: 12rpx; */
+/* --radius-lg: 16rpx; */
+/* --radius-full: 9999rpx;          胶囊形 */
+
+/* ========================================
+   阴影系统 - Shadows
+   ======================================== */
+
+/* --shadow-sm: 0 2rpx 8rpx rgba(26, 54, 93, 0.06); */
+/* --shadow-md: 0 4rpx 16rpx rgba(26, 54, 93, 0.08); */
+/* --shadow-lg: 0 8rpx 32rpx rgba(26, 54, 93, 0.12); */
+
+/* ========================================
+   实用工具类 - Utility Classes
+   ======================================== */
+
+/* 文本颜色 */
+.text-primary { color: #1a365d; }
+.text-accent { color: #ed8936; }
+.text-success { color: #38a169; }
+.text-warning { color: #dd6b20; }
+.text-error { color: #c53030; }
+.text-info { color: #2b6cb0; }
+.text-gray-900 { color: #1a202c; }
+.text-gray-800 { color: #2d3748; }
+.text-gray-700 { color: #4a5568; }
+.text-gray-600 { color: #718096; }
+.text-gray-500 { color: #a0aec0; }
+
+/* 背景颜色 */
+.bg-page { background-color: #fefcf6; }
+.bg-card { background-color: #ffffff; }
+.bg-section { background-color: #f7fafc; }
+.bg-primary { background-color: #1a365d; }
+.bg-accent { background-color: #ed8936; }
+.bg-success { background-color: #c6f6d5; }
+.bg-warning { background-color: #feebc8; }
+.bg-error { background-color: #fed7d7; }
+.bg-info { background-color: #bee3f8; }
+
+/* 字号 */
+.text-hero { font-size: 72rpx; }
+.text-h1 { font-size: 40rpx; }
+.text-h2 { font-size: 36rpx; }
+.text-h3 { font-size: 32rpx; }
+.text-h4 { font-size: 30rpx; }
+.text-body { font-size: 28rpx; }
+.text-small { font-size: 26rpx; }
+.text-caption { font-size: 24rpx; }
+.text-mini { font-size: 22rpx; }
+
+/* 字重 */
+.font-bold { font-weight: 800; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+.font-normal { font-weight: 400; }
+
+/* 圆角 */
+.rounded-sm { border-radius: 6rpx; }
+.rounded-md { border-radius: 12rpx; }
+.rounded-lg { border-radius: 16rpx; }
+.rounded-full { border-radius: 9999rpx; }

@@ -1,73 +1,111 @@
-<view class="home-container">
+<!-- 管理员首页 - 教育杂志风 -->
+<view class="ed-page ed-home-page">
   <!-- 骨架屏 -->
-  <skeleton wx:if="{{ pageLoading }}" />
+  <view wx:if="{{ pageLoading }}" class="ed-skeleton-wrapper">
+    <skeleton type="dashboard" count="{{1}}" />
+  </view>
 
   <block wx:else>
-    <!-- 欢迎信息 -->
-    <view class="welcome-section">
-      <view class="greeting">
-        <text class="greeting-text">您好，{{ userInfo.userName || '管理员' }}</text>
-        <van-tag type="primary" size="medium">管理员</van-tag>
-      </view>
-      <view class="subtitle">欢迎使用智慧社团管理系统</view>
-    </view>
-
-    <!-- 统计卡片 -->
-    <view class="card stats-section card-pop-in">
-      <view class="stats-grid">
-        <view class="stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/users/users">
-          <view class="stat-value">{{ stats.totalUsers }}</view>
-          <view class="stat-label">总用户数</view>
+    <!-- 顶部信息栏 - Editorial Hero -->
+    <view class="ed-hero ed-hero-admin fade-in-up">
+      <view class="ed-hero-content">
+        <view class="ed-hero-eyebrow">
+          <van-icon name="shield-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+          <text>管理员控制台</text>
         </view>
-        <view class="stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/approval/approval">
-          <view class="stat-value warning">{{ stats.pendingUsers }}</view>
-          <view class="stat-label">待审批</view>
+        <view class="ed-hero-title">
+          <text class="ed-hero-title-line">您好，{{ userInfo.userName || '管理员' }}</text>
         </view>
-        <view class="stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/data/data">
-          <view class="stat-value">{{ stats.totalClubs }}</view>
-          <view class="stat-label">社团数量</view>
-        </view>
-        <view class="stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/data/data">
-          <view class="stat-value">{{ stats.todayAttendance }}</view>
-          <view class="stat-label">今日点名</view>
+        <view class="ed-hero-divider"></view>
+        <view class="ed-hero-meta">
+          <view class="ed-meta-item">
+            <van-icon name="smile-o" size="26rpx" />
+            <text>欢迎使用智慧社团管理系统</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 快捷操作 -->
-    <view class="quick-actions">
-      <view class="section-title">快捷操作</view>
-      <van-grid column-num="4" border="{{ false }}">
-        <van-grid-item
-          icon="manager-o"
-          text="用户管理"
-          data-url="/pages/admin/users/users"
-          bindtap="navigateTo"
-        />
-        <van-grid-item
-          icon="bar-chart-o"
-          text="数据中心"
-          data-url="/pages/admin/data/data"
-          bindtap="navigateTo"
-        />
-        <van-grid-item
-          icon="orders-o"
-          text="审批中心"
-          data-url="/pages/admin/approval/approval"
-          bindtap="navigateTo"
-        />
-        <van-grid-item
-          icon="bell"
-          text="通知中心"
-          data-url="/pages/common/notifications/notifications"
-          bindtap="navigateTo"
-        />
-      </van-grid>
+    <!-- 统计卡片网格 -->
+    <view class="ed-stats-grid">
+      <view class="ed-stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/users/users">
+        <view class="ed-stat-icon">
+          <van-icon name="friends-o" size="40rpx" color="#1a365d" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.totalUsers }}</view>
+          <view class="ed-stat-label">总用户数</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-warning card-tap" bindtap="navigateTo" data-url="/pages/admin/approval/approval">
+        <view class="ed-stat-icon">
+          <van-icon name="warning-o" size="40rpx" color="#dd6b20" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.pendingUsers }}</view>
+          <view class="ed-stat-label">待审批</view>
+        </view>
+      </view>
+      <view class="ed-stat-card card-tap" bindtap="navigateTo" data-url="/pages/admin/data/data">
+        <view class="ed-stat-icon">
+          <van-icon name="cluster-o" size="40rpx" color="#2c5282" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.totalClubs }}</view>
+          <view class="ed-stat-label">社团数量</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-success card-tap" bindtap="navigateTo" data-url="/pages/admin/data/data">
+        <view class="ed-stat-icon">
+          <van-icon name="passed" size="40rpx" color="#38a169" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.todayAttendance }}</view>
+          <view class="ed-stat-label">今日点名</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷操作区域 -->
+    <view class="ed-section">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">01</text>
+          <text class="ed-section-text">快捷操作</text>
+        </view>
+      </view>
+
+      <view class="ed-quick-grid">
+        <view class="ed-quick-item card-tap" bindtap="navigateTo" data-url="/pages/admin/users/users">
+          <view class="ed-quick-icon">
+            <van-icon name="manager-o" size="48rpx" color="#1a365d" />
+          </view>
+          <text class="ed-quick-label">用户管理</text>
+        </view>
+        <view class="ed-quick-item card-tap" bindtap="navigateTo" data-url="/pages/admin/data/data">
+          <view class="ed-quick-icon">
+            <van-icon name="bar-chart-o" size="48rpx" color="#2c5282" />
+          </view>
+          <text class="ed-quick-label">数据中心</text>
+        </view>
+        <view class="ed-quick-item card-tap" bindtap="navigateTo" data-url="/pages/admin/approval/approval">
+          <view class="ed-quick-icon ed-quick-icon-warning">
+            <van-icon name="orders-o" size="48rpx" color="#dd6b20" />
+          </view>
+          <text class="ed-quick-label">审批中心</text>
+        </view>
+        <view class="ed-quick-item card-tap" bindtap="navigateTo" data-url="/pages/common/notifications/notifications">
+          <view class="ed-quick-icon">
+            <van-icon name="bell" size="48rpx" color="#38a169" />
+          </view>
+          <text class="ed-quick-label">通知中心</text>
+        </view>
+      </view>
     </view>
   </block>
 
   <!-- 底部 TabBar -->
   <custom-tabbar role="admin" active="0" />
-</view>
 
-<van-toast id="van-toast" />
+  <van-toast id="van-toast" />
+</view>

@@ -1,95 +1,204 @@
-.switch-role-container {
+/* 角色切换页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
+
+/* ========== 页面容器 ========== */
+.ed-switch-role-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background-color: var(--bg-page, #fefcf6);
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
 }
 
-/* 头部 */
-.header {
-  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
-  padding: 60rpx 40rpx 40rpx;
-  color: #fff;
+/* ========== Hero 头部 ========== */
+/* 使用全局 ed-hero 标准高度: padding: 40rpx 32rpx 56rpx */
+
+.ed-hero-subtitle {
+  margin-top: 8rpx;
 }
 
-.header-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  display: block;
-}
-
-.header-subtitle {
+.ed-hero-subtitle text {
   font-size: 26rpx;
-  opacity: 0.8;
-  margin-top: 10rpx;
-  display: block;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* 角色列表 */
-.role-list {
-  padding: 30rpx;
-}
-
-/* 角色卡片 - 继承公共 .card，仅覆盖特有样式 */
-.role-card {
-  display: flex;
-  align-items: center;
-  padding: 30rpx;
-}
-
-.role-card.current {
-  border: 2rpx solid #1F6FAD;
-  background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
-}
-
-.role-icon-wrapper {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 24rpx;
-}
-
-.role-card.current .role-icon-wrapper {
-  background: #bae7ff;
-}
-
-.role-info {
-  flex: 1;
-}
-
-.role-name {
-  font-size: 32rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.role-label {
-  font-size: 26rpx;
-  color: #666;
-  margin-top: 6rpx;
-}
-
-.role-extra {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 4rpx;
-}
-
-.role-status {
-  display: flex;
-  align-items: center;
-}
-
-/* 加载 */
-.loading-wrapper {
+/* ========== 加载状态 ========== */
+.ed-loading-wrapper {
   display: flex;
   justify-content: center;
   padding: 100rpx 0;
 }
 
-/* 添加新身份 */
-.add-role-section {
-  padding: 40rpx 30rpx;
+/* ========== 角色列表 ========== */
+.ed-role-list {
+  padding: 24rpx;
+}
+
+.ed-role-card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.ed-role-card.current {
+  border-color: var(--color-primary, #1a365d);
+  box-shadow: 0 4rpx 20rpx rgba(26, 54, 93, 0.15);
+}
+
+/* 左侧角色指示条 */
+.ed-card-indicator {
+  width: 8rpx;
+  flex-shrink: 0;
+}
+
+.ed-card-indicator.teacher {
+  background: linear-gradient(180deg, #1a365d 0%, #2c5282 100%);
+}
+
+.ed-card-indicator.classTeacher {
+  background: linear-gradient(180deg, #276749 0%, #38a169 100%);
+}
+
+.ed-card-indicator.leader {
+  background: linear-gradient(180deg, #744210 0%, #d69e2e 100%);
+}
+
+.ed-card-indicator.admin {
+  background: linear-gradient(180deg, #553c9a 0%, #805ad5 100%);
+}
+
+/* 卡片主体 */
+.ed-card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  gap: 20rpx;
+}
+
+/* 角色头像 */
+.ed-role-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ed-role-avatar.teacher {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+}
+
+.ed-role-avatar.classTeacher {
+  background: linear-gradient(135deg, #276749 0%, #38a169 100%);
+}
+
+.ed-role-avatar.leader {
+  background: linear-gradient(135deg, #744210 0%, #d69e2e 100%);
+}
+
+.ed-role-avatar.admin {
+  background: linear-gradient(135deg, #553c9a 0%, #805ad5 100%);
+}
+
+/* 角色信息 */
+.ed-role-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-role-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--gray-800, #2d3748);
+}
+
+.ed-role-label {
+  font-size: 26rpx;
+  color: var(--gray-600, #718096);
+}
+
+.ed-role-extra {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  color: var(--gray-500, #a0aec0);
+  margin-top: 4rpx;
+}
+
+/* 状态标识 */
+.ed-role-status {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ed-current-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* ========== 添加新身份 ========== */
+.ed-add-role-section {
+  padding: 32rpx 24rpx;
+}
+
+.ed-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx dashed var(--gray-300, #e2e8f0);
+  transition: all 0.2s ease;
+}
+
+.ed-add-btn:active {
+  background: var(--gray-50, #f7fafc);
+  border-color: var(--color-primary, #1a365d);
+}
+
+.ed-add-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(26, 54, 93, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ed-add-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-add-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary, #1a365d);
+}
+
+.ed-add-desc {
+  font-size: 24rpx;
+  color: var(--gray-500, #a0aec0);
 }

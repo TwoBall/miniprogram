@@ -1,83 +1,152 @@
-<view class="add-user-container">
-  <view class="form-section">
-    <van-cell-group title="基本信息">
-      <van-field
-        label="姓名"
-        value="{{ formData.userName }}"
-        placeholder="请输入姓名"
-        required
-        bind:input="onNameInput"
-      />
-
-      <van-cell
-        title="角色"
-        is-link
-        required
-        value="{{ roleLabel || '请选择角色' }}"
-        bind:click="showRolePicker"
-      />
-    </van-cell-group>
-
-    <van-cell-group title="详细信息" wx:if="{{ formData.role }}">
-      <van-cell
-        wx:if="{{ formData.role === 'leader' || formData.role === 'classTeacher' }}"
-        title="学部"
-        is-link
-        required
-        value="{{ formData.department || '请选择学部' }}"
-        bind:click="showDepartmentPicker"
-      />
-
-      <van-cell
-        wx:if="{{ formData.role === 'classTeacher' }}"
-        title="班级"
-        is-link
-        required
-        value="{{ formData.className || '请选择班级' }}"
-        bind:click="showClassPicker"
-      />
-
-      <van-cell
-        wx:if="{{ formData.role === 'teacher' }}"
-        title="社团"
-        is-link
-        required
-        value="{{ formData.clubName || '请选择社团' }}"
-        bind:click="showClubPicker"
-      />
-    </van-cell-group>
-
-    <view class="tips-section">
-      <van-icon name="info-o" size="32rpx" color="#1890ff" />
-      <text class="tips-text">
-        添加的用户将自动审批通过，用户首次登录时可通过姓名和角色关联此账号
-      </text>
+<!-- 新增/编辑用户页 - 教育杂志风 -->
+<view class="ed-page ed-add-user-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-admin fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="user-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>用户管理</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">{{ mode === 'add' ? '新增用户' : '编辑用户' }}</text>
+      </view>
+      <view class="ed-hero-subtitle">
+        <text>{{ mode === 'add' ? '添加预注册账号' : '修改用户信息' }}</text>
+      </view>
     </view>
   </view>
 
-  <view class="action-buttons">
-    <view class="btn-wrapper">
+  <!-- 表单区域 -->
+  <view class="ed-form-section card-pop-in">
+    <!-- 基本信息 -->
+    <view class="ed-section">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">01</text>
+          <text class="ed-section-text">基本信息</text>
+        </view>
+      </view>
+
+      <view class="ed-form-card">
+        <!-- 姓名 -->
+        <view class="ed-form-item">
+          <view class="ed-form-label">
+            <text class="ed-label-required">*</text>
+            <text>姓名</text>
+          </view>
+          <view class="ed-form-input">
+            <van-icon name="user-o" size="28rpx" color="#718096" />
+            <input
+              class="ed-input"
+              value="{{ formData.userName }}"
+              placeholder="请输入姓名"
+              bindinput="onNameInput"
+            />
+          </view>
+        </view>
+
+        <!-- 角色选择 -->
+        <view class="ed-form-item" bindtap="showRolePicker">
+          <view class="ed-form-label">
+            <text class="ed-label-required">*</text>
+            <text>角色</text>
+          </view>
+          <view class="ed-form-value">
+            <text class="{{ roleLabel ? '' : 'placeholder' }}">{{ roleLabel || '请选择角色' }}</text>
+            <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 详细信息 -->
+    <view class="ed-section" wx:if="{{ formData.role }}">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">02</text>
+          <text class="ed-section-text">详细信息</text>
+        </view>
+      </view>
+
+      <view class="ed-form-card">
+        <!-- 学部选择（领导/班主任） -->
+        <view
+          wx:if="{{ formData.role === 'leader' || formData.role === 'classTeacher' }}"
+          class="ed-form-item"
+          bindtap="showDepartmentPicker"
+        >
+          <view class="ed-form-label">
+            <text class="ed-label-required">*</text>
+            <text>学部</text>
+          </view>
+          <view class="ed-form-value">
+            <text class="{{ formData.department ? '' : 'placeholder' }}">{{ formData.department || '请选择学部' }}</text>
+            <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+          </view>
+        </view>
+
+        <!-- 班级选择（班主任） -->
+        <view
+          wx:if="{{ formData.role === 'classTeacher' }}"
+          class="ed-form-item {{ !formData.department ? 'disabled' : '' }}"
+          bindtap="showClassPicker"
+        >
+          <view class="ed-form-label">
+            <text class="ed-label-required">*</text>
+            <text>班级</text>
+          </view>
+          <view class="ed-form-value">
+            <text class="{{ formData.className ? '' : 'placeholder' }}">{{ formData.className || (formData.department ? '请选择班级' : '请先选择学部') }}</text>
+            <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+          </view>
+        </view>
+
+        <!-- 社团选择（教师） -->
+        <view
+          wx:if="{{ formData.role === 'teacher' }}"
+          class="ed-form-item"
+          bindtap="showClubPicker"
+        >
+          <view class="ed-form-label">
+            <text class="ed-label-required">*</text>
+            <text>社团</text>
+          </view>
+          <view class="ed-form-value">
+            <text class="{{ formData.clubName ? '' : 'placeholder' }}">{{ formData.clubName || '请选择社团' }}</text>
+            <van-icon name="arrow" size="24rpx" color="#a0aec0" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="ed-tips-card">
+      <view class="ed-tips-icon">
+        <van-icon name="info-o" size="32rpx" color="#805ad5" />
+      </view>
+      <text class="ed-tips-text">添加的用户将自动审批通过，用户首次登录时可通过姓名和角色关联此账号</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="ed-action-buttons">
       <van-button
-        type="default"
-        size="large"
-        block
+        plain
+        round
         bind:click="cancel"
-        custom-class="btn-active"
+        custom-class="ed-btn-cancel btn-active"
       >
         取消
       </van-button>
-    </view>
-    <view class="btn-wrapper">
       <van-button
         type="primary"
-        size="large"
-        block
+        round
         loading="{{ submitting }}"
         disabled="{{ submitting }}"
+        loading-text="提交中..."
         bind:click="submitForm"
-        custom-class="btn-active"
+        custom-class="ed-btn-primary btn-active"
       >
-        {{ mode === 'add' ? '添加' : '保存' }}
+        {{ mode === 'add' ? '添加用户' : '保存修改' }}
       </van-button>
     </view>
   </view>

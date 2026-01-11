@@ -1,5 +1,7 @@
+/* 领导个人中心样式 - Editorial 教育杂志风 */
 @import '../../../styles/profile-base.wxss';
 
-.user-info {
-  background: linear-gradient(135deg, #faad14 0%, #ffd666 100%);
+/* 领导 Hero 渐变 - 金色系 */
+.ed-hero-leader {
+  background: linear-gradient(165deg, #744210 0%, #d69e2e 100%);
 }

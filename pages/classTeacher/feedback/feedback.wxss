@@ -1,79 +1,192 @@
-.feedback-container {
-  padding: 20rpx;
+/* 班主任反馈页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
+
+/* ========== 页面容器 ========== */
+.ed-feedback-page {
+  min-height: 100vh;
+  background-color: var(--bg-page, #fefcf6);
+  padding-bottom: 60rpx;
 }
 
-.info-card {
-  background-color: #ffffff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
+/* ========== Hero 头部 ========== */
+/* 使用全局 ed-hero 标准高度: padding: 40rpx 32rpx 56rpx */
 
-.info-item {
-  font-size: 28rpx;
-  margin-bottom: 16rpx;
-}
-
-.info-item:last-child {
-  margin-bottom: 0;
-}
-
-.label {
-  color: #999999;
-}
-
-.value {
-  color: #333333;
-  font-weight: 500;
-}
-
-.feedback-card {
-  background-color: #ffffff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.card-title {
-  font-size: 32rpx;
-  font-weight: 500;
-  margin-bottom: 20rpx;
-}
-
-.feedback-input {
-  width: 100%;
-  min-height: 300rpx;
-  background-color: #f5f5f5;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  box-sizing: border-box;
-  font-size: 28rpx;
-  line-height: 1.6;
-}
-
-.char-count {
-  text-align: right;
-  font-size: 24rpx;
-  color: #999999;
+.ed-hero-subtitle {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 12rpx;
 }
 
-.btn-submit {
-  width: 100%;
-  height: 88rpx;
-  background-color: #1F6FAD;
-  color: #ffffff;
-  border-radius: 12rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  border: none;
-  line-height: 88rpx;
-  text-align: center;
+/* ========== 表单区域 ========== */
+.ed-form-section {
+  margin: -40rpx 24rpx 0;
+  background: #fff;
+  border-radius: 20rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  padding: 32rpx;
+  position: relative;
+  z-index: 10;
+}
+
+/* ========== 区域容器 ========== */
+.ed-section {
+  margin-bottom: 32rpx;
+}
+
+.ed-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.ed-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.ed-section-num {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: #38a169;
+  font-family: 'Georgia', serif;
+}
+
+.ed-section-text {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--gray-800, #2d3748);
+  letter-spacing: 1rpx;
+}
+
+/* ========== 字数统计 ========== */
+.ed-char-count {
+  font-size: 24rpx;
+  color: var(--gray-500, #718096);
+  font-family: 'Georgia', serif;
+}
+
+.ed-char-count .warning {
+  color: #c05621;
+  font-weight: 600;
+}
+
+.ed-char-total {
+  color: var(--gray-400, #a0aec0);
+}
+
+/* ========== 信息卡片 ========== */
+.ed-info-card {
+  background: var(--gray-50, #f7fafc);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.ed-info-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
+}
+
+.ed-info-item:last-child {
+  border-bottom: none;
+}
+
+.ed-info-icon {
+  width: 56rpx;
+  height: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(39, 103, 73, 0.1);
+  border-radius: 12rpx;
+  flex-shrink: 0;
 }
 
-.btn-submit[disabled] {
-  background-color: #cccccc;
+.ed-info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-info-label {
+  font-size: 24rpx;
+  color: var(--gray-500, #718096);
+}
+
+.ed-info-value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--gray-800, #2d3748);
+}
+
+/* ========== 文本域卡片 ========== */
+.ed-textarea-card {
+  background: var(--gray-50, #f7fafc);
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  padding: 24rpx;
+  transition: border-color 0.2s ease;
+}
+
+.ed-textarea-card:focus-within {
+  border-color: #38a169;
+}
+
+.ed-textarea {
+  width: 100%;
+  min-height: 240rpx;
+  font-size: 28rpx;
+  color: var(--gray-800, #2d3748);
+  line-height: 1.8;
+  background: transparent;
+}
+
+.ed-textarea-placeholder {
+  color: var(--gray-400, #a0aec0);
+}
+
+/* ========== 提示卡片 ========== */
+.ed-tips-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: 24rpx;
+  background: rgba(39, 103, 73, 0.08);
+  border-radius: 16rpx;
+  border-left: 6rpx solid #38a169;
+  margin-bottom: 32rpx;
+}
+
+.ed-tips-icon {
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(39, 103, 73, 0.15);
+  border-radius: 50%;
+}
+
+.ed-tips-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #276749;
+  line-height: 1.6;
+}
+
+/* ========== 提交按钮 ========== */
+.ed-submit-section {
+  margin-top: 16rpx;
+}
+
+.ed-btn-primary {
+  background: linear-gradient(135deg, #276749 0%, #38a169 100%) !important;
+  border: none !important;
 }

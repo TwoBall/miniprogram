@@ -1,86 +1,125 @@
-<view class="page-container">
-  <!-- 学生信息卡片 -->
-  <view class="card student-info-card card-pop-in">
-    <view class="card-header">
-      <van-icon name="user-circle-o" size="40rpx" color="#1890ff" />
-      <text class="card-title">学生信息</text>
-    </view>
-    <view class="info-content">
-      <view class="info-row">
-        <text class="label">姓名</text>
-        <text class="value">{{ studentName }}</text>
+<!-- 创建转社团申请页 - 教育杂志风 -->
+<view class="ed-page ed-create-transfer-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-compact fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="exchange" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>发起申请</text>
       </view>
-      <view class="info-row">
-        <text class="label">班级</text>
-        <text class="value">{{ className }}</text>
-      </view>
-      <view class="info-row">
-        <text class="label">当前社团</text>
-        <text class="value highlight">{{ fromClub }}</text>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">转社团申请</text>
       </view>
     </view>
   </view>
 
-  <!-- 转社团表单 -->
-  <view class="card form-card card-pop-in">
-    <view class="card-header">
-      <van-icon name="exchange" size="40rpx" color="#1890ff" />
-      <text class="card-title">转入信息</text>
+  <!-- 学生信息卡片 -->
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">01</text>
+        <text class="ed-section-text">学生信息</text>
+      </view>
     </view>
 
-    <van-cell-group border="{{ false }}">
-      <van-cell
-        title="目标社团"
-        is-link
-        required
-        value="{{ toClub || '请选择' }}"
-        value-class="{{ toClub ? '' : 'placeholder' }}"
-        bind:click="showClubPicker"
-      />
-    </van-cell-group>
+    <view class="ed-info-card">
+      <view class="ed-info-row">
+        <view class="ed-info-label">
+          <van-icon name="user-o" size="28rpx" color="#718096" />
+          <text>姓名</text>
+        </view>
+        <view class="ed-info-value">{{ studentName }}</view>
+      </view>
+      <view class="ed-info-row">
+        <view class="ed-info-label">
+          <van-icon name="location-o" size="28rpx" color="#718096" />
+          <text>班级</text>
+        </view>
+        <view class="ed-info-value">{{ className }}</view>
+      </view>
+      <view class="ed-info-row">
+        <view class="ed-info-label">
+          <van-icon name="shop-o" size="28rpx" color="#718096" />
+          <text>当前社团</text>
+        </view>
+        <view class="ed-info-value ed-value-highlight">{{ fromClub }}</view>
+      </view>
+    </view>
+  </view>
 
-    <view class="form-item">
-      <view class="form-label">申请理由（选填）</view>
-      <van-field
-        type="textarea"
-        placeholder="请输入转社团理由..."
-        value="{{ reason }}"
-        autosize="{{ { minHeight: 80 } }}"
-        maxlength="200"
-        show-word-limit
-        bind:change="onReasonInput"
-      />
+  <!-- 转入信息表单 -->
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">02</text>
+        <text class="ed-section-text">转入信息</text>
+      </view>
+    </view>
+
+    <view class="ed-form-card">
+      <!-- 目标社团选择 -->
+      <view class="ed-form-item" bindtap="showClubPicker">
+        <view class="ed-form-label">
+          <text class="ed-label-required">*</text>
+          <text>目标社团</text>
+        </view>
+        <view class="ed-form-content">
+          <text class="{{ toClub ? 'ed-form-value' : 'ed-form-placeholder' }}">{{ toClub || '请选择目标社团' }}</text>
+          <van-icon name="arrow" size="28rpx" color="#a0aec0" />
+        </view>
+      </view>
+
+      <!-- 申请理由 -->
+      <view class="ed-form-item ed-form-item-textarea">
+        <view class="ed-form-label">
+          <text>申请理由（选填）</text>
+        </view>
+        <van-field
+          type="textarea"
+          placeholder="请输入转社团理由..."
+          value="{{ reason }}"
+          autosize="{{ { minHeight: 80 } }}"
+          maxlength="200"
+          show-word-limit
+          border="{{ false }}"
+          bind:change="onReasonInput"
+          custom-class="ed-textarea"
+        />
+      </view>
     </view>
   </view>
 
   <!-- 流程说明 -->
-  <view class="tips-section">
-    <van-icon name="info-o" size="32rpx" color="#1890ff" />
-    <text class="tips-text">
-      提交后需转出老师和转入老师确认，最后由班主任审批通过
-    </text>
+  <view class="ed-tips-card">
+    <view class="ed-tips-icon">
+      <van-icon name="info-o" size="36rpx" color="#1a365d" />
+    </view>
+    <view class="ed-tips-content">
+      <text class="ed-tips-title">审批流程说明</text>
+      <text class="ed-tips-text">提交后需转出老师和转入老师确认，最后由班主任审批通过</text>
+    </view>
   </view>
 
-  <!-- 操作按钮 -->
-  <view class="action-buttons">
-    <view class="btn-wrapper">
-      <van-button type="default" size="large" block bind:click="cancel" custom-class="btn-active">
-        取消
-      </van-button>
-    </view>
-    <view class="btn-wrapper">
-      <van-button
-        type="primary"
-        size="large"
-        block
-        loading="{{ submitting }}"
-        disabled="{{ submitting }}"
-        bind:click="submitForm"
-        custom-class="btn-active"
-      >
-        提交申请
-      </van-button>
-    </view>
+  <!-- 底部操作按钮 -->
+  <view class="ed-bottom-actions">
+    <van-button
+      type="default"
+      size="large"
+      bind:click="cancel"
+      custom-class="ed-btn-cancel btn-active"
+    >
+      取消
+    </van-button>
+    <van-button
+      type="primary"
+      size="large"
+      loading="{{ submitting }}"
+      disabled="{{ submitting }}"
+      bind:click="submitForm"
+      custom-class="ed-btn-primary btn-active"
+    >
+      提交申请
+    </van-button>
   </view>
 
   <!-- 社团选择器 -->

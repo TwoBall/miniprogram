@@ -1,76 +1,278 @@
-.login-container {
+/* 登录页样式 - 教育杂志风 */
+
+/* 页面容器 */
+.ed-login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
-  padding: 100rpx 40rpx;
+  background: linear-gradient(165deg, #1a365d 0%, #2c5282 50%, #1a365d 100%);
+  padding: 0 40rpx;
+  padding-top: 120rpx;
+  padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.logo-section {
-  text-align: center;
-  margin-bottom: 80rpx;
+/* 背景装饰圆形 */
+.ed-login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.logo {
-  width: 160rpx;
-  height: 160rpx;
-  margin-bottom: 30rpx;
+.ed-login-circle {
+  position: absolute;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.title {
-  display: block;
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 12rpx;
+.ed-circle-1 {
+  width: 600rpx;
+  height: 600rpx;
+  top: -200rpx;
+  right: -200rpx;
+  animation: floatSlow 8s ease-in-out infinite;
 }
 
-.subtitle {
-  display: block;
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 2rpx;
+.ed-circle-2 {
+  width: 400rpx;
+  height: 400rpx;
+  bottom: 200rpx;
+  left: -150rpx;
+  animation: floatSlow 6s ease-in-out infinite reverse;
 }
 
-.welcome-section {
-  text-align: center;
-  margin-bottom: 80rpx;
+.ed-circle-3 {
+  width: 300rpx;
+  height: 300rpx;
+  bottom: -100rpx;
+  right: 50rpx;
+  animation: floatSlow 10s ease-in-out infinite;
 }
 
-.welcome-text {
-  display: block;
-  font-size: 36rpx;
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 16rpx;
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20rpx, -20rpx);
+  }
 }
 
-.welcome-desc {
-  display: block;
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
+/* 品牌区域 */
+.ed-login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx;
+  position: relative;
+  z-index: 1;
+  animation: fadeInDown 0.6s ease-out;
 }
 
-.button-section {
-  width: 100%;
-  max-width: 600rpx;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ed-login-logo-wrap {
+  width: 180rpx;
+  height: 180rpx;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 40rpx;
+  backdrop-filter: blur(10rpx);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
 }
 
-.tips-section {
+.ed-login-logo {
+  width: 120rpx;
+  height: 120rpx;
+}
+
+.ed-login-title {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.ed-title-line {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 4rpx;
+}
+
+.ed-title-accent {
+  color: #ed8936;
+}
+
+.ed-login-divider {
+  width: 80rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #ed8936, rgba(237, 137, 54, 0.3));
+  border-radius: 3rpx;
+  margin-bottom: 20rpx;
+}
+
+.ed-login-subtitle {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+}
+
+/* 欢迎区域 */
+.ed-login-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ed-welcome-badge {
   display: flex;
   align-items: center;
   gap: 12rpx;
-  padding: 20rpx 30rpx;
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12rpx 28rpx;
+  border-radius: 30rpx;
+  margin-bottom: 20rpx;
+  backdrop-filter: blur(10rpx);
+}
+
+.ed-welcome-badge text {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.ed-welcome-text {
+  font-size: 32rpx;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+/* 登录按钮区域 */
+.ed-login-action {
+  width: 100%;
+  max-width: 600rpx;
+  margin-bottom: 40rpx;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ed-login-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24rpx;
+  padding: 40rpx;
+  backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.ed-login-card-inner {
+  width: 100%;
+}
+
+.ed-login-btn {
+  height: 100rpx !important;
+  font-size: 32rpx !important;
+  font-weight: 600 !important;
+  border-radius: 16rpx !important;
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%) !important;
+  border: none !important;
+  box-shadow: 0 8rpx 24rpx rgba(56, 161, 105, 0.3) !important;
+}
+
+.ed-btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.ed-btn-content text {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 提示区域 */
+.ed-login-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.6s ease-out 0.6s both;
+}
+
+.ed-tips-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 12rpx;
 }
 
-.tips-text {
+.ed-tips-item text {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 底部信息 */
+.ed-login-footer {
+  position: absolute;
+  bottom: 60rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ed-footer-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 8rpx;
 }

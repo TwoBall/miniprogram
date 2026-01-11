@@ -1,0 +1,961 @@
+/**
+ * 教育杂志风（Editorial）设计系统 - 组件样式库
+ *
+ * 使用方式：在页面 WXSS 中通过 @import 引入
+ * @import '../../../styles/editorial.wxss';
+ *
+ * 或在 app.wxss 中全局引入
+ */
+
+/* ========================================
+   1. 页面容器 - Page Container
+   ======================================== */
+
+.ed-page {
+  min-height: 100vh;
+  background-color: #fefcf6;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ed-page-content {
+  padding: 0 30rpx 30rpx;
+}
+
+/* ========================================
+   2. 头部区域 - Hero Section
+   ======================================== */
+
+.ed-hero {
+  background: linear-gradient(165deg, #1a365d 0%, #2c5282 100%);
+  padding: 40rpx 32rpx 56rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.ed-hero-admin {
+  background: linear-gradient(165deg, #553c9a 0%, #805ad5 100%);
+}
+
+.ed-hero-teacher {
+  background: linear-gradient(165deg, #1a365d 0%, #2c5282 100%);
+}
+
+.ed-hero-classTeacher {
+  background: linear-gradient(165deg, #276749 0%, #38a169 100%);
+}
+
+.ed-hero-leader {
+  background: linear-gradient(165deg, #744210 0%, #d69e2e 100%);
+}
+
+.ed-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.ed-hero-eyebrow {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 4rpx;
+  margin-bottom: 12rpx;
+}
+
+.ed-hero-title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16rpx;
+}
+
+.ed-hero-title-line {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.ed-hero-title-accent {
+  color: #ed8936;
+}
+
+.ed-hero-divider {
+  width: 60rpx;
+  height: 5rpx;
+  background-color: #ed8936;
+  margin-bottom: 14rpx;
+}
+
+.ed-hero-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ed-hero-dot {
+  width: 8rpx;
+  height: 8rpx;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
+/* 装饰元素 */
+.ed-hero-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ed-hero-deco-circle {
+  position: absolute;
+  top: -60rpx;
+  right: -60rpx;
+  width: 300rpx;
+  height: 300rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.ed-hero-deco-line {
+  position: absolute;
+  bottom: 40rpx;
+  right: 40rpx;
+  width: 120rpx;
+  height: 4rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: rotate(-45deg);
+}
+
+/* ========================================
+   3. 统计卡片 - Stat Cards
+   ======================================== */
+
+.ed-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin: -50rpx 30rpx 30rpx;
+  position: relative;
+  z-index: 10;
+}
+
+.ed-stat-card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(26, 54, 93, 0.08);
+}
+
+.ed-stat-card-large {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32rpx;
+}
+
+.ed-stat-card-accent {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.ed-stat-card-accent .ed-stat-label,
+.ed-stat-card-accent .ed-stat-number,
+.ed-stat-card-accent .ed-stat-sub {
+  color: #ffffff;
+}
+
+.ed-stat-label {
+  font-size: 24rpx;
+  color: #718096;
+  margin-bottom: 8rpx;
+}
+
+.ed-stat-number {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #1a365d;
+  line-height: 1;
+}
+
+.ed-stat-unit {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-left: 4rpx;
+}
+
+.ed-stat-sub {
+  font-size: 22rpx;
+  color: #a0aec0;
+  margin-top: 8rpx;
+}
+
+.ed-stat-trend {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 22rpx;
+  margin-top: 12rpx;
+}
+
+.ed-stat-trend-positive {
+  color: #38a169;
+}
+
+.ed-stat-trend-negative {
+  color: #c53030;
+}
+
+/* ========================================
+   4. 区块容器 - Section Block
+   ======================================== */
+
+.ed-section {
+  background: #ffffff;
+  border-radius: 16rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.04);
+}
+
+.ed-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.ed-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+
+.ed-section-num {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #ed8936;
+  font-style: italic;
+}
+
+.ed-section-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a365d;
+}
+
+.ed-section-action {
+  font-size: 26rpx;
+  color: #2c5282;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* ========================================
+   5. 卡片组件 - Card Component
+   ======================================== */
+
+.ed-card {
+  background: #ffffff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.04);
+}
+
+.ed-card-indicator {
+  width: 6rpx;
+  flex-shrink: 0;
+}
+
+.ed-card-pending .ed-card-indicator {
+  background-color: #ed8936;
+}
+
+.ed-card-success .ed-card-indicator {
+  background-color: #38a169;
+}
+
+.ed-card-warning .ed-card-indicator {
+  background-color: #dd6b20;
+}
+
+.ed-card-error .ed-card-indicator {
+  background-color: #c53030;
+}
+
+.ed-card-info .ed-card-indicator {
+  background-color: #2b6cb0;
+}
+
+.ed-card-body {
+  flex: 1;
+  padding: 20rpx 24rpx;
+}
+
+.ed-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.ed-card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a365d;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ed-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.ed-card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  color: #718096;
+}
+
+.ed-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #edf2f7;
+}
+
+/* ========================================
+   6. 徽章组件 - Badge Component
+   ======================================== */
+
+.ed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.ed-badge-pending {
+  background-color: #feebc8;
+  color: #c05621;
+}
+
+.ed-badge-success {
+  background-color: #c6f6d5;
+  color: #276749;
+}
+
+.ed-badge-warning {
+  background-color: #feebc8;
+  color: #c05621;
+}
+
+.ed-badge-error {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.ed-badge-info {
+  background-color: #bee3f8;
+  color: #2b6cb0;
+}
+
+/* ========================================
+   7. 进度条 - Progress Bar
+   ======================================== */
+
+.ed-progress {
+  margin-bottom: 20rpx;
+}
+
+.ed-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.ed-progress-label {
+  font-size: 26rpx;
+  color: #4a5568;
+}
+
+.ed-progress-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1a365d;
+}
+
+.ed-progress-bar {
+  height: 12rpx;
+  background-color: #edf2f7;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.ed-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1a365d 0%, #2c5282 100%);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.ed-progress-fill-secondary {
+  background: linear-gradient(90deg, #2b6cb0 0%, #4299e1 100%);
+}
+
+.ed-progress-fill-warning {
+  background: linear-gradient(90deg, #dd6b20 0%, #ed8936 100%);
+}
+
+.ed-progress-fill-success {
+  background: linear-gradient(90deg, #276749 0%, #38a169 100%);
+}
+
+/* ========================================
+   8. 排行榜 - Ranking List
+   ======================================== */
+
+.ed-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.ed-ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #edf2f7;
+}
+
+.ed-ranking-item:last-child {
+  border-bottom: none;
+}
+
+.ed-rank-position {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+  background-color: #edf2f7;
+}
+
+.ed-rank-num {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: #4a5568;
+}
+
+.ed-ranking-item.ed-rank-first .ed-rank-position {
+  background-color: #1a365d;
+}
+
+.ed-ranking-item.ed-rank-first .ed-rank-num {
+  color: #ffffff;
+}
+
+.ed-ranking-item.ed-rank-second .ed-rank-position {
+  background-color: #2c5282;
+}
+
+.ed-ranking-item.ed-rank-second .ed-rank-num {
+  color: #ffffff;
+}
+
+.ed-ranking-item.ed-rank-third .ed-rank-position {
+  background-color: #4a5568;
+}
+
+.ed-ranking-item.ed-rank-third .ed-rank-num {
+  color: #ffffff;
+}
+
+.ed-rank-info {
+  flex: 1;
+}
+
+.ed-rank-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a365d;
+  margin-bottom: 4rpx;
+}
+
+.ed-rank-desc {
+  font-size: 24rpx;
+  color: #718096;
+}
+
+.ed-rank-score {
+  display: flex;
+  align-items: baseline;
+}
+
+.ed-rank-score-value {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1a365d;
+}
+
+.ed-rank-score-unit {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #718096;
+  margin-left: 4rpx;
+}
+
+/* ========================================
+   9. Tab 切换 - Tabs
+   ======================================== */
+
+.ed-tabs {
+  display: flex;
+  background: #f7fafc;
+  border-radius: 12rpx;
+  padding: 6rpx;
+  margin-bottom: 24rpx;
+}
+
+.ed-tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #718096;
+  border-radius: 8rpx;
+  transition: all 0.2s ease;
+}
+
+.ed-tab-item.active {
+  background: #ffffff;
+  color: #1a365d;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.08);
+}
+
+/* ========================================
+   10. 列表项 - List Item
+   ======================================== */
+
+.ed-list-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #edf2f7;
+}
+
+.ed-list-item:last-child {
+  border-bottom: none;
+}
+
+.ed-item-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.ed-item-avatar.male {
+  background: linear-gradient(135deg, #2c5282 0%, #4a5568 100%);
+}
+
+.ed-item-avatar.female {
+  background: linear-gradient(135deg, #9f7aea 0%, #ed64a6 100%);
+}
+
+.ed-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ed-item-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a365d;
+  margin-bottom: 6rpx;
+}
+
+.ed-item-desc {
+  font-size: 24rpx;
+  color: #718096;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-item-extra {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/* 状态标签 */
+.ed-status {
+  padding: 8rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.ed-status-success {
+  background-color: #c6f6d5;
+  color: #276749;
+}
+
+.ed-status-error {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.ed-status-warning {
+  background-color: #feebc8;
+  color: #c05621;
+}
+
+.ed-status-info {
+  background-color: #bee3f8;
+  color: #2b6cb0;
+}
+
+/* ========================================
+   11. 空状态 - Empty State
+   ======================================== */
+
+.ed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 40rpx;
+}
+
+.ed-empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7fafc;
+  border-radius: 50%;
+  margin-bottom: 32rpx;
+}
+
+.ed-empty-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 12rpx;
+}
+
+.ed-empty-desc {
+  font-size: 26rpx;
+  color: #a0aec0;
+  text-align: center;
+}
+
+/* ========================================
+   12. 操作按钮 - Action Buttons
+   ======================================== */
+
+.ed-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.ed-actions-center {
+  justify-content: center;
+}
+
+.ed-actions-end {
+  justify-content: flex-end;
+}
+
+.ed-actions-between {
+  justify-content: space-between;
+}
+
+/* 按钮样式覆盖 */
+.ed-btn-primary {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.ed-btn-secondary {
+  background: #ffffff !important;
+  border: 2rpx solid #e2e8f0 !important;
+  color: #4a5568 !important;
+}
+
+.ed-btn-accent {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.ed-btn-success {
+  background: linear-gradient(135deg, #38a169 0%, #276749 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.ed-btn-danger {
+  background: #ffffff !important;
+  border: 2rpx solid #fc8181 !important;
+  color: #c53030 !important;
+}
+
+/* ========================================
+   13. 快捷操作网格 - Action Grid
+   ======================================== */
+
+.ed-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx;
+}
+
+.ed-action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 0;
+}
+
+.ed-action-icon {
+  width: 88rpx;
+  height: 88rpx;
+  background: #f7fafc;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.ed-action-label {
+  font-size: 24rpx;
+  color: #4a5568;
+  text-align: center;
+}
+
+/* ========================================
+   14. 底部区域 - Footer
+   ======================================== */
+
+.ed-footer {
+  padding: 40rpx 30rpx;
+  text-align: center;
+}
+
+.ed-footer-line {
+  width: 120rpx;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, #cbd5e0, transparent);
+  margin: 0 auto 20rpx;
+}
+
+.ed-footer-text {
+  font-size: 24rpx;
+  color: #a0aec0;
+  margin-bottom: 8rpx;
+}
+
+.ed-footer-version {
+  font-size: 22rpx;
+  color: #cbd5e0;
+  font-style: italic;
+}
+
+/* ========================================
+   15. 搜索框 - Search Bar
+   ======================================== */
+
+.ed-search {
+  margin: 0 30rpx 24rpx;
+}
+
+.ed-search-inner {
+  background: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.04);
+}
+
+/* ========================================
+   16. 筛选器 - Filter Section
+   ======================================== */
+
+.ed-filter {
+  background: #ffffff;
+  margin: 0 30rpx 24rpx;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(26, 54, 93, 0.04);
+}
+
+.ed-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.ed-filter-picker {
+  flex: 1;
+}
+
+.ed-filter-picker-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 20rpx;
+  background: #f7fafc;
+  border-radius: 8rpx;
+}
+
+.ed-filter-label {
+  font-size: 24rpx;
+  color: #718096;
+}
+
+.ed-filter-value {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: #1a365d;
+}
+
+.ed-filter-reset {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #718096;
+  padding: 12rpx 16rpx;
+}
+
+.ed-filter-reset.active {
+  color: #2c5282;
+}
+
+/* ========================================
+   17. 加载状态 - Loading State
+   ======================================== */
+
+.ed-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+
+.ed-loading-text {
+  font-size: 26rpx;
+  color: #a0aec0;
+  margin-top: 16rpx;
+}
+
+.ed-no-more {
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 24rpx;
+  color: #a0aec0;
+}
+
+/* ========================================
+   18. 虚拟列表容器 - Virtual List
+   ======================================== */
+
+.ed-virtual-list {
+  position: relative;
+}
+
+.ed-virtual-list-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+/* ========================================
+   19. 分布标签 - Distribution Tags
+   ======================================== */
+
+.ed-distribution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+}
+
+.ed-distribution-tag {
+  padding: 10rpx 20rpx;
+  background: #f7fafc;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #4a5568;
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ed-distribution-tag.active {
+  background: #ffffff;
+  border-color: #1a365d;
+  color: #1a365d;
+  font-weight: 600;
+}
+
+.ed-distribution-count {
+  color: #a0aec0;
+  margin-left: 8rpx;
+}
+
+/* ========================================
+   20. 对话框内容 - Dialog Content
+   ======================================== */
+
+.ed-dialog-content {
+  padding: 20rpx 24rpx;
+}
+
+.ed-dialog-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a365d;
+  margin-bottom: 16rpx;
+  text-align: center;
+}
+
+.ed-dialog-body {
+  font-size: 28rpx;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.ed-dialog-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}

@@ -1,4 +1,29 @@
-/* 自定义 TabBar 样式 */
-.custom-tabbar {
-  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+/* 自定义 TabBar 样式 - Editorial 风格 */
+
+/* ========== 基础样式 ========== */
+.ed-tabbar {
+  background: #fff !important;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06) !important;
+  border-top: 1rpx solid var(--gray-200, #edf2f7) !important;
+}
+
+/* ========== 角色主题色 ========== */
+/* 管理员 - 紫色 */
+.ed-tabbar-admin {
+  --tabbar-active-color: #805ad5;
+}
+
+/* 教师 - 深蓝色 */
+.ed-tabbar-teacher {
+  --tabbar-active-color: #2c5282;
+}
+
+/* 班主任 - 绿色 */
+.ed-tabbar-classTeacher {
+  --tabbar-active-color: #38a169;
+}
+
+/* 领导 - 金色 */
+.ed-tabbar-leader {
+  --tabbar-active-color: #d69e2e;
 }

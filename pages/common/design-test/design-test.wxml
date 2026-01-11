@@ -1,0 +1,354 @@
+<!--
+  教育杂志风（Editorial）设计测试页面
+  展示所有设计元素：排版、色彩、卡片、按钮、列表等
+-->
+<view class="editorial-container">
+
+  <!-- ========== 1. 头部区域 - 不对称排版 ========== -->
+  <view class="hero-section">
+    <view class="hero-content">
+      <view class="hero-eyebrow">智慧社团</view>
+      <view class="hero-title">
+        <text class="title-line">考勤</text>
+        <text class="title-line title-accent">管理系统</text>
+      </view>
+      <view class="hero-divider"></view>
+      <view class="hero-subtitle">
+        <text>2024-2025学年</text>
+        <text class="dot-separator"></text>
+        <text>第二学期</text>
+      </view>
+    </view>
+    <view class="hero-decoration">
+      <view class="deco-circle"></view>
+      <view class="deco-line"></view>
+    </view>
+  </view>
+
+  <!-- ========== 2. 统计卡片区 - 杂志网格布局 ========== -->
+  <view class="stats-grid">
+    <view class="stat-card stat-card-large">
+      <view class="stat-label">今日出勤率</view>
+      <view class="stat-number">94.7<text class="stat-unit">%</text></view>
+      <view class="stat-trend positive">
+        <van-icon name="arrow-up" size="24rpx" />
+        <text>较昨日 +2.3%</text>
+      </view>
+    </view>
+
+    <view class="stat-card">
+      <view class="stat-label">到课人数</view>
+      <view class="stat-number">128</view>
+      <view class="stat-sub">共 135 人</view>
+    </view>
+
+    <view class="stat-card stat-card-accent">
+      <view class="stat-label">待处理</view>
+      <view class="stat-number">3</view>
+      <view class="stat-sub">审批申请</view>
+    </view>
+
+    <view class="stat-card">
+      <view class="stat-label">社团数量</view>
+      <view class="stat-number">12</view>
+      <view class="stat-sub">活跃中</view>
+    </view>
+  </view>
+
+  <!-- ========== 3. 进度展示区 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">01</text>
+        <text class="title-text">本周考勤概览</text>
+      </view>
+      <view class="section-action">查看详情</view>
+    </view>
+
+    <view class="progress-list">
+      <view class="progress-item">
+        <view class="progress-info">
+          <text class="progress-label">职教一部</text>
+          <text class="progress-value">96.2%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: 96.2%"></view>
+        </view>
+      </view>
+
+      <view class="progress-item">
+        <view class="progress-info">
+          <text class="progress-label">职教二部</text>
+          <text class="progress-value">91.8%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill fill-secondary" style="width: 91.8%"></view>
+        </view>
+      </view>
+
+      <view class="progress-item">
+        <view class="progress-info">
+          <text class="progress-label">医药护理部</text>
+          <text class="progress-value">89.5%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill fill-warning" style="width: 89.5%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 4. 卡片列表区 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">02</text>
+        <text class="title-text">待处理事项</text>
+      </view>
+    </view>
+
+    <view class="card-list">
+      <!-- 待审批卡片 -->
+      <view class="editorial-card card-pending">
+        <view class="card-indicator"></view>
+        <view class="card-body">
+          <view class="card-header">
+            <view class="card-title">张三的注册申请</view>
+            <view class="card-badge badge-pending">待审批</view>
+          </view>
+          <view class="card-meta">
+            <view class="meta-item">
+              <van-icon name="clock-o" size="28rpx" />
+              <text>提交于 10分钟前</text>
+            </view>
+            <view class="meta-item">
+              <van-icon name="manager-o" size="28rpx" />
+              <text>申请角色：教师</text>
+            </view>
+          </view>
+          <view class="card-actions">
+            <van-button size="small" plain custom-class="btn-reject">拒绝</van-button>
+            <van-button size="small" type="primary" custom-class="btn-approve">通过</van-button>
+          </view>
+        </view>
+      </view>
+
+      <!-- 成功卡片 -->
+      <view class="editorial-card card-success">
+        <view class="card-indicator"></view>
+        <view class="card-body">
+          <view class="card-header">
+            <view class="card-title">李四的转社团申请</view>
+            <view class="card-badge badge-success">已通过</view>
+          </view>
+          <view class="card-meta">
+            <view class="meta-item">
+              <van-icon name="exchange" size="28rpx" />
+              <text>篮球社 → 足球社</text>
+            </view>
+            <view class="meta-item">
+              <van-icon name="passed" size="28rpx" />
+              <text>审批于 2小时前</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 警告卡片 -->
+      <view class="editorial-card card-warning">
+        <view class="card-indicator"></view>
+        <view class="card-body">
+          <view class="card-header">
+            <view class="card-title">王五 缺勤预警</view>
+            <view class="card-badge badge-warning">需关注</view>
+          </view>
+          <view class="card-meta">
+            <view class="meta-item">
+              <van-icon name="warning-o" size="28rpx" />
+              <text>本月累计缺勤 3 次</text>
+            </view>
+            <view class="meta-item">
+              <van-icon name="phone-o" size="28rpx" />
+              <text>建议联系班主任</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 5. 排行榜区域 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">03</text>
+        <text class="title-text">出勤率排行</text>
+      </view>
+    </view>
+
+    <view class="ranking-list">
+      <view class="ranking-item rank-first">
+        <view class="rank-position">
+          <text class="rank-num">1</text>
+        </view>
+        <view class="rank-info">
+          <view class="rank-name">计算机应用班</view>
+          <view class="rank-dept">职教一部</view>
+        </view>
+        <view class="rank-score">
+          <text class="score-value">98.5</text>
+          <text class="score-unit">%</text>
+        </view>
+      </view>
+
+      <view class="ranking-item rank-second">
+        <view class="rank-position">
+          <text class="rank-num">2</text>
+        </view>
+        <view class="rank-info">
+          <view class="rank-name">护理专业班</view>
+          <view class="rank-dept">医药护理部</view>
+        </view>
+        <view class="rank-score">
+          <text class="score-value">97.2</text>
+          <text class="score-unit">%</text>
+        </view>
+      </view>
+
+      <view class="ranking-item rank-third">
+        <view class="rank-position">
+          <text class="rank-num">3</text>
+        </view>
+        <view class="rank-info">
+          <view class="rank-name">电子商务班</view>
+          <view class="rank-dept">职教二部</view>
+        </view>
+        <view class="rank-score">
+          <text class="score-value">96.8</text>
+          <text class="score-unit">%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 6. 操作按钮区 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">04</text>
+        <text class="title-text">快捷操作</text>
+      </view>
+    </view>
+
+    <view class="action-grid">
+      <view class="action-item">
+        <view class="action-icon">
+          <van-icon name="edit" size="48rpx" color="#1a365d" />
+        </view>
+        <view class="action-label">开始点名</view>
+      </view>
+
+      <view class="action-item">
+        <view class="action-icon">
+          <van-icon name="bar-chart-o" size="48rpx" color="#1a365d" />
+        </view>
+        <view class="action-label">数据统计</view>
+      </view>
+
+      <view class="action-item">
+        <view class="action-icon">
+          <van-icon name="friends-o" size="48rpx" color="#1a365d" />
+        </view>
+        <view class="action-label">学生管理</view>
+      </view>
+
+      <view class="action-item">
+        <view class="action-icon">
+          <van-icon name="description" size="48rpx" color="#1a365d" />
+        </view>
+        <view class="action-label">导出报表</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 7. Tab 切换示例 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">05</text>
+        <text class="title-text">Tab 切换</text>
+      </view>
+    </view>
+
+    <view class="editorial-tabs">
+      <view class="tab-item active">全部</view>
+      <view class="tab-item">到课</view>
+      <view class="tab-item">缺课</view>
+      <view class="tab-item">请假</view>
+    </view>
+
+    <!-- 学生列表 -->
+    <view class="student-list">
+      <view class="student-item">
+        <view class="student-avatar male">
+          <van-icon name="user-o" size="40rpx" color="#fff" />
+        </view>
+        <view class="student-info">
+          <view class="student-name">张明远</view>
+          <view class="student-class">计算机应用班</view>
+        </view>
+        <view class="student-status status-present">到课</view>
+      </view>
+
+      <view class="student-item">
+        <view class="student-avatar female">
+          <van-icon name="user-o" size="40rpx" color="#fff" />
+        </view>
+        <view class="student-info">
+          <view class="student-name">李雪晴</view>
+          <view class="student-class">护理专业班</view>
+        </view>
+        <view class="student-status status-present">到课</view>
+      </view>
+
+      <view class="student-item">
+        <view class="student-avatar male">
+          <van-icon name="user-o" size="40rpx" color="#fff" />
+        </view>
+        <view class="student-info">
+          <view class="student-name">王建国</view>
+          <view class="student-class">电子商务班</view>
+        </view>
+        <view class="student-status status-absent">缺课</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 8. 空状态示例 ========== -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-number">06</text>
+        <text class="title-text">空状态</text>
+      </view>
+    </view>
+
+    <view class="empty-state">
+      <view class="empty-illustration">
+        <van-icon name="orders-o" size="120rpx" color="#cbd5e0" />
+      </view>
+      <view class="empty-title">暂无待处理事项</view>
+      <view class="empty-desc">所有任务已完成，请继续保持</view>
+    </view>
+  </view>
+
+  <!-- ========== 9. 底部信息 ========== -->
+  <view class="footer-section">
+    <view class="footer-line"></view>
+    <view class="footer-text">智慧社团管理系统 · 教育杂志风格预览</view>
+    <view class="footer-version">Design System v2.0</view>
+  </view>
+
+</view>
+
+<van-toast id="van-toast" />

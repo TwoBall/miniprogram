@@ -125,7 +125,7 @@ function processFile(filename) {
 
     // 按行分割并解析每个JSON对象
     const lines = content.trim().split('\n')
-    let data = lines.map(line => JSON.parse(line.trim()))
+    const data = lines.map(line => JSON.parse(line.trim()))
 
     // 根据文件名判断集合类型并处理
     let modifiedData

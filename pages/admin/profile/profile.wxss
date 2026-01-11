@@ -1,5 +1,7 @@
+/* 管理员个人中心 - Editorial 教育杂志风 */
 @import '../../../styles/profile-base.wxss';
 
-.user-info {
-  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
+/* 管理员专属 Hero 渐变 */
+.ed-hero-admin {
+  background: linear-gradient(165deg, #553c9a 0%, #805ad5 100%);
 }

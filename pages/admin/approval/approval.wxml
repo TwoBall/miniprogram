@@ -1,212 +1,240 @@
-<view class="approval-container">
-  <!-- 顶部信息栏 -->
-  <view class="header-section fade-in-up">
-    <view class="header-top">
-      <view class="page-title">
-        <van-icon name="friends-o" size="40rpx" color="#ffffff" />
-        <text class="title-text">用户审批管理</text>
+<!-- 审批管理页 - 教育杂志风 -->
+<view class="ed-page ed-approval-page">
+  <!-- 顶部信息栏 - Editorial Hero -->
+  <view class="ed-hero ed-hero-admin fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="friends-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>审批中心</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">用户审批</text>
+        <text class="ed-hero-title-line ed-hero-title-accent">管理</text>
+      </view>
+      <view class="ed-hero-divider"></view>
+      <view class="ed-hero-meta">
+        <view class="ed-meta-item" wx:if="{{pendingUsers.length > 0}}">
+          <van-icon name="warning-o" size="26rpx" />
+          <text>{{pendingUsers.length}} 条待处理</text>
+        </view>
+        <view class="ed-meta-item" wx:else>
+          <van-icon name="passed" size="26rpx" />
+          <text>暂无待审批</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#1890ff">
-    <van-tab title="待审批({{pendingUsers.length}})">
-      <view class="tab-content">
-        <!-- 骨架屏 -->
-        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
-          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+  <!-- Tab 切换 - 悬浮样式 -->
+  <view class="ed-tabs-wrapper">
+    <view class="ed-tabs">
+      <view class="ed-tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{0}}">
+        <text>待审批</text>
+        <view class="ed-tab-badge warning" wx:if="{{pendingUsers.length > 0}}">{{pendingUsers.length}}</view>
+      </view>
+      <view class="ed-tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{1}}">
+        <text>已通过</text>
+        <view class="ed-tab-badge success" wx:if="{{approvedUsers.length > 0}}">{{approvedUsers.length}}</view>
+      </view>
+      <view class="ed-tab-item {{activeTab === 2 ? 'active' : ''}}" bindtap="onTabChange" data-index="{{2}}">
+        <text>已拒绝</text>
+        <view class="ed-tab-badge error" wx:if="{{rejectedUsers.length > 0}}">{{rejectedUsers.length}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 待审批列表 -->
+  <view class="ed-tab-content" wx:if="{{activeTab === 0}}">
+    <!-- 骨架屏 -->
+    <view wx:if="{{pageLoading}}" class="ed-skeleton-wrapper">
+      <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+    </view>
+
+    <view wx:elif="{{pendingUsers.length > 0}}" class="ed-card-list">
+      <view class="ed-user-card ed-card-pending list-item-enter" wx:for="{{pendingUsers}}" wx:key="_id">
+        <!-- 左侧状态指示条 -->
+        <view class="ed-card-indicator warning"></view>
+
+        <view class="ed-card-body">
+          <view class="ed-card-header">
+            <view class="ed-user-main">
+              <view class="ed-user-avatar">
+                <van-icon name="user-o" size="36rpx" color="#fff" />
+              </view>
+              <text class="ed-user-name">{{item.userName}}</text>
+            </view>
+            <view class="ed-status-tag warning">待审批</view>
+          </view>
+
+          <view class="ed-card-meta">
+            <view class="ed-meta-row">
+              <van-icon name="manager-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">角色</text>
+              <text class="ed-meta-value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.clubName}}">
+              <van-icon name="friends-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">社团</text>
+              <text class="ed-meta-value">{{item.clubName}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.className}}">
+              <van-icon name="home-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">班级</text>
+              <text class="ed-meta-value">{{item.className}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.department}}">
+              <van-icon name="cluster-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">学部</text>
+              <text class="ed-meta-value">{{item.department}}</text>
+            </view>
+            <view class="ed-meta-row">
+              <van-icon name="clock-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">申请</text>
+              <text class="ed-meta-value">{{item.createTime}}</text>
+            </view>
+          </view>
+
+          <view class="ed-card-actions">
+            <van-button
+              type="default"
+              size="small"
+              plain
+              custom-class="ed-btn-outline ed-btn-error btn-active"
+              loading="{{btnLoadingMap['reject_' + item._id]}}"
+              bind:click="handleReject"
+              data-user="{{item}}"
+            >拒绝</van-button>
+            <van-button
+              type="primary"
+              size="small"
+              custom-class="ed-btn-primary btn-active"
+              loading="{{btnLoadingMap['approve_' + item._id]}}"
+              bind:click="handleApprove"
+              data-user="{{item}}"
+            >通过</van-button>
+          </view>
         </view>
-        <view class="user-list" wx:elif="{{pendingUsers.length > 0}}">
-          <view class="card user-card card-list-enter" wx:for="{{pendingUsers}}" wx:key="_id">
-            <view class="user-header">
-              <view class="user-info">
-                <view class="user-name">
-                  <van-icon name="user-o" size="32rpx" color="#1890ff" />
-                  <text>{{item.userName}}</text>
-                </view>
-                <van-tag type="warning" size="medium">待审批</van-tag>
+      </view>
+    </view>
+
+    <empty-state wx:elif="{{!pageLoading}}" type="approval" />
+  </view>
+
+  <!-- 已通过列表 -->
+  <view class="ed-tab-content" wx:if="{{activeTab === 1}}">
+    <view wx:if="{{pageLoading}}" class="ed-skeleton-wrapper">
+      <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+    </view>
+
+    <view wx:elif="{{approvedUsers.length > 0}}" class="ed-card-list">
+      <view class="ed-user-card ed-card-approved list-item-enter" wx:for="{{approvedUsers}}" wx:key="_id">
+        <view class="ed-card-indicator success"></view>
+
+        <view class="ed-card-body">
+          <view class="ed-card-header">
+            <view class="ed-user-main">
+              <view class="ed-user-avatar success">
+                <van-icon name="user-o" size="36rpx" color="#fff" />
               </view>
+              <text class="ed-user-name">{{item.userName}}</text>
             </view>
+            <view class="ed-status-tag success">已通过</view>
+          </view>
 
-            <view class="user-detail">
-              <view class="detail-row">
-                <van-icon name="manager-o" size="24rpx" color="#999" />
-                <text class="label">角色：</text>
-                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.clubName}}">
-                <van-icon name="friends-o" size="24rpx" color="#999" />
-                <text class="label">社团：</text>
-                <text class="value">{{item.clubName}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.className}}">
-                <van-icon name="home-o" size="24rpx" color="#999" />
-                <text class="label">班级：</text>
-                <text class="value">{{item.className}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.department}}">
-                <van-icon name="cluster-o" size="24rpx" color="#999" />
-                <text class="label">学部：</text>
-                <text class="value">{{item.department}}</text>
-              </view>
-
-              <view class="detail-row">
-                <van-icon name="clock-o" size="24rpx" color="#999" />
-                <text class="label">申请时间：</text>
-                <text class="value" user-select>{{item.createTime}}</text>
-              </view>
+          <view class="ed-card-meta">
+            <view class="ed-meta-row">
+              <van-icon name="manager-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">角色</text>
+              <text class="ed-meta-value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
             </view>
-
-            <view class="action-buttons">
-              <van-button
-                type="danger"
-                size="small"
-                plain
-                class="btn-active"
-                loading="{{btnLoadingMap['reject_' + item._id]}}"
-                bind:click="handleReject"
-                data-user="{{item}}"
-              >
-                拒绝
-              </van-button>
-              <van-button
-                type="primary"
-                size="small"
-                class="btn-active"
-                loading="{{btnLoadingMap['approve_' + item._id]}}"
-                bind:click="handleApprove"
-                data-user="{{item}}"
-              >
-                通过
-              </van-button>
+            <view class="ed-meta-row" wx:if="{{item.approvedByName}}">
+              <van-icon name="passed" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">审批人</text>
+              <text class="ed-meta-value">{{item.approvedByName}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.approvedTime}}">
+              <van-icon name="clock-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">审批时间</text>
+              <text class="ed-meta-value">{{item.approvedTime}}</text>
             </view>
           </view>
         </view>
-
-        <empty-state
-          wx:elif="{{!pageLoading}}"
-          type="approval"
-        />
       </view>
-    </van-tab>
+    </view>
 
-    <van-tab title="已通过({{approvedUsers.length}})">
-      <view class="tab-content">
-        <!-- 骨架屏 -->
-        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
-          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
-        </view>
-        <view class="user-list" wx:elif="{{approvedUsers.length > 0}}">
-          <view class="card user-card approved card-list-enter" wx:for="{{approvedUsers}}" wx:key="_id">
-            <view class="user-header">
-              <view class="user-info">
-                <view class="user-name">
-                  <van-icon name="user-o" size="32rpx" color="#52c41a" />
-                  <text>{{item.userName}}</text>
-                </view>
-                <van-tag type="success" size="medium">已通过</van-tag>
+    <empty-state
+      wx:elif="{{!pageLoading}}"
+      type="approval"
+      title="暂无已通过用户"
+      description="还没有审批通过的用户"
+    />
+
+    <!-- 加载更多 -->
+    <view class="ed-load-more" wx:if="{{approvedLoading}}">
+      <van-loading size="24px">加载中...</van-loading>
+    </view>
+    <view class="ed-no-more" wx:elif="{{approvedUsers.length > 0 && !approvedHasMore}}">
+      <text>— 没有更多了 —</text>
+    </view>
+  </view>
+
+  <!-- 已拒绝列表 -->
+  <view class="ed-tab-content" wx:if="{{activeTab === 2}}">
+    <view wx:if="{{pageLoading}}" class="ed-skeleton-wrapper">
+      <skeleton type="card" count="{{3}}" avatar="{{true}}" />
+    </view>
+
+    <view wx:elif="{{rejectedUsers.length > 0}}" class="ed-card-list">
+      <view class="ed-user-card ed-card-rejected list-item-enter" wx:for="{{rejectedUsers}}" wx:key="_id">
+        <view class="ed-card-indicator error"></view>
+
+        <view class="ed-card-body">
+          <view class="ed-card-header">
+            <view class="ed-user-main">
+              <view class="ed-user-avatar error">
+                <van-icon name="user-o" size="36rpx" color="#fff" />
               </view>
+              <text class="ed-user-name">{{item.userName}}</text>
             </view>
+            <view class="ed-status-tag error">已拒绝</view>
+          </view>
 
-            <view class="user-detail">
-              <view class="detail-row">
-                <van-icon name="manager-o" size="24rpx" color="#999" />
-                <text class="label">角色：</text>
-                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.approvedByName}}">
-                <van-icon name="passed" size="24rpx" color="#999" />
-                <text class="label">审批人：</text>
-                <text class="value">{{item.approvedByName}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.approvedTime}}">
-                <van-icon name="clock-o" size="24rpx" color="#999" />
-                <text class="label">审批时间：</text>
-                <text class="value" user-select>{{item.approvedTime}}</text>
-              </view>
+          <view class="ed-card-meta">
+            <view class="ed-meta-row">
+              <van-icon name="manager-o" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">角色</text>
+              <text class="ed-meta-value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.rejectReason}}">
+              <van-icon name="info-o" size="24rpx" color="#c53030" />
+              <text class="ed-meta-label">原因</text>
+              <text class="ed-meta-value ed-meta-error">{{item.rejectReason}}</text>
+            </view>
+            <view class="ed-meta-row" wx:if="{{item.approvedByName}}">
+              <van-icon name="manager" size="24rpx" color="#718096" />
+              <text class="ed-meta-label">审批人</text>
+              <text class="ed-meta-value">{{item.approvedByName}}</text>
             </view>
           </view>
         </view>
-
-        <empty-state
-          wx:elif="{{!pageLoading}}"
-          type="approval"
-          title="暂无已通过用户"
-          description="还没有审批通过的用户"
-        />
-
-        <!-- 加载更多提示 -->
-        <view class="load-more" wx:if="{{approvedLoading}}">
-          <van-loading size="24px">加载中...</van-loading>
-        </view>
-        <view class="no-more" wx:elif="{{approvedUsers.length > 0 && !approvedHasMore}}">
-          <text>— 没有更多了 —</text>
-        </view>
       </view>
-    </van-tab>
+    </view>
 
-    <van-tab title="已拒绝({{rejectedUsers.length}})">
-      <view class="tab-content">
-        <!-- 骨架屏 -->
-        <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
-          <skeleton type="card" count="{{3}}" avatar="{{true}}" />
-        </view>
-        <view class="user-list" wx:elif="{{rejectedUsers.length > 0}}">
-          <view class="card user-card rejected card-list-enter" wx:for="{{rejectedUsers}}" wx:key="_id">
-            <view class="user-header">
-              <view class="user-info">
-                <view class="user-name">
-                  <van-icon name="user-o" size="32rpx" color="#ff4d4f" />
-                  <text>{{item.userName}}</text>
-                </view>
-                <van-tag type="danger" size="medium">已拒绝</van-tag>
-              </view>
-            </view>
+    <empty-state
+      wx:elif="{{!pageLoading}}"
+      type="approval"
+      title="暂无已拒绝用户"
+      description="还没有被拒绝的用户"
+    />
 
-            <view class="user-detail">
-              <view class="detail-row">
-                <van-icon name="manager-o" size="24rpx" color="#999" />
-                <text class="label">角色：</text>
-                <text class="value">{{item.role === 'teacher' ? '社团老师' : item.role === 'classTeacher' ? '班主任' : '学部领导'}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.rejectReason}}">
-                <van-icon name="info-o" size="24rpx" color="#999" />
-                <text class="label">拒绝原因：</text>
-                <text class="value reason" user-select>{{item.rejectReason}}</text>
-              </view>
-
-              <view class="detail-row" wx:if="{{item.approvedByName}}">
-                <van-icon name="manager" size="24rpx" color="#999" />
-                <text class="label">审批人：</text>
-                <text class="value">{{item.approvedByName}}</text>
-              </view>
-            </view>
-          </view>
-        </view>
-
-        <empty-state
-          wx:elif="{{!pageLoading}}"
-          type="approval"
-          title="暂无已拒绝用户"
-          description="还没有被拒绝的用户"
-        />
-
-        <!-- 加载更多提示 -->
-        <view class="load-more" wx:if="{{rejectedLoading}}">
-          <van-loading size="24px">加载中...</van-loading>
-        </view>
-        <view class="no-more" wx:elif="{{rejectedUsers.length > 0 && !rejectedHasMore}}">
-          <text>— 没有更多了 —</text>
-        </view>
-      </view>
-    </van-tab>
-  </van-tabs>
+    <!-- 加载更多 -->
+    <view class="ed-load-more" wx:if="{{rejectedLoading}}">
+      <van-loading size="24px">加载中...</van-loading>
+    </view>
+    <view class="ed-no-more" wx:elif="{{rejectedUsers.length > 0 && !rejectedHasMore}}">
+      <text>— 没有更多了 —</text>
+    </view>
+  </view>
 
   <!-- 拒绝原因对话框 -->
   <van-popup
@@ -215,24 +243,25 @@
     round
     closeable
     bind:close="closeRejectDialog"
-    custom-style="width: 80%; padding: 40rpx;"
+    custom-style="width: 85%; padding: 40rpx;"
   >
-    <view class="reject-dialog">
-      <view class="dialog-title">拒绝原因</view>
-      <view class="dialog-content">
+    <view class="ed-dialog">
+      <view class="ed-dialog-title">拒绝原因</view>
+      <view class="ed-dialog-content">
         <van-field
           value="{{ rejectReason }}"
           type="textarea"
-          placeholder="请输入拒绝原因"
+          placeholder="请输入拒绝原因（选填）"
           bind:change="onRejectReasonInput"
           autosize
           maxlength="200"
           show-word-limit
+          custom-style="background: #f7fafc; border-radius: 12rpx;"
         />
       </view>
-      <view class="dialog-actions">
-        <van-button size="small" bind:click="closeRejectDialog">取消</van-button>
-        <van-button type="danger" size="small" bind:click="confirmReject">确认拒绝</van-button>
+      <view class="ed-dialog-actions">
+        <van-button size="small" custom-class="ed-btn-outline btn-active" bind:click="closeRejectDialog">取消</van-button>
+        <van-button type="danger" size="small" custom-class="ed-btn-error btn-active" bind:click="confirmReject">确认拒绝</van-button>
       </view>
     </view>
   </van-popup>

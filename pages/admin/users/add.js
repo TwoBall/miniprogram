@@ -1,4 +1,4 @@
-const app = getApp()
+const _app = getApp()
 const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')

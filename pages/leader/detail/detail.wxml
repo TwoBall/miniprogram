@@ -1,51 +1,75 @@
-<view class="detail-container">
-  <!-- 顶部信息栏 -->
-  <view class="header-section fade-in-up">
-    <view class="header-top">
-      <view class="class-info">
-        <van-icon name="home-o" size="40rpx" color="#ffffff" />
-        <text class="class-name">{{className}}</text>
+<!-- 领导班级详情页 - 教育杂志风 -->
+<view class="ed-page ed-detail-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-leader fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="home-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>班级详情</text>
       </view>
-    </view>
-    <view class="date-info">
-      <van-icon name="clock-o" size="28rpx" color="rgba(255,255,255,0.9)" />
-      <text>{{date}}</text>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">{{ className }}</text>
+      </view>
+      <view class="ed-hero-meta">
+        <van-icon name="clock-o" size="24rpx" color="rgba(255,255,255,0.9)" />
+        <text>{{ date }}</text>
+      </view>
     </view>
   </view>
 
-  <view class="student-list">
-    <block wx:if="{{students.length > 0}}">
-      <view class="card student-card card-list-enter" wx:for="{{students}}" wx:key="_id">
-        <view class="student-header">
-          <view class="student-name">
-            <text>{{item.studentName}}</text>
-            <van-tag wx:if="{{item.gender}}" plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
-          </view>
-          <view class="status-badge {{item.todayStatus}}">
-            {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
-          </view>
-        </view>
+  <!-- 学生列表 -->
+  <view class="ed-student-list">
+    <block wx:if="{{ students.length > 0 }}">
+      <view
+        wx:for="{{ students }}"
+        wx:key="_id"
+        class="ed-student-card card-pop-in"
+      >
+        <!-- 左侧状态指示条 -->
+        <view class="ed-card-indicator {{ item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'error' : 'pending' }}"></view>
 
-        <view class="student-detail">
-          <view class="detail-item">
-            <text class="label">社团：</text>
-            <text class="value">{{item.clubName || '未加入'}}</text>
+        <view class="ed-card-body">
+          <!-- 头部：学生姓名 + 状态 -->
+          <view class="ed-student-header">
+            <view class="ed-student-name">
+              <text>{{ item.studentName }}</text>
+              <view wx:if="{{ item.gender }}" class="ed-gender-tag {{ item.gender === '男' ? 'male' : 'female' }}">
+                {{ item.gender }}
+              </view>
+            </view>
+            <view class="ed-status-badge {{ item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'error' : 'pending' }}">
+              {{ item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名' }}
+            </view>
           </view>
-          <view class="detail-item" wx:if="{{item.classTeacher}}">
-            <text class="label">班主任：</text>
-            <text class="value">{{item.classTeacher}}</text>
+
+          <!-- 详情信息 -->
+          <view class="ed-student-info">
+            <view class="ed-info-row">
+              <van-icon name="cluster-o" size="24rpx" color="#718096" />
+              <text class="ed-info-label">社团</text>
+              <text class="ed-info-value">{{ item.clubName || '未加入' }}</text>
+            </view>
+            <view wx:if="{{ item.classTeacher }}" class="ed-info-row">
+              <van-icon name="manager-o" size="24rpx" color="#718096" />
+              <text class="ed-info-label">班主任</text>
+              <text class="ed-info-value">{{ item.classTeacher }}</text>
+            </view>
+            <view wx:if="{{ item.classTeacherPhone }}" class="ed-info-row">
+              <van-icon name="phone-o" size="24rpx" color="#718096" />
+              <text class="ed-info-label">联系方式</text>
+              <text class="ed-info-value">{{ item.classTeacherPhone }}</text>
+            </view>
+            <view wx:if="{{ item.todayStatus }}" class="ed-info-row">
+              <van-icon name="clock-o" size="24rpx" color="#718096" />
+              <text class="ed-info-label">点名时间</text>
+              <text class="ed-info-value">{{ item.attendanceTime }}</text>
+            </view>
           </view>
-          <view class="detail-item" wx:if="{{item.classTeacherPhone}}">
-            <text class="label">联系方式：</text>
-            <text class="value">{{item.classTeacherPhone}}</text>
-          </view>
-          <view class="detail-item" wx:if="{{item.todayStatus}}">
-            <text class="label">点名时间：</text>
-            <text class="value">{{item.attendanceTime}}</text>
-          </view>
-          <view class="feedback-info" wx:if="{{item.feedback}}">
-             <van-icon name="comment-o" size="24rpx" color="#faad14" />
-             <text>班主任反馈: {{item.feedback}}</text>
+
+          <!-- 班主任反馈 -->
+          <view wx:if="{{ item.feedback }}" class="ed-feedback-info">
+            <van-icon name="comment-o" size="24rpx" color="#d69e2e" />
+            <text>班主任反馈: {{ item.feedback }}</text>
           </view>
         </view>
       </view>

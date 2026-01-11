@@ -116,7 +116,7 @@ Page({
   },
 
   onNameInput(e) {
-    this.setData({ name: e.detail })
+    this.setData({ name: e.detail.value })
   },
 
   showRolePickerPopup() { this.setData({ showRolePicker: true }) },

@@ -8,11 +8,92 @@
 
 ## 文件索引
 
+- `variables.wxss` - **教育杂志风设计变量**（色彩、排版、间距、圆角规范）
+- `editorial.wxss` - **教育杂志风组件样式库**（20+ 可复用组件类）
 - `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
 - `animations.wxss` - 动画样式库（入场动画、交互反馈、加载状态）
 - `profile-base.wxss` - Profile 页面公共样式基类
-- `student-list-base.wxss` - 学生列表页面公共样式基类
-- `card-list-base.wxss` - 卡片列表页面公共样式基类
+
+## 教育杂志风设计系统（Editorial Design System）
+
+### 设计理念
+
+采用教育杂志风格（Editorial Style），特点包括：
+- **不对称排版**：打破传统对称布局，增加视觉层次
+- **大字标题**：超大号粗体标题，强调信息层级
+- **编号区块**：区块标题带数字编号（01、02...）
+- **左侧色条**：卡片左侧状态色条指示器
+- **方形排名徽章**：排行榜使用方形数字徽章
+
+### 色彩规范
+
+| 用途 | 颜色值 | 说明 |
+|-----|--------|------|
+| 主色 | `#1a365d` | 深蓝 - 主品牌色 |
+| 强调色 | `#ed8936` | 暖橙 - 行动按钮、标题强调 |
+| 页面背景 | `#fefcf6` | 奶白色 - 纸张质感 |
+| 成功色 | `#38a169` | 绿色 - 到课/通过状态 |
+| 警告色 | `#dd6b20` | 橙色 - 待处理/需关注 |
+| 错误色 | `#c53030` | 红色 - 缺课/拒绝状态 |
+
+### editorial.wxss 组件类
+
+| 类名 | 用途 | 说明 |
+|-----|------|------|
+| `.ed-page` | 页面容器 | 奶白背景 + 安全区适配 |
+| `.ed-hero` | 头部区域 | 渐变背景 + 不对称排版 |
+| `.ed-stats-grid` | 统计网格 | 2 列网格布局 |
+| `.ed-stat-card` | 统计卡片 | 数值展示卡片 |
+| `.ed-section` | 区块容器 | 带编号标题的区块 |
+| `.ed-card` | 通用卡片 | 左侧色条 + 内容区 |
+| `.ed-badge` | 徽章组件 | 状态标签（pending/success/warning/error） |
+| `.ed-progress` | 进度条 | 渐变填充进度条 |
+| `.ed-ranking-list` | 排行榜 | 方形排名徽章 |
+| `.ed-tabs` | Tab 切换 | 圆角背景切换 |
+| `.ed-list-item` | 列表项 | 头像 + 信息 + 状态 |
+| `.ed-empty` | 空状态 | 圆形图标背景 |
+| `.ed-actions` | 操作按钮组 | flex 布局按钮组 |
+| `.ed-action-grid` | 快捷操作 | 4 列图标网格 |
+| `.ed-filter` | 筛选器 | 筛选选项容器 |
+| `.ed-search` | 搜索框 | 搜索输入框容器 |
+| `.ed-footer` | 底部区域 | 页脚信息 |
+
+### 使用方式
+
+样式已在 `app.wxss` 中全局引入，页面可直接使用：
+
+```html
+<!-- WXML -->
+<view class="ed-page">
+  <view class="ed-hero ed-hero-teacher">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">智慧社团</view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">考勤</text>
+        <text class="ed-hero-title-line ed-hero-title-accent">管理</text>
+      </view>
+      <view class="ed-hero-divider"></view>
+    </view>
+  </view>
+
+  <view class="ed-stats-grid">
+    <view class="ed-stat-card ed-stat-card-large">
+      <view class="ed-stat-label">今日出勤率</view>
+      <view class="ed-stat-number">94.7<text class="ed-stat-unit">%</text></view>
+    </view>
+  </view>
+
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">01</text>
+        <text class="ed-section-text">待处理事项</text>
+      </view>
+    </view>
+    <!-- 内容 -->
+  </view>
+</view>
+```
 
 ## common.wxss 公共样式类
 
@@ -147,79 +228,3 @@
 </view>
 ```
 
-## student-list-base.wxss 学生列表样式
-
-### 使用方式
-
-在页面 WXSS 中引入：
-
-```css
-@import '../../../styles/student-list-base.wxss';
-
-/* 页面特有样式 */
-.teacher-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-```
-
-### 可复用样式类
-
-| 类名 | 用途 |
-|-----|------|
-| `.student-list-container` | 页面容器 |
-| `.list-header` | 头部信息卡片 |
-| `.distribution-section` | 分布统计区域 |
-| `.distribution-tag` | 分布标签 |
-| `.student-list-tabs` | Tab 切换容器 |
-| `.student-list-tab-item` | Tab 项 |
-| `.student-list-search` | 搜索框容器 |
-| `.student-card` | 学生卡片 |
-| `.student-rank-list` | 排行榜容器 |
-| `.student-rank-item` | 排行项 |
-| `.student-rank-rate` | 出勤率徽章（支持 .excellent/.good/.normal/.poor）|
-
-### 使用该样式的页面
-
-- `pages/teacher/club/club.wxss`
-- `pages/classTeacher/students/students.wxss`
-
-## card-list-base.wxss 卡片列表样式
-
-### 使用方式
-
-在页面 WXSS 中引入：
-
-```css
-@import '../../../styles/card-list-base.wxss';
-
-/* 页面特有样式 */
-.approval-item.approved {
-  border-left: 6rpx solid #52c41a;
-}
-```
-
-### 可复用样式类
-
-| 类名 | 用途 |
-|-----|------|
-| `.card-list-container` | 页面容器 |
-| `.card-list-tabs` | Tab 切换容器 |
-| `.card-list` | 列表容器 |
-| `.card-list-item` | 卡片项（支持 .approved/.rejected/.pending/.warning/.unread）|
-| `.card-list-header` | 卡片头部 |
-| `.card-list-title` | 卡片标题 |
-| `.card-list-body` | 卡片内容 |
-| `.card-list-info` | 信息区域 |
-| `.card-list-info-row` | 信息行 |
-| `.card-list-stats` | 统计区域 |
-| `.card-list-actions` | 操作按钮区域 |
-| `.card-list-result` | 结果信息（支持 .success/.error）|
-| `.card-list-time` | 时间标签 |
-| `.card-list-loading` | 加载状态 |
-
-### 使用该样式的页面
-
-- `pages/admin/approval/approval.wxss`
-- `pages/common/transfer/transfer.wxss`
-- `pages/common/notifications/notifications.wxss`
-- `pages/teacher/history/history.wxss`

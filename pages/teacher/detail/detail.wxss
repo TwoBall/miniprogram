@@ -1,131 +1,313 @@
-/* 点名详情页面 - 页面特有样式 */
-/* 公共样式已在 app.wxss 中引入 common.wxss */
+/* 点名详情页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
 
-.detail-container {
+/* ========== 页面容器 ========== */
+.ed-detail-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page, #fefcf6);
   padding-bottom: 40rpx;
 }
 
-/* 社团信息 */
-.club-info {
-  display: flex;
-  align-items: center;
+/* ========== Hero 头部 - Teacher 深蓝主题 ========== */
+.ed-hero-teacher {
+  background: linear-gradient(165deg, #1a365d 0%, #2c5282 100%);
+}
+
+/* ========== 统计卡片网格 ========== */
+.ed-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16rpx;
-  margin-bottom: 20rpx;
+  padding: 0 24rpx;
+  margin-top: -40rpx;
+  position: relative;
+  z-index: 10;
 }
 
-.club-name {
-  font-size: 40rpx;
-  font-weight: bold;
+.ed-stat-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 }
 
-.date-time,
-.teacher-info {
+.ed-stat-icon {
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 12rpx;
+  justify-content: center;
+  background: var(--gray-100, #f7fafc);
+  border-radius: 12rpx;
 }
 
-/* 学生列表 */
-.student-list {
-  margin-top: 20rpx;
+.ed-stat-info {
+  text-align: center;
 }
 
-.list-title {
-  font-size: 28rpx;
-  color: #969799;
-  padding: 16rpx 32rpx;
+.ed-stat-number {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: var(--gray-900, #1a202c);
+  line-height: 1.2;
 }
 
-.student-list-wrapper {
+.ed-stat-label {
+  font-size: 22rpx;
+  color: var(--gray-500, #a0aec0);
+}
+
+/* 统计卡片状态变体 */
+.ed-stat-card.ed-stat-success .ed-stat-icon {
+  background: var(--color-success-bg, #c6f6d5);
+}
+
+.ed-stat-card.ed-stat-success .ed-stat-number {
+  color: var(--color-success, #38a169);
+}
+
+.ed-stat-card.ed-stat-error .ed-stat-icon {
+  background: var(--color-error-bg, #fed7d7);
+}
+
+.ed-stat-card.ed-stat-error .ed-stat-number {
+  color: var(--color-error, #c53030);
+}
+
+/* ========== 区域容器 ========== */
+.ed-section {
+  margin-top: 24rpx;
   padding: 0 24rpx;
 }
 
-.student-cell {
+.ed-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
-  background: #ffffff;
-  border-radius: 12rpx;
-  border: 2rpx solid #e8e8e8;
-  box-sizing: border-box;
+  margin-bottom: 16rpx;
 }
 
-.student-info {
+.ed-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.ed-section-num {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--color-accent, #ed8936);
+  font-family: 'Georgia', serif;
+}
+
+.ed-section-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--gray-800, #2d3748);
+  letter-spacing: 1rpx;
+}
+
+.ed-section-tip {
+  font-size: 22rpx;
+  color: var(--gray-500, #a0aec0);
+}
+
+/* ========== 学生列表 ========== */
+.ed-student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+/* ========== 学生卡片 ========== */
+.ed-student-card {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  margin-bottom: 12rpx;
+}
+
+/* 左侧状态指示条 */
+.ed-card-indicator {
+  width: 8rpx;
+  flex-shrink: 0;
+  background: var(--gray-300, #e2e8f0);
+}
+
+.ed-card-indicator.success {
+  background: var(--color-success, #38a169);
+}
+
+.ed-card-indicator.error {
+  background: var(--color-error, #c53030);
+}
+
+/* 卡片主体 */
+.ed-card-body {
   flex: 1;
+  padding: 20rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
 }
 
-.student-name {
+.ed-student-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+}
+
+.ed-student-main {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+/* 学生头像 */
+.ed-student-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ed-student-avatar.present {
+  background: linear-gradient(135deg, #276749 0%, #38a169 100%);
+}
+
+.ed-student-avatar.absent {
+  background: linear-gradient(135deg, #9b2c2c 0%, #c53030 100%);
+}
+
+/* 学生信息 */
+.ed-student-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-student-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.ed-student-name {
   font-size: 30rpx;
-  color: #333;
-  margin-bottom: 8rpx;
+  font-weight: 600;
+  color: var(--gray-900, #1a202c);
 }
 
-.gender-tag {
-  font-size: 22rpx;
-  color: #999;
-  background: #f0f0f0;
-  padding: 2rpx 12rpx;
-  border-radius: 20rpx;
+.ed-gender-tag {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 500;
 }
 
-.student-class {
+.ed-gender-tag.male {
+  background: rgba(26, 54, 93, 0.1);
+  color: var(--color-primary, #1a365d);
+}
+
+.ed-gender-tag.female {
+  background: rgba(197, 48, 48, 0.1);
+  color: var(--color-error, #c53030);
+}
+
+.ed-student-class {
   font-size: 24rpx;
-  color: #666;
-  margin-left: 44rpx;
+  color: var(--gray-600, #718096);
 }
 
-.teacher-contact {
-  font-size: 22rpx;
-  color: #999;
-  margin-left: 44rpx;
-  margin-top: 8rpx;
+/* 学生元信息 */
+.ed-student-meta {
+  padding-top: 8rpx;
 }
 
-.teacher-contact .phone {
-  margin-left: 16rpx;
-  color: #1F6FAD;
-}
-
-.feedback-info {
+.ed-meta-row {
   display: flex;
   align-items: center;
   gap: 8rpx;
-  margin-top: 12rpx;
-  margin-left: 44rpx;
-  font-size: 24rpx;
-  color: #faad14;
-  background: #fffbe6;
-  padding: 8rpx 16rpx;
+}
+
+.ed-meta-text {
+  font-size: 22rpx;
+  color: var(--gray-600, #718096);
+}
+
+.ed-meta-phone {
+  font-size: 22rpx;
+  color: var(--color-primary, #1a365d);
+  margin-left: 12rpx;
+}
+
+/* 反馈信息 */
+.ed-feedback-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: var(--color-warning, #dd6b20);
+  background: var(--color-warning-bg, #feebc8);
+  padding: 8rpx 12rpx;
   border-radius: 8rpx;
   width: fit-content;
 }
 
-.status-toggle {
+/* 状态切换 */
+.ed-status-toggle {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16rpx;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 0 16rpx;
   flex-shrink: 0;
 }
 
-/* 固定底部保存按钮 */
-.save-section-fixed {
+.ed-status-badge {
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.ed-status-badge.success {
+  background: var(--color-success-bg, #c6f6d5);
+  color: var(--color-success, #38a169);
+}
+
+.ed-status-badge.error {
+  background: var(--color-error-bg, #fed7d7);
+  color: var(--color-error, #c53030);
+}
+
+/* ========== 固定底部保存按钮 ========== */
+.ed-save-section {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 24rpx 32rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
-  background: #ffffff;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: #fff;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
   z-index: 100;
+}
+
+.ed-btn-primary {
+  background: linear-gradient(135deg, var(--color-primary, #1a365d) 0%, var(--color-primary-light, #2c5282) 100%) !important;
+  border: none !important;
 }

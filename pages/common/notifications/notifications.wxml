@@ -1,82 +1,105 @@
-<view class="notifications-container">
+<!-- 通知列表页 - 教育杂志风 -->
+<view class="ed-page ed-notifications-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-compact fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="bell" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>消息中心</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">通知提醒</text>
+      </view>
+    </view>
+  </view>
+
   <!-- Tab 切换 -->
-  <view class="tabs-wrapper">
-    <view class="tabs">
+  <view class="ed-tabs-wrapper">
+    <view class="ed-tabs">
       <view
-        class="tab-item {{ activeTab === 'all' ? 'active' : '' }}"
+        class="ed-tab-item {{ activeTab === 'all' ? 'active' : '' }}"
         bindtap="onTabChange"
         data-tab="all"
       >
+        <van-icon name="bars" size="28rpx" />
         <text>全部</text>
       </view>
       <view
-        class="tab-item {{ activeTab === 'unread' ? 'active' : '' }}"
+        class="ed-tab-item {{ activeTab === 'unread' ? 'active' : '' }}"
         bindtap="onTabChange"
         data-tab="unread"
       >
+        <van-icon name="envelop-o" size="28rpx" />
         <text>未读</text>
-        <view wx:if="{{ unreadCount > 0 }}" class="badge heartbeat">{{ unreadCount > 99 ? '99+' : unreadCount }}</view>
+        <view wx:if="{{ unreadCount > 0 }}" class="ed-tab-badge">
+          {{ unreadCount > 99 ? '99+' : unreadCount }}
+        </view>
       </view>
       <view
-        class="tab-item {{ activeTab === 'read' ? 'active' : '' }}"
+        class="ed-tab-item {{ activeTab === 'read' ? 'active' : '' }}"
         bindtap="onTabChange"
         data-tab="read"
       >
+        <van-icon name="passed" size="28rpx" />
         <text>已读</text>
       </view>
     </view>
   </view>
 
   <!-- 全部标记为已读按钮 -->
-  <view wx:if="{{ notifications.length > 0 && unreadCount > 0 }}" class="mark-all-wrapper">
-    <view class="mark-all-btn btn-active" bindtap="markAllAsRead">
-      <van-icon name="checked" size="32rpx" />
+  <view wx:if="{{ notifications.length > 0 && unreadCount > 0 }}" class="ed-action-wrapper">
+    <view class="ed-mark-all-btn btn-active" bindtap="markAllAsRead">
+      <van-icon name="checked" size="28rpx" />
       <text>全部标记为已读</text>
     </view>
   </view>
 
+  <!-- 骨架屏加载 -->
+  <view wx:if="{{ loading }}" class="ed-skeleton-wrapper">
+    <skeleton type="list" count="{{5}}" />
+  </view>
+
   <!-- 通知列表 -->
-  <view class="notifications-list">
+  <view wx:elif="{{ notifications.length > 0 }}" class="ed-notifications-list">
     <view
       wx:for="{{ notifications }}"
       wx:key="_id"
-      class="card notification-item card-list-enter card-tap {{ !item.read ? 'unread' : '' }}"
+      class="ed-notification-card card-tap {{ !item.read ? 'unread' : '' }}"
       bindtap="onNotificationTap"
       data-notification="{{ item }}"
       data-id="{{ item._id }}"
     >
-      <!-- 未读指示器 -->
-      <view wx:if="{{ !item.read }}" class="unread-dot"></view>
+      <!-- 左侧状态指示条 -->
+      <view class="ed-card-indicator {{ !item.read ? 'unread' : '' }}"></view>
 
-      <!-- 通知内容 -->
-      <view class="notification-content">
+      <view class="ed-card-body">
         <!-- 顶部：类型标签 + 时间 -->
-        <view class="notification-header">
-          <view class="type-badge type-{{ item.type }}">
+        <view class="ed-notification-header">
+          <view class="ed-type-tag type-{{ item.type }}">
             <van-icon
               name="{{ item.type === 'absence_warning' ? 'warning-o' : item.type === 'transfer_request' ? 'question-o' : item.type === 'transfer_result' ? 'passed' : 'bell' }}"
               size="24rpx"
             />
             <text>{{ formatNotificationType(item.type) }}</text>
           </view>
-          <text class="time">{{ item.createTime }}</text>
+          <text class="ed-notification-time">{{ item.createTime }}</text>
         </view>
 
         <!-- 标题 -->
-        <view class="notification-title">{{ item.title }}</view>
+        <view class="ed-notification-title">{{ item.title }}</view>
 
         <!-- 内容 -->
-        <view class="notification-text">{{ item.content }}</view>
+        <view class="ed-notification-text">{{ item.content }}</view>
       </view>
 
       <!-- 右侧操作 -->
-      <view wx:if="{{ !item.read }}" class="notification-action">
+      <view wx:if="{{ !item.read }}" class="ed-notification-action">
         <view
-          class="mark-read-btn"
+          class="ed-mark-read-btn"
           catchtap="markAsRead"
           data-id="{{ item._id }}"
         >
-          <van-icon name="success" size="32rpx" color="#52c41a" />
+          <van-icon name="success" size="36rpx" color="#38a169" />
         </view>
       </view>
     </view>
@@ -89,11 +112,8 @@
     description="{{ activeTab === 'unread' ? '暂无未读通知' : activeTab === 'read' ? '暂无已读通知' : '' }}"
   />
 
-  <!-- 骨架屏加载 -->
-  <skeleton wx:if="{{ loading }}" type="list" count="{{5}}" />
-
   <!-- 没有更多 -->
-  <view wx:if="{{ !loading && notifications.length > 0 && !hasMore }}" class="no-more">
+  <view wx:if="{{ !loading && notifications.length > 0 && !hasMore }}" class="ed-no-more">
     没有更多了
   </view>
 </view>

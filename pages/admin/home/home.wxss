@@ -1,71 +1,174 @@
-.home-container {
+/* 管理员首页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
+
+/* ========== 页面容器 ========== */
+.ed-home-page {
   min-height: 100vh;
-  background: #f5f5f5;
-  padding-bottom: 100rpx;
+  background-color: var(--bg-page, #fefcf6);
+  padding-bottom: calc(160rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
-.welcome-section {
-  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
-  padding: 60rpx 40rpx;
-  color: #fff;
+/* ========== 骨架屏包装器 ========== */
+.ed-skeleton-wrapper {
+  padding: 24rpx;
 }
 
-.greeting {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20rpx;
+/* ========== Hero 头部 - Admin 紫色主题 ========== */
+.ed-hero-admin {
+  background: linear-gradient(165deg, #553c9a 0%, #805ad5 100%);
 }
 
-.greeting-text {
-  font-size: 44rpx;
-  font-weight: bold;
-  margin-right: 20rpx;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
-}
-
-.stats-section {
-  margin: -40rpx 30rpx 30rpx;
-  padding: 30rpx;
-  /* background, border-radius, border 由 .card 基类提供 */
-}
-
-.stats-grid {
+/* ========== 统计卡片网格 ========== */
+.ed-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30rpx;
+  gap: 16rpx;
+  padding: 0 24rpx;
+  margin-top: -40rpx;
+  position: relative;
+  z-index: 10;
 }
 
-.stat-card {
-  text-align: center;
+.ed-stat-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
 }
 
-.stat-value {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #1890ff;
-  margin-bottom: 10rpx;
+.ed-stat-card:active {
+  transform: scale(0.98);
+  background: var(--gray-50, #f8fafc);
 }
 
-.stat-value.warning {
-  color: #ff4d4f;
+.ed-stat-icon {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100, #f7fafc);
+  border-radius: 12rpx;
+  flex-shrink: 0;
 }
 
-.stat-label {
+.ed-stat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-stat-number {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--gray-900, #1a202c);
+  line-height: 1.2;
+}
+
+.ed-stat-label {
   font-size: 24rpx;
-  color: #666;
+  color: var(--gray-500, #a0aec0);
 }
 
-.quick-actions {
-  margin: 30rpx;
+/* 统计卡片状态变体 */
+.ed-stat-card.ed-stat-success .ed-stat-icon {
+  background: var(--color-success-bg, #c6f6d5);
 }
 
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+.ed-stat-card.ed-stat-success .ed-stat-number {
+  color: var(--color-success, #38a169);
+}
+
+.ed-stat-card.ed-stat-warning .ed-stat-icon {
+  background: var(--color-warning-bg, #feebc8);
+}
+
+.ed-stat-card.ed-stat-warning .ed-stat-number {
+  color: var(--color-warning, #dd6b20);
+}
+
+/* ========== 区域容器 ========== */
+.ed-section {
+  margin-top: 32rpx;
+  padding: 0 24rpx;
+}
+
+.ed-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 20rpx;
+}
+
+.ed-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.ed-section-num {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--color-accent, #ed8936);
+  font-family: 'Georgia', serif;
+}
+
+.ed-section-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--gray-800, #2d3748);
+  letter-spacing: 1rpx;
+}
+
+/* ========== 快捷操作网格 ========== */
+.ed-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+}
+
+.ed-quick-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 24rpx 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  transition: all 0.2s ease;
+}
+
+.ed-quick-item:active {
+  transform: scale(0.95);
+  background: var(--gray-50, #f8fafc);
+  border-color: var(--gray-300, #e2e8f0);
+}
+
+.ed-quick-icon {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100, #f7fafc);
+  border-radius: 16rpx;
+}
+
+.ed-quick-icon-warning {
+  background: var(--color-warning-bg, #feebc8);
+}
+
+.ed-quick-label {
+  font-size: 24rpx;
+  color: var(--gray-700, #4a5568);
+  font-weight: 500;
+  text-align: center;
 }

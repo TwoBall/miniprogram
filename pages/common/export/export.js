@@ -1,4 +1,4 @@
-const app = getApp()
+const _app = getApp()
 const { formatDate } = require('../../../utils/date')
 const request = require('../../../utils/request')
 const { SafeToast, SafeDialog } = require('../../../utils/error')
@@ -123,12 +123,15 @@ Page({
 
   // 导出类型切换
   onExportTypeChange(e) {
-    this.setData({ exportType: e.detail })
+    const type = e.currentTarget.dataset.type
+    if (type === this.data.exportType) return
+    this.setData({ exportType: type })
   },
 
   // 日期范围切换
   onDateRangeChange(e) {
-    const range = e.detail
+    const range = e.currentTarget.dataset.range
+    if (range === this.data.dateRange) return
     this.setData({ dateRange: range })
     if (range !== 'custom') {
       this.setDateRange(range)

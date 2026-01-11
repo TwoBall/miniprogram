@@ -1,84 +1,254 @@
-.export-container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+/* 数据导出页样式 - Editorial 教育杂志风 */
+/* 公共样式已在 app.wxss 中引入 editorial.wxss */
+
+/* ========== 页面容器 ========== */
+.ed-export-page {
   min-height: 100vh;
+  background-color: var(--bg-page, #fefcf6);
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
 }
 
-.history-entry {
+/* ========== Hero 头部 ========== */
+/* 使用全局 ed-hero 标准高度: padding: 40rpx 32rpx 56rpx */
+
+/* ========== 历史记录入口 ========== */
+.ed-history-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -32rpx 24rpx 24rpx;
+  padding: 24rpx 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+.ed-entry-left {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  padding: 24rpx 30rpx;
-  margin-bottom: 20rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
-  border: 1rpx solid #e8e8e8;
   font-size: 28rpx;
-  color: #333;
-}
-
-.history-entry text {
-  flex: 1;
-}
-
-.section {
-  margin-bottom: 20rpx;
-}
-
-.section-title {
-  padding: 20rpx 30rpx;
-  font-size: 28rpx;
-  color: #666;
   font-weight: 500;
+  color: var(--color-primary, #1a365d);
 }
 
-.custom-date {
-  margin-top: 20rpx;
+/* ========== 区域容器 ========== */
+.ed-section {
+  margin-top: 24rpx;
+  padding: 0 24rpx;
 }
 
-.export-btn {
-  margin: 40rpx 0;
-  padding: 0 30rpx;
+.ed-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
 }
 
-.tips {
+.ed-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.ed-section-num {
+  font-size: 28rpx;
+  font-weight: 800;
+  color: var(--color-accent, #ed8936);
+  font-family: 'Georgia', serif;
+}
+
+.ed-section-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--gray-800, #2d3748);
+  letter-spacing: 1rpx;
+}
+
+/* ========== 选项卡片 ========== */
+.ed-option-card {
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  overflow: hidden;
+}
+
+.ed-option-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
+  transition: all 0.2s ease;
+}
+
+.ed-option-item:last-child {
+  border-bottom: none;
+}
+
+.ed-option-item:active {
+  background: var(--gray-50, #f7fafc);
+}
+
+.ed-option-item.active {
+  background: rgba(26, 54, 93, 0.04);
+}
+
+/* 自定义单选按钮 */
+.ed-option-radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--gray-300, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.ed-option-radio.checked {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+  border-color: var(--color-primary, #1a365d);
+}
+
+/* 选项信息 */
+.ed-option-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-option-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--gray-800, #2d3748);
+}
+
+.ed-option-desc {
+  font-size: 24rpx;
+  color: var(--gray-500, #a0aec0);
+}
+
+/* ========== 自定义日期范围 ========== */
+.ed-custom-date {
+  margin-top: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  overflow: hidden;
+}
+
+.ed-date-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
+}
+
+.ed-date-item:last-child {
+  border-bottom: none;
+}
+
+.ed-date-label {
+  font-size: 28rpx;
+  color: var(--gray-600, #718096);
+}
+
+.ed-date-value {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--gray-800, #2d3748);
+}
+
+/* ========== 筛选卡片 ========== */
+.ed-filter-card {
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  overflow: hidden;
+}
+
+.ed-filter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
+}
+
+.ed-filter-item:last-child {
+  border-bottom: none;
+}
+
+.ed-filter-item.disabled {
+  background: var(--gray-50, #f7fafc);
+  opacity: 0.7;
+}
+
+.ed-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 28rpx;
+  color: var(--gray-600, #718096);
+}
+
+.ed-filter-value {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--gray-800, #2d3748);
+}
+
+/* ========== 导出按钮 ========== */
+.ed-export-btn {
+  margin: 32rpx 24rpx;
+}
+
+.ed-btn-primary {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  letter-spacing: 2rpx !important;
+}
+
+/* ========== 提示卡片 ========== */
+.ed-tips-card {
   display: flex;
   align-items: flex-start;
-  padding: 20rpx 30rpx;
-  margin-top: 20rpx;
-  background-color: #fff8e6;
-  border-radius: 8rpx;
+  gap: 16rpx;
+  margin: 0 24rpx;
+  padding: 24rpx;
+  background: rgba(26, 54, 93, 0.06);
+  border-radius: 16rpx;
+  border-left: 6rpx solid var(--color-primary, #1a365d);
 }
 
-.tips-text {
-  margin-left: 10rpx;
-  font-size: 24rpx;
-  color: #856404;
-  line-height: 1.6;
-}
-
-/* 日期选择器样式 */
-.date-picker-header {
+.ed-tips-icon {
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 24rpx 32rpx;
-  background: #fff;
-  border-bottom: 1rpx solid #eee;
+  justify-content: center;
+  background: rgba(26, 54, 93, 0.1);
+  border-radius: 50%;
 }
 
-.date-picker-cancel {
-  color: #999;
-  font-size: 28rpx;
-}
-
-.date-picker-title {
-  font-size: 32rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.date-picker-confirm {
-  color: #1890ff;
-  font-size: 28rpx;
+.ed-tips-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--gray-600, #718096);
+  line-height: 1.6;
 }

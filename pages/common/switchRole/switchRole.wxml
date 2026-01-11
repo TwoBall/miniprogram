@@ -1,62 +1,89 @@
-<view class="switch-role-container">
-  <!-- 头部 -->
-  <view class="header">
-    <view class="header-content">
-      <text class="header-title">身份管理</text>
-      <text class="header-subtitle">选择要使用的身份</text>
+<!-- 角色切换页 - 教育杂志风 -->
+<view class="ed-page ed-switch-role-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-compact fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="exchange" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>账号管理</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">身份切换</text>
+      </view>
+      <view class="ed-hero-subtitle">
+        <text>选择要使用的身份</text>
+      </view>
     </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{ loading }}" class="ed-loading-wrapper">
+    <van-loading size="48rpx" vertical>加载中...</van-loading>
   </view>
 
   <!-- 角色列表 -->
-  <view class="role-list" wx:if="{{!loading}}">
+  <view wx:elif="{{ roles.length > 0 }}" class="ed-role-list">
     <view
-      class="card role-card card-list-enter card-tap {{item.isCurrent ? 'current' : ''}}"
-      wx:for="{{roles}}"
+      wx:for="{{ roles }}"
       wx:key="_id"
+      class="ed-role-card card-tap {{ item.isCurrent ? 'current' : '' }}"
       bindtap="switchRole"
-      data-role="{{item}}"
+      data-role="{{ item }}"
     >
-      <view class="role-icon-wrapper">
-        <van-icon 
-          name="{{item.role === 'teacher' ? 'friends-o' : (item.role === 'classTeacher' ? 'home-o' : (item.role === 'leader' ? 'cluster-o' : 'manager-o'))}}" 
-          size="48rpx" 
-          color="{{item.isCurrent ? '#1890ff' : '#666'}}"
-        />
-      </view>
-      <view class="role-info">
-        <view class="role-name">{{item.userName}}</view>
-        <view class="role-label">{{item.roleLabel}}</view>
-        <view class="role-extra" wx:if="{{item.extraInfo}}">{{item.extraInfo}}</view>
-      </view>
-      <view class="role-status">
-        <van-tag type="primary" wx:if="{{item.isCurrent}}">当前</van-tag>
-        <van-icon name="arrow" color="#ccc" wx:else />
+      <!-- 左侧角色指示条 -->
+      <view class="ed-card-indicator {{ item.role }}"></view>
+
+      <view class="ed-card-body">
+        <!-- 角色图标 -->
+        <view class="ed-role-avatar {{ item.role }}">
+          <van-icon
+            name="{{ item.role === 'teacher' ? 'friends-o' : item.role === 'classTeacher' ? 'home-o' : item.role === 'leader' ? 'cluster-o' : 'manager-o' }}"
+            size="44rpx"
+            color="#fff"
+          />
+        </view>
+
+        <!-- 角色信息 -->
+        <view class="ed-role-info">
+          <view class="ed-role-name">{{ item.userName }}</view>
+          <view class="ed-role-label">{{ item.roleLabel }}</view>
+          <view wx:if="{{ item.extraInfo }}" class="ed-role-extra">
+            <van-icon name="location-o" size="22rpx" />
+            <text>{{ item.extraInfo }}</text>
+          </view>
+        </view>
+
+        <!-- 状态标识 -->
+        <view class="ed-role-status">
+          <view wx:if="{{ item.isCurrent }}" class="ed-current-badge">
+            <van-icon name="success" size="24rpx" color="#fff" />
+            <text>当前</text>
+          </view>
+          <van-icon wx:else name="arrow" size="32rpx" color="#a0aec0" />
+        </view>
       </view>
     </view>
-  </view>
-
-  <!-- 加载中 -->
-  <view class="loading-wrapper" wx:if="{{loading}}">
-    <van-loading size="48rpx" vertical>加载中...</van-loading>
   </view>
 
   <!-- 空状态 -->
   <empty-state
-    wx:if="{{!loading && roles.length === 0}}"
+    wx:if="{{ !loading && roles.length === 0 }}"
     type="default"
     description="暂无其他身份，请注册新身份"
   />
 
   <!-- 添加新身份 -->
-  <view class="add-role-section" wx:if="{{!loading}}">
-    <van-button 
-      plain 
-      type="info" 
-      icon="plus" 
-      block 
-      round
-      bind:click="addNewRole"
-    >注册新身份</van-button>
+  <view wx:if="{{ !loading }}" class="ed-add-role-section">
+    <view class="ed-add-btn card-tap" bindtap="addNewRole">
+      <view class="ed-add-icon">
+        <van-icon name="plus" size="40rpx" color="#1a365d" />
+      </view>
+      <view class="ed-add-text">
+        <text class="ed-add-title">注册新身份</text>
+        <text class="ed-add-desc">申请其他角色权限</text>
+      </view>
+      <van-icon name="arrow" size="28rpx" color="#a0aec0" />
+    </view>
   </view>
 
   <van-toast id="van-toast" />

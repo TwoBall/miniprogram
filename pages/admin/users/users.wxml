@@ -1,119 +1,161 @@
-<view class="users-container">
+<!-- 用户管理页 - 教育杂志风 -->
+<view class="ed-page ed-users-page">
   <!-- 初始加载骨架屏 -->
-  <block wx:if="{{ pageLoading }}">
+  <view wx:if="{{ pageLoading }}" class="ed-skeleton-wrapper">
     <skeleton type="list" count="{{6}}" avatar="{{false}}" />
-  </block>
+  </view>
 
   <!-- 实际内容 -->
   <block wx:else>
-  <view class="search-bar">
-    <van-search
-      value="{{ searchKeyword }}"
-      placeholder="搜索姓名、学部、班级或社团"
-      bind:change="onSearchChange"
-      bind:search="onSearch"
-      bind:clear="onSearchClear"
-    />
-  </view>
-
-  <van-tabs active="{{ activeTab }}" bind:change="onTabChange" sticky>
-    <van-tab
-      wx:for="{{ roleOptions }}"
-      wx:key="value"
-      name="{{ item.value }}"
-      title="{{ item.label }}"
-    />
-  </van-tabs>
-
-  <view class="users-list">
-    <van-cell-group wx:if="{{ users.length > 0 }}">
-      <van-swipe-cell
-        wx:for="{{ users }}"
-        wx:key="_id"
-        right-width="{{ 130 }}"
-        custom-class="list-item-enter"
-      >
-        <van-cell
-          border="{{ false }}"
-          custom-class="user-card"
-          bind:click="editUser"
-          data-user="{{ item }}"
-        >
-          <view slot="title" class="user-info">
-            <view class="user-header">
-              <view class="user-name-wrapper">
-                <text class="user-name">{{ item.userName }}</text>
-                <van-tag
-                  type="{{ statusMap[item.status].type }}"
-                  size="medium"
-                  plain
-                >
-                  {{ statusMap[item.status].text }}
-                </van-tag>
-              </view>
-              <van-tag type="primary" plain size="medium">
-                {{ roleMap[item.role] }}
-              </van-tag>
-            </view>
-            <view class="user-extra" wx:if="{{ item.department || item.className || item.clubName }}">
-              <van-icon name="location-o" size="28rpx" color="#999" />
-              <text class="extra-text">
-                <block wx:if="{{ item.department }}">{{ item.department }}</block>
-                <block wx:if="{{ item.className }}"> · {{ item.className }}</block>
-                <block wx:if="{{ item.clubName }}"> · {{ item.clubName }}</block>
-              </text>
-            </view>
-            <view class="user-meta" wx:if="{{ item._openid }}">
-              <van-icon name="user-circle-o" size="28rpx" color="#52c41a" />
-              <text class="meta-text">已绑定微信</text>
-            </view>
-            <view class="user-meta" wx:else>
-              <van-icon name="user-circle-o" size="28rpx" color="#ff9800" />
-              <text class="meta-text">预注册账号</text>
-            </view>
-          </view>
-        </van-cell>
-        <view slot="right" class="swipe-actions">
-          <view class="action-btn edit-btn" bind:tap="editUser" data-user="{{ item }}">
-            编辑
-          </view>
-          <view class="action-btn delete-btn" bind:tap="deleteUser" data-user="{{ item }}">
-            删除
+    <!-- 顶部信息栏 - Editorial Hero -->
+    <view class="ed-hero ed-hero-admin fade-in-up">
+      <view class="ed-hero-content">
+        <view class="ed-hero-eyebrow">
+          <van-icon name="friends-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+          <text>用户中心</text>
+        </view>
+        <view class="ed-hero-title">
+          <text class="ed-hero-title-line">用户管理</text>
+        </view>
+        <view class="ed-hero-divider"></view>
+        <view class="ed-hero-meta">
+          <view class="ed-meta-item">
+            <van-icon name="manager-o" size="26rpx" />
+            <text>共 {{totalCount || 0}} 位用户</text>
           </view>
         </view>
-      </van-swipe-cell>
-    </van-cell-group>
-
-    <empty-state
-      wx:elif="{{ !loading }}"
-      type="default"
-      description="暂无用户数据"
-    />
-
-    <van-loading
-      wx:if="{{ loading && users.length === 0 }}"
-      type="spinner"
-      class="loading-center"
-    >
-      加载中...
-    </van-loading>
-
-    <view wx:if="{{ hasMore && users.length > 0 }}" class="load-more">
-      <van-loading wx:if="{{ loading }}" type="spinner" size="20px" />
-      <text wx:if="{{ loading }}" class="load-more-text">加载更多...</text>
+      </view>
     </view>
-    <view wx:if="{{ !hasMore && users.length > 0 }}" class="no-more">
-      — 没有更多了 —
-    </view>
-  </view>
 
-  <view class="fab-btn btn-active" bind:tap="goToAddUser">
-    <van-icon name="plus" size="48rpx" color="#fff" />
-  </view>
+    <!-- 搜索栏 -->
+    <view class="ed-search-wrapper">
+      <van-search
+        value="{{ searchKeyword }}"
+        placeholder="搜索姓名、学部、班级或社团"
+        bind:change="onSearchChange"
+        bind:search="onSearch"
+        bind:clear="onSearchClear"
+        custom-class="ed-search"
+      />
+    </view>
+
+    <!-- Tab 切换 - 悬浮样式 -->
+    <view class="ed-tabs-wrapper">
+      <view class="ed-tabs">
+        <view
+          wx:for="{{ roleOptions }}"
+          wx:key="value"
+          class="ed-tab-item {{activeTab === item.value ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-name="{{ item.value }}"
+        >
+          <text>{{ item.label }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 用户列表 -->
+    <view class="ed-tab-content">
+      <view wx:if="{{ users.length > 0 }}" class="ed-card-list">
+        <van-swipe-cell
+          wx:for="{{ users }}"
+          wx:key="_id"
+          right-width="{{ 160 }}"
+        >
+          <view
+            class="ed-user-card list-item-enter card-tap"
+            bindtap="editUser"
+            data-user="{{ item }}"
+          >
+            <!-- 左侧状态指示条 -->
+            <view class="ed-card-indicator {{ item.status === 'approved' ? 'success' : item.status === 'pending' ? 'warning' : 'default' }}"></view>
+
+            <view class="ed-card-body">
+              <view class="ed-card-header">
+                <view class="ed-user-main">
+                  <view class="ed-user-avatar {{ item._openid ? 'bound' : 'unbound' }}">
+                    <van-icon name="user-o" size="36rpx" color="#fff" />
+                  </view>
+                  <view class="ed-user-info">
+                    <view class="ed-user-name-row">
+                      <text class="ed-user-name">{{ item.userName }}</text>
+                      <view class="ed-status-tag {{ statusMap[item.status].class }}">
+                        {{ statusMap[item.status].text }}
+                      </view>
+                    </view>
+                    <view class="ed-role-tag">{{ roleMap[item.role] }}</view>
+                  </view>
+                </view>
+              </view>
+
+              <view class="ed-card-meta" wx:if="{{ item.department || item.className || item.clubName }}">
+                <view class="ed-meta-row">
+                  <van-icon name="location-o" size="24rpx" color="#718096" />
+                  <text class="ed-meta-value">
+                    <block wx:if="{{ item.department }}">{{ item.department }}</block>
+                    <block wx:if="{{ item.className }}"> · {{ item.className }}</block>
+                    <block wx:if="{{ item.clubName }}"> · {{ item.clubName }}</block>
+                  </text>
+                </view>
+              </view>
+
+              <view class="ed-bind-status {{ item._openid ? 'bound' : 'unbound' }}">
+                <van-icon
+                  name="{{ item._openid ? 'passed' : 'warning-o' }}"
+                  size="24rpx"
+                  color="{{ item._openid ? '#38a169' : '#dd6b20' }}"
+                />
+                <text>{{ item._openid ? '已绑定微信' : '预注册账号' }}</text>
+              </view>
+            </view>
+
+            <view class="ed-card-arrow">
+              <van-icon name="arrow" size="28rpx" color="#a0aec0" />
+            </view>
+          </view>
+
+          <view slot="right" class="ed-swipe-actions">
+            <view class="ed-action-btn ed-action-edit" bindtap="editUser" data-user="{{ item }}">
+              <van-icon name="edit" size="32rpx" color="#fff" />
+              <text>编辑</text>
+            </view>
+            <view class="ed-action-btn ed-action-delete" bindtap="deleteUser" data-user="{{ item }}">
+              <van-icon name="delete-o" size="32rpx" color="#fff" />
+              <text>删除</text>
+            </view>
+          </view>
+        </van-swipe-cell>
+      </view>
+
+      <empty-state
+        wx:elif="{{ !loading }}"
+        type="default"
+        description="暂无用户数据"
+      />
+
+      <!-- 加载状态 -->
+      <view wx:if="{{ loading && users.length === 0 }}" class="ed-loading-center">
+        <van-loading type="spinner" size="24px">加载中...</van-loading>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="ed-load-more" wx:if="{{ hasMore && users.length > 0 && loading }}">
+        <van-loading size="24px">加载更多...</van-loading>
+      </view>
+      <view class="ed-no-more" wx:if="{{ !hasMore && users.length > 0 }}">
+        <text>— 没有更多了 —</text>
+      </view>
+    </view>
+
+    <!-- 浮动添加按钮 -->
+    <view class="ed-fab ed-fab-admin btn-active" bindtap="goToAddUser">
+      <van-icon name="plus" size="48rpx" color="#fff" />
+    </view>
+  </block>
+
+  <!-- 底部 TabBar -->
+  <custom-tabbar role="admin" active="0" />
 
   <van-toast id="van-toast" />
   <van-dialog id="van-dialog" />
-  </block>
-
-  <custom-tabbar role="admin" active="0" />
 </view>

@@ -1,5 +1,7 @@
+/* 班主任个人中心样式 - Editorial 教育杂志风 */
 @import '../../../styles/profile-base.wxss';
 
-.user-info {
-  background: linear-gradient(135deg, #52c41a 0%, #95de64 100%);
+/* 班主任 Hero 渐变 - 绿色系 */
+.ed-hero-classTeacher {
+  background: linear-gradient(165deg, #276749 0%, #38a169 100%);
 }

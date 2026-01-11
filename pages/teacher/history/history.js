@@ -96,17 +96,29 @@ Page({
       if (result.success) {
         const { data, pagination } = result
 
+        // 处理日期格式，提取日和月用于显示
+        const processedData = data.map(item => {
+          if (item.date) {
+            const parts = item.date.split('-')
+            if (parts.length === 3) {
+              item.dateMonth = `${parseInt(parts[1], 10)}月`
+              item.dateDay = parseInt(parts[2], 10).toString()
+            }
+          }
+          return item
+        })
+
         if (this.data.page === 1) {
           const cacheKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS}_${userInfo._id}`
           const cacheTimeKey = `${storage.STORAGE_KEYS.HISTORY_RECORDS_TIME}_${userInfo._id}`
           storage.setWithCache(cacheKey, cacheTimeKey, {
-            records: data,
+            records: processedData,
             page: 1,
             hasMore: pagination.hasMore
           })
         }
 
-        this.handleLoadSuccess(data, pagination, refresh, 'records')
+        this.handleLoadSuccess(processedData, pagination, refresh, 'records')
       }
     } catch (error) {
       console.error('加载历史记录失败:', error)

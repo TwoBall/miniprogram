@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "设计预览 - 教育杂志风",
+  "navigationBarBackgroundColor": "#1a365d",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index",
+    "van-button": "@vant/weapp/button/index",
+    "van-tag": "@vant/weapp/tag/index",
+    "van-progress": "@vant/weapp/progress/index",
+    "van-toast": "@vant/weapp/toast/index"
+  }
+}

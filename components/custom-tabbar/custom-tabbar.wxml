@@ -1,9 +1,13 @@
+<!-- 自定义底部导航栏 - Editorial 风格 -->
 <van-tabbar
   active="{{ active }}"
   bind:change="onChange"
   fixed="{{ true }}"
   placeholder="{{ true }}"
-  border="{{ true }}"
+  border="{{ false }}"
+  active-color="{{ activeColor }}"
+  inactive-color="#718096"
+  custom-class="ed-tabbar ed-tabbar-{{ role }}"
 >
   <van-tabbar-item
     wx:for="{{ tabs[role] }}"

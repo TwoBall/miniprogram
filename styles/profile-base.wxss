@@ -1,61 +1,248 @@
 /**
- * Profile 页面公共样式基类
- * 各角色 profile.wxss 只需 @import 此文件并覆盖 .user-info 的渐变色
+ * Profile 页面公共样式基类 - Editorial 教育杂志风
+ * 各角色 profile.wxss 只需 @import 此文件并覆盖角色特定的颜色
  */
 
-.profile-container {
+/* ========== 页面容器 ========== */
+.ed-profile-page {
   min-height: 100vh;
-  background: #f5f5f5;
-  padding-bottom: 100rpx;
+  background-color: var(--bg-page, #fefcf6);
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
 }
 
-.user-info {
-  padding: 60rpx 40rpx;
-  color: #fff;
+/* ========== 用户信息卡片 ========== */
+.ed-user-card {
+  margin: -20rpx 24rpx 24rpx;
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 10;
+}
+
+.ed-user-header {
   display: flex;
   align-items: center;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
 }
 
-.avatar {
-  margin-right: 30rpx;
+.ed-user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.user-details {
+/* 各角色头像渐变色需要在各自页面定义 */
+.ed-user-avatar.admin {
+  background: linear-gradient(135deg, #553c9a 0%, #805ad5 100%);
+}
+
+.ed-user-avatar.teacher {
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+}
+
+.ed-user-avatar.classTeacher {
+  background: linear-gradient(135deg, #276749 0%, #38a169 100%);
+}
+
+.ed-user-avatar.leader {
+  background: linear-gradient(135deg, #744210 0%, #d69e2e 100%);
+}
+
+.ed-user-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
 }
 
-.name {
-  font-size: 40rpx;
-  font-weight: bold;
+.ed-user-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--gray-800, #2d3748);
+}
+
+.ed-user-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  width: fit-content;
+}
+
+/* 角色标签颜色需要在各自页面定义 */
+.ed-user-role.admin {
+  background: rgba(85, 60, 154, 0.1);
+  color: #553c9a;
+}
+
+.ed-user-role.teacher {
+  background: rgba(26, 54, 93, 0.1);
+  color: var(--color-primary, #1a365d);
+}
+
+.ed-user-role.classTeacher {
+  background: rgba(39, 103, 73, 0.1);
+  color: #276749;
+}
+
+.ed-user-role.leader {
+  background: rgba(116, 66, 16, 0.1);
+  color: #744210;
+}
+
+/* 用户详情信息 */
+.ed-user-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--gray-100, #f7fafc);
+}
+
+.ed-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  background: var(--gray-50, #f7fafc);
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: var(--gray-600, #718096);
+}
+
+/* ========== 菜单区域 ========== */
+.ed-menu-section {
+  padding: 0 24rpx;
+}
+
+.ed-menu-group {
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--gray-200, #edf2f7);
+  overflow: hidden;
   margin-bottom: 20rpx;
 }
 
-.role-tag {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 8rpx 20rpx;
-  border-radius: 30rpx;
-  font-size: 24rpx;
-  margin-bottom: 12rpx;
-}
-
-.role-tag .role-text {
-  margin-left: 8rpx;
-}
-
-.info-item {
+.ed-menu-item {
   display: flex;
   align-items: center;
-  font-size: 26rpx;
-  margin-top: 12rpx;
-  opacity: 0.9;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid var(--gray-100, #f7fafc);
+  transition: background 0.2s ease;
 }
 
-.info-item .info-text {
-  margin-left: 8rpx;
+.ed-menu-item:last-child {
+  border-bottom: none;
 }
 
-.menu-section {
-  margin-top: 20rpx;
+.ed-menu-item:active {
+  background: var(--gray-50, #f7fafc);
+}
+
+.ed-menu-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.ed-menu-icon.primary {
+  background: rgba(26, 54, 93, 0.1);
+}
+
+.ed-menu-icon.success {
+  background: rgba(56, 161, 105, 0.1);
+}
+
+.ed-menu-icon.warning {
+  background: rgba(237, 137, 54, 0.1);
+}
+
+.ed-menu-icon.danger {
+  background: rgba(197, 48, 48, 0.1);
+}
+
+.ed-menu-icon.purple {
+  background: rgba(85, 60, 154, 0.1);
+}
+
+.ed-menu-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.ed-menu-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--gray-800, #2d3748);
+}
+
+.ed-menu-desc {
+  font-size: 24rpx;
+  color: var(--gray-500, #a0aec0);
+}
+
+.ed-menu-right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.ed-menu-badge {
+  min-width: 36rpx;
+  height: 36rpx;
+  padding: 0 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-error, #c53030);
+  border-radius: 18rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ========== 退出登录按钮 ========== */
+.ed-logout-section {
+  padding: 32rpx 24rpx;
+}
+
+.ed-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--color-error, #c53030);
+  transition: all 0.2s ease;
+}
+
+.ed-logout-btn:active {
+  background: rgba(197, 48, 48, 0.05);
+}
+
+.ed-logout-btn text {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--color-error, #c53030);
 }

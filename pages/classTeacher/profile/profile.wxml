@@ -1,41 +1,77 @@
-<view class="profile-container">
-  <!-- 用户信息卡片 -->
-  <view class="user-info card-pop-in">
-    <view class="avatar">
-      <van-icon name="user-circle-o" size="64px" color="#52c41a" />
+<!-- 班主任个人中心 - 教育杂志风 -->
+<view class="ed-page ed-profile-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-classTeacher fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="home-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>个人中心</text>
+      </view>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">我的</text>
+      </view>
     </view>
-    <view class="user-details">
-      <view class="name">{{ userInfo.userName || '未登录' }}</view>
-      <view class="role-tag">
-        <van-icon name="manager-o" size="14px" />
-        <text class="role-text">班主任</text>
+  </view>
+
+  <!-- 用户信息卡片 -->
+  <view class="ed-user-card card-pop-in">
+    <view class="ed-user-header">
+      <view class="ed-user-avatar classTeacher">
+        <van-icon name="home-o" size="48rpx" color="#fff" />
       </view>
-      <view class="info-item" wx:if="{{ userInfo.className }}">
-        <van-icon name="home-o" size="14px" />
-        <text class="info-text">{{ userInfo.className }}</text>
+      <view class="ed-user-info">
+        <view class="ed-user-name">{{ userInfo.userName || '未登录' }}</view>
+        <view class="ed-user-role classTeacher">
+          <van-icon name="manager-o" size="24rpx" />
+          <text>班主任</text>
+        </view>
       </view>
-      <view class="info-item" wx:if="{{ userInfo.department }}">
-        <van-icon name="location-o" size="14px" />
-        <text class="info-text">{{ userInfo.department }}</text>
+    </view>
+    <view wx:if="{{ userInfo.className || userInfo.department }}" class="ed-user-details">
+      <view wx:if="{{ userInfo.className }}" class="ed-detail-item">
+        <van-icon name="home-o" size="24rpx" />
+        <text>{{ userInfo.className }}</text>
+      </view>
+      <view wx:if="{{ userInfo.department }}" class="ed-detail-item">
+        <van-icon name="location-o" size="24rpx" />
+        <text>{{ userInfo.department }}</text>
       </view>
     </view>
   </view>
 
   <!-- 功能菜单 -->
-  <view class="menu-section">
-    <van-cell-group>
-      <van-cell
+  <view class="ed-menu-section">
+    <view class="ed-menu-group">
+      <view
         wx:for="{{ menuList }}"
         wx:key="id"
-        title="{{ item.text }}"
-        icon="{{ item.icon }}"
-        is-link="{{ !item.action }}"
-        value="{{ item.showBadge && unreadCount > 0 ? (unreadCount > 99 ? '99+' : unreadCount) : '' }}"
+        class="ed-menu-item card-tap"
         data-url="{{ item.url }}"
         data-action="{{ item.action }}"
         bindtap="onMenuTap"
-      />
-    </van-cell-group>
+      >
+        <view class="ed-menu-icon {{ item.iconType || 'primary' }}">
+          <van-icon name="{{ item.icon }}" size="32rpx" color="{{ item.iconColor || '#1a365d' }}" />
+        </view>
+        <view class="ed-menu-content">
+          <text class="ed-menu-title">{{ item.text }}</text>
+        </view>
+        <view class="ed-menu-right">
+          <view wx:if="{{ item.showBadge && unreadCount > 0 }}" class="ed-menu-badge">
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </view>
+          <van-icon name="arrow" size="28rpx" color="#a0aec0" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="ed-logout-section">
+    <view class="ed-logout-btn card-tap" bindtap="onLogout">
+      <van-icon name="revoke" size="32rpx" color="#c53030" />
+      <text>退出登录</text>
+    </view>
   </view>
 
   <!-- 底部 TabBar -->

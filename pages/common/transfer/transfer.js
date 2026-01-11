@@ -10,7 +10,7 @@ Page({
   behaviors: [paginationBehavior, throttleBehavior],
 
   data: {
-    activeTab: 'pending',
+    activeTab: 'pending_teacher',
     transfers: [],
     userInfo: null,
     role: '',
@@ -48,7 +48,8 @@ Page({
 
   // 切换标签
   onTabChange(e) {
-    const tab = e.detail.name
+    const tab = e.currentTarget.dataset.tab
+    if (tab === this.data.activeTab) return
     this.setData({ activeTab: tab, transfers: [] })
     this.resetPagination()
     this.loadList(true)

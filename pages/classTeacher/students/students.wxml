@@ -1,191 +1,227 @@
-<view class="student-list-container">
+<!-- 班主任学生列表页 - 教育杂志风 -->
+<view class="ed-page ed-students-page">
   <!-- 初始加载骨架屏 -->
-  <block wx:if="{{ pageLoading }}">
+  <view wx:if="{{ pageLoading }}" class="ed-skeleton-wrapper">
     <skeleton type="list" count="{{6}}" avatar="{{true}}" />
-  </block>
+  </view>
 
   <!-- 实际内容 -->
   <block wx:else>
-  <!-- 班级信息卡片 -->
-  <view class="list-header class-teacher-header fade-in-up">
-    <view class="header-info">
-      <view class="header-title-wrapper">
-        <van-icon name="friends-o" size="40rpx" color="#fff" />
-        <text class="header-title">{{ className }}</text>
-      </view>
-      <view class="header-meta">
-        <text class="header-meta-item">班主任：{{ userInfo.userName }}</text>
-      </view>
-    </view>
-    <view class="header-stats">
-      <view class="header-stat-item">
-        <text class="header-stat-value">{{ stats.totalCount }}</text>
-        <text class="header-stat-label">学生数</text>
-      </view>
-      <view class="header-stat-item" wx:if="{{ activeTab === 'rank' }}">
-        <text class="header-stat-value">{{ stats.avgAttendanceRate }}%</text>
-        <text class="header-stat-label">平均出勤率</text>
-      </view>
-      <view class="header-stat-item warning" wx:if="{{ activeTab === 'students' && stats.warningCount > 0 }}">
-        <text class="header-stat-value">{{ stats.warningCount }}</text>
-        <text class="header-stat-label">缺勤预警</text>
+    <!-- 顶部信息栏 - Editorial Hero -->
+    <view class="ed-hero ed-hero-class-teacher fade-in-up">
+      <view class="ed-hero-content">
+        <view class="ed-hero-eyebrow">
+          <van-icon name="friends-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+          <text>学生管理</text>
+        </view>
+        <view class="ed-hero-title">
+          <text class="ed-hero-title-line">{{ className }}</text>
+        </view>
+        <view class="ed-hero-divider"></view>
+        <view class="ed-hero-meta">
+          <view class="ed-meta-item">
+            <van-icon name="manager-o" size="26rpx" />
+            <text>{{ userInfo.userName }}</text>
+          </view>
+        </view>
       </view>
     </view>
-  </view>
 
-  <!-- 社团分布 -->
-  <view class="distribution-section" wx:if="{{ clubDistribution.length > 0 }}">
-    <view class="distribution-title">社团分布</view>
-    <view class="distribution-tags">
-      <view
-        class="distribution-tag {{ selectedDistribution === '全部' || !selectedDistribution ? 'active' : '' }}"
-        bindtap="onDistributionFilter"
-        data-value="全部"
+    <!-- 统计卡片 -->
+    <view class="ed-stats-grid">
+      <view class="ed-stat-card">
+        <view class="ed-stat-icon">
+          <van-icon name="friends-o" size="40rpx" color="#276749" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.totalCount }}</view>
+          <view class="ed-stat-label">学生数</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-success" wx:if="{{ activeTab === 'rank' }}">
+        <view class="ed-stat-icon">
+          <van-icon name="chart-trending-o" size="40rpx" color="#38a169" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.avgAttendanceRate }}%</view>
+          <view class="ed-stat-label">平均出勤率</view>
+        </view>
+      </view>
+      <view class="ed-stat-card ed-stat-warning" wx:if="{{ activeTab === 'students' && stats.warningCount > 0 }}">
+        <view class="ed-stat-icon">
+          <van-icon name="warning-o" size="40rpx" color="#dd6b20" />
+        </view>
+        <view class="ed-stat-info">
+          <view class="ed-stat-number">{{ stats.warningCount }}</view>
+          <view class="ed-stat-label">缺勤预警</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 社团分布 -->
+    <view class="ed-section" wx:if="{{ clubDistribution.length > 0 }}">
+      <view class="ed-section-header">
+        <view class="ed-section-title">
+          <text class="ed-section-num">01</text>
+          <text class="ed-section-text">社团分布</text>
+        </view>
+      </view>
+      <view class="ed-distribution-tags">
+        <view
+          class="ed-distribution-tag {{ selectedDistribution === '全部' || !selectedDistribution ? 'active' : '' }}"
+          bindtap="onDistributionFilter"
+          data-value="全部"
+        >
+          <text class="ed-tag-name">全部</text>
+          <text class="ed-tag-count">{{ stats.totalCount }}</text>
+        </view>
+        <view
+          wx:for="{{ clubDistribution }}"
+          wx:key="name"
+          class="ed-distribution-tag {{ selectedDistribution === item.name ? 'active' : '' }}"
+          bindtap="onDistributionFilter"
+          data-value="{{ item.name }}"
+        >
+          <text class="ed-tag-name">{{ item.name }}</text>
+          <text class="ed-tag-count">{{ item.count }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Tab 切换 -->
+    <view class="ed-tabs-wrapper">
+      <view class="ed-tabs">
+        <view
+          class="ed-tab-item {{ activeTab === 'students' ? 'active' : '' }}"
+          data-tab="students"
+          bindtap="onTabChange"
+        >
+          <van-icon name="friends-o" size="32rpx" />
+          <text>学生名单</text>
+        </view>
+        <view
+          class="ed-tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
+          data-tab="rank"
+          bindtap="onTabChange"
+        >
+          <van-icon name="bar-chart-o" size="32rpx" />
+          <text>出勤排行</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 搜索框 -->
+    <view class="ed-search-wrapper" wx:if="{{ activeTab === 'students' }}">
+      <van-search
+        value="{{ searchValue }}"
+        placeholder="搜索学生姓名或社团"
+        bind:search="onSearch"
+        bind:clear="onSearchClear"
+        bind:change="onSearch"
+        custom-class="ed-search"
+      />
+    </view>
+
+    <!-- 学生名单 -->
+    <view wx:if="{{ activeTab === 'students' }}" class="ed-tab-content">
+      <view wx:if="{{ loading }}" class="ed-loading-center">
+        <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+      </view>
+
+      <scroll-view
+        wx:elif="{{ filteredStudents.length > 0 }}"
+        class="ed-student-scroll"
+        scroll-y
+        bindscroll="onVirtualScroll"
+        style="height: calc(100vh - 520rpx);"
       >
-        <text class="distribution-tag-name">全部</text>
-        <text class="distribution-tag-count">{{ stats.totalCount }}</text>
-      </view>
-      <view
-        wx:for="{{ clubDistribution }}"
-        wx:key="name"
-        class="distribution-tag {{ selectedDistribution === item.name ? 'active' : '' }}"
-        bindtap="onDistributionFilter"
-        data-value="{{ item.name }}"
-      >
-        <text class="distribution-tag-name">{{ item.name }}</text>
-        <text class="distribution-tag-count">{{ item.count }}</text>
-      </view>
-    </view>
-  </view>
+        <view class="ed-student-list" style="height: {{totalHeight}}px; position: relative;">
+          <view style="transform: translateY({{offsetY}}px);">
+            <view
+              wx:for="{{ virtualList }}"
+              wx:key="_id"
+              class="ed-student-card card-tap"
+              bindtap="onStudentTap"
+              data-id="{{ item._id }}"
+            >
+              <!-- 左侧状态指示条 -->
+              <view class="ed-card-indicator {{ warningStudentIds.includes(item._id) ? 'warning' : 'success' }}"></view>
 
-  <!-- Tab 切换 -->
-  <view class="student-list-tabs">
-    <view
-      class="student-list-tab-item {{ activeTab === 'students' ? 'active' : '' }}"
-      data-tab="students"
-      bindtap="onTabChange"
-    >
-      <van-icon name="friends-o" size="36rpx" />
-      <text>学生名单</text>
-    </view>
-    <view
-      class="student-list-tab-item {{ activeTab === 'rank' ? 'active' : '' }}"
-      data-tab="rank"
-      bindtap="onTabChange"
-    >
-      <van-icon name="bar-chart-o" size="36rpx" />
-      <text>出勤排行</text>
-    </view>
-  </view>
-
-  <!-- 搜索框 -->
-  <view class="student-list-search" wx:if="{{ activeTab === 'students' }}">
-    <van-search
-      value="{{ searchValue }}"
-      placeholder="搜索学生姓名或社团"
-      bind:search="onSearch"
-      bind:clear="onSearchClear"
-      bind:change="onSearch"
-    />
-  </view>
-
-  <!-- 学生名单 -->
-  <view wx:if="{{ activeTab === 'students' }}" class="student-list-content">
-    <view wx:if="{{ loading }}" class="student-list-loading">
-      <van-loading type="spinner" size="48rpx">加载中...</van-loading>
-    </view>
-
-    <scroll-view
-      wx:elif="{{ filteredStudents.length > 0 }}"
-      class="student-list-scroll"
-      scroll-y
-      bindscroll="onVirtualScroll"
-      style="height: calc(100vh - 420rpx);"
-    >
-      <view class="student-list-wrapper" style="height: {{totalHeight}}px; position: relative;">
-        <view style="transform: translateY({{offsetY}}px);">
-          <view
-            wx:for="{{ virtualList }}"
-            wx:key="_id"
-            class="student-card card-tap"
-            bindtap="onStudentTap"
-            data-id="{{ item._id }}"
-          >
-            <view class="student-card-avatar">
-              <van-icon name="user-circle-o" size="40px" color="#1890ff" />
-            </view>
-            <view class="student-card-info">
-              <view class="student-card-header">
-                <view class="student-card-name-wrapper">
-                  <text class="student-card-name">{{ item.studentName }}</text>
-                  <van-tag
-                    wx:if="{{ warningStudentIds.includes(item._id) }}"
-                    type="danger"
-                    plain
-                    size="medium"
-                  >
-                    <van-icon name="warning-o" size="12px" />
-                    预警
-                  </van-tag>
+              <view class="ed-card-body">
+                <view class="ed-student-header">
+                  <view class="ed-student-main">
+                    <view class="ed-student-avatar">
+                      <van-icon name="user-o" size="36rpx" color="#fff" />
+                    </view>
+                    <view class="ed-student-info">
+                      <view class="ed-student-name-row">
+                        <text class="ed-student-name">{{ item.studentName }}</text>
+                        <view wx:if="{{ warningStudentIds.includes(item._id) }}" class="ed-warning-tag">
+                          <van-icon name="warning-o" size="20rpx" />
+                          <text>预警</text>
+                        </view>
+                        <view wx:if="{{ item.gender }}" class="ed-gender-tag {{ item.gender === '男' ? 'male' : 'female' }}">
+                          {{ item.gender }}
+                        </view>
+                      </view>
+                      <view class="ed-student-club">
+                        <van-icon name="apps-o" size="24rpx" color="#718096" />
+                        <text>{{ item.clubName || '未分配社团' }}</text>
+                      </view>
+                    </view>
+                  </view>
                 </view>
-                <van-tag wx:if="{{ item.gender }}" plain type="{{ item.gender === '男' ? 'primary' : 'danger' }}" size="medium">
-                  {{ item.gender }}
-                </van-tag>
               </view>
-              <view class="student-card-meta">
-                <view class="student-card-meta-item">
-                  <van-icon name="apps-o" size="28rpx" color="#999" />
-                  <text>{{ item.clubName || '未分配社团' }}</text>
-                </view>
+
+              <view class="ed-card-arrow">
+                <van-icon name="arrow" size="28rpx" color="#a0aec0" />
               </view>
             </view>
-            <van-icon name="arrow" size="16px" color="#ccc" />
+          </view>
+        </view>
+      </scroll-view>
+
+      <empty-state
+        wx:else
+        type="students"
+      />
+    </view>
+
+    <!-- 出勤率排行 -->
+    <view wx:if="{{ activeTab === 'rank' }}" class="ed-tab-content">
+      <view wx:if="{{ loading }}" class="ed-loading-center">
+        <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+      </view>
+
+      <view wx:elif="{{ attendanceRank.length > 0 }}" class="ed-ranking-list">
+        <view
+          wx:for="{{ attendanceRank }}"
+          wx:key="_id"
+          class="ed-ranking-item {{ index < 3 ? 'top-rank' : '' }}"
+        >
+          <view class="ed-rank-badge">
+            <text class="ed-rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">{{ index + 1 }}</text>
+          </view>
+          <view class="ed-rank-info">
+            <view class="ed-rank-header">
+              <text class="ed-rank-name">{{ item.studentName }}</text>
+              <text class="ed-rank-club">{{ item.clubName || '未分配' }}</text>
+            </view>
+            <view class="ed-rank-stats">
+              <text>到课 {{ item.present }} / 总计 {{ item.total }} 次</text>
+            </view>
+          </view>
+          <view class="ed-rate-badge {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
+            <text class="ed-rate-value">{{ item.rate }}%</text>
           </view>
         </view>
       </view>
-    </scroll-view>
 
-    <empty-state
-      wx:else
-      type="students"
-    />
-  </view>
-
-  <!-- 出勤率排行 -->
-  <view wx:if="{{ activeTab === 'rank' }}" class="student-list-content">
-    <view wx:if="{{ loading }}" class="student-list-loading">
-      <van-loading type="spinner" size="48rpx">加载中...</van-loading>
+      <empty-state
+        wx:else
+        type="attendance"
+      />
     </view>
-
-    <view wx:elif="{{ attendanceRank.length > 0 }}" class="student-rank-list">
-      <view
-        wx:for="{{ attendanceRank }}"
-        wx:key="studentName"
-        class="student-rank-item {{ index < 3 ? 'top-rank' : '' }}"
-      >
-        <view class="student-rank-badge">
-          <text class="student-rank-number {{ index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '' }}">{{ index + 1 }}</text>
-        </view>
-        <view class="student-rank-info">
-          <view class="student-rank-header">
-            <text class="student-rank-name">{{ item.studentName }}</text>
-            <text class="student-rank-class">{{ item.clubName || '未分配' }}</text>
-          </view>
-          <view class="student-rank-stats">
-            <text>到课 {{ item.present }} / 总计 {{ item.total }} 次</text>
-          </view>
-        </view>
-        <view class="student-rank-rate {{ item.rate >= 90 ? 'excellent' : item.rate >= 80 ? 'good' : item.rate >= 60 ? 'normal' : 'poor' }}">
-          <text class="student-rank-rate-value">{{ item.rate }}%</text>
-        </view>
-      </view>
-    </view>
-
-    <empty-state
-      wx:else
-      type="attendance"
-    />
-  </view>
   </block>
 
   <van-toast id="van-toast" />

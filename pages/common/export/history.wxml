@@ -1,70 +1,105 @@
-<view class="history-container">
-  <!-- 空状态 -->
-  <view wx:if="{{ !loading && records.length === 0 }}" class="empty-state">
-    <van-icon name="orders-o" size="80px" color="#ccc" />
-    <text class="empty-text">暂无导出记录</text>
-  </view>
-
-  <!-- 记录列表 -->
-  <view wx:else class="record-list">
-    <view
-      wx:for="{{ records }}"
-      wx:key="_id"
-      class="record-item card card-list-enter"
-    >
-      <view class="record-header">
-        <view class="record-type">
-          <text class="type-tag {{ item.exportType }}">{{ item.typeName }}</text>
-        </view>
-        <text class="record-time">{{ item.createTimeStr }}</text>
+<!-- 导出历史页 - 教育杂志风 -->
+<view class="ed-page ed-history-page">
+  <!-- Hero 头部 -->
+  <view class="ed-hero ed-hero-compact fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="orders-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>导出管理</text>
       </view>
-
-      <view class="record-body">
-        <view class="record-info">
-          <text class="file-name">{{ item.fileName }}</text>
-          <text class="record-count">共 {{ item.recordCount }} 条记录</text>
-        </view>
-        <view wx:if="{{ item.filterDesc }}" class="filter-desc">
-          <van-icon name="filter-o" size="14px" />
-          <text>{{ item.filterDesc }}</text>
-        </view>
-      </view>
-
-      <view class="record-actions">
-        <van-button
-          size="small"
-          type="primary"
-          icon="down"
-          loading="{{ downloading[item._id] }}"
-          data-id="{{ item._id }}"
-          data-file-id="{{ item.fileID }}"
-          bind:click="onDownload"
-          custom-class="btn-active"
-        >
-          下载
-        </van-button>
-        <van-button
-          size="small"
-          type="default"
-          icon="delete-o"
-          data-id="{{ item._id }}"
-          data-file-id="{{ item.fileID }}"
-          bind:click="onDelete"
-          custom-class="btn-active"
-        >
-          删除
-        </van-button>
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">导出历史</text>
       </view>
     </view>
   </view>
 
-  <!-- 加载状态 -->
-  <view wx:if="{{ loading }}" class="loading-wrapper">
+  <!-- 骨架屏加载 -->
+  <view wx:if="{{ loading && records.length === 0 }}" class="ed-skeleton-wrapper">
+    <skeleton type="list" count="{{5}}" />
+  </view>
+
+  <!-- 记录列表 -->
+  <view wx:elif="{{ records.length > 0 }}" class="ed-history-list">
+    <view
+      wx:for="{{ records }}"
+      wx:key="_id"
+      class="ed-history-card card-list-enter delay-{{ index < 5 ? index : 5 }}"
+    >
+      <!-- 左侧类型指示条 -->
+      <view class="ed-card-indicator {{ item.exportType }}"></view>
+
+      <view class="ed-card-body">
+        <!-- 头部：类型标签 + 时间 -->
+        <view class="ed-history-header">
+          <view class="ed-type-badge {{ item.exportType }}">
+            <van-icon
+              name="{{ item.exportType === 'attendance' ? 'notes-o' : item.exportType === 'summary' ? 'chart-trending-o' : 'friends-o' }}"
+              size="24rpx"
+            />
+            <text>{{ item.typeName }}</text>
+          </view>
+          <text class="ed-history-time">{{ item.createTimeStr }}</text>
+        </view>
+
+        <!-- 文件信息 -->
+        <view class="ed-file-info">
+          <text class="ed-file-name">{{ item.fileName }}</text>
+          <view class="ed-file-meta">
+            <van-icon name="description" size="24rpx" color="#718096" />
+            <text>共 {{ item.recordCount }} 条记录</text>
+          </view>
+        </view>
+
+        <!-- 筛选条件 -->
+        <view wx:if="{{ item.filterDesc }}" class="ed-filter-desc">
+          <van-icon name="filter-o" size="24rpx" color="#718096" />
+          <text>{{ item.filterDesc }}</text>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="ed-history-actions">
+          <van-button
+            size="small"
+            type="primary"
+            icon="down"
+            loading="{{ downloading[item._id] }}"
+            data-id="{{ item._id }}"
+            data-file-id="{{ item.fileID }}"
+            bind:click="onDownload"
+            custom-class="ed-btn-download btn-active"
+          >
+            下载
+          </van-button>
+          <van-button
+            size="small"
+            type="default"
+            icon="delete-o"
+            data-id="{{ item._id }}"
+            data-file-id="{{ item.fileID }}"
+            bind:click="onDelete"
+            custom-class="ed-btn-delete btn-active"
+          >
+            删除
+          </van-button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:if="{{ !loading && records.length === 0 }}"
+    type="history"
+    description="暂无导出记录"
+  />
+
+  <!-- 加载更多 -->
+  <view wx:if="{{ loading && records.length > 0 }}" class="ed-loading-more">
     <van-loading size="24px">加载中...</van-loading>
   </view>
 
-  <!-- 无更多数据 -->
-  <view wx:if="{{ !loading && records.length > 0 && !hasMore }}" class="no-more">
+  <!-- 没有更多 -->
+  <view wx:if="{{ !loading && records.length > 0 && !hasMore }}" class="ed-no-more">
     没有更多了
   </view>
 </view>

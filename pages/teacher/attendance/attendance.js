@@ -109,11 +109,11 @@ Page({
         // 获取可用学部列表
         const depts = [...new Set(allStudents.map(s => s.department).filter(d => d))]
           .sort((a, b) => a.localeCompare(b, 'zh-CN'))
-        
+
         // 使用配置化的排课规则
         const day = dateUtil.getDayOfWeek()
         const schedule = await getTodaySchedule(day, depts)
-        
+
         const { isClassDay, departments: defaultDepts, noClassMessage } = schedule
 
         const filteredStudents = isClassDay
@@ -139,7 +139,7 @@ Page({
       SafeToast.fail('加载失败')
     } finally {
       SafeToast.clear()
-      
+
       // 延迟关闭 loading 以避免闪烁，并确保骨架屏平滑过渡到真实内容
       setTimeout(() => {
         this.setData({ pageLoading: false })

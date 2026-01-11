@@ -1,100 +1,146 @@
-<view class="overview-container">
-  <view class="header-section fade-in-up">
-    <view class="header-top">
-      <view class="class-info">
-        <van-icon name="home-o" size="40rpx" color="#ffffff" />
-        <text class="class-name">{{className}}</text>
+<!-- 班主任概览页 - 教育杂志风 -->
+<view class="ed-page ed-overview-page">
+  <!-- 顶部信息栏 - Editorial Hero -->
+  <view class="ed-hero ed-hero-classTeacher fade-in-up">
+    <view class="ed-hero-content">
+      <view class="ed-hero-eyebrow">
+        <van-icon name="home-o" size="28rpx" color="rgba(255,255,255,0.9)" />
+        <text>班级考勤</text>
       </view>
-    </view>
-    <view class="date-selector icon-tap" bindtap="showDatePickerPopup">
-      <van-icon name="calendar-o" size="28rpx" color="rgba(255,255,255,0.9)" />
-      <text>{{selectedDate}}</text>
-      <van-icon name="arrow-down" size="24rpx" color="rgba(255,255,255,0.9)" />
+      <view class="ed-hero-title">
+        <text class="ed-hero-title-line">{{className}}</text>
+      </view>
+      <view class="ed-hero-divider"></view>
+      <view class="ed-hero-meta">
+        <view class="ed-meta-item ed-date-selector icon-tap" bindtap="showDatePickerPopup">
+          <van-icon name="calendar-o" size="26rpx" />
+          <text>{{selectedDate}}</text>
+          <van-icon name="arrow-down" size="22rpx" />
+        </view>
+      </view>
     </view>
   </view>
 
   <!-- 统计区域骨架屏 -->
-  <view class="stats-section" wx:if="{{pageLoading}}">
+  <view class="ed-stats-section" wx:if="{{pageLoading}}">
     <skeleton type="stats" count="{{4}}" />
   </view>
 
-  <view class="stats-section" wx:else>
-    <van-grid column-num="4" border="{{ false }}">
-      <van-grid-item use-slot>
-        <view class="stat-content">
-          <view class="stat-number">{{totalStudents}}</view>
-          <view class="stat-label">总人数</view>
-        </view>
-      </van-grid-item>
-      <van-grid-item use-slot>
-        <view class="stat-content">
-          <view class="stat-number">{{joinedClubs}}</view>
-          <view class="stat-label">参加社团</view>
-        </view>
-      </van-grid-item>
-      <van-grid-item use-slot>
-        <view class="stat-content">
-          <view class="stat-number present">{{presentToday}}</view>
-          <view class="stat-label">今日到课</view>
-        </view>
-      </van-grid-item>
-      <van-grid-item use-slot>
-        <view class="stat-content">
-          <view class="stat-number absent">{{absentToday}}</view>
-          <view class="stat-label">今日缺课</view>
-        </view>
-      </van-grid-item>
-    </van-grid>
+  <!-- 统计卡片 - Editorial Style -->
+  <view class="ed-stats-grid" wx:else>
+    <view class="ed-stat-card">
+      <view class="ed-stat-icon">
+        <van-icon name="friends-o" size="40rpx" color="#1a365d" />
+      </view>
+      <view class="ed-stat-info">
+        <view class="ed-stat-number">{{totalStudents}}</view>
+        <view class="ed-stat-label">总人数</view>
+      </view>
+    </view>
+    <view class="ed-stat-card">
+      <view class="ed-stat-icon">
+        <van-icon name="cluster-o" size="40rpx" color="#2c5282" />
+      </view>
+      <view class="ed-stat-info">
+        <view class="ed-stat-number">{{joinedClubs}}</view>
+        <view class="ed-stat-label">参加社团</view>
+      </view>
+    </view>
+    <view class="ed-stat-card ed-stat-success">
+      <view class="ed-stat-icon">
+        <van-icon name="passed" size="40rpx" color="#38a169" />
+      </view>
+      <view class="ed-stat-info">
+        <view class="ed-stat-number">{{presentToday}}</view>
+        <view class="ed-stat-label">今日到课</view>
+      </view>
+    </view>
+    <view class="ed-stat-card ed-stat-error">
+      <view class="ed-stat-icon">
+        <van-icon name="cross" size="40rpx" color="#c53030" />
+      </view>
+      <view class="ed-stat-info">
+        <view class="ed-stat-number">{{absentToday}}</view>
+        <view class="ed-stat-label">今日缺课</view>
+      </view>
+    </view>
   </view>
 
-  <view class="student-list">
+  <!-- 学生列表区域 -->
+  <view class="ed-section">
+    <view class="ed-section-header">
+      <view class="ed-section-title">
+        <text class="ed-section-num">01</text>
+        <text class="ed-section-text">学生考勤详情</text>
+      </view>
+    </view>
+
     <!-- 学生列表骨架屏 -->
-    <view wx:if="{{pageLoading}}" class="skeleton-wrapper">
+    <view wx:if="{{pageLoading}}" class="ed-skeleton-wrapper">
       <skeleton type="list" count="{{5}}" avatar="{{true}}" avatarShape="round" />
     </view>
 
-    <van-cell-group title="学生考勤详情" wx:elif="{{students.length > 0}}">
-      <van-cell wx:for="{{students}}" wx:key="_id" border="{{ false }}" custom-class="student-card list-item-enter">
-        <view slot="title" class="student-info">
-          <view class="student-header">
-            <view class="student-name">
-              <van-icon name="user-o" size="32rpx" color="#1890ff" />
-              <text>{{item.studentName}}</text>
-              <van-tag plain type="{{item.gender === '男' ? 'primary' : 'danger'}}" size="mini">{{item.gender}}</van-tag>
-            </view>
-            <van-tag
-              type="{{ item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'danger' : 'default' }}"
-              size="medium"
-            >
-              {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
-            </van-tag>
-          </view>
-          <view class="student-detail">
-            <view class="detail-item">
-              <van-icon name="friends-o" size="24rpx" color="#999" />
-              <text>{{item.clubName || '未加入社团'}}</text>
-            </view>
-            <view class="detail-item" wx:if="{{item.todayStatus}}">
-              <van-icon name="clock-o" size="24rpx" color="#999" />
-              <text>{{item.attendanceTime}}</text>
-            </view>
-          </view>
-        </view>
-        <view slot="right-icon" wx:if="{{item.todayStatus === 'absent'}}">
-          <van-button
-            type="primary"
-            size="small"
-            plain
-            bind:click="sendFeedback"
-            data-student="{{item}}"
-            custom-class="btn-active"
-          >
-            发送反馈
-          </van-button>
-        </view>
-      </van-cell>
-    </van-cell-group>
+    <!-- 学生列表 -->
+    <view wx:elif="{{students.length > 0}}" class="ed-student-list">
+      <view
+        wx:for="{{students}}"
+        wx:key="_id"
+        class="ed-student-card list-item-enter"
+      >
+        <!-- 左侧状态指示条 -->
+        <view class="ed-card-indicator {{item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'error' : 'default'}}"></view>
 
+        <view class="ed-card-body">
+          <view class="ed-student-header">
+            <view class="ed-student-main">
+              <view class="ed-student-avatar {{item.gender === '男' ? 'male' : 'female'}}">
+                <van-icon name="{{item.gender === '男' ? 'friends' : 'friends-o'}}" size="36rpx" color="#fff" />
+              </view>
+              <view class="ed-student-info">
+                <view class="ed-student-name-row">
+                  <text class="ed-student-name">{{item.studentName}}</text>
+                  <view class="ed-gender-tag {{item.gender === '男' ? 'male' : 'female'}}">
+                    {{item.gender}}
+                  </view>
+                </view>
+                <view class="ed-student-meta">
+                  <view class="ed-meta-item">
+                    <van-icon name="cluster-o" size="24rpx" color="#718096" />
+                    <text>{{item.clubName || '未加入社团'}}</text>
+                  </view>
+                  <view class="ed-meta-item" wx:if="{{item.todayStatus}}">
+                    <van-icon name="clock-o" size="24rpx" color="#718096" />
+                    <text>{{item.attendanceTime}}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view class="ed-student-status">
+              <view class="ed-status-tag {{item.todayStatus === 'present' ? 'success' : item.todayStatus === 'absent' ? 'error' : 'default'}}">
+                {{item.todayStatus === 'present' ? '到课' : item.todayStatus === 'absent' ? '缺课' : '未点名'}}
+              </view>
+            </view>
+          </view>
+
+          <!-- 缺课时显示反馈按钮 -->
+          <view wx:if="{{item.todayStatus === 'absent'}}" class="ed-card-actions">
+            <van-button
+              type="primary"
+              size="small"
+              plain
+              bind:click="sendFeedback"
+              data-student="{{item}}"
+              custom-class="ed-btn-outline btn-active"
+            >
+              <van-icon name="comment-o" size="28rpx" />
+              发送反馈
+            </van-button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
     <empty-state
       wx:else
       type="attendance"
@@ -102,6 +148,7 @@
     />
   </view>
 
+  <!-- 日历选择器 -->
   <van-calendar
     show="{{ showCalendar }}"
     type="single"
@@ -110,7 +157,7 @@
     default-date="{{ calendarDefaultDate }}"
     bind:close="onCalendarClose"
     bind:confirm="onCalendarConfirm"
-    color="#1F6FAD"
+    color="#276749"
   />
 
   <!-- 底部 TabBar -->

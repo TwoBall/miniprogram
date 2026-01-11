@@ -56,7 +56,8 @@
         "transfer/transfer",
         "transfer/create",
         "export/export",
-        "export/history"
+        "export/history",
+        "design-test/design-test"
       ]
     }
   ],

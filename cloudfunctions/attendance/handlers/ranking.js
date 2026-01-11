@@ -56,8 +56,9 @@ async function handleGetClubRank(event, ctx) {
             })
         })
 
-        const rankList = Object.values(studentStats)
-            .map(item => ({
+        const rankList = Object.entries(studentStats)
+            .map(([studentId, item]) => ({
+                _id: studentId,
                 ...item,
                 rate: item.total > 0 ? parseFloat(((item.present / item.total) * 100).toFixed(1)) : 0
             }))
@@ -129,8 +130,9 @@ async function handleGetClassRank(event, ctx) {
             })
         })
 
-        const rankList = Object.values(studentStats)
-            .map(item => ({
+        const rankList = Object.entries(studentStats)
+            .map(([studentId, item]) => ({
+                _id: studentId,
                 ...item,
                 rate: item.total > 0 ? parseFloat(((item.present / item.total) * 100).toFixed(1)) : 0
             }))

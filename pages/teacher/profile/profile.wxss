@@ -1,5 +1,7 @@
+/* 教师个人中心 - Editorial 教育杂志风 */
 @import '../../../styles/profile-base.wxss';
 
-.user-info {
-  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+/* 教师专属 Hero 渐变 */
+.ed-hero-teacher {
+  background: linear-gradient(165deg, #1a365d 0%, #2c5282 100%);
 }
