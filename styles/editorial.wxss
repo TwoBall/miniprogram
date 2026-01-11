@@ -86,6 +86,20 @@
   margin-bottom: 14rpx;
 }
 
+.ed-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.ed-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .ed-hero-subtitle {
   display: flex;
   align-items: center;

@@ -1,105 +1,50 @@
 /* 引入公共样式 */
 @import './styles/common.wxss';
-/* 引入动画样式库 */
 @import './styles/animations.wxss';
-/* 引入教育杂志风设计变量 */
 @import './styles/variables.wxss';
-/* 引入教育杂志风组件样式库 */
 @import './styles/editorial.wxss';
 
 /* 全局样式 */
 page {
-  background-color: #fefcf6; /* 教育杂志风奶白背景 */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: #fefcf6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 
-  /* ========== Vant 组件主题变量 ========== */
-  /* 品牌主色 - 教育杂志风深蓝 */
+  /* Vant 主题变量 */
   --button-primary-background-color: #1a365d;
   --button-primary-border-color: #1a365d;
   --button-info-background-color: #1a365d;
   --button-info-border-color: #1a365d;
-
-  /* Dialog 样式 */
   --dialog-confirm-button-text-color: #1a365d;
-
-  /* Toast 样式 */
   --toast-max-width: 70%;
   --toast-background-color: rgba(0, 0, 0, 0.7);
-
-  /* Tag 样式 */
   --tag-primary-color: #1a365d;
-
-  /* Cell 样式 */
   --cell-active-color: #f7fafc;
-
-  /* Tab 样式 */
   --tabs-bottom-bar-color: #1a365d;
   --tab-active-text-color: #1a365d;
 }
 
-/* 修复 style:v2 导致 Vant Dialog 按钮不对齐的问题 */
-button {
-  width: auto !important;
-  min-width: auto !important;
-  text-align: center !important;
-}
-
-/* ========== Vant 组件全局样式覆盖 ========== */
-
-/* Button - 统一小按钮样式 */
+/* van-button 小按钮样式 */
 .van-button--small {
   min-width: 120rpx !important;
   padding: 0 24rpx !important;
   font-size: 26rpx !important;
   height: 60rpx !important;
-  line-height: 58rpx !important;
 }
 
-/* Dialog - 统一弹窗按钮样式，增大点击区域 */
+/* van-dialog 按钮样式 */
 .van-dialog__footer {
-  display: flex !important;
   min-height: 100rpx !important;
 }
 
-.van-dialog__button {
-  flex: 1 !important;
-  height: 100rpx !important;
-  min-height: 100rpx !important;
-  line-height: 100rpx !important;
-  text-align: center !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* 确保按钮内部元素也有足够的点击区域 */
-.van-dialog__button--bold,
-.van-dialog__button .van-button {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100rpx !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
+.van-dialog__button,
 .van-dialog__cancel,
 .van-dialog__confirm {
+  height: 100rpx !important;
   font-size: 32rpx !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100rpx !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-.van-dialog__cancel {
-  color: #333 !important;
-}
-
-.van-dialog__confirm {
-  color: #1a365d !important;
-}
+.van-dialog__cancel { color: #333 !important; }
+.van-dialog__confirm { color: #1a365d !important; }
