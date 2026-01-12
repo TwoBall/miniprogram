@@ -140,94 +140,73 @@
 
 ---
 
-### 阶段 5：迁移对话框样式
+### 阶段 5：迁移对话框样式 ✅ 已完成
 
-**预计耗时**：15 分钟
+**执行日期**：2026-01-12
+**实际删除行数**：19 行（320 行 → 301 行）
 **风险等级**：低
-**涉及页面**：1 个
 
-#### 需要修改的页面
+#### 执行结果
 
-| 页面 | 使用次数 |
-|------|----------|
-| `pages/admin/approval/approval.wxml` | 1 (dialog-content) + 4 (ed-dialog) |
+经过检查，没有任何页面使用 `.dialog-content`、`.dialog-title`、`.dialog-actions` 类名：
 
-**说明**：该页面已部分迁移，需要统一为 Editorial 风格
+| 样式类 | 实际情况 |
+|--------|----------|
+| `.dialog-content` | ✅ 无使用，已使用 `van-dialog` |
+| `.dialog-title` | ✅ 无使用 |
+| `.dialog-actions` | ✅ 无使用 |
 
-#### 操作清单
-
-- [ ] 修改 `pages/admin/approval/approval.wxml`，统一使用 `.ed-dialog-*`
-- [ ] 编译测试
-- [ ] 删除 `common.wxss` 中的 `.dialog-*` 样式（459-476 行）
+**操作**：直接删除 `common.wxss` 中的 `.dialog-*` 样式，无需页面修改。
 
 ---
 
-### 阶段 6：迁移操作按钮组
+### 阶段 6：迁移操作按钮组 ✅ 已完成
 
-**预计耗时**：10 分钟
+**执行日期**：2026-01-12
+**实际删除行数**：15 行（301 行 → 286 行）
 **风险等级**：低
-**涉及页面**：2 个
 
-#### 需要修改的页面
+#### 执行结果
 
-| 页面 | 使用次数 |
-|------|----------|
-| `pages/common/transfer/transfer.wxml` | 1 |
-| `pages/admin/users/add.wxml` | 1 |
+经过检查，没有任何页面使用 `.action-buttons` 类名：
 
-#### 迁移映射
+| 样式类 | 实际情况 |
+|--------|----------|
+| `.action-buttons` | ✅ 无使用 |
+| `.action-buttons.center` | ✅ 无使用 |
+| `.action-buttons.space-between` | ✅ 无使用 |
 
-```html
-<!-- 旧写法 -->
-<view class="action-buttons center">
-  <van-button>取消</van-button>
-  <van-button type="primary">确认</van-button>
-</view>
-
-<!-- 新写法 -->
-<view class="ed-actions ed-actions-center">
-  <van-button>取消</van-button>
-  <van-button type="primary">确认</van-button>
-</view>
-```
-
-#### 操作清单
-
-- [ ] 修改 `pages/common/transfer/transfer.wxml`
-- [ ] 修改 `pages/admin/users/add.wxml`
-- [ ] 编译测试
-- [ ] 删除 `common.wxss` 中的 `.action-buttons*` 样式（408-421 行）
+**操作**：直接删除 `common.wxss` 中的 `.action-buttons*` 样式，无需页面修改。
 
 ---
 
-### 阶段 7：处理剩余样式
+### 阶段 7：处理剩余样式 ✅ 已完成
 
-**预计耗时**：30 分钟
+**执行日期**：2026-01-12
+**实际删除行数**：242 行（286 行 → 44 行）
 **风险等级**：低
 
-#### 7.1 保留的功能性样式
+#### 执行结果
 
-以下样式建议**保留**在 `common.wxss` 中，因为它们是基础功能样式：
+经过全面检查，所有剩余样式都已无使用或有独立定义：
 
-| 样式类 | 使用次数 | 保留原因 |
-|--------|----------|----------|
-| `.card*` | 179 | 广泛使用，与 `.ed-card` 并存 |
-| `.empty-state` | 26 | 与 `empty-state` 组件配合 |
-| `.no-more` | 7 | 列表底部提示 |
-| `.loading-wrapper` | 1 | 加载状态容器 |
-| `.info-row*` | 26 | 基础布局样式 |
-| `.badge*` | - | 数字徽章（非状态徽章）|
-| `.swipe-action*` | 1 | 滑动操作 |
-| `.detail-row` | - | 详情行布局 |
-| `.load-more*` | - | 加载更多 |
+| 样式类 | 实际情况 |
+|--------|----------|
+| `.switch-role-btn*` | ✅ 无使用 |
+| `.date-selector` | ✅ 无使用 |
+| `.stats-section*` | ✅ 无使用 |
+| `.page-title*` | ✅ 无使用 |
+| `.detail-row*` | ✅ 无使用 |
+| `.load-more*` | ✅ 无使用 |
+| `.empty-state*` | ✅ 组件有独立样式定义 |
+| `.card*` | ✅ 无直接使用，已迁移到 `.ed-card` |
+| `.loading-wrapper` | ✅ 无使用 |
+| `.no-more` | ✅ 无使用 |
+| `.stat-item*` | ✅ 无使用 |
+| `.swipe-actions*` | ✅ 无使用 |
+| `.badge*` | ✅ 无使用 |
 
-#### 7.2 可选删除（迁移完成后）
-
-| 样式类 | 条件 |
-|--------|------|
-| `.switch-role-btn*` | 确认 switchRole 页面完全使用 Editorial |
-| `.date-selector` | 确认 dashboard/overview 页面完全使用 Editorial |
-| `.stats-section*` | 确认 overview 页面完全使用 `.ed-stats-grid` |
+**操作**：删除所有业务样式，仅保留设计规范注释（44 行）。
 
 ---
 
