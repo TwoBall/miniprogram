@@ -205,25 +205,7 @@
   font-size: 26rpx;
 }
 
-/* ========== 2.3 信息行 ========== */
-.info-row {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  margin-bottom: 12rpx;
-}
-
-.info-row .label {
-  color: #999;
-  flex-shrink: 0;
-}
-
-.info-row .value {
-  color: #333;
-  font-weight: 500;
-}
-
-/* ========== 2.4 统计项 ========== */
+/* ========== 2.3 统计项 ========== */
 .stat-item {
   display: flex;
   flex-direction: column;
@@ -249,7 +231,7 @@
   color: #ff4d4f;
 }
 
-/* ========== 2.5 操作按钮组 ========== */
+/* ========== 2.4 操作按钮组 ========== */
 .action-buttons {
   display: flex;
   gap: 16rpx;
@@ -264,7 +246,7 @@
   justify-content: space-between;
 }
 
-/* ========== 2.6 对话框样式 ========== */
+/* ========== 2.5 对话框样式 ========== */
 .dialog-content {
   padding: 20rpx;
 }
@@ -283,35 +265,7 @@
   justify-content: flex-end;
 }
 
-/* ========== 2.7 用户/学生信息样式 ========== */
-.user-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.user-name {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.user-meta {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.meta-text {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* ========== 2.8 滑动操作样式 ========== */
+/* ========== 2.6 滑动操作样式 ========== */
 .swipe-actions {
   display: flex;
   height: 100%;
@@ -338,7 +292,7 @@
   background-color: #ff9800;
 }
 
-/* ========== 2.9 徽章样式 ========== */
+/* ========== 2.7 徽章样式 ========== */
 .badge {
   min-width: 32rpx;
   height: 32rpx;

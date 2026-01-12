@@ -120,42 +120,23 @@
 
 ---
 
-### 阶段 4：迁移信息行与用户头部
+### 阶段 4：迁移信息行与用户头部 ✅ 已完成
 
-**预计耗时**：45 分钟
-**风险等级**：中
-**涉及页面**：10 个
+**执行日期**：2026-01-12
+**实际删除行数**：46 行（366 行 → 320 行）
+**风险等级**：低
 
-#### 4.1 `.info-row` 迁移（26 处）
+#### 执行结果
 
-| 页面 | 使用次数 |
-|------|----------|
-| `pages/classTeacher/studentDetail/studentDetail.wxml` | 9 |
-| `pages/leader/detail/detail.wxml` | 4 |
-| `components/skeleton/skeleton.wxml` | 4 |
-| `pages/teacher/attendance/attendance.wxml` | 3 |
-| `pages/common/transfer/transfer.wxml` | 3 |
-| `pages/common/transfer/create.wxml` | 3 |
+经过检查，所有页面都已使用 Editorial 风格（`.ed-info-row` 和 `.ed-user-header`），旧类名无任何使用：
 
-迁移方案：保留 `.info-row` 或迁移到 `.ed-card-meta-item`
+| 样式类 | 实际情况 |
+|--------|----------|
+| `.info-row` | ✅ 所有页面已使用 `.ed-info-row` |
+| `.user-header` | ✅ 所有页面已使用 `.ed-user-header` |
+| `skeleton` 组件 | ✅ 使用独立的 `.skeleton-info-row` |
 
-#### 4.2 `.user-header` 迁移（4 处）
-
-| 页面 | 使用次数 |
-|------|----------|
-| `pages/admin/profile/profile.wxml` | 1 |
-| `pages/teacher/profile/profile.wxml` | 1 |
-| `pages/classTeacher/profile/profile.wxml` | 1 |
-| `pages/leader/profile/profile.wxml` | 1 |
-
-迁移方案：Profile 页面已使用 Editorial 风格，检查是否需要更新
-
-#### 操作清单
-
-- [ ] 评估 `.info-row` 是否需要迁移（功能性样式，可保留）
-- [ ] 检查 Profile 页面 `.user-header` 使用情况
-- [ ] 如需迁移则逐页修改
-- [ ] 编译测试
+**操作**：直接删除 `common.wxss` 中的 `.info-row*` 和 `.user-header*` 样式，无需页面修改。
 
 ---
 
