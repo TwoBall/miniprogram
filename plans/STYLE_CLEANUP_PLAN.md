@@ -35,117 +35,67 @@
 
 ## 二、迁移阶段规划
 
-### 阶段 0：立即删除（无使用样式）
+### 阶段 0：立即删除（无使用样式）✅ 已完成
 
-**预计耗时**：10 分钟
+**执行日期**：2026-01-12
+**实际删除行数**：146 行（644 行 → 498 行）
 **风险等级**：低
 
-删除 `common.wxss` 中确认无使用的样式：
+已删除 `common.wxss` 中确认无使用的样式：
 
 | 行号 | 样式类 | 状态 |
 |------|--------|------|
-| 46-57 | `.header-section`, `.header-top` | ✅ 可删除 |
-| 423-427 | `.search-bar` | ✅ 可删除 |
-| 429-457 | `.fab-btn*` | ✅ 可删除 |
-| 478-561 | `.filter-section*` 全系列 | ✅ 可删除 |
-| 179-188 | `.page-container*` | ✅ 可删除 |
+| 46-57 | `.header-section`, `.header-top` | ✅ 已删除 |
+| 423-427 | `.search-bar` | ✅ 已删除 |
+| 429-457 | `.fab-btn*` | ✅ 已删除 |
+| 478-561 | `.filter-section*` 全系列 | ✅ 已删除 |
+| 179-188 | `.page-container*` | ✅ 已删除 |
 
-**操作步骤**：
-```bash
-# 1. 备份原文件
-cp styles/common.wxss styles/common.wxss.bak
-
-# 2. 删除上述行号范围的样式
-
-# 3. 编译测试，确认无报错
-```
+**附加操作**：章节编号已整理为连续编号（2.1-2.12）
 
 ---
 
-### 阶段 1：迁移 Tab 切换样式
+### 阶段 1：迁移 Tab 切换样式 ✅ 已完成
 
-**预计耗时**：30 分钟
-**风险等级**：中
-**涉及页面**：9 个
-
-#### 需要修改的页面
-
-| 页面 | 使用次数 | 优先级 |
-|------|----------|--------|
-| `pages/admin/users/users.wxml` | 3 | 高 |
-| `pages/admin/approval/approval.wxml` | 3 | 高 |
-| `pages/teacher/club/club.wxml` | 3 | 高 |
-| `pages/classTeacher/students/students.wxml` | 3 | 高 |
-| `pages/classTeacher/studentDetail/studentDetail.wxml` | 3 | 中 |
-| `pages/common/transfer/transfer.wxml` | 3 | 中 |
-| `pages/common/notifications/notifications.wxml` | 3 | 中 |
-| `pages/common/design-test/design-test.wxml` | 1 | 低 |
-| `components/custom-tabbar/custom-tabbar.wxml` | 1 | 低（底部导航，非 Tab） |
-
-#### 迁移映射
-
-```html
-<!-- 旧写法 -->
-<view class="tabs">
-  <view class="tab-item {{activeTab === 'all' ? 'active' : ''}}" data-tab="all" bindtap="onTabChange">全部</view>
-  <view class="tab-item {{activeTab === 'pending' ? 'active' : ''}}" data-tab="pending" bindtap="onTabChange">待处理</view>
-</view>
-
-<!-- 新写法 -->
-<view class="ed-tabs">
-  <view class="ed-tab-item {{activeTab === 'all' ? 'active' : ''}}" data-tab="all" bindtap="onTabChange">全部</view>
-  <view class="ed-tab-item {{activeTab === 'pending' ? 'active' : ''}}" data-tab="pending" bindtap="onTabChange">待处理</view>
-</view>
-```
-
-#### 操作清单
-
-- [ ] 修改 `pages/admin/users/users.wxml`
-- [ ] 修改 `pages/admin/approval/approval.wxml`
-- [ ] 修改 `pages/teacher/club/club.wxml`
-- [ ] 修改 `pages/classTeacher/students/students.wxml`
-- [ ] 修改 `pages/classTeacher/studentDetail/studentDetail.wxml`
-- [ ] 修改 `pages/common/transfer/transfer.wxml`
-- [ ] 修改 `pages/common/notifications/notifications.wxml`
-- [ ] 修改 `pages/common/design-test/design-test.wxml`
-- [ ] 编译测试全部页面
-- [ ] 删除 `common.wxss` 中的 `.tabs*` 样式（309-341 行）
-
----
-
-### 阶段 2：迁移状态徽章样式
-
-**预计耗时**：15 分钟
+**执行日期**：2026-01-12
+**实际删除行数**：35 行（498 行 → 463 行）
 **风险等级**：低
-**涉及页面**：2 个
 
-#### 需要修改的页面
+#### 执行结果
 
-| 页面 | 使用次数 |
+经过检查，所有页面都已经使用 `van-tabs` 组件，`.tabs` 和 `.tab-item` 类名无任何页面使用：
+
+| 页面 | 实际情况 |
 |------|----------|
-| `pages/teacher/detail/detail.wxml` | 1 |
-| `pages/leader/detail/detail.wxml` | 1 |
+| `pages/admin/users/users.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/admin/approval/approval.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/teacher/club/club.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/classTeacher/students/students.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/classTeacher/studentDetail/studentDetail.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/common/transfer/transfer.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/common/notifications/notifications.wxml` | ✅ 已使用 `van-tabs` |
+| `pages/common/design-test/design-test.wxml` | ✅ 使用 `editorial-tabs`（非 `.tabs`）|
 
-#### 迁移映射
+**操作**：直接删除 `common.wxss` 中的 `.tabs*` 样式（原 284-317 行），无需页面修改。
 
-```html
-<!-- 旧写法 -->
-<view class="status-badge success">到课</view>
-<view class="status-badge error">缺课</view>
-<view class="status-badge warning">迟到</view>
+---
 
-<!-- 新写法 -->
-<view class="ed-badge ed-badge-success">到课</view>
-<view class="ed-badge ed-badge-error">缺课</view>
-<view class="ed-badge ed-badge-warning">迟到</view>
-```
+### 阶段 2：迁移状态徽章样式 ✅ 已完成
 
-#### 操作清单
+**执行日期**：2026-01-12
+**实际删除行数**：32 行（463 行 → 431 行）
+**风险等级**：低
 
-- [ ] 修改 `pages/teacher/detail/detail.wxml`
-- [ ] 修改 `pages/leader/detail/detail.wxml`
-- [ ] 编译测试
-- [ ] 删除 `common.wxss` 中的 `.status-badge*` 样式（217-247 行）
+#### 执行结果
+
+经过检查，两个页面都已使用 `.ed-status-badge`（Editorial 风格）：
+
+| 页面 | 实际情况 |
+|------|----------|
+| `pages/teacher/detail/detail.wxml` | ✅ 已使用 `.ed-status-badge` |
+| `pages/leader/detail/detail.wxml` | ✅ 已使用 `.ed-status-badge` |
+
+**操作**：直接删除 `common.wxss` 中的 `.status-badge*` 样式（原 193-223 行），无需页面修改。
 
 ---
 

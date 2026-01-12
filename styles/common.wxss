@@ -43,19 +43,6 @@
  * 注意：以下旧样式保留是为了兼容性，新页面请使用 editorial.wxss 中的 .ed-* 类名
  */
 
-/* ========== 顶部信息栏 ========== */
-.header-section {
-  background: linear-gradient(135deg, #1F6FAD 0%, #2E8B9A 100%);
-  padding: 40rpx 30rpx;
-  color: #ffffff;
-}
-
-.header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
 /* ========== 切换身份按钮 ========== */
 .switch-role-btn {
   padding: 12rpx 20rpx;
@@ -176,18 +163,7 @@
   font-size: 28rpx;
 }
 
-/* ========== 2.1 页面容器 ========== */
-.page-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-bottom: 40rpx;
-}
-
-.page-container.with-tabbar {
-  padding-bottom: 140rpx;
-}
-
-/* ========== 2.2 通用卡片 - 扁平描边风格 ========== */
+/* ========== 2.1 通用卡片 - 扁平描边风格 ========== */
 .card {
   background-color: #fff;
   border-radius: 12rpx;
@@ -214,39 +190,7 @@
   color: #333;
 }
 
-/* ========== 2.3 状态标签 ========== */
-.status-badge {
-  display: inline-block;
-  padding: 8rpx 20rpx;
-  border-radius: 20rpx;
-  font-size: 24rpx;
-  font-weight: 500;
-}
-
-.status-badge.success,
-.status-badge.present {
-  background: #f6ffed;
-  color: #52c41a;
-}
-
-.status-badge.error,
-.status-badge.absent {
-  background: #fff1f0;
-  color: #ff4d4f;
-}
-
-.status-badge.warning {
-  background: #fff7e6;
-  color: #ff9800;
-}
-
-.status-badge.info,
-.status-badge.pending {
-  background: #e6f7ff;
-  color: #1890ff;
-}
-
-/* ========== 2.4 加载状态 ========== */
+/* ========== 2.2 加载状态 ========== */
 .loading-wrapper {
   display: flex;
   justify-content: center;
@@ -261,7 +205,7 @@
   font-size: 26rpx;
 }
 
-/* ========== 2.5 信息行 ========== */
+/* ========== 2.3 信息行 ========== */
 .info-row {
   display: flex;
   align-items: center;
@@ -279,7 +223,7 @@
   font-weight: 500;
 }
 
-/* ========== 2.6 统计项 ========== */
+/* ========== 2.4 统计项 ========== */
 .stat-item {
   display: flex;
   flex-direction: column;
@@ -305,42 +249,7 @@
   color: #ff4d4f;
 }
 
-/* ========== 2.7 Tab 切换 ========== */
-.tabs {
-  display: flex;
-  background-color: #fff;
-  border-bottom: 2rpx solid #e8e8e8;
-}
-
-.tab-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24rpx 0;
-  font-size: 28rpx;
-  color: #666;
-  position: relative;
-}
-
-.tab-item.active {
-  color: #1890ff;
-  font-weight: 600;
-}
-
-.tab-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60rpx;
-  height: 6rpx;
-  background-color: #1890ff;
-  border-radius: 3rpx;
-}
-
-/* ========== 2.8 排名样式 ========== */
+/* ========== 2.5 排名样式 ========== */
 .ranking-item {
   display: flex;
   align-items: center;
@@ -405,7 +314,7 @@
   color: #ff4d4f;
 }
 
-/* ========== 2.9 操作按钮组 ========== */
+/* ========== 2.6 操作按钮组 ========== */
 .action-buttons {
   display: flex;
   gap: 16rpx;
@@ -420,43 +329,7 @@
   justify-content: space-between;
 }
 
-/* ========== 2.10 搜索栏 ========== */
-.search-bar {
-  background-color: #fff;
-  padding-bottom: 20rpx;
-}
-
-/* ========== 2.11 浮动操作按钮 ========== */
-.fab-btn {
-  position: fixed;
-  right: 32rpx;
-  bottom: 180rpx;
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
-  z-index: 100;
-}
-
-.fab-btn:active {
-  transform: scale(0.95);
-  opacity: 0.9;
-}
-
-.fab-btn.admin {
-  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
-  box-shadow: 0 8rpx 24rpx rgba(114, 46, 209, 0.4);
-}
-
-.fab-btn.teacher {
-  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
-  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.4);
-}
-
-/* ========== 2.12 对话框样式 ========== */
+/* ========== 2.7 对话框样式 ========== */
 .dialog-content {
   padding: 20rpx;
 }
@@ -475,92 +348,7 @@
   justify-content: flex-end;
 }
 
-/* ========== 2.13 筛选器样式 ========== */
-.filter-section {
-  background-color: #fff;
-  padding: 24rpx 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.filter-row {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-}
-
-.filter-picker {
-  flex: 1;
-}
-
-.filter-picker-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
-  padding: 16rpx 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 8rpx;
-  border: 2rpx solid #e8e8e8;
-  transition: all 0.2s;
-}
-
-.filter-picker-content:active {
-  background-color: #e6f7ff;
-  border-color: #1890ff;
-}
-
-.filter-picker-content.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.filter-label {
-  font-size: 22rpx;
-  color: #999;
-}
-
-.filter-value {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.filter-reset {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-  padding: 20rpx 24rpx;
-  font-size: 26rpx;
-  color: #1890ff;
-  background-color: #e6f7ff;
-  border-radius: 8rpx;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-
-.filter-reset:active {
-  background-color: #bae7ff;
-}
-
-.filter-reset.disabled {
-  color: #999;
-  background-color: #f5f5f5;
-  pointer-events: none;
-}
-
-.filter-result {
-  margin-top: 16rpx;
-  font-size: 24rpx;
-  color: #666;
-  padding: 12rpx 16rpx;
-  background-color: #f0f9ff;
-  border-radius: 6rpx;
-  border-left: 4rpx solid #1890ff;
-}
-
-/* ========== 2.14 用户/学生信息样式 ========== */
+/* ========== 2.8 用户/学生信息样式 ========== */
 .user-header {
   display: flex;
   justify-content: space-between;
@@ -588,7 +376,7 @@
   color: #999;
 }
 
-/* ========== 2.15 滑动操作样式 ========== */
+/* ========== 2.9 滑动操作样式 ========== */
 .swipe-actions {
   display: flex;
   height: 100%;
@@ -615,7 +403,7 @@
   background-color: #ff9800;
 }
 
-/* ========== 2.16 徽章样式 ========== */
+/* ========== 2.10 徽章样式 ========== */
 .badge {
   min-width: 32rpx;
   height: 32rpx;
