@@ -6,11 +6,13 @@
 
 全局样式层提供统一的 UI 规范和可复用的公共样式类。通过 `app.wxss` 引入，所有页面（包括分包）自动继承。
 
+**重要**：所有业务样式已迁移到 `editorial.wxss` 的 `.ed-*` 类名，`common.wxss` 仅保留设计规范文档。
+
 ## 文件索引
 
 - `variables.wxss` - **教育杂志风设计变量**（色彩、排版、间距、圆角规范）
-- `editorial.wxss` - **教育杂志风组件样式库**（20+ 可复用组件类）
-- `common.wxss` - 公共样式类库（设计规范 + 可复用组件样式）
+- `editorial.wxss` - **教育杂志风组件样式库**（20+ 可复用组件类）⭐ 主要使用
+- `common.wxss` - **设计规范文档**（仅注释，无业务样式）
 - `animations.wxss` - 动画样式库（入场动画、交互反馈、加载状态）
 - `profile-base.wxss` - Profile 页面公共样式基类
 
@@ -95,70 +97,43 @@
 </view>
 ```
 
-## common.wxss 公共样式类
+## common.wxss 设计规范文档
 
-### 设计规范
-
-文件顶部包含完整的设计规范文档，定义了：
+`common.wxss` 现在仅包含设计规范注释（44 行），定义了：
 - 品牌色系、角色主题色
 - 状态色（成功/错误/警告/信息）
 - 文本色、背景色
 - 边框与圆角规范
-- 卡片风格（扁平描边）
+- 卡片风格（Editorial 风格）
 
-### 可复用样式类
+**注意**：所有业务样式类已迁移到 `editorial.wxss`，请使用 `.ed-*` 类名。
 
-| 类名 | 用途 | 使用方式 |
-|-----|------|---------|
-| `.page-container` | 页面容器 | 直接使用 |
-| `.card` | 通用卡片 | 组合类名：`class="card xxx-card"` |
-| `.status-badge` | 状态标签 | 带变体：`.success`, `.error`, `.warning`, `.info` |
-| `.tabs` + `.tab-item` | Tab 切换 | 直接使用 |
-| `.ranking-item` | 排名项 | 直接使用 |
-| `.rank-badge` | 排名徽章 | 带变体：`.first`, `.second`, `.third` |
-| `.rate-badge` | 出勤率徽章 | 带变体：`.excellent`, `.good`, `.normal`, `.poor` |
-| `.info-row` | 信息行 | 配合 `.label` 和 `.value` |
-| `.stat-item` | 统计项 | 配合 `.stat-value` 和 `.stat-label` |
-| `.loading-wrapper` | 加载容器 | 直接使用 |
-| `.no-more` | 无更多数据 | 直接使用 |
-| `.empty-state` | 空状态 | 直接使用 |
-| `.action-buttons` | 操作按钮组 | 带变体：`.center`, `.space-between` |
-| `.search-bar` | 搜索栏 | 配合 `van-search` 使用 |
-| `.fab-btn` | 浮动操作按钮 | 带变体：`.admin`, `.teacher` |
-| `.dialog-content` | 对话框内容 | 配合 `.dialog-title`, `.dialog-actions` |
-| `.filter-section` | 筛选器区域 | 配合 `.filter-row`, `.filter-picker` 等 |
-| `.user-header` | 用户信息头部 | 配合 `.user-name`, `.user-meta` |
-| `.swipe-actions` | 滑动操作 | 配合 `.swipe-action-btn` |
-| `.badge` | 徽章 | 带变体：`.success`, `.warning`, `.info` |
+### 已废弃的样式类（已删除）
 
-### 组合类名模式
+以下样式类已在 2026-01 迁移中删除，请使用对应的 Editorial 替代：
 
-推荐使用组合类名实现样式复用：
-
-```html
-<!-- WXML -->
-<view class="card notification-item">...</view>
-```
-
-```css
-/* WXSS - 仅定义特有样式 */
-.notification-item {
-  display: flex;
-  padding: 32rpx 24rpx;
-}
-/* 无需重复定义 background-color, border-radius, border 等 */
-```
+| 旧类名 | 替代方案 |
+|--------|----------|
+| `.card` | `.ed-card` |
+| `.status-badge` | `.ed-badge` / `.ed-status-badge` |
+| `.tabs` | `van-tabs` 组件 |
+| `.ranking-item` | `.ed-ranking-item` |
+| `.info-row` | `.ed-info-row` |
+| `.action-buttons` | `.ed-actions` |
+| `.dialog-*` | `van-dialog` 组件 |
+| `.user-header` | `.ed-user-header` |
 
 ## 使用规范
 
-1. **全局引入**：`app.wxss` 已通过 `@import './styles/common.wxss'` 引入
+1. **全局引入**：`app.wxss` 已通过 `@import` 引入所有样式文件
 2. **分包页面**：自动继承公共样式，无需额外引入
-3. **样式覆盖**：页面特有样式通过组合类名覆盖公共样式
-4. **命名约定**：页面特有类名使用语义化命名（如 `.notification-item`）
+3. **推荐使用**：`editorial.wxss` 中的 `.ed-*` 类名
+4. **命名约定**：页面特有类名使用语义化命名
 
 ## 相关文档
 
 - [CARD_STYLE_GUIDE.md](../CARD_STYLE_GUIDE.md) - 卡片样式详细规范
+- [STYLE_CLEANUP_PLAN.md](../plans/STYLE_CLEANUP_PLAN.md) - 样式迁移计划（已完成）
 
 ## animations.wxss 动画样式库
 
