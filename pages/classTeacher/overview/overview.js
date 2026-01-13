@@ -7,6 +7,7 @@ const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
 const { SafeToast } = require('../../../utils/error')
+const { loadWithCache } = require('../../../utils/loader')
 
 Page({
   behaviors: [datePickerBehavior],
@@ -75,18 +76,7 @@ Page({
 
     this.lastLoadTime = Date.now()
     const { selectedDate } = this.data
-
-    const cacheKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA}_class_${userInfo.className}_${selectedDate}`
-    const cacheTimeKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA_TIME}_class_${userInfo.className}_${selectedDate}`
-
-    if (!forceRefresh) {
-      const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
-      if (cached) {
-        this.applyData(cached)
-        this.setData({ pageLoading: false })
-        return
-      }
-    }
+    const cacheKey = `class_overview_${userInfo.className}_${selectedDate}`
 
     this.setData({ pageLoading: true })
 
@@ -97,13 +87,20 @@ Page({
         duration: 0
       })
 
-      const result = await request.callApi('attendance', 'getByClass', {
-        className: userInfo.className,
-        date: selectedDate
-      }, { showLoading: false, showError: false })
+      // 使用 loader.js 统一加载逻辑，调用批量统计接口
+      const result = await loadWithCache({
+        cacheKey,
+        cacheDuration: storage.CACHE_DURATION.FIVE_MINUTES,
+        forceRefresh,
+        apiModule: 'stats',
+        apiAction: 'getClassOverviewStats',
+        apiData: {
+          className: userInfo.className,
+          date: selectedDate
+        }
+      })
 
       if (result.success) {
-        storage.setWithCache(cacheKey, cacheTimeKey, result.data)
         this.applyData(result.data)
       }
     } catch (error) {
@@ -120,13 +117,9 @@ Page({
    * @param {Object} data - 考勤数据
    */
   applyData(data) {
-    const sortedStudents = data.students.sort((a, b) => {
-      const statusOrder = { 'absent': 0, 'present': 1, null: 2 }
-      return (statusOrder[a.todayStatus] ?? 2) - (statusOrder[b.todayStatus] ?? 2)
-    })
-
+    // 数据已经在 API 层排序，直接使用
     this.setData({
-      students: sortedStudents,
+      students: data.students,
       totalStudents: data.totalStudents,
       joinedClubs: data.joinedClubs,
       presentToday: data.presentToday,

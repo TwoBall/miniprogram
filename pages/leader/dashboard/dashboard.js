@@ -7,6 +7,7 @@ const storage = require('../../../utils/storage')
 const request = require('../../../utils/request')
 const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
 const { SafeToast } = require('../../../utils/error')
+const { loadWithCache } = require('../../../utils/loader')
 
 Page({
   behaviors: [datePickerBehavior],
@@ -23,7 +24,8 @@ Page({
     classRanking: [],
     showRanking: false,
     absenceWarnings: [],
-    warningCount: 0
+    warningCount: 0,
+    pageLoading: true
   },
 
   /** 页面加载 */
@@ -78,26 +80,9 @@ Page({
 
     this.lastLoadTime = Date.now()
     const { selectedDate } = this.data
+    const cacheKey = `leader_dashboard_${userInfo.department}_${selectedDate}`
 
-    const cacheKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA}_dept_${userInfo.department}_${selectedDate}`
-    const cacheTimeKey = `${storage.STORAGE_KEYS.ATTENDANCE_DATA_TIME}_dept_${userInfo.department}_${selectedDate}`
-
-    if (!forceRefresh) {
-      const cached = storage.getWithCache(cacheKey, cacheTimeKey, storage.CACHE_DURATION.FIVE_MINUTES)
-      if (cached) {
-        cached.classes.sort((a, b) => a.className.localeCompare(b.className, 'zh-CN', { numeric: true }))
-        this.setData({
-          classes: cached.classes,
-          totalClasses: cached.totalClasses,
-          totalStudents: cached.totalStudents,
-          presentToday: cached.presentToday,
-          absentToday: cached.absentToday,
-          absenceWarnings: cached.absenceWarnings || [],
-          warningCount: cached.warningCount || 0
-        })
-        return
-      }
-    }
+    this.setData({ pageLoading: true })
 
     try {
       await SafeToast.loading({
@@ -106,33 +91,46 @@ Page({
         duration: 0
       })
 
-      // 使用批量接口，一次获取考勤数据和缺勤预警
-      const result = await request.callApi('stats', 'getDashboardStats', {
-        department: userInfo.department,
-        date: selectedDate
-      }, { showLoading: false, showError: false })
+      // 使用 loader.js 统一加载逻辑，调用批量统计接口
+      const result = await loadWithCache({
+        cacheKey,
+        cacheDuration: storage.CACHE_DURATION.FIVE_MINUTES,
+        forceRefresh,
+        apiModule: 'stats',
+        apiAction: 'getDashboardStats',
+        apiData: {
+          department: userInfo.department,
+          date: selectedDate
+        }
+      })
 
       if (result.success) {
-        const data = result.data
-        data.classes.sort((a, b) => a.className.localeCompare(b.className, 'zh-CN', { numeric: true }))
-        storage.setWithCache(cacheKey, cacheTimeKey, data)
-
-        this.setData({
-          classes: data.classes,
-          totalClasses: data.totalClasses,
-          totalStudents: data.totalStudents,
-          presentToday: data.presentToday,
-          absentToday: data.absentToday,
-          absenceWarnings: data.absenceWarnings || [],
-          warningCount: data.warningCount || 0
-        })
+        this.applyData(result.data)
       }
     } catch (error) {
       console.error('加载数据失败:', error)
       SafeToast.fail('加载失败')
     } finally {
       SafeToast.clear()
+      this.setData({ pageLoading: false })
     }
+  },
+
+  /**
+   * 应用数据到页面
+   * @param {Object} data - 考勤数据
+   */
+  applyData(data) {
+    // 数据已经在 API 层排序，直接使用
+    this.setData({
+      classes: data.classes,
+      totalClasses: data.totalClasses,
+      totalStudents: data.totalStudents,
+      presentToday: data.presentToday,
+      absentToday: data.absentToday,
+      absenceWarnings: data.absenceWarnings || [],
+      warningCount: data.warningCount || 0
+    })
   },
 
   /**

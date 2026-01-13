@@ -4,6 +4,7 @@ const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const throttleBehavior = require('../../../behaviors/throttleBehavior')
 const { SafeToast } = require('../../../utils/error')
+const { TRANSFER_STATUS } = require('../../../utils/constants')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -15,13 +16,8 @@ Page({
     userInfo: null,
     role: '',
 
-    // 状态映射
-    statusMap: {
-      pending_teacher: { text: '等待老师确认', type: 'warning' },
-      pending_classTeacher: { text: '等待班主任审批', type: 'primary' },
-      approved: { text: '已通过', type: 'success' },
-      rejected: { text: '已拒绝', type: 'danger' }
-    },
+    // 使用 constants.js 统一管理
+    statusMap: TRANSFER_STATUS,
 
     // 拒绝原因输入
     rejectReason: '',

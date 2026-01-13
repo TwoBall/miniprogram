@@ -5,6 +5,7 @@
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
+const { USER_STATUS, ROLES, getUserStatusText, getRoleText } = require('../../../utils/constants')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -19,23 +20,14 @@ Page({
 
     roleOptions: [
       { value: 'all', label: '全部' },
-      { value: 'teacher', label: '社团老师' },
-      { value: 'classTeacher', label: '班主任' },
-      { value: 'leader', label: '学部领导' }
+      { value: 'teacher', label: ROLES.teacher.text },
+      { value: 'classTeacher', label: ROLES.classTeacher.text },
+      { value: 'leader', label: ROLES.leader.text }
     ],
 
-    statusMap: {
-      pending: { text: '待审批', type: 'warning' },
-      approved: { text: '已通过', type: 'success' },
-      rejected: { text: '已拒绝', type: 'danger' }
-    },
-
-    roleMap: {
-      teacher: '社团老师',
-      classTeacher: '班主任',
-      leader: '学部领导',
-      admin: '管理员'
-    }
+    // 使用 constants.js 统一管理，在 WXML 中通过 WXS 或函数调用
+    statusMap: USER_STATUS,
+    roleMap: ROLES
   },
 
   onLoad() {

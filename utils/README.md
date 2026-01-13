@@ -11,8 +11,10 @@
 ## 文件索引
 
 - `auth.js` - 身份认证工具，处理用户登录状态、权限验证
+- `constants.js` - 状态常量工具，提供考勤/用户/转社团等状态映射和文本转换
 - `date.js` - 日期处理工具，提供日期格式化、计算等功能
 - `error.js` - 错误处理工具，统一处理异常和错误提示，提供安全的 Toast 和 Dialog 包装器
+- `loader.js` - 通用加载工具，封装带缓存的数据加载逻辑
 - `request.js` - 网络请求工具，封装云函数调用和 HTTP 请求
 - `storage.js` - 本地存储工具，封装 wx.getStorageSync 和 wx.setStorageSync
 - `performance.js` - 性能监控工具，提供 setData 性能追踪和云函数调用监控
@@ -86,7 +88,12 @@ const freshOptions = await request.getFilterOptions(true)
 | 常量/函数 | 用途 |
 |----------|------|
 | `STORAGE_KEYS.FILTER_OPTIONS` | 筛选选项缓存键 |
+| `CACHE_DURATION.TWO_MINUTES` | 2 分钟缓存时长 |
+| `CACHE_DURATION.FIVE_MINUTES` | 5 分钟缓存时长 |
 | `CACHE_DURATION.TEN_MINUTES` | 10 分钟缓存时长 |
+| `CACHE_DURATION.THIRTY_MINUTES` | 30 分钟缓存时长 |
+| `CACHE_DURATION.ONE_HOUR` | 1 小时缓存时长 |
+| `CACHE_DURATION.ONE_DAY` | 1 天缓存时长 |
 | `getWithCache(key, timeKey, duration)` | 获取带过期检查的缓存 |
 | `setWithCache(key, timeKey, data)` | 设置缓存及时间戳 |
 
@@ -321,4 +328,113 @@ if (!result.valid) {
 
 // 清理输入
 const cleanData = sanitizeObject(formData, ['userName', 'feedback'])
+```
+
+## constants.js 状态常量工具
+
+提供统一的状态常量定义和文本转换函数，消除页面间重复的状态映射代码。
+
+### 状态常量
+
+| 常量 | 说明 |
+|------|------|
+| `ATTENDANCE_STATUS` | 考勤状态（present/late/absent/leave） |
+| `USER_STATUS` | 用户状态（pending/approved/rejected） |
+| `TRANSFER_STATUS` | 转社团状态（pending/confirmed/approved/rejected） |
+| `NOTIFICATION_TYPE` | 通知类型（system/attendance/transfer/approval） |
+| `EXPORT_TYPE` | 导出类型（attendance/summary/students） |
+| `ROLES` | 用户角色（admin/teacher/classTeacher/leader） |
+
+### 转换函数
+
+| 函数名 | 用途 |
+|--------|------|
+| `getAttendanceStatusText(status)` | 获取考勤状态文本 |
+| `getAttendanceStatusType(status)` | 获取考勤状态类型（用于样式） |
+| `getUserStatusText(status)` | 获取用户状态文本 |
+| `getTransferStatusText(status)` | 获取转社团状态文本 |
+| `getRoleText(role)` | 获取角色文本 |
+
+### 使用示例
+
+```javascript
+const {
+  ATTENDANCE_STATUS,
+  getAttendanceStatusText,
+  getAttendanceStatusType
+} = require('../../../utils/constants')
+
+// 使用常量
+if (record.status === ATTENDANCE_STATUS.ABSENT) {
+  // 处理缺勤
+}
+
+// 获取状态文本
+const statusText = getAttendanceStatusText('present') // '到课'
+const statusType = getAttendanceStatusType('absent')  // 'error'
+```
+
+## loader.js 通用加载工具
+
+封装带缓存的数据加载逻辑，减少页面样板代码。
+
+### 函数列表
+
+| 函数名 | 用途 | 说明 |
+|--------|------|------|
+| `loadWithCache(options)` | 带缓存的数据加载 | 支持缓存、强制刷新、数据转换 |
+| `loadMultiple(loaders, options)` | 批量并行加载 | 并行加载多个数据源 |
+| `createLoader(page, config)` | 创建页面加载器 | 返回绑定页面上下文的加载函数 |
+
+### loadWithCache 参数
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `cacheKey` | string | 缓存键名 |
+| `cacheDuration` | number | 缓存时长（毫秒），默认5分钟 |
+| `forceRefresh` | boolean | 是否强制刷新 |
+| `apiModule` | string | API 模块名 |
+| `apiAction` | string | API 操作名 |
+| `apiData` | object | API 参数 |
+| `transform` | function | 数据转换函数 |
+
+### 使用示例
+
+```javascript
+const { loadWithCache, createLoader } = require('../../../utils/loader')
+
+// 方式1：直接使用 loadWithCache
+const result = await loadWithCache({
+  cacheKey: 'dashboard_stats',
+  cacheDuration: storage.CACHE_DURATION.FIVE_MINUTES,
+  apiModule: 'stats',
+  apiAction: 'getDashboardStats',
+  apiData: { department: '职教一部', date: '2025-01-13' }
+})
+
+if (result.success) {
+  console.log('数据:', result.data)
+  console.log('来自缓存:', result.fromCache)
+}
+
+// 方式2：使用 createLoader 创建页面专用加载器
+Page({
+  onLoad() {
+    this.loadStats = createLoader(this, {
+      dataKey: 'stats',
+      cacheKey: 'home_stats',
+      apiModule: 'stats',
+      apiAction: 'getHomeStats'
+    })
+  },
+
+  async onShow() {
+    await this.loadStats()
+  },
+
+  async onPullDownRefresh() {
+    await this.loadStats(true) // 强制刷新
+    wx.stopPullDownRefresh()
+  }
+})
 ```

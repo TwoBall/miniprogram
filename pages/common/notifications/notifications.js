@@ -2,6 +2,7 @@ const request = require('../../../utils/request')
 const { formatRelativeTime } = require('../../../utils/date')
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const { SafeToast } = require('../../../utils/error')
+const { getNotificationTypeText } = require('../../../utils/constants')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
@@ -223,14 +224,7 @@ Page({
    * 格式化通知类型
    */
   formatNotificationType(type) {
-    const typeMap = {
-      absence_warning: '缺勤提醒',
-      attendance_update: '考勤修改',
-      transfer_request: '转社团申请',
-      transfer_result: '转社团结果',
-      register_result: '注册审批'
-    }
-    return typeMap[type] || '系统通知'
+    return getNotificationTypeText(type)
   },
 
   /**

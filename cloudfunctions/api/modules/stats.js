@@ -417,12 +417,187 @@ async function handleGetDashboardStats(event, ctx) {
     }
 }
 
+// ========== 班主任概览批量接口 ==========
+
+/**
+ * 获取班主任概览统计数据（批量接口）
+ * 合并班级学生列表 + 当日考勤
+ * 优化：将原来2次调用减少为1次
+ */
+async function handleGetClassOverviewStats(event, ctx) {
+    const { db } = ctx
+    const { className, date } = event
+    const _ = db.command
+
+    if (!className) {
+        return fail('缺少班级参数')
+    }
+
+    if (!date) {
+        return fail('缺少日期参数')
+    }
+
+    try {
+        // 并行查询：班级学生 + 当日考勤记录
+        const [studentsResult, attendanceResult] = await Promise.all([
+            db.collection('students')
+                .where({ className })
+                .field({ _id: true, studentName: true, className: true, clubName: true, department: true })
+                .get(),
+            db.collection('attendance_records')
+                .where({ date })
+                .get()
+        ])
+
+        const students = studentsResult.data || []
+        const attendanceRecords = attendanceResult.data || []
+
+        // 构建学生ID到考勤状态的映射
+        const studentAttendanceMap = {}
+        attendanceRecords.forEach(record => {
+            if (!record.records) return
+            record.records.forEach(r => {
+                if (!studentAttendanceMap[r.studentId]) {
+                    studentAttendanceMap[r.studentId] = {
+                        status: r.status,
+                        clubName: record.clubName
+                    }
+                }
+            })
+        })
+
+        // 统计数据
+        let presentCount = 0
+        let absentCount = 0
+        const clubSet = new Set()
+
+        // 为每个学生添加今日考勤状态
+        const studentsWithStatus = students.map(student => {
+            const attendance = studentAttendanceMap[student._id]
+            if (student.clubName) clubSet.add(student.clubName)
+
+            if (attendance) {
+                if (attendance.status === 'present' || attendance.status === 'late') {
+                    presentCount++
+                } else if (attendance.status === 'absent') {
+                    absentCount++
+                }
+            }
+
+            return {
+                ...student,
+                todayStatus: attendance?.status || null,
+                attendanceClub: attendance?.clubName || null
+            }
+        })
+
+        // 按状态排序：缺勤优先显示
+        studentsWithStatus.sort((a, b) => {
+            const statusOrder = { 'absent': 0, 'late': 1, 'present': 2, null: 3 }
+            return (statusOrder[a.todayStatus] ?? 3) - (statusOrder[b.todayStatus] ?? 3)
+        })
+
+        return success({
+            students: studentsWithStatus,
+            totalStudents: students.length,
+            joinedClubs: clubSet.size,
+            presentToday: presentCount,
+            absentToday: absentCount
+        })
+    } catch (error) {
+        console.error('获取班主任概览统计失败:', error)
+        return fail('获取统计数据失败')
+    }
+}
+
+// ========== 教师首页批量接口 ==========
+
+/**
+ * 获取教师首页统计数据（批量接口）
+ * 合并社团学生列表 + 今日点名状态
+ * 优化：将原来2次调用减少为1次
+ */
+async function handleGetTeacherHomeStats(event, ctx) {
+    const { db } = ctx
+    const { clubName, date } = event
+    const _ = db.command
+
+    if (!clubName) {
+        return fail('缺少社团参数')
+    }
+
+    try {
+        const queryDate = date || formatDate(new Date())
+
+        // 并行查询：社团学生 + 今日考勤记录
+        const [studentsResult, attendanceResult] = await Promise.all([
+            db.collection('students')
+                .where({ clubName })
+                .field({ _id: true, studentName: true, className: true, department: true })
+                .get(),
+            db.collection('attendance_records')
+                .where({
+                    clubName,
+                    date: queryDate
+                })
+                .orderBy('createTime', 'desc')
+                .limit(1)
+                .get()
+        ])
+
+        const students = studentsResult.data || []
+        const todayRecord = attendanceResult.data?.[0] || null
+
+        // 统计今日考勤
+        let presentCount = 0
+        let absentCount = 0
+        let hasSubmittedToday = false
+
+        if (todayRecord && todayRecord.records) {
+            hasSubmittedToday = true
+            todayRecord.records.forEach(r => {
+                if (r.status === 'present' || r.status === 'late') {
+                    presentCount++
+                } else if (r.status === 'absent') {
+                    absentCount++
+                }
+            })
+        }
+
+        // 按学部统计学生分布
+        const deptStats = {}
+        students.forEach(s => {
+            const dept = s.department || '未分配'
+            deptStats[dept] = (deptStats[dept] || 0) + 1
+        })
+
+        return success({
+            totalStudents: students.length,
+            hasSubmittedToday,
+            todayStats: {
+                present: presentCount,
+                absent: absentCount,
+                total: presentCount + absentCount
+            },
+            departmentDistribution: Object.entries(deptStats)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count),
+            lastSubmitTime: todayRecord?.createTime || null
+        })
+    } catch (error) {
+        console.error('获取教师首页统计失败:', error)
+        return fail('获取统计数据失败')
+    }
+}
+
 // 导出模块
 module.exports = {
     beforeAction,
     handlers: {
         getDataCenterStats: handleGetDataCenterStats,
         getHomeStats: handleGetHomeStats,
-        getDashboardStats: handleGetDashboardStats
+        getDashboardStats: handleGetDashboardStats,
+        getClassOverviewStats: handleGetClassOverviewStats,
+        getTeacherHomeStats: handleGetTeacherHomeStats
     }
 }
