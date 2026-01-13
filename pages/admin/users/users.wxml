@@ -84,7 +84,7 @@
                         {{ statusMap[item.status].text }}
                       </view>
                     </view>
-                    <view class="ed-role-tag">{{ roleMap[item.role] }}</view>
+                    <view class="ed-role-tag">{{ roleMap[item.role].text }}</view>
                   </view>
                 </view>
               </view>
