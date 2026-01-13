@@ -3,7 +3,7 @@
  * @module api/modules/stats
  * @description 处理跨模块的批量统计数据获取，减少前端 API 调用次数
  */
-const { verifyAdmin, USER_STATUS, success, fail, unauthorized, getAllData } = require('../common')
+const { verifyAdmin, USER_STATUS, success, fail, unauthorized, query } = require('../common')
 
 /**
  * 前置钩子 - 权限验证
@@ -308,19 +308,16 @@ async function handleGetDashboardStats(event, ctx) {
 
         // 并行执行：学部学生列表 + 当日考勤记录 + 缺勤预警
         const [students, attendanceRecords, warningsResult] = await Promise.all([
-            // 获取学部下所有学生（使用 getAllData 突破 20 条限制）
-            getAllData(
-                db.collection('students'),
-                { department },
-                { _id: true, studentName: true, className: true, clubName: true }
-            ),
+            // 获取学部下所有学生（使用 query 统一查询方法）
+            query(db.collection('students'), {
+                where: { department },
+                field: { _id: true, studentName: true, className: true, clubName: true }
+            }),
 
-            // 获取当日考勤记录（使用 getAllData）
-            getAllData(
-                db.collection('attendance_records'),
-                { date },
-                null
-            ),
+            // 获取当日考勤记录
+            query(db.collection('attendance_records'), {
+                where: { date }
+            }),
 
             // 获取缺勤预警（本月缺勤>=3次的学生）
             db.collection('attendance_records').aggregate()
@@ -438,18 +435,15 @@ async function handleGetClassOverviewStats(event, ctx) {
     }
 
     try {
-        // 并行查询：班级学生 + 当日考勤记录（使用 getAllData 突破限制）
+        // 并行查询：班级学生 + 当日考勤记录（使用 query 统一查询方法）
         const [students, attendanceRecords] = await Promise.all([
-            getAllData(
-                db.collection('students'),
-                { className },
-                { _id: true, studentName: true, className: true, clubName: true, department: true, gender: true }
-            ),
-            getAllData(
-                db.collection('attendance_records'),
-                { date },
-                null
-            )
+            query(db.collection('students'), {
+                where: { className },
+                field: { _id: true, studentName: true, className: true, clubName: true, department: true, gender: true }
+            }),
+            query(db.collection('attendance_records'), {
+                where: { date }
+            })
         ])
 
         // 构建学生ID到考勤状态的映射
@@ -529,24 +523,20 @@ async function handleGetTeacherHomeStats(event, ctx) {
     try {
         const queryDate = date || formatDate(new Date())
 
-        // 并行查询：社团学生 + 今日考勤记录（使用 getAllData 突破 20 条限制）
-        const [students, attendanceResult] = await Promise.all([
-            getAllData(
-                db.collection('students'),
-                { clubName },
-                { _id: true, studentName: true, className: true, department: true }
-            ),
-            db.collection('attendance_records')
-                .where({
-                    clubName,
-                    date: queryDate
-                })
-                .orderBy('createTime', 'desc')
-                .limit(1)
-                .get()
+        // 并行查询：社团学生 + 今日考勤记录（使用 query 统一查询方法）
+        const [students, todayRecords] = await Promise.all([
+            query(db.collection('students'), {
+                where: { clubName },
+                field: { _id: true, studentName: true, className: true, department: true }
+            }),
+            query(db.collection('attendance_records'), {
+                where: { clubName, date: queryDate },
+                orderBy: { createTime: 'desc' },
+                limit: 1
+            })
         ])
 
-        const todayRecord = attendanceResult.data?.[0] || null
+        const todayRecord = todayRecords[0] || null
 
         // 统计今日考勤
         let presentCount = 0

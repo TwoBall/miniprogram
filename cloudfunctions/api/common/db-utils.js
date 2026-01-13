@@ -168,11 +168,221 @@ async function setSystemConfig(db, configId, data) {
   }
 }
 
+/**
+ * 统一查询方法
+ * 自动处理20条限制问题，支持分页、排序、字段选择
+ *
+ * @param {Object} collection - 数据库集合对象
+ * @param {Object} options - 查询选项
+ * @param {Object} options.where - 查询条件（必须）
+ * @param {Object|null} options.field - 返回字段（可选）
+ * @param {Object|null} options.orderBy - 排序规则，如 { date: 'desc', name: 'asc' }（可选）
+ * @param {number|null} options.limit - 限制返回数量（可选，不设置则返回全部）
+ * @param {number|null} options.skip - 跳过记录数（可选，配合 limit 使用）
+ * @param {boolean} options.fetchAll - 是否获取全部数据，默认 true（可选）
+ * @returns {Promise<Array>} 查询结果数组
+ *
+ * @example
+ * // 获取全部数据
+ * const students = await query(db.collection('students'), {
+ *   where: { className: '一年级1班' },
+ *   field: { _id: true, studentName: true },
+ *   orderBy: { studentName: 'asc' }
+ * })
+ *
+ * // 获取分页数据
+ * const records = await query(db.collection('attendance_records'), {
+ *   where: { clubName: '篮球社' },
+ *   orderBy: { date: 'desc' },
+ *   limit: 20,
+ *   skip: 0
+ * })
+ *
+ * // 获取单条最新记录
+ * const [latest] = await query(db.collection('attendance_records'), {
+ *   where: { clubName: '篮球社', date: '2025-01-13' },
+ *   orderBy: { createTime: 'desc' },
+ *   limit: 1
+ * })
+ */
+async function query(collection, options = {}) {
+  const {
+    where = {},
+    field = null,
+    orderBy = null,
+    limit = null,
+    skip = null,
+    fetchAll = true
+  } = options
+
+  // 如果设置了 limit，直接使用普通查询（不需要处理20条限制）
+  if (limit !== null) {
+    let q = collection.where(where)
+    if (field) q = q.field(field)
+    if (orderBy) {
+      for (const [f, dir] of Object.entries(orderBy)) {
+        q = q.orderBy(f, dir)
+      }
+    }
+    if (skip !== null) q = q.skip(skip)
+    q = q.limit(limit)
+    const res = await q.get()
+    return res.data
+  }
+
+  // 不设置 limit，根据 fetchAll 决定是否获取全部
+  if (!fetchAll) {
+    // 不获取全部时，使用默认限制（20条）
+    let q = collection.where(where)
+    if (field) q = q.field(field)
+    if (orderBy) {
+      for (const [f, dir] of Object.entries(orderBy)) {
+        q = q.orderBy(f, dir)
+      }
+    }
+    const res = await q.get()
+    return res.data
+  }
+
+  // 获取全部数据，突破20条限制
+  const countResult = await collection.where(where).count()
+  const total = countResult.total
+
+  if (total === 0) return []
+
+  let q = collection.where(where)
+  if (field) q = q.field(field)
+  if (orderBy) {
+    for (const [f, dir] of Object.entries(orderBy)) {
+      q = q.orderBy(f, dir)
+    }
+  }
+
+  if (total <= MAX_LIMIT) {
+    const res = await q.get()
+    return res.data
+  }
+
+  // 分批查询
+  const batchTimes = Math.ceil(total / MAX_LIMIT)
+
+  // 有排序时顺序执行，保证排序稳定性
+  if (orderBy) {
+    const allData = []
+    for (let i = 0; i < batchTimes; i++) {
+      const res = await q.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+      allData.push(...res.data)
+    }
+    return allData
+  }
+
+  // 无排序时并行执行，提高性能
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    tasks.push(q.skip(i * MAX_LIMIT).limit(MAX_LIMIT).get())
+  }
+  const results = await Promise.all(tasks)
+  return results.flatMap(res => res.data)
+}
+
+/**
+ * 统一分页查询方法
+ * 返回数据和分页信息
+ *
+ * @param {Object} collection - 数据库集合对象
+ * @param {Object} options - 查询选项
+ * @param {Object} options.where - 查询条件（必须）
+ * @param {number} options.page - 页码，从1开始（默认1）
+ * @param {number} options.pageSize - 每页数量（默认20）
+ * @param {Object|null} options.field - 返回字段（可选）
+ * @param {Object|null} options.orderBy - 排序规则（可选，默认 { createTime: 'desc' }）
+ * @returns {Promise<Object>} { data: Array, pagination: { page, pageSize, total, hasMore } }
+ *
+ * @example
+ * const result = await queryPage(db.collection('attendance_records'), {
+ *   where: { clubName: '篮球社' },
+ *   page: 1,
+ *   pageSize: 20,
+ *   orderBy: { date: 'desc' }
+ * })
+ * console.log(result.data, result.pagination)
+ */
+async function queryPage(collection, options = {}) {
+  const {
+    where = {},
+    page = 1,
+    pageSize = 20,
+    field = null,
+    orderBy = { createTime: 'desc' }
+  } = options
+
+  // 获取总数
+  const countRes = await collection.where(where).count()
+  const total = countRes.total
+
+  // 计算跳过的记录数
+  const skip = (page - 1) * pageSize
+
+  // 构建查询
+  let q = collection.where(where)
+  if (orderBy) {
+    for (const [f, dir] of Object.entries(orderBy)) {
+      q = q.orderBy(f, dir)
+    }
+  }
+  q = q.skip(skip).limit(pageSize)
+  if (field) q = q.field(field)
+
+  const result = await q.get()
+
+  return {
+    data: result.data,
+    pagination: {
+      page,
+      pageSize,
+      total,
+      hasMore: skip + result.data.length < total
+    }
+  }
+}
+
+/**
+ * 获取单条记录
+ *
+ * @param {Object} collection - 数据库集合对象
+ * @param {string} id - 文档ID
+ * @returns {Promise<Object|null>} 文档数据或null
+ *
+ * @example
+ * const student = await queryOne(db.collection('students'), 'student_id_123')
+ */
+async function queryOne(collection, id) {
+  try {
+    const result = await collection.doc(id).get()
+    return result.data || null
+  } catch (error) {
+    if (error.errCode === -1) {
+      return null
+    }
+    throw error
+  }
+}
+
 module.exports = {
+  // 新版统一查询方法（推荐）
+  query,
+  queryPage,
+  queryOne,
+
+  // 兼容旧版方法
   getAllData,
   getAllDataSorted,
   paginate,
+
+  // 系统配置
   getSystemConfig,
   setSystemConfig,
+
+  // 常量
   MAX_LIMIT
 }

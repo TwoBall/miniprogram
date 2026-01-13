@@ -208,16 +208,57 @@ cloudfunctions/
 ```javascript
 // 在云函数中引用公共模块
 const {
+  // 统一查询方法（推荐）
+  query,
+  queryPage,
+  queryOne,
+  // 兼容旧版
   getAllData,
   paginate,
+  // 权限验证
   verifyAdmin,
+  // 常量
   ROLES,
   USER_STATUS,
+  // 响应格式
   success,
   fail,
   unauthorized,
+  // 排序工具
   sortStudentsByName
 } = require('./common')
+```
+
+### 统一查询方法（推荐）
+
+使用 `query`、`queryPage`、`queryOne` 替代原有的查询方式，自动处理20条限制：
+
+```javascript
+// 获取全部数据（自动突破20条限制）
+const students = await query(db.collection('students'), {
+  where: { className: '一年级1班' },
+  field: { _id: true, studentName: true },
+  orderBy: { studentName: 'asc' }
+})
+
+// 获取分页数据
+const result = await queryPage(db.collection('records'), {
+  where: { clubName: '篮球社' },
+  page: 1,
+  pageSize: 20,
+  orderBy: { date: 'desc' }
+})
+// result.data, result.pagination
+
+// 获取单条记录
+const student = await queryOne(db.collection('students'), 'student_id')
+
+// 获取单条最新记录
+const [latest] = await query(db.collection('records'), {
+  where: { clubName: '篮球社' },
+  orderBy: { createTime: 'desc' },
+  limit: 1
+})
 ```
 
 ### 同步公共模块
@@ -236,7 +277,7 @@ node cloudfunctions/scripts/sync-common.js --force
 
 | 模块 | 文件 | 导出函数 |
 |------|------|----------|
-| 数据库工具 | `db-utils.js` | `getAllData`, `getAllDataSorted`, `paginate`, `MAX_LIMIT` |
+| 数据库工具 | `db-utils.js` | `query`, `queryPage`, `queryOne`, `getAllData`, `getAllDataSorted`, `paginate`, `MAX_LIMIT` |
 | 权限验证 | `auth-utils.js` | `verifyAdmin`, `verifyUser`, `verifyUserRoles` |
 | 响应格式 | `response-utils.js` | `success`, `successWithPagination`, `fail`, `badRequest`, `unauthorized`, `forbidden`, `notFound`, `wrapHandler`, `createDispatcher` |
 | 排序工具 | `sort-utils.js` | `zhCompare`, `zhNumericCompare`, `sortStudentsByName`, `sortStudentsByClassAndName`, `sortOptions` |
