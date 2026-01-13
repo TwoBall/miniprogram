@@ -4,7 +4,6 @@
  */
 const auth = require('../../../utils/auth')
 const storage = require('../../../utils/storage')
-const request = require('../../../utils/request')
 const datePickerBehavior = require('../../../behaviors/datePickerBehavior')
 const { SafeToast } = require('../../../utils/error')
 const { loadWithCache } = require('../../../utils/loader')

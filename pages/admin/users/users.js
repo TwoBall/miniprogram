@@ -5,7 +5,7 @@
 const paginationBehavior = require('../../../behaviors/paginationBehavior')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
-const { USER_STATUS, ROLES, getUserStatusText, getRoleText } = require('../../../utils/constants')
+const { USER_STATUS, ROLES } = require('../../../utils/constants')
 import Dialog from '@vant/weapp/dialog/dialog'
 
 Page({
