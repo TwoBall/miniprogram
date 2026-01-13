@@ -3,7 +3,7 @@
  * @module api/modules/stats
  * @description 处理跨模块的批量统计数据获取，减少前端 API 调用次数
  */
-const { verifyAdmin, USER_STATUS, success, fail, unauthorized } = require('../common')
+const { verifyAdmin, USER_STATUS, success, fail, unauthorized, getAllData } = require('../common')
 
 /**
  * 前置钩子 - 权限验证
@@ -307,17 +307,20 @@ async function handleGetDashboardStats(event, ctx) {
         const currentMonth = `${year}-${month}`
 
         // 并行执行：学部学生列表 + 当日考勤记录 + 缺勤预警
-        const [studentsResult, attendanceResult, warningsResult] = await Promise.all([
-            // 获取学部下所有学生
-            db.collection('students')
-                .where({ department })
-                .field({ _id: true, studentName: true, className: true, clubName: true })
-                .get(),
+        const [students, attendanceRecords, warningsResult] = await Promise.all([
+            // 获取学部下所有学生（使用 getAllData 突破 20 条限制）
+            getAllData(
+                db.collection('students'),
+                { department },
+                { _id: true, studentName: true, className: true, clubName: true }
+            ),
 
-            // 获取当日考勤记录
-            db.collection('attendance_records')
-                .where({ date })
-                .get(),
+            // 获取当日考勤记录（使用 getAllData）
+            getAllData(
+                db.collection('attendance_records'),
+                { date },
+                null
+            ),
 
             // 获取缺勤预警（本月缺勤>=3次的学生）
             db.collection('attendance_records').aggregate()
@@ -341,9 +344,6 @@ async function handleGetDashboardStats(event, ctx) {
                 .sort({ absenceCount: -1 })
                 .end()
         ])
-
-        const students = studentsResult.data || []
-        const attendanceRecords = attendanceResult.data || []
 
         // 按班级统计学生
         const classMap = {}
@@ -438,19 +438,19 @@ async function handleGetClassOverviewStats(event, ctx) {
     }
 
     try {
-        // 并行查询：班级学生 + 当日考勤记录
-        const [studentsResult, attendanceResult] = await Promise.all([
-            db.collection('students')
-                .where({ className })
-                .field({ _id: true, studentName: true, className: true, clubName: true, department: true, gender: true })
-                .get(),
-            db.collection('attendance_records')
-                .where({ date })
-                .get()
+        // 并行查询：班级学生 + 当日考勤记录（使用 getAllData 突破限制）
+        const [students, attendanceRecords] = await Promise.all([
+            getAllData(
+                db.collection('students'),
+                { className },
+                { _id: true, studentName: true, className: true, clubName: true, department: true, gender: true }
+            ),
+            getAllData(
+                db.collection('attendance_records'),
+                { date },
+                null
+            )
         ])
-
-        const students = studentsResult.data || []
-        const attendanceRecords = attendanceResult.data || []
 
         // 构建学生ID到考勤状态的映射
         const studentAttendanceMap = {}
