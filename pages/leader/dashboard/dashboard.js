@@ -38,7 +38,6 @@ Page({
   /** 页面初次渲染完成 */
   onReady() {
     this.loadData()
-    this.loadAbsenceWarnings()
   },
 
   /** 页面显示 */
@@ -58,10 +57,7 @@ Page({
 
   /** 页面下拉刷新 */
   async onPullDownRefresh() {
-    await Promise.all([
-      this.loadData(true),
-      this.loadAbsenceWarnings()
-    ])
+    await this.loadData(true)
     wx.stopPullDownRefresh()
   },
 
@@ -73,7 +69,7 @@ Page({
   },
 
   /**
-   * 加载学部考勤数据
+   * 加载学部考勤数据（使用批量接口，包含缺勤预警）
    * @param {boolean} forceRefresh - 是否强制刷新
    */
   async loadData(forceRefresh = false) {
@@ -95,7 +91,9 @@ Page({
           totalClasses: cached.totalClasses,
           totalStudents: cached.totalStudents,
           presentToday: cached.presentToday,
-          absentToday: cached.absentToday
+          absentToday: cached.absentToday,
+          absenceWarnings: cached.absenceWarnings || [],
+          warningCount: cached.warningCount || 0
         })
         return
       }
@@ -108,7 +106,8 @@ Page({
         duration: 0
       })
 
-      const result = await request.callApi('attendance', 'getByDepartment', {
+      // 使用批量接口，一次获取考勤数据和缺勤预警
+      const result = await request.callApi('stats', 'getDashboardStats', {
         department: userInfo.department,
         date: selectedDate
       }, { showLoading: false, showError: false })
@@ -123,7 +122,9 @@ Page({
           totalClasses: data.totalClasses,
           totalStudents: data.totalStudents,
           presentToday: data.presentToday,
-          absentToday: data.absentToday
+          absentToday: data.absentToday,
+          absenceWarnings: data.absenceWarnings || [],
+          warningCount: data.warningCount || 0
         })
       }
     } catch (error) {
@@ -182,35 +183,5 @@ Page({
       this.loadClassRanking()
     }
     this.setData({ showRanking: !this.data.showRanking })
-  },
-
-  /**
-   * 加载缺勤预警
-   */
-  async loadAbsenceWarnings() {
-    const userInfo = auth.getUserInfo()
-    if (!userInfo) return
-
-    try {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const currentMonth = `${year}-${month}`
-
-      const result = await request.callApi('attendance', 'getAbsenceWarnings', {
-        month: currentMonth,
-        department: userInfo.department
-      }, { showLoading: false, showError: false })
-
-      if (result.success) {
-        const warnings = result.data || []
-        this.setData({
-          absenceWarnings: warnings,
-          warningCount: warnings.length
-        })
-      }
-    } catch (error) {
-      console.error('加载缺勤预警失败:', error)
-    }
   }
 })

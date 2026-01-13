@@ -147,6 +147,7 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 |--------|------|---------|
 | `getDataCenterStats` | 批量获取数据中心统计（用户/学生/社团/考勤）| 管理员数据中心页 |
 | `getHomeStats` | 批量获取首页统计（用户/社团/今日考勤）| 管理员首页 |
+| `getDashboardStats` | 批量获取领导看板统计（学部考勤/缺勤预警）| 领导看板页 |
 
 ## cleanupRateLimits 云函数
 

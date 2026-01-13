@@ -278,11 +278,151 @@ async function handleGetHomeStats(event, ctx) {
     }
 }
 
+// ========== 领导看板批量接口 ==========
+
+/**
+ * 获取领导看板统计数据（批量接口）
+ * 合并学部考勤数据 + 缺勤预警
+ * 优化：将原来2次调用减少为1次
+ */
+async function handleGetDashboardStats(event, ctx) {
+    const { db } = ctx
+    const { department, date } = event
+    const _ = db.command
+    const $ = db.command.aggregate
+
+    if (!department) {
+        return fail('缺少学部参数')
+    }
+
+    if (!date) {
+        return fail('缺少日期参数')
+    }
+
+    try {
+        // 获取当前月份用于缺勤预警查询
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const currentMonth = `${year}-${month}`
+
+        // 并行执行：学部学生列表 + 当日考勤记录 + 缺勤预警
+        const [studentsResult, attendanceResult, warningsResult] = await Promise.all([
+            // 获取学部下所有学生
+            db.collection('students')
+                .where({ department })
+                .field({ _id: true, studentName: true, className: true, clubName: true })
+                .get(),
+
+            // 获取当日考勤记录
+            db.collection('attendance_records')
+                .where({ date })
+                .get(),
+
+            // 获取缺勤预警（本月缺勤>=3次的学生）
+            db.collection('attendance_records').aggregate()
+                .match({
+                    date: _.gte(`${currentMonth}-01`).and(_.lte(`${currentMonth}-31`))
+                })
+                .unwind('$records')
+                .match({
+                    'records.status': 'absent'
+                })
+                .group({
+                    _id: '$records.studentId',
+                    absenceCount: $.sum(1),
+                    studentName: $.first('$records.studentName'),
+                    className: $.first('$records.className'),
+                    clubName: $.first('$records.clubName')
+                })
+                .match({
+                    absenceCount: _.gte(3)
+                })
+                .sort({ absenceCount: -1 })
+                .end()
+        ])
+
+        const students = studentsResult.data || []
+        const attendanceRecords = attendanceResult.data || []
+
+        // 按班级统计学生
+        const classMap = {}
+        students.forEach(student => {
+            const className = student.className
+            if (!classMap[className]) {
+                classMap[className] = {
+                    className,
+                    totalStudents: 0,
+                    presentCount: 0,
+                    absentCount: 0
+                }
+            }
+            classMap[className].totalStudents++
+        })
+
+        // 统计当日考勤情况
+        let totalPresent = 0
+        let totalAbsent = 0
+        const studentClassMap = {}
+        students.forEach(s => {
+            studentClassMap[s._id] = s.className
+        })
+
+        attendanceRecords.forEach(record => {
+            if (!record.records) return
+            record.records.forEach(r => {
+                const className = r.className || studentClassMap[r.studentId]
+                if (!className || !classMap[className]) return
+
+                if (r.status === 'present' || r.status === 'late') {
+                    classMap[className].presentCount++
+                    totalPresent++
+                } else if (r.status === 'absent') {
+                    classMap[className].absentCount++
+                    totalAbsent++
+                }
+            })
+        })
+
+        // 转换为数组
+        const classes = Object.values(classMap)
+
+        // 过滤缺勤预警：只保留本学部的学生
+        const departmentStudentIds = new Set(students.map(s => s._id))
+        const warnings = (warningsResult.list || []).filter(w => {
+            // 需要检查学生是否属于该学部
+            return departmentStudentIds.has(w._id)
+        }).map(w => ({
+            studentId: w._id,
+            studentName: w.studentName,
+            className: w.className,
+            clubName: w.clubName,
+            absenceCount: w.absenceCount
+        }))
+
+        return success({
+            // 考勤数据
+            classes,
+            totalClasses: classes.length,
+            totalStudents: students.length,
+            presentToday: totalPresent,
+            absentToday: totalAbsent,
+            // 缺勤预警
+            absenceWarnings: warnings,
+            warningCount: warnings.length
+        })
+    } catch (error) {
+        console.error('获取领导看板统计失败:', error)
+        return fail('获取统计数据失败')
+    }
+}
+
 // 导出模块
 module.exports = {
     beforeAction,
     handlers: {
         getDataCenterStats: handleGetDataCenterStats,
-        getHomeStats: handleGetHomeStats
+        getHomeStats: handleGetHomeStats,
+        getDashboardStats: handleGetDashboardStats
     }
 }
