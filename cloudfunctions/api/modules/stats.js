@@ -529,12 +529,13 @@ async function handleGetTeacherHomeStats(event, ctx) {
     try {
         const queryDate = date || formatDate(new Date())
 
-        // 并行查询：社团学生 + 今日考勤记录
-        const [studentsResult, attendanceResult] = await Promise.all([
-            db.collection('students')
-                .where({ clubName })
-                .field({ _id: true, studentName: true, className: true, department: true })
-                .get(),
+        // 并行查询：社团学生 + 今日考勤记录（使用 getAllData 突破 20 条限制）
+        const [students, attendanceResult] = await Promise.all([
+            getAllData(
+                db.collection('students'),
+                { clubName },
+                { _id: true, studentName: true, className: true, department: true }
+            ),
             db.collection('attendance_records')
                 .where({
                     clubName,
@@ -545,7 +546,6 @@ async function handleGetTeacherHomeStats(event, ctx) {
                 .get()
         ])
 
-        const students = studentsResult.data || []
         const todayRecord = attendanceResult.data?.[0] || null
 
         // 统计今日考勤
