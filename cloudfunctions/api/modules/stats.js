@@ -442,7 +442,7 @@ async function handleGetClassOverviewStats(event, ctx) {
         const [studentsResult, attendanceResult] = await Promise.all([
             db.collection('students')
                 .where({ className })
-                .field({ _id: true, studentName: true, className: true, clubName: true, department: true })
+                .field({ _id: true, studentName: true, className: true, clubName: true, department: true, gender: true })
                 .get(),
             db.collection('attendance_records')
                 .where({ date })
