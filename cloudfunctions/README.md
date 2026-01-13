@@ -106,6 +106,7 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 | `getFilterOptions` | 获取筛选选项（学部/班级/社团）| 多个页面 |
 | `getStatistics` | 获取学生统计数据（聚合查询）| 数据中心页 |
 | `getAll` | 获取所有学生列表 | 管理员页面 |
+| `getStudentWithAttendance` | 批量获取学生详情+考勤历史 | 学生详情页 |
 
 ## user 云函数 Action 列表
 

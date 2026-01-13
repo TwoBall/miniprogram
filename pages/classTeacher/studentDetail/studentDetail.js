@@ -22,88 +22,37 @@ Page({
     const { studentId } = options
     if (studentId) {
       this.setData({ studentId })
-      this.loadStudentDetail()
-      this.loadAttendanceHistory()
+      this.loadStudentData()
     }
   },
 
   onPullDownRefresh() {
-    this.loadStudentDetail()
-    this.loadAttendanceHistory()
+    this.loadStudentData()
   },
 
-  // 加载学生详情
-  async loadStudentDetail() {
+  /**
+   * 加载学生数据（使用批量接口，包含学生信息和考勤历史）
+   */
+  async loadStudentData() {
+    this.setData({ loading: true })
+
     try {
-      const result = await request.callApi('students', 'getById', {
+      // 使用批量接口，一次获取学生信息和考勤历史
+      const result = await request.callApi('students', 'getStudentWithAttendance', {
         studentId: this.data.studentId
       }, { showLoading: false })
 
       if (result.success && result.data) {
-        this.setData({ student: result.data })
-      } else {
-        SafeToast.fail(result.message || '加载失败')
-      }
-    } catch (error) {
-      console.error('加载学生详情失败:', error)
-      SafeToast.fail('加载失败')
-    }
-  },
-
-  // 加载考勤历史
-  async loadAttendanceHistory() {
-    this.setData({ loading: true })
-
-    try {
-      const result = await request.callApi('attendance', 'getByStudent', {
-        studentId: this.data.studentId
-      })
-
-      if (result.success) {
-        const records = result.data || []
-
-        // 计算统计数据并预处理每条记录的学生状态
-        let presentCount = 0
-        let absentCount = 0
-        let lateCount = 0
-
-        const processedRecords = records.map(record => {
-          const studentRecord = record.records.find(s => s.studentId === this.data.studentId)
-
-          if (studentRecord) {
-            switch (studentRecord.status) {
-              case 'present':
-                presentCount++
-                break
-              case 'absent':
-                absentCount++
-                break
-              case 'late':
-                lateCount++
-                break
-            }
-          }
-
-          // 为每条记录添加该学生的状态信息
-          return {
-            ...record,
-            studentStatus: studentRecord?.status || 'unknown',
-            studentNote: studentRecord?.note || ''
-          }
-        })
-
-        const totalRecords = records.length
-        const attendanceRate = totalRecords > 0
-          ? Math.round(((presentCount + lateCount) / totalRecords) * 100)
-          : 0
+        const { student, attendanceHistory, stats } = result.data
 
         this.setData({
-          attendanceHistory: processedRecords,
-          totalRecords,
-          presentCount,
-          absentCount,
-          lateCount,
-          attendanceRate,
+          student,
+          attendanceHistory,
+          totalRecords: stats.totalRecords,
+          presentCount: stats.presentCount,
+          absentCount: stats.absentCount,
+          lateCount: stats.lateCount,
+          attendanceRate: stats.attendanceRate,
           loading: false
         })
 
@@ -113,7 +62,7 @@ Page({
         this.setData({ loading: false })
       }
     } catch (error) {
-      console.error('加载考勤历史失败:', error)
+      console.error('加载学生数据失败:', error)
       SafeToast.fail('加载失败')
       this.setData({ loading: false })
       wx.stopPullDownRefresh()

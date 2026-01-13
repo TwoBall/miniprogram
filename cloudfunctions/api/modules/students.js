@@ -221,6 +221,89 @@ async function handleGetStatistics(event, ctx) {
     }
 }
 
+/**
+ * 获取学生详情及考勤历史（批量接口）
+ * 合并 getById + attendance/getByStudent
+ * 优化：将原来2次调用减少为1次
+ */
+async function handleGetStudentWithAttendance(event, ctx) {
+    const { studentId } = event
+    const { db } = ctx
+
+    if (!studentId) {
+        return fail('缺少学生ID')
+    }
+
+    try {
+        // 并行查询：学生信息 + 考勤记录
+        const [studentResult, attendanceResult] = await Promise.all([
+            db.collection('students').doc(studentId).get(),
+            db.collection('attendance_records')
+                .where({
+                    'records.studentId': studentId
+                })
+                .orderBy('date', 'desc')
+                .limit(100)
+                .get()
+        ])
+
+        const student = studentResult.data
+        const records = attendanceResult.data || []
+
+        // 计算统计数据并预处理每条记录的学生状态
+        let presentCount = 0
+        let absentCount = 0
+        let lateCount = 0
+
+        const processedRecords = records.map(record => {
+            const studentRecord = record.records.find(s => s.studentId === studentId)
+
+            if (studentRecord) {
+                switch (studentRecord.status) {
+                    case 'present':
+                        presentCount++
+                        break
+                    case 'absent':
+                        absentCount++
+                        break
+                    case 'late':
+                        lateCount++
+                        break
+                }
+            }
+
+            return {
+                _id: record._id,
+                date: record.date,
+                clubName: record.clubName,
+                teacherName: record.teacherName,
+                studentStatus: studentRecord?.status || 'unknown',
+                studentNote: studentRecord?.note || ''
+            }
+        })
+
+        const totalRecords = records.length
+        const attendanceRate = totalRecords > 0
+            ? Math.round(((presentCount + lateCount) / totalRecords) * 100)
+            : 0
+
+        return success({
+            student,
+            attendanceHistory: processedRecords,
+            stats: {
+                totalRecords,
+                presentCount,
+                absentCount,
+                lateCount,
+                attendanceRate
+            }
+        })
+    } catch (error) {
+        console.error('获取学生详情及考勤失败:', error)
+        return fail('获取学生详情失败')
+    }
+}
+
 // 导出模块
 module.exports = {
     beforeAction,
@@ -231,6 +314,7 @@ module.exports = {
         getByDepartment: handleGetByDepartment,
         getById: handleGetById,
         getAll: handleGetAll,
-        getStatistics: handleGetStatistics
+        getStatistics: handleGetStatistics,
+        getStudentWithAttendance: handleGetStudentWithAttendance
     }
 }
