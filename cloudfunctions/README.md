@@ -23,6 +23,7 @@
     - `transfer.js` - 转社团管理模块
     - `export.js` - 数据导出模块
     - `system.js` - 系统配置模块
+    - `stats.js` - 统计聚合模块
     - `feedback.js` - 反馈提交模块
   - `common/` - 公共工具模块
 
@@ -74,6 +75,7 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 | `transfer` | create, getList, confirm, approve, reject |
 | `export` | attendance, summary, students, getHistory, getDownloadUrl, deleteRecord |
 | `system` | getConfig, setConfig |
+| `stats` | getDataCenterStats, getHomeStats |
 | `feedback` | submit |
 
 ## attendance 云函数 Action 列表
@@ -138,6 +140,13 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 |--------|------|---------|
 | `getConfig` | 获取系统配置 | 各页面（通过 utils/config.js）|
 | `setConfig` | 设置系统配置（仅管理员）| 管理后台 |
+
+## stats 云函数 Action 列表
+
+| Action | 用途 | 调用页面 |
+|--------|------|---------|
+| `getDataCenterStats` | 批量获取数据中心统计（用户/学生/社团/考勤）| 管理员数据中心页 |
+| `getHomeStats` | 批量获取首页统计（用户/社团/今日考勤）| 管理员首页 |
 
 ## cleanupRateLimits 云函数
 

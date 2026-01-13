@@ -2,7 +2,6 @@
  * @file 管理员首页
  * @module pages/admin/home/home
  */
-const { formatDate } = require('../../../utils/date')
 const auth = require('../../../utils/auth')
 const request = require('../../../utils/request')
 const { SafeToast } = require('../../../utils/error')
@@ -50,47 +49,24 @@ Page({
   },
 
   /**
-   * 加载统计数据
+   * 加载统计数据（使用批量接口，单次请求）
    */
   async loadStats() {
     try {
-      const today = formatDate(new Date())
-
-      const [userRes, filterOptions, attendanceRes] = await Promise.all([
-        request.callApi('user', 'getStats', {}, { showLoading: false, showError: false }),
-        request.getFilterOptions(),
-        request.callApi('attendance', 'getStatistics', {
-          startDate: today,
-          endDate: today
-        }, { showLoading: false, showError: false })
-      ])
-
-      let totalUsers = 0
-      let pendingUsers = 0
-      if (userRes.success && userRes.data) {
-        totalUsers = userRes.data.total
-        pendingUsers = userRes.data.pending
-      }
-
-      let totalClubs = 0
-      if (filterOptions && filterOptions.clubs) {
-        totalClubs = filterOptions.clubs.length
-      }
-
-      let todayAttendance = 0
-      if (attendanceRes.success && attendanceRes.data) {
-        todayAttendance = attendanceRes.data.total
-      }
-
-      this.setData({
-        pageLoading: false,
-        stats: {
-          totalUsers,
-          pendingUsers,
-          totalClubs,
-          todayAttendance
-        }
+      const result = await request.callApi('stats', 'getHomeStats', {}, {
+        showLoading: false,
+        showError: false
       })
+
+      if (result.success) {
+        this.setData({
+          pageLoading: false,
+          stats: result.data
+        })
+      } else {
+        console.error('加载统计数据失败:', result.message)
+        this.setData({ pageLoading: false })
+      }
     } catch (error) {
       console.error('加载统计数据失败:', error)
       this.setData({ pageLoading: false })

@@ -40,7 +40,8 @@ const SUPPORTED_MODULES = [
     'transfer',     // 转社团管理
     'export',       // 数据导出
     'system',       // 系统配置
-    'feedback'      // 反馈提交
+    'feedback',     // 反馈提交
+    'stats'         // 统计聚合
 ]
 
 /**
