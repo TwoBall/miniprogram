@@ -25,27 +25,26 @@
     - `system.js` - 系统配置模块
     - `stats.js` - 统计聚合模块
     - `feedback.js` - 反馈提交模块
-  - `common/` - 公共工具模块
+  - `common/` - 公共工具模块（由同步脚本自动生成）
 
-### 定时触发器云函数（必须独立）
+### 定时触发器云函数
 
 - `cleanupRateLimits/` - 定时清理云函数（每小时执行），清理过期的 rate_limits 记录
 
 > **注意**：定时触发器云函数不能合并到统一 API 中，因为它们由云开发定时器自动触发，而非前端调用。
 
-### 独立云函数（兼容旧版，可逐步废弃）
+### 公共模块和脚本
 
-- `attendance/` - 考勤管理云函数
-- `students/` - 学生管理云函数
-- `user/` - 用户管理云函数
-- `export/` - 数据导出云函数
-- `notification/` - 通知推送云函数
-- `transfer/` - 转社团处理云函数
-- `submitFeedback/` - 反馈提交云函数
-- `system/` - 系统配置云函数
-- `common/` - 公共模块模板
+- `common/` - 公共模块源码（单一真相源），由同步脚本分发到各云函数
+- `scripts/` - 构建脚本目录
+  - `sync-common.js` - 公共模块同步脚本
 
-> **迁移说明**：上述独立云函数已迁移至统一 API (`api/`)，保留是为了兼容性。前端已全部切换到 `callApi`，这些独立云函数可在确认无调用后删除。
+### 归档目录
+
+- `_archived/` - 已废弃的独立云函数（2026-01 归档）
+  - 包含：attendance、students、user、export、notification、transfer、submitFeedback、system
+  - 这些功能已全部迁移至 `api/` 统一云函数
+  - 详见 `_archived/README.md`
 
 ## 统一 API 调用方式
 
@@ -75,7 +74,7 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 | `transfer` | create, getList, confirm, approve, reject |
 | `export` | attendance, summary, students, getHistory, getDownloadUrl, deleteRecord |
 | `system` | getConfig, setConfig |
-| `stats` | getDataCenterStats, getHomeStats |
+| `stats` | getDataCenterStats, getHomeStats, getDashboardStats, getClassOverviewStats, getTeacherHomeStats |
 | `feedback` | submit |
 
 ## attendance 云函数 Action 列表
@@ -149,6 +148,8 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 | `getDataCenterStats` | 批量获取数据中心统计（用户/学生/社团/考勤）| 管理员数据中心页 |
 | `getHomeStats` | 批量获取首页统计（用户/社团/今日考勤）| 管理员首页 |
 | `getDashboardStats` | 批量获取领导看板统计（学部考勤/缺勤预警）| 领导看板页 |
+| `getClassOverviewStats` | 批量获取班主任概览统计（班级学生+当日考勤）| 班主任概览页 |
+| `getTeacherHomeStats` | 批量获取教师首页统计（社团学生+今日点名状态）| 教师首页 |
 
 ## cleanupRateLimits 云函数
 
@@ -174,22 +175,32 @@ const result = await request.callApi('user', 'login', { code: 'xxx' })
 
 ```
 cloudfunctions/
+├── api/                       # 统一 API 云函数（推荐）
+│   ├── index.js              # 统一入口，模块路由分发
+│   ├── package.json          # 依赖配置
+│   ├── modules/              # 业务模块目录
+│   │   ├── user.js
+│   │   ├── students.js
+│   │   ├── attendance.js
+│   │   ├── notification.js
+│   │   ├── transfer.js
+│   │   ├── export.js
+│   │   ├── system.js
+│   │   ├── stats.js
+│   │   └── feedback.js
+│   └── common/               # 自动同步的公共模块
+├── cleanupRateLimits/         # 定时触发器云函数
 ├── common/                    # 公共模块源码（单一真相源）
 │   ├── index.js              # 统一导出入口
 │   ├── db-utils.js           # 数据库工具
 │   ├── auth-utils.js         # 权限验证工具
 │   ├── response-utils.js     # 统一响应格式
 │   ├── sort-utils.js         # 排序工具
+│   ├── date-utils.js         # 日期工具
 │   └── constants.js          # 常量定义
 ├── scripts/
 │   └── sync-common.js        # 同步脚本
-├── attendance/
-│   ├── index.js
-│   ├── package.json
-│   └── common/               # 自动同步的公共模块
-│       ├── index.js
-│       └── ...
-└── ...
+└── _archived/                 # 已归档的废弃云函数
 ```
 
 ### 使用方式
@@ -230,6 +241,7 @@ node cloudfunctions/scripts/sync-common.js --force
 | 响应格式 | `response-utils.js` | `success`, `successWithPagination`, `fail`, `badRequest`, `unauthorized`, `forbidden`, `notFound`, `wrapHandler`, `createDispatcher` |
 | 排序工具 | `sort-utils.js` | `zhCompare`, `zhNumericCompare`, `sortStudentsByName`, `sortStudentsByClassAndName`, `sortOptions` |
 | 常量定义 | `constants.js` | `MAX_LIMIT`, `ROLES`, `USER_STATUS`, `ATTENDANCE_STATUS` |
+| 日期工具 | `date-utils.js` | `formatDate`, `formatDateTime`, `getToday`, `getCurrentMonth`, `getCurrentMonthRange`, `getDateRange`, `getMonthsAgoRange`, `DATE_RANGES` |
 | 限频工具 | `rate-limit.js` | `checkRateLimit`, `cleanupExpiredRecords`, `RATE_LIMIT_CONFIGS` |
 | 输入校验 | `validator.js` | `RULES`, `validateField`, `validateRequired`, `validate`, `sanitize`, `sanitizeObject` |
 

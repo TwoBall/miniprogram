@@ -10,6 +10,7 @@ const sortUtils = require('./sort-utils')
 const constants = require('./constants')
 const rateLimitUtils = require('./rate-limit')
 const validatorUtils = require('./validator')
+const dateUtils = require('./date-utils')
 
 module.exports = {
   // 数据库工具
@@ -25,5 +26,7 @@ module.exports = {
   // 限频工具
   ...rateLimitUtils,
   // 校验工具
-  ...validatorUtils
+  ...validatorUtils,
+  // 日期工具
+  ...dateUtils
 }
