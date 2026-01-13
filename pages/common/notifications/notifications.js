@@ -15,13 +15,11 @@ Page({
 
   onLoad() {
     this.loadList()
-    this.loadUnreadCount()
   },
 
   onPullDownRefresh() {
     this.setData({ notifications: [] })
     this.handlePullDownRefresh()
-    this.loadUnreadCount()
   },
 
   onReachBottom() {
@@ -63,29 +61,16 @@ Page({
         }))
 
         this.handleLoadSuccess(formattedData, result.pagination, refresh, 'notifications')
+
+        // 从 pagination 中获取未读数量（getList 接口已包含）
+        if (result.pagination && result.pagination.unreadCount !== undefined) {
+          this.setData({ unreadCount: result.pagination.unreadCount })
+        }
       }
     } catch (error) {
       console.error('加载通知失败:', error)
       this.setData({ loading: false })
       SafeToast.fail('加载失败')
-    }
-  },
-
-  /**
-   * 加载未读数量
-   */
-  async loadUnreadCount() {
-    try {
-      const result = await request.callApi('notification', 'getUnreadCount', {}, {
-        showLoading: false,
-        showError: false
-      })
-
-      if (result.success) {
-        this.setData({ unreadCount: result.data.count })
-      }
-    } catch (error) {
-      console.error('获取未读数失败:', error)
     }
   },
 
@@ -115,8 +100,9 @@ Page({
         const notifications = this.data.notifications.map(n =>
           n._id === id ? { ...n, read: true } : n
         )
-        this.setData({ notifications })
-        this.loadUnreadCount()
+        // 本地减少未读数
+        const unreadCount = Math.max(0, this.data.unreadCount - 1)
+        this.setData({ notifications, unreadCount })
       }
     } catch (error) {
       console.error('标记已读失败:', error)
@@ -144,11 +130,10 @@ Page({
 
       if (result.success) {
         SafeToast.success(result.message)
-        // 刷新列表
+        // 刷新列表（loadList 会自动更新 unreadCount）
         this.setData({ notifications: [] })
         this.resetPagination()
         this.loadList(true)
-        this.loadUnreadCount()
       }
     } catch (error) {
       console.error('批量标记失败:', error)

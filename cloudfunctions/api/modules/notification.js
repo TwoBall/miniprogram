@@ -76,7 +76,7 @@ async function handleCreate(event, ctx) {
 }
 
 /**
- * 获取通知列表
+ * 获取通知列表（同时返回未读数量）
  */
 async function handleGetList(event, ctx) {
     const { recipientId, read, page = 1, pageSize = 20 } = event
@@ -89,18 +89,29 @@ async function handleGetList(event, ctx) {
             condition.read = read
         }
 
-        const countRes = await db.collection('notifications').where(condition).count()
+        // 并行查询：总数、列表、未读数
+        const [countRes, listRes, unreadRes] = await Promise.all([
+            db.collection('notifications').where(condition).count(),
+            db.collection('notifications')
+                .where(condition)
+                .orderBy('createTime', 'desc')
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .get(),
+            db.collection('notifications')
+                .where({ recipientId: targetId, read: false })
+                .count()
+        ])
+
         const total = countRes.total
 
-        const skip = (page - 1) * pageSize
-        const listRes = await db.collection('notifications')
-            .where(condition)
-            .orderBy('createTime', 'desc')
-            .skip(skip)
-            .limit(pageSize)
-            .get()
-
-        return successWithPagination(listRes.data, { page, pageSize, total, hasMore: skip + listRes.data.length < total })
+        return successWithPagination(listRes.data, {
+            page,
+            pageSize,
+            total,
+            hasMore: (page - 1) * pageSize + listRes.data.length < total,
+            unreadCount: unreadRes.total
+        })
     } catch (error) {
         console.error('获取通知列表失败:', error)
         return fail('获取通知列表失败')
