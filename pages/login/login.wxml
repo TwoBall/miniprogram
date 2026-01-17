@@ -20,13 +20,14 @@
     <text class="ed-login-subtitle">Smart Club Management System</text>
   </view>
 
-  <!-- 欢迎区域 -->
-  <view class="ed-login-welcome">
-    <view class="ed-welcome-badge">
-      <van-icon name="smile-o" size="32rpx" color="#ed8936" />
-      <text>欢迎使用</text>
+  <!-- 内部使用说明 -->
+  <view class="ed-login-notice">
+    <view class="ed-notice-badge">
+      <van-icon name="warning-o" size="32rpx" color="#ed8936" />
+      <text>内部系统</text>
     </view>
-    <text class="ed-welcome-text">开启高效社团管理之旅</text>
+    <text class="ed-notice-text">本系统仅限学校内部教职工使用</text>
+    <text class="ed-notice-desc">登录后需管理员审核批准方可使用</text>
   </view>
 
   <!-- 登录按钮区域 -->
@@ -54,8 +55,12 @@
   <!-- 提示区域 -->
   <view class="ed-login-tips">
     <view class="ed-tips-item">
+      <van-icon name="passed" size="28rpx" color="#38a169" />
+      <text>首次登录需提交注册信息</text>
+    </view>
+    <view class="ed-tips-item">
       <van-icon name="info-o" size="28rpx" color="#a0aec0" />
-      <text>首次使用需要完成注册信息</text>
+      <text>管理员审核通过后方可正常使用</text>
     </view>
   </view>
 
