@@ -314,9 +314,12 @@ async function handleGetDashboardStats(event, ctx) {
                 field: { _id: true, studentName: true, className: true, clubName: true }
             }),
 
-            // 获取当日考勤记录
+            // 获取当日该学部的考勤记录（通过 departments 数组过滤）
             query(db.collection('attendance_records'), {
-                where: { date }
+                where: {
+                    date,
+                    departments: department  // 只查询包含该学部的考勤记录
+                }
             }),
 
             // 获取缺勤预警（本月缺勤>=3次的学生）
@@ -350,8 +353,8 @@ async function handleGetDashboardStats(event, ctx) {
                 classMap[className] = {
                     className,
                     totalStudents: 0,
-                    presentCount: 0,
-                    absentCount: 0
+                    present: 0,
+                    absent: 0
                 }
             }
             classMap[className].totalStudents++
@@ -360,6 +363,9 @@ async function handleGetDashboardStats(event, ctx) {
         // 统计当日考勤情况
         let totalPresent = 0
         let totalAbsent = 0
+
+        // 构建该学部学生ID集合，用于精确过滤
+        const departmentStudentIds = new Set(students.map(s => s._id))
         const studentClassMap = {}
         students.forEach(s => {
             studentClassMap[s._id] = s.className
@@ -368,24 +374,32 @@ async function handleGetDashboardStats(event, ctx) {
         attendanceRecords.forEach(record => {
             if (!record.records) return
             record.records.forEach(r => {
+                // 只统计该学部的学生（一条考勤记录可能包含多个学部的学生）
+                if (!departmentStudentIds.has(r.studentId)) return
+
                 const className = r.className || studentClassMap[r.studentId]
                 if (!className || !classMap[className]) return
 
                 if (r.status === 'present' || r.status === 'late') {
-                    classMap[className].presentCount++
+                    classMap[className].present++
                     totalPresent++
                 } else if (r.status === 'absent') {
-                    classMap[className].absentCount++
+                    classMap[className].absent++
                     totalAbsent++
                 }
             })
         })
 
-        // 转换为数组
-        const classes = Object.values(classMap)
+        // 转换为数组，并计算出勤率
+        const classes = Object.values(classMap).map(c => {
+            const total = c.present + c.absent
+            return {
+                ...c,
+                attendanceRate: total > 0 ? Math.round(c.present / total * 100) : 0
+            }
+        })
 
-        // 过滤缺勤预警：只保留本学部的学生
-        const departmentStudentIds = new Set(students.map(s => s._id))
+        // 过滤缺勤预警：只保留本学部的学生（复用已有的 departmentStudentIds）
         const warnings = (warningsResult.list || []).filter(w => {
             // 需要检查学生是否属于该学部
             return departmentStudentIds.has(w._id)
