@@ -238,6 +238,9 @@ Page({
     const student = students[lastAction.index]
     const currentStatus = student.status
 
+    // 先移除最后一个已标记学生
+    markedStudents.pop()
+
     const updates = {
       currentIndex: lastAction.index,
       currentStudent: student,
@@ -245,13 +248,10 @@ Page({
       presentCount: currentStatus === 'present' ? presentCount - 1 : presentCount,
       absentCount: currentStatus === 'absent' ? absentCount - 1 : absentCount,
       [`students[${lastAction.index}].status`]: null,
-      [`markedStudents.length`]: markedStudents.length - 1,
+      markedStudents,  // 直接赋值修改后的数组
       cardStyle: '',
       _actionHistory
     }
-
-    markedStudents.pop()
-    updates.markedStudents = markedStudents
 
     this.setData(updates)
 
