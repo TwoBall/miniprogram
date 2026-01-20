@@ -155,7 +155,7 @@ Page({
         SafeToast.clear()
         SafeToast.fail(error.message || '删除失败')
       }
-    } catch (e) {
+    } catch {
       // 用户取消
     }
   },

@@ -197,11 +197,9 @@ module.exports = Behavior({
      * @private
      */
     _updateHasFilter() {
-      const hasFilter = !!(
-        this.data.selectedDepartment ||
+      const hasFilter = Boolean(this.data.selectedDepartment ||
         this.data.selectedClass ||
-        this.data.selectedClub
-      )
+        this.data.selectedClub)
       this.setData({ hasFilter })
     },
 

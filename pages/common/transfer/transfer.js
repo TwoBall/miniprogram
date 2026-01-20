@@ -117,7 +117,7 @@ Page({
           SafeToast.fail(result.message || '确认失败')
         }
       })
-    } catch (e) {
+    } catch {
       // 用户取消
     }
   },
@@ -145,7 +145,7 @@ Page({
           SafeToast.fail(result.message || '审批失败')
         }
       })
-    } catch (e) {
+    } catch {
       // 用户取消
     }
   },

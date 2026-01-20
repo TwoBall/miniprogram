@@ -49,7 +49,7 @@ function checkToastComponent() {
 
   try {
     const toast = page.selectComponent('#van-toast')
-    return !!toast
+    return Boolean(toast)
   } catch {
     return false
   }
@@ -116,13 +116,13 @@ async function safeLoading(options) {
       duration: 0,
       ...opts
     })
-  } else {
-    wx.showLoading({
-      title: opts.message || '加载中...',
-      mask: opts.forbidClick !== false
-    })
-    return null
   }
+  wx.showLoading({
+    title: opts.message || '加载中...',
+    mask: opts.forbidClick !== false
+  })
+  return null
+
 }
 
 /**

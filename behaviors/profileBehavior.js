@@ -27,7 +27,7 @@ const profileBehavior = Behavior({
     checkAuth() {
       const role = this.data.role
       const userInfo = auth.checkRole(role)
-      return !!userInfo
+      return Boolean(userInfo)
     },
 
     loadProfileData() {

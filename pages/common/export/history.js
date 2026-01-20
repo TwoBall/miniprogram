@@ -189,7 +189,7 @@ Page({
                         SafeToast.fail('打开失败')
                       }
                     })
-                  } catch (e) {
+                  } catch {
                     // 用户取消
                   }
                 },
@@ -253,7 +253,7 @@ Page({
         console.error('删除失败:', error)
         SafeToast.fail('删除失败')
       }
-    } catch (e) {
+    } catch {
       // 用户取消
     }
   }
